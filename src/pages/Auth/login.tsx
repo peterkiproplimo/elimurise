@@ -66,21 +66,21 @@ const Login = () => {
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    try {
-      const data = await getValues();
-      isLoading(true);
-      // const res = await { datasusername, password };
-      isLoading(false);
-      await ApiService.handleLogin(data.username, data.password);
-      setSuccess(true);
-      setMessage("Authenticated successfully");
-      notify.current?.showToast();
-    } catch (error) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage("Incorrect credentials.");
-      notify.current?.showToast();
-    }
+    //   try {
+    //     const data = await getValues();
+    //     isLoading(true);
+    //      const res = await {  };
+    //     isLoading(false);
+    //    await auth.Login(res);
+    //     setSuccess(true);
+    //     setMessage("Authenticated successfully");
+    //     notify.current?.showToast();
+    //   } catch (error) {
+    //     isLoading(false);
+    //     setSuccess(false);
+    //     setMessage("Incorrect credentials.");
+    //     notify.current?.showToast();
+    //   }
   };
 
   const [showPassword, setShowPassword] = useState<boolean>(false);

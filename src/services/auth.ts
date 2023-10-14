@@ -653,54 +653,54 @@ try {
   }
 
   //login
- export const handleLogin = async (username:any, password:any) => {
-    const url = "https://sb-backend-test.onrender.com/graphql";
+//  export const handleLogin = async (username:any, password:any) => {
+//     const url = "https://sb-backend-test.onrender.com/graphql";
   
-    const data = {
-      query: `
-        query adminLogin($loginInput: LoginInput) {
-          adminLogin(loginInput: $loginInput) {
-            userId
-            token
-            type
-            username
-            online
-            phone
-            dataToken
-            tokenExpiration
-            otp
-          }
-        }
-      `,
-      variables: {
-        loginInput: {
-          username: username,
-          password: password,
-        },
-      },
-    };
+//     const data = {
+//       query: `
+//         query adminLogin($loginInput: LoginInput) {
+//           adminLogin(loginInput: $loginInput) {
+//             userId
+//             token
+//             type
+//             username
+//             online
+//             phone
+//             dataToken
+//             tokenExpiration
+//             otp
+//           }
+//         }
+//       `,
+//       variables: {
+//         loginInput: {
+//           username: username,
+//           password: password,
+//         },
+//       },
+//     };
   
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-        redirect: 'follow',
-      });
+//     try {
+//       const response = await fetch(url, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(data),
+//         redirect: 'follow',
+//       });
   
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! Status: ${response.status}`);
+//       }
   
-      const result = await response.json();
-      console.log(result.data.adminLogin);
-      return result.data.adminLogin;
-    } catch (error) {
-      throw new Error(`HTTP error! `);
-    }
-  };
+//       const result = await response.json();
+//       console.log(result.data.adminLogin);
+//       return result.data.adminLogin;
+//     } catch (error) {
+//       // throw new Error(`HTTP error! `);
+//     }
+//   };
   
 
   
