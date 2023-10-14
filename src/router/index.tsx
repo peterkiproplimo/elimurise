@@ -29,9 +29,6 @@ import Terms from "../pages/Auth/terms&conditions";
 import Privacy from "../pages/Auth/privacy";
 import NewProfile from "../pages/Auth/profile";
 
-
-
-
 import Role from "../pages/Auth/roles";
 import Permissions from "../pages/Auth/permissions";
 import ForgotPassword from "../pages/Auth/forgot-password";
@@ -64,35 +61,14 @@ import CoversFAQs from "../pages/coverFAQs";
 import FAQs from "../pages/FAQs";
 import Settings from "../pages/Auth/settings";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function Router() {
   const routes = [
     {
       path: "/",
       element:
-        <AuthGuard>
-          <Layout />
-        </AuthGuard>,
+        // <AuthGuard>
+          <Layout />,
+        // </AuthGuard>,
       children: [
         {
           path: "/",
@@ -146,7 +122,7 @@ function Router() {
           path: "valuers",
           element: <Valuers />,
         },
-        
+
         {
           path: "accounts",
           element: <Accounts />,
@@ -161,106 +137,89 @@ function Router() {
         },
         {
           path: "Terms",
-          element: <Terms/>,
+          element: <Terms />,
         },
-       
+
         {
           path: "extension",
           element: <Extension />,
         },
         {
           path: "model",
-          element: <Model/>,
+          element: <Model />,
         },
         {
           path: "active",
-          element: <ClaimActive/>,
+          element: <ClaimActive />,
         },
         {
           path: "pendingClaim",
-          element: <ClaimPending/>,
+          element: <ClaimPending />,
         },
         {
           path: "rejectedClaim",
-          element: <ClaimRejected/>,
+          element: <ClaimRejected />,
         },
         {
           path: "accountDetails",
-          element: <AccountDetails/>,
+          element: <AccountDetails />,
         },
         {
           path: "Autocorrect",
-          element: <Autocorrect/>,
+          element: <Autocorrect />,
         },
         {
           path: "Thirdparty",
-          element: <Thirdparty/>,
+          element: <Thirdparty />,
         },
         {
           path: "Theft",
-          element: <Theft/>,
+          element: <Theft />,
         },
         {
           path: "Contents",
-          element: <Contents/>,
+          element: <Contents />,
         },
         {
           path: "CoversFAQs",
-          element: <CoversFAQs/>,
+          element: <CoversFAQs />,
         },
         {
           path: "FAQs",
-          element: <FAQs/>,
+          element: <FAQs />,
         },
-        
-        
-
 
         //security
         {
           path: "Role",
-          element: <Role/>,
+          element: <Role />,
         },
         {
           path: "Permissions",
-          element: <Permissions/>,
+          element: <Permissions />,
         },
-        
+
         {
           path: "Logs",
-          element: <Logs/>,
+          element: <Logs />,
         },
         {
           path: "PrivacyPolicy",
-          element: <PrivacyPolicy/>,
+          element: <PrivacyPolicy />,
         },
         {
           path: "Privacy",
-          element: <Privacy/>,
+          element: <Privacy />,
         },
         {
           path: "NewProfile",
-          element: <NewProfile/>,
+          element: <NewProfile />,
         },
         {
           path: "Settings",
-          element: <Settings/>,
+          element: <Settings />,
         },
 
-        
-      
-        
-
-
-
-
-
-
-
-
-
-        
-        
         {
           path: "speakers",
           element: <Speakers />,
@@ -309,10 +268,11 @@ function Router() {
     },
     {
       path: "/",
-      element:
+      element: (
         <GuestGuard>
           <Auth />
-        </GuestGuard>,
+        </GuestGuard>
+      ),
       children: [
         {
           path: "/login",
@@ -332,9 +292,7 @@ function Router() {
           path: "/CreateNewPassword",
           element: <CreateNewPassword />,
         },
-        
-      
-      ]
+      ],
     },
     {
       path: "/error-page",

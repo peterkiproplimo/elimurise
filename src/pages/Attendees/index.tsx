@@ -325,7 +325,7 @@ function Main() {
   const getUsers = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.getUsers();
+      let res = await ApiService.getUsers({ page: 1 });
       setUsers(res.users);
       isLoading(false);
       setNextPage(page < res.total_pages ? page + 1 : res.total_pages);

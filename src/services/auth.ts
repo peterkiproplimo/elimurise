@@ -41,7 +41,7 @@ export const createUser = async (username:any, phone:any, password:any, roleId:a
   
 
   //fetchusers
-  export const getUsers = async () => {
+  export const getUsers =async ({ page }: { page: number }) => {
     try {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
@@ -59,7 +59,9 @@ export const createUser = async (username:any, phone:any, password:any, roleId:a
             }
           }
         `,
-        variables: {}
+        variables: {
+          page: page
+        }
       };
   
       const requestOptions = {

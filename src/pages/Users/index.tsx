@@ -333,7 +333,7 @@ function Main() {
   }, []);
 
   const getUsers = async () => {
-    const response = await ApiService.getUsers();
+    const response = await ApiService.getUsers({ page: 1 });
     setUsers(response);
     console.log(response);
   };
