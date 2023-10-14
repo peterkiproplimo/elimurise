@@ -410,7 +410,7 @@ function Main() {
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
                   {/* {stats.vendors} */}
-                  <h3>Ksh{stats.houseLosses}</h3>
+                  <h3>Ksh {stats.houseLosses}</h3>
                 </div>
                 <div className="mt-1 text-base text-slate-500">House Loses</div>
               </div>
