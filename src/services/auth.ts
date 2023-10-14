@@ -705,6 +705,66 @@ try {
 //   };
   
 
+//dashboard
+export const getDashboard  = async () => {
+const headers = new Headers({
+  "Content-Type": "application/json"
+});
+
+const graphqlQuery = {
+  query: `
+    query Dashboard {
+      Dashboard {
+        houseRevenue {
+          currentDay
+        }
+        houseLose{
+          currentDay
+        }
+        mpesaBalance {
+          paybillTotal
+          b2cTotal
+        }
+        players {
+          total
+          onlineToday
+        }
+        withholdingTax {
+          total
+        }
+        walletsTotal {
+          grandTotal
+        }
+        houseWins {
+          monthlyTotal
+        }
+        houseLosses {
+          monthlyTotal
+        }
+      }
+    }
+  `,
+  variables: {}
+};
+
+const requestOptions = {
+  method: 'POST',
+  headers,
+  body: JSON.stringify(graphqlQuery),
+  redirect: 'follow' as RequestRedirect
+};
+
+try {
+  const response = await fetch(c.BASE_URL, requestOptions);
+  const res = await response.json();
+   return res.data.Dashboard;
+} catch (error) {
+  console.log('Error:', error);
+  throw error;
+}
+}
+
+
   
 
   
@@ -863,14 +923,14 @@ export async function changePassword(data: any) {
     }
 }
 
-export async function getDashboard() {
-    try {
-        let res = await axios.get(c.DASHBOARD);
-        return res.data;
-    } catch (e) {
-        throw handler(e);
-    }
-}
+// export async function getDashboard() {
+//     try {
+//         let res = await axios.get(c.DASHBOARD);
+//         return res.data;
+//     } catch (e) {
+//         throw handler(e);
+//     }
+// }
 
 export async function getConferences() {
     try {

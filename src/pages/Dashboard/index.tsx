@@ -27,11 +27,16 @@ function Main() {
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);
   const [stats, setSats] = useState({
-    attendees: 0,
-    speakers: 0,
-    vendors: 0,
-    exhibitors: 0,
-    total_events: 0,
+    houseLose: 0,
+    houseLosses: 0,
+    houseRevenue: 0,
+    houseWins: 0,
+    mpesaBalancepaybill: 0,
+    mpesaBalanceb2cTotal: 0,
+    totalplayers: 0,
+    playersonline: 0,
+    walletsTotal: 0,
+    withholdingTax: 0,
   });
   useEffect(() => {
     getDashboard();
@@ -40,15 +45,20 @@ function Main() {
   const getDashboard = async () => {
     let res = await ApiService.getDashboard();
     setSats({
-      attendees: res.attendees,
-      speakers: res.speakers,
-      vendors: res.vendors,
-      exhibitors: res.exhibitors,
-      total_events: res.total_events,
+      houseLose: res.houseLose.currentDay,
+      houseLosses: res.houseLosses.monthlyTotal,
+      houseRevenue: res.houseRevenue.currentDay,
+      houseWins: res.houseWins.monthlyTotal,
+      mpesaBalancepaybill: res.mpesaBalance.paybillTotal,
+      mpesaBalanceb2cTotal: res.mpesaBalance.b2cTotal,
+      totalplayers: res.players.total,
+      playersonline: res.players.onlineToday,
+      walletsTotal: res.walletsTotal.grandTotal,
+      withholdingTax: res.withholdingTax.total,
     });
-    setFeeds(res.feeds);
-    setEvents(res.events);
-    setQuestions(res.questions);
+    // setFeeds(res.feeds);
+    // setEvents(res.events);
+    // setQuestions(res.questions);
   };
 
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
@@ -102,8 +112,11 @@ function Main() {
                 <div className="mt-6 text-3xl font-medium leading-8">
                   {/* {stats.attendees} */}
                   {/* {totalUsers} */}
-                  {totalUsers !== null ? totalUsers : "Loading..."}
-                  {/* <h1>KSH 70,000</h1> */}
+                  {/* {totalUsers !== null ? totalUsers : "Loading..."} */}
+
+                  <div>
+                    <h1>Ksh {stats.houseRevenue}</h1>
+                  </div>
                 </div>
                 <div className="mt-1 text-base text-slate-500">
                   Daily House Revenue{" "}
@@ -112,116 +125,6 @@ function Main() {
             </Link>
           </div>
         </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/vendors"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="Briefcase"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.vendors} */}
-                  <h3>KSH 130,000</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Wallet Total
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/speakers"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="Volume2"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto ">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.speakers} */}
-                  <h1>194</h1>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Total Players
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/exhibitors"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="Briefcase"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.exhibitors} */}
-                  <h3>KSH 71,000</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Withholding Tax Total
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-
         <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
           <div
             className={clsx([
@@ -250,10 +153,48 @@ function Main() {
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
                   {/* {stats.attendees} */}
-                  <h3>KSH 20,000</h3>
+                  <h3>{stats.mpesaBalanceb2cTotal}</h3>
                 </div>
                 <div className="mt-1 text-base text-slate-500">
                   Mpesa Balance
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
+          <div
+            className={clsx([
+              "relative zoom-in",
+              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
+            ])}
+          >
+            <Link to="">
+              {/* <Link to="/attendees"> */}
+              <div className="p-5 box">
+                <div className="flex">
+                  <Lucide
+                    icon="FileCheck"
+                    className="w-[28px] h-[28px] text-blue-800"
+                  />
+                  <div className="ml-auto">
+                    <Tippy
+                      as="div"
+                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                      content=""
+                    >
+                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
+                    </Tippy>
+                  </div>
+                </div>
+                <div className="mt-6 text-3xl font-medium leading-8">
+                  {/* {stats.attendees} */}
+                  {/* {totalUsers} */}
+                  {/* {totalUsers !== null ? totalUsers : "Loading..."} */}
+
+                  <div>
+                    <h1>Ksh {stats.mpesaBalancepaybill}</h1>
+                  </div>
                 </div>
                 <div className="mt-1 text-base text-slate-500">
                   Paybill Total
@@ -270,11 +211,47 @@ function Main() {
             ])}
           >
             <Link to="">
+              {/* <Link to="/speakers"> */}
+              <div className="p-5 box">
+                <div className="flex">
+                  <Lucide
+                    icon="Volume2"
+                    className="w-[28px] h-[28px] text-blue-800"
+                  />
+                  <div className="ml-auto ">
+                    <Tippy
+                      as="div"
+                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                      content=""
+                    >
+                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
+                    </Tippy>
+                  </div>
+                </div>
+                <div className="mt-6 text-3xl font-medium leading-8">
+                  {/* {stats.speakers} */}
+                  <h1>{stats.totalplayers}</h1>
+                </div>
+                <div className="mt-1 text-base text-slate-500">
+                  Total Players
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
+          <div
+            className={clsx([
+              "relative zoom-in",
+              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
+            ])}
+          >
+            <Link to="">
               {/* <Link to="/vendors"> */}
               <div className="p-5 box">
                 <div className="flex">
                   <Lucide
-                    icon="Briefcase"
+                    icon="Volume2"
                     className="w-[28px] h-[28px] text-blue-800"
                   />
                   <div className="ml-auto">
@@ -289,16 +266,88 @@ function Main() {
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
                   {/* {stats.vendors} */}
-                  <h3>KSH 200,000</h3>
+                  <h3>{stats.playersonline}</h3>
                 </div>
-                <div className="mt-1 text-base text-slate-500">House Wins</div>
                 <div className="mt-1 text-base text-slate-500">
-                  Played Rounds <h1>124</h1>
+                  Players Online
                 </div>
               </div>
             </Link>
           </div>
         </div>
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
+          <div
+            className={clsx([
+              "relative zoom-in",
+              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
+            ])}
+          >
+            <Link to="">
+              {/* <Link to="/exhibitors"> */}
+              <div className="p-5 box">
+                <div className="flex">
+                  <Lucide
+                    icon="UserCheck"
+                    className="w-[28px] h-[28px] text-blue-800"
+                  />
+                  <div className="ml-auto">
+                    <Tippy
+                      as="div"
+                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                      content=""
+                    >
+                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
+                    </Tippy>
+                  </div>
+                </div>
+                <div className="mt-6 text-3xl font-medium leading-8">
+                  {/* {stats.exhibitors} */}
+                  <h3>Ksh {stats.withholdingTax}</h3>
+                </div>
+                <div className="mt-1 text-base text-slate-500">
+                  Withholding Tax Total
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
+          <div
+            className={clsx([
+              "relative zoom-in",
+              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
+            ])}
+          >
+            <Link to="">
+              {/* <Link to="/vendors"> */}
+              <div className="p-5 box">
+                <div className="flex">
+                  <Lucide
+                    icon="UserCheck"
+                    className="w-[28px] h-[28px] text-blue-800"
+                  />
+                  <div className="ml-auto">
+                    <Tippy
+                      as="div"
+                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                      content=""
+                    >
+                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
+                    </Tippy>
+                  </div>
+                </div>
+                <div className="mt-6 text-3xl font-medium leading-8">
+                  {/* {stats.vendors} */}
+                  <h3>Ksh {stats.walletsTotal}</h3>
+                </div>
+                <div className="mt-1 text-base text-slate-500">
+                  Wallet Total
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
           <div
             className={clsx([
@@ -326,12 +375,44 @@ function Main() {
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
                   {/* {stats.vendors} */}
-                  <h3>KSH 38,000</h3>
+                  <h3>{stats.houseWins}</h3>
+                </div>
+                <div className="mt-1 text-base text-slate-500">House Wins</div>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
+          <div
+            className={clsx([
+              "relative zoom-in",
+              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
+            ])}
+          >
+            <Link to="">
+              {/* <Link to="/vendors"> */}
+              <div className="p-5 box">
+                <div className="flex">
+                  <Lucide
+                    icon="Briefcase"
+                    className="w-[28px] h-[28px] text-blue-800"
+                  />
+                  <div className="ml-auto">
+                    <Tippy
+                      as="div"
+                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                      content=""
+                    >
+                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
+                    </Tippy>
+                  </div>
+                </div>
+                <div className="mt-6 text-3xl font-medium leading-8">
+                  {/* {stats.vendors} */}
+                  <h3>Ksh{stats.houseLosses}</h3>
                 </div>
                 <div className="mt-1 text-base text-slate-500">House Loses</div>
-                <div className="mt-1 text-base text-slate-500">
-                  Played Rounds <h1>124</h1>
-                </div>
               </div>
             </Link>
           </div>
