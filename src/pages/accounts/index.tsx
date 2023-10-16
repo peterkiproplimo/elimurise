@@ -412,7 +412,7 @@ function Main() {
       <Dialog
         staticBackdrop
         size="lg"
-        open={dialog}
+        // open={dialog}
         onClose={() => {
           setDialog(false);
         }}

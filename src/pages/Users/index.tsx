@@ -298,7 +298,7 @@ function Main() {
     "MANAGER",
     "MARKETER",
   ]);
-  const [selectUserRole, setUserRole] = useState([""]);
+  const [selectUserRole, setUserRole] = useState("");
 
   // Success notification
   const notify = useRef<NotificationElement>();
@@ -371,18 +371,21 @@ function Main() {
   // };
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = await trigger();
+    const result = true;
+
+    console.log(selectUserRole);
     if (result && !loading) {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createUser(
-          data.username,
-          data.phone,
-          data.password,
-          data.roleId
-        );
-        await getUsers();
+        console.log(data),
+          await ApiService.createUser(
+            data.username,
+            data.phone,
+            "password",
+            "652a9568fa1bb3003372433c"
+          );
+        // await getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -686,9 +689,9 @@ function Main() {
               <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-1">Username</FormLabel>
                 <FormInput
-                  {...register("firstName")}
+                  {...register("username")}
                   type="text"
-                  name="firstName"
+                  name="username"
                   className={errors.firstname ? "border-danger" : ""}
                   placeholder="John"
                 />
@@ -795,7 +798,10 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">User Status</FormLabel>
-                <FormSelect className="w-56 ml-2 xl:w-auto !box">
+                <FormSelect
+                  className="w-56 ml-2 xl:w-auto !box"
+                  {...register("status")}
+                >
                   <option>Select Status</option>
                   <option>Active</option>
                   <option>Inactive</option>
@@ -811,6 +817,7 @@ function Main() {
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">Roles</FormLabel>
                 <TomSelect
+                  // {...register("roles")}
                   value={selectUserRole}
                   onChange={setUserRole}
                   options={{

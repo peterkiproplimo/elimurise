@@ -5,36 +5,52 @@ import { FieldValues } from 'react-hook-form';
 
 //Users
 export const createUser = async (username:any, phone:any, password:any, roleId:any) => {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
   
-  const graphql = JSON.stringify({
-    query: "mutation createAdmin ($userInput: AdminUserInput) {\n    createAdmin (userInput: $userInput) {\n        userId\n        token\n        type\n        username\n        online\n        phone\n        dataToken\n        tokenExpiration\n        otp\n    }\n}",
-    variables: {"userInput":{"username":username,"phone":phone,"password":password,"roleId":roleId}}
-  })
-  const requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: graphql,
-    redirect: 'follow' as RequestRedirect
-  };
-
+      const userInput = {
+        username: username,
+        phoneNumber: phone,
+        password: password,
+        role: roleId,
+      };
   
-  try {
-    const response = await fetch(c.BASE_URL, requestOptions);
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+      const graphql = JSON.stringify({
+        query: `mutation createUser($userInput: CreateUserInput) {
+          createUser(userInput: $userInput) {
+            _id
+            phoneNumber
+            status
+            deleted
+            password
+            tokenValidity
+            username
+            role
+            createdAt
+            updatedAt
+          }
+        }`,
+        variables: { userInput }
+      });
+  
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: graphql,
+        redirect: 'follow' as RequestRedirect
+      };
+  
+      const response = await fetch(c.BASE_URL, requestOptions);
+      const result = await response.text();
+      console.log(result);
+    } catch (error) {
+      console.error('error', error);
     }
-
-    const data = await response.json();
-    console.log(data)
-    return data; 
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-    throw error; 
   }
-}
+  
+  
+
   
  
     
@@ -85,7 +101,84 @@ export const createUser = async (username:any, phone:any, password:any, roleId:a
     }
   };
   
+  //updateusers
+  export const updateUsers = async ()  =>{
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
   
+      const userInput = {
+        _id: "",
+        username: "",
+        phoneNumber: "",
+        role: ""
+      };
+  
+      const requestBody = JSON.stringify({
+        query: `mutation updateUser($userInput: UpdateUserInput) {
+          updateUser(userInput: $userInput) {
+            _id
+            phoneNumber
+            status
+            deleted
+            password
+            tokenValidity
+            username
+            role
+            createdAt
+            updatedAt
+          }
+        }`,
+        variables: { userInput }
+      });
+  
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: requestBody,
+        redirect: 'follow' as RequestRedirect
+      };
+  
+      const response = await fetch("YOUR_API_ENDPOINT_HERE", requestOptions);
+      const result = await response.text();
+      console.log(result);
+    } catch (error) {
+      console.error('error', error);
+    }
+  }
+
+ //deleteusers
+ export const deleteUsers = async ()  =>{
+  try {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const requestBody = JSON.stringify({
+      query: `mutation deleteUser($username: String!) {
+        deleteUser(username: $username) {
+          status
+          message
+        }
+      }`,
+      variables: { username: "john" }
+    });
+
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: requestBody,
+      redirect: 'follow' as RequestRedirect
+    };
+
+    const response = await fetch(c.BASE_URL, requestOptions);
+    const result = await response.text();
+    console.log(result);
+  } catch (error) {
+    console.error('error', error);
+  }
+}
+
+ 
 
   
 //Roles
