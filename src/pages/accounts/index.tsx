@@ -253,9 +253,9 @@ function Main() {
                 {/* <Table.Th className="border-b-0 whitespace-nowrap">
                   EMAIL
                 </Table.Th> */}
-                <Table.Th className="border-b-0 whitespace-nowrap">
+                {/* <Table.Th className="border-b-0 whitespace-nowrap">
                   ACCOUNT BALANCE
-                </Table.Th>
+                </Table.Th> */}
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   STATUS
                 </Table.Th>
@@ -299,9 +299,9 @@ function Main() {
                     {player.phone}
                   </Table.Td>
 
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {player.account}
-                  </Table.Td>
+                  </Table.Td> */}
                   {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {player.nationality}
                   </Table.Td> */}

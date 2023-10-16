@@ -222,9 +222,6 @@ function Main() {
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   Bet ID
                 </Table.Th>
-                {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                Middle Name
-                </Table.Th> */}
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   Timestamp
                 </Table.Th>
@@ -275,7 +272,7 @@ function Main() {
                   <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <FormCheck.Input type="checkbox" />
                   </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div className="flex items-center">
                       <div className="w-9 h-9 image-fit zoom-in">
                         <Tippy
@@ -287,18 +284,33 @@ function Main() {
                         />
                       </div>
                     </div>
-                  </Table.Td>
+                  </Table.Td> */}
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {bet._id}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.username}
+                    {bet.createdAt}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.userId.username}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.betAmount}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {bet.phone}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {bet.point}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.phone}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.phone}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.phone}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {bet.phone}

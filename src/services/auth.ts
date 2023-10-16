@@ -589,7 +589,9 @@ export const fetchBets = async () => {
     try {
       const response = await fetch(c.BASE_URL, requestOptions);
       const transactions = await response.json();
+      // console.log(transactions.data.allTransactions)
       return transactions.data.allTransactions;
+     
     } catch (error) {
       console.log('Error:', error);
       throw error; // Rethrow the error to handle it at a higher level if needed.

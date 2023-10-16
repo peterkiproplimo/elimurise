@@ -494,9 +494,6 @@ function Main() {
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   PHONE
                 </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  PASSWORD
-                </Table.Th>
 
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   ROLE

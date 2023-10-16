@@ -119,8 +119,8 @@ function Main() {
 
   const getAllTransactions = async () => {
     let res = await ApiService.getAllTransactions();
-    console.log(res);
-    // setAllTransactions(res);
+    // console.log(res);
+    setAllTransactions(res);
   };
 
   // const getConferences = async () => {
