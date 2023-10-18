@@ -4,6 +4,8 @@ import { parseColor } from "tailwindcss/lib/util/color";
 
 dayjs.extend(duration);
 
+
+
 const cutText = (text: string, length: number) => {
   if (text.split(" ").length > 1) {
     const string = text.substring(0, length);

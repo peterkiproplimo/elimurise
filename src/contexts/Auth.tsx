@@ -1,10 +1,11 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { AuthData, authService } from '../services/authService';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { AuthData, authService } from "../services/authService";
+import * as ApiService from "../services/auth";
 
 type AuthContextData = {
   authData?: AuthData;
   loading: boolean;
-  signIn(data: any): Promise<void>;
+  signIn(username: any, password: any): Promise<void>;
   signOut(): void;
 };
 
@@ -14,7 +15,8 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 type ContainerProps = {
   children: React.ReactNode; //👈 children prop typr
 };
-const AuthProvider = (props: ContainerProps) => { //👈 prop definition
+const AuthProvider = (props: ContainerProps) => {
+  //👈 prop definition
   const [authData, setAuthData] = useState<AuthData>();
 
   //the AuthContext start with loading equals true
@@ -30,7 +32,7 @@ const AuthProvider = (props: ContainerProps) => { //👈 prop definition
   async function loadStorageData(): Promise<void> {
     try {
       //Try get the data from Async Storage
-      const authDataSerialized = await localStorage.getItem('@AuthData');
+      const authDataSerialized = await localStorage.getItem("@AuthData");
       if (authDataSerialized) {
         //If there are data, it's converted to an Object and the state is updated.
         const _authData: AuthData = JSON.parse(authDataSerialized);
@@ -43,10 +45,10 @@ const AuthProvider = (props: ContainerProps) => { //👈 prop definition
     }
   }
 
-  const signIn = async (data: any) => {
+  const signIn = async (username: any, password: any) => {
     //call the service passing credential (email and password).
     //In a real App this data will be provided by the user from some InputText components.
-    const _authData = await authService.signIn(data);
+    const _authData = await ApiService.handleLogin(username, password);
 
     //Set the data in the context, so the App can be notified
     //and send the user to the AuthStack
@@ -54,7 +56,7 @@ const AuthProvider = (props: ContainerProps) => { //👈 prop definition
 
     //Persist the data in the Async Storage
     //to be recovered in the next user session.
-    localStorage.setItem('@AuthData', JSON.stringify(_authData));
+    localStorage.setItem("@AuthData", JSON.stringify(_authData));
   };
 
   const signOut = async () => {
@@ -64,8 +66,8 @@ const AuthProvider = (props: ContainerProps) => { //👈 prop definition
 
     //Remove the data from Async Storage
     //to NOT be recoverede in next session.
-    await localStorage.removeItem('access_token');
-    await localStorage.removeItem('@AuthData');
+    await localStorage.removeItem("access_token");
+    await localStorage.removeItem("@AuthData");
   };
 
   return (
@@ -83,7 +85,7 @@ function useAuth(): AuthContextData {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
 
   return context;

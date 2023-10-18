@@ -47,59 +47,48 @@ export const createUser = async (username:any, phone:any, password:any, roleId:a
     } catch (error) {
       console.error('error', error);
     }
-  }
-  
-  
-
-  
- 
+  } 
     
   
 
   //fetchusers
-  export const getUsers =async ({ page }: { page: number }) => {
-    try {
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-  
-      const graphqlQuery = {
-        query: `
-          query admins {
-            admins {
-              _id
-              phone
-              password
-              username
-              createdAt
-              updatedAt
-            }
-          }
-        `,
-        variables: {
-          page: page
-        }
-      };
-  
-      const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: JSON.stringify(graphqlQuery),
-        redirect: 'follow' as RequestRedirect
-      };
-  
-      const response = await fetch(c.BASE_URL, requestOptions);
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      const result = await response.json();
-      return result.data.admins;
-    } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-      throw error;
+export const getUsers =async ({ page }: { page: number }) => {
+    try{
+ const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+const graphql = JSON.stringify({
+  query: `
+  query getUsers {
+    getUsers {
+      _id
+      phoneNumber
+      status
+      deleted
+      username
+      role
+      createdAt
+      updatedAt
     }
-  };
+  }`,variables: {},
+  
+})
+const requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: graphql,
+  redirect: 'follow' as RequestRedirect
+};
+
+const response = await fetch(c.BASE_URL, requestOptions);
+      const result = await response.json();
+      const users = result.data.getUsers;
+      return users
+      // console.log(users);
+    } catch (error) {
+      console.error('error', error);
+    }
+  }
   
   //updateusers
   export const updateUsers = async ()  =>{
@@ -750,54 +739,54 @@ try {
   }
 
   //login
-//  export const handleLogin = async (username:any, password:any) => {
-//     const url = "https://sb-backend-test.onrender.com/graphql";
+ export const handleLogin = async (username:any, password:any) => {
+    const url = "https://sb-backend-test.onrender.com/graphql";
   
-//     const data = {
-//       query: `
-//         query adminLogin($loginInput: LoginInput) {
-//           adminLogin(loginInput: $loginInput) {
-//             userId
-//             token
-//             type
-//             username
-//             online
-//             phone
-//             dataToken
-//             tokenExpiration
-//             otp
-//           }
-//         }
-//       `,
-//       variables: {
-//         loginInput: {
-//           username: username,
-//           password: password,
-//         },
-//       },
-//     };
+    const data = {
+      query: `
+        query adminLogin($loginInput: LoginInput) {
+          adminLogin(loginInput: $loginInput) {
+            userId
+            token
+            type
+            username
+            online
+            phone
+            dataToken
+            tokenExpiration
+            otp
+          }
+        }
+      `,
+      variables: {
+        loginInput: {
+          username: username,
+          password: password,
+        },
+      },
+    };
   
-//     try {
-//       const response = await fetch(url, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(data),
-//         redirect: 'follow',
-//       });
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        redirect: 'follow',
+      });
   
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! Status: ${response.status}`);
-//       }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
   
-//       const result = await response.json();
-//       console.log(result.data.adminLogin);
-//       return result.data.adminLogin;
-//     } catch (error) {
-//       // throw new Error(`HTTP error! `);
-//     }
-//   };
+      const result = await response.json();
+      console.log(result.data.adminLogin);
+      return result.data.adminLogin;
+    } catch (error) {
+      throw new Error(`HTTP error! `);
+    }
+  };
   
 
 //dashboard
@@ -859,10 +848,72 @@ try {
 }
 }
 
+//FAQS
+export const createFAQ = async (question:any, answer:any) => {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const graphql = JSON.stringify({
+    query: `
+      mutation createFAQ ($faqInput: FaqInput!) {
+        createFAQ (faqInput: $faqInput) {
+          status
+          message
+        }
+      }`,
+    variables: {
+      faqInput: {
+        question: question,
+        answer: answer
+      }
+    }
+  });
+
+  const requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: graphql,
+    redirect: 'follow' as RequestRedirect
+  };
+
+  try {
+    const response = await fetch(c.BASE_URL, requestOptions);
+    const result = await response.json();
+    console.log(result);
+  } catch (error) {
+    console.error('error', error);
+  }
+};
 
   
+//getFAQs
+export const getFAQ = async () => {
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
 
-  
+var graphql = JSON.stringify({
+  query: "query getFAQs {\n    getFAQs {\n        _id\n        question\n        answer\n    }\n}",
+  variables: {}
+})
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: graphql,
+  redirect: 'follow' as RequestRedirect
+};
+
+try {
+  const response = await fetch(c.BASE_URL, requestOptions);
+  const result = await response.json();
+  const FAQ= result.data.getFAQs;
+  return FAQ;
+  console.log(FAQ)
+} catch (error) {
+  console.error('error', error);
+}
+};
+
+
   
 
 

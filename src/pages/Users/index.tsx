@@ -292,12 +292,8 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [select_role] = useState([
-    "ADMIN",
-    "GENERAL MANAGER",
-    "MANAGER",
-    "MARKETER",
-  ]);
+
+  const [select_role] = useState([]);
   const [selectUserRole, setUserRole] = useState("");
 
   // Success notification
@@ -385,7 +381,7 @@ function Main() {
             "password",
             "652a9568fa1bb3003372433c"
           );
-        // await getUsers();
+        await getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -497,13 +493,9 @@ function Main() {
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   PHONE
                 </Table.Th>
-
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   ROLE
                 </Table.Th>
-                {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                  COUNTRY
-                </Table.Th> */}
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   STATUS
                 </Table.Th>
@@ -535,14 +527,12 @@ function Main() {
                     {user.username}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.phone}
+                    {user.phoneNumber}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.password}
+                    {user.role}
                   </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.roleId}
-                  </Table.Td>
+
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div
                       className={clsx([

@@ -6,7 +6,7 @@ import TinySlider, {
 } from "../../base-components/TinySlider";
 import Lucide from "../../base-components/Lucide";
 import * as ApiService from "../../services/auth";
-import { formatDate, timeAgo } from "../../utils/helper";
+import { formatDate, timeAgo, formatCurrency } from "../../utils/helper";
 import Tippy from "../../base-components/Tippy";
 import clsx from "clsx";
 import Table from "../../base-components/Table";
@@ -338,7 +338,7 @@ function Main() {
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
                   {/* {stats.vendors} */}
-                  <h3>Ksh {stats.walletsTotal}</h3>
+                  <h3>Ksh {stats.walletsTotal.toFixed(2)}</h3>
                 </div>
                 <div className="mt-1 text-base text-slate-500">
                   Wallet Total
@@ -425,7 +425,7 @@ function Main() {
         <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
           <div className="flex h-10 intro-y">
             <h2 className="mr-5 text-lg font-medium truncate">
-              Players Statisctics
+              Players Statistics
             </h2>
           </div>
           <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
@@ -447,7 +447,7 @@ function Main() {
         <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
           <div className="flex h-10 intro-y">
             <h2 className="text-lg font-medium truncate">
-              Games wins vs loss statisctics
+              Games wins vs loss statistics
             </h2>
           </div>
           <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">

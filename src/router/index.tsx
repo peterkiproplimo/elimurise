@@ -65,10 +65,11 @@ function Router() {
   const routes = [
     {
       path: "/",
-      element:
+      element: (
         // <AuthGuard>
-          <Layout />,
-        // </AuthGuard>,
+        <Layout />
+        // </AuthGuard>
+      ),
       children: [
         {
           path: "/",
