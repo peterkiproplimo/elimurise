@@ -20,7 +20,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   const [conference, selectConference] = useState("64b2f66f6aecc56ae2999c0d");
   const [conferences, setConferences] = useState([]);
   useEffect(() => {
-    getConferences();
+    //getConferences();
   }, []);
 
   const getConferences = async () => {

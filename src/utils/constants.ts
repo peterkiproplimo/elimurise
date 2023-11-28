@@ -8,8 +8,28 @@
 export const BASE_URL= "https://hero.techsavanna.technology/api/"
 //API Endpoints
 //devops has do it again
-export const REGISTER = `${BASE_URL}register`;
 export const LOGIN = `${BASE_URL}cms/login`;
+export const LEVEL=`${BASE_URL}cms/level`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const REGISTER = `${BASE_URL}register`;
 export const FORGOT_PASSWORD = `${BASE_URL}send-password/`; 
 export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
 export const ROLES = `${BASE_URL}users/roles`;

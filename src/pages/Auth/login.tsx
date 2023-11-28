@@ -51,7 +51,7 @@ const Login = () => {
         const data = await getValues();
         let res = await ApiService.login(data);
         isLoading(false);
-        // await auth.signIn(res);
+        await auth.signIn(res);
         setSuccess(true);
         setMessage("Authenticated successfully");
         notify.current?.showToast();

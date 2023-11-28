@@ -5,7 +5,7 @@ import * as ApiService from "../services/auth";
 type AuthContextData = {
   authData?: AuthData;
   loading: boolean;
-  signIn(username: any, password: any): Promise<void>;
+  signIn(data: any): Promise<void>;
   signOut(): void;
 };
 
@@ -45,10 +45,10 @@ const AuthProvider = (props: ContainerProps) => {
     }
   }
 
-  const signIn = async (username: any, password: any) => {
+  const signIn = async (data: any) => {
     //call the service passing credential (email and password).
     //In a real App this data will be provided by the user from some InputText components.
-    const _authData = await ApiService.handleLogin(username, password);
+    const _authData = await authService.signIn(data);
 
     //Set the data in the context, so the App can be notified
     //and send the user to the AuthStack

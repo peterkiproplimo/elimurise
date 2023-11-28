@@ -4,6 +4,114 @@ import * as c from '../utils/constants';
 import { FieldValues } from 'react-hook-form';
 
 //Users
+export async function login(data: FieldValues) {
+  try {
+    let res = await axios.post(c.LOGIN, data);
+    const storeData = async () => {
+      try {
+        const jsonValue = JSON.stringify(res.data); //email:
+        await localStorage.setItem("user", jsonValue);
+      } catch (e) {
+        throw handler(e);
+      }
+    };
+    storeData();
+    axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export const getLevels =async ({ page }: { page: number }) => {
+try {
+    let res = await axios.get(c.LEVEL);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function createLevel(data: FieldValues) {
+  try {
+    let res = await axios.post(c.LEVEL, data);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function deleteLevel(levelId: any) {
+  try {
+  
+    let res = await axios.delete(c.LEVEL+'/'+levelId);
+    console.log(res)
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const createUser = async (username:any, phone:any, password:any, roleId:any) => {
     try {
       const myHeaders = new Headers();
@@ -52,43 +160,7 @@ export const createUser = async (username:any, phone:any, password:any, roleId:a
   
 
   //fetchusers
-export const getUsers =async ({ page }: { page: number }) => {
-    try{
- const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
 
-const graphql = JSON.stringify({
-  query: `
-  query getUsers {
-    getUsers {
-      _id
-      phoneNumber
-      status
-      deleted
-      username
-      role
-      createdAt
-      updatedAt
-    }
-  }`,variables: {},
-  
-})
-const requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body: graphql,
-  redirect: 'follow' as RequestRedirect
-};
-
-const response = await fetch(c.BASE_URL, requestOptions);
-      const result = await response.json();
-      const users = result.data.getUsers;
-      return users
-      // console.log(users);
-    } catch (error) {
-      console.error('error', error);
-    }
-  }
   
   //updateusers
   export const updateUsers = async ()  =>{
@@ -788,24 +860,6 @@ try {
     }
   };
   
-  export async function login(data: FieldValues) {
-    try {
-      let res = await axios.post(c.LOGIN, data);
-      const storeData = async () => {
-        try {
-          const jsonValue = JSON.stringify(res.data); //email:
-          await localStorage.setItem("user", jsonValue);
-        } catch (e) {
-          throw handler(e);
-        }
-      };
-      storeData();
-      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
-      return res.data;
-    } catch (e) {
-      throw handler(e);
-    }
-  }
   
 
 //dashboard
