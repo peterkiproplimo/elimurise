@@ -14,35 +14,20 @@ import Logs from "../pages/Auth/audit-logs";
 // import Login from "../pages/Auth/change-password";
 // import Login from "../pages/Auth/forgot-password";
 // import LoginBacks from "../pages/Auth/loginsBacks";
-import PrivacyPolicy from "../pages/Auth/privacy-policy";
-import Terms from "../pages/Auth/terms&conditions";
-import Privacy from "../pages/Auth/privacy";
-import NewProfile from "../pages/Auth/profile";
 
 import Role from "../pages/Auth/roles";
-import Permissions from "../pages/Strand";
+
 import ForgotPassword from "../pages/Auth/forgot-password";
 import ForgotPasswordOTP from "../pages/Auth/forgot-passOTP";
 import CreateNewPassword from "../pages/Auth/create-newPassword";
 import ErrorPage from "../pages/ErrorPage";
-import UpdateProfile from "../pages/UpdateProfile/original";
-import ChangePassword from "../pages/Auth/forgot-password";
 import AuthGuard from "../utils/route-guard/AuthGuard";
 import GuestGuard from "../utils/route-guard/GuestGuard";
-
 import SecurityFeature from "../pages/security";
-
-import Accounts from "../pages/Grade";
 import Learning from "../pages/Learning";
-
 import Level from "../pages/Level";
-
 import Substrand from "../pages/Substrand";
-
 import AccountDetails from "../pages/accountDetails";
-
-import FAQs from "../pages/FAQs";
-import Settings from "../pages/Auth/settings";
 import Grade from "../pages/Grade";
 import Strand from "../pages/Strand";
 

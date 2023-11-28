@@ -140,7 +140,7 @@ function Main() {
         const data = await getValues();
         // data.tenant = "64b199727fe94a1ea97a64cd";
         let res = await ApiService.signup(data);
-        getUsers();
+        // getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -160,7 +160,7 @@ function Main() {
     isLoading(true);
     try {
       let res = await ApiService.deleteUser(userId);
-      getUsers();
+      // getUsers();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
