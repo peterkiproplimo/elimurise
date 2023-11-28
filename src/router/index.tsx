@@ -30,7 +30,7 @@ import Substrand from "../pages/Substrand";
 import AccountDetails from "../pages/accountDetails";
 import Grade from "../pages/Grade";
 import Strand from "../pages/Strand";
-
+//nn
 function Router() {
   const routes = [
     {
