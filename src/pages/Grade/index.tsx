@@ -382,34 +382,6 @@ function Main() {
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-          <Pagination className="w-full sm:w-auto sm:mr-auto">
-            <Pagination.Link
-              onClick={() => (setPage(previous_page), getUsers())}
-            >
-              <Lucide icon="ChevronLeft" className="w-4 h-4" />
-            </Pagination.Link>
-            {_.times(pagination.total_pages).map((page, key) =>
-              page + 1 == pagination.current_page ? (
-                <Pagination.Link
-                  onClick={() => (setPage(page + 1), getUsers())}
-                  active
-                  key={key}
-                >
-                  {page + 1}
-                </Pagination.Link>
-              ) : (
-                <Pagination.Link
-                  onClick={() => (setPage(page + 1), getUsers())}
-                  key={key}
-                >
-                  {page + 1}
-                </Pagination.Link>
-              )
-            )}
-            <Pagination.Link onClick={() => (setPage(next_page), getUsers())}>
-              <Lucide icon="ChevronRight" className="w-4 h-4" />
-            </Pagination.Link>
-          </Pagination>
           <FormSelect className="w-20 mt-3 !box sm:mt-0">
             <option>10</option>
             <option>25</option>
