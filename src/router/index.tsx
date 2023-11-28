@@ -49,8 +49,6 @@ function Router() {
           path: "categories",
           element: <Categories />,
         },
-
-        ,
         {
           path: "user",
           element: <User />,
