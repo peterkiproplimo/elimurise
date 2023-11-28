@@ -13,6 +13,9 @@ import Table from "../../base-components/Table";
 import { Link } from "react-router-dom";
 import ReportPieChart from "../../components/ReportPieChart";
 import ReportDonutChart from "../../components/ReportDonutChart";
+import "./dashboard.css";
+import logoUrl from "../../assets/images/paypal.svg";
+import LoadingIcon from "../../base-components/LoadingIcon";
 
 function Main() {
   const importantNotesRef = useRef<TinySliderElement>();
@@ -84,29 +87,25 @@ function Main() {
     <>
       {/* BEGIN: Important Notes */}
       <div className="grid grid-cols-12 gap-6 mt-5">
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y box1 ">
+          <div className="">
             <Link to="">
               {/* <Link to="/attendees"> */}
               <div className="p-5 box">
                 <div className="flex">
-                  <Lucide
+                  {/* <Lucide
                     icon="UserCheck"
                     className="w-[28px] h-[28px] text-blue-800"
-                  />
+                  /> */}
+                  <h2>Schools Registered</h2>
                   <div className="ml-auto">
-                    <Tippy
+                    {/* <Tippy
                       as="div"
                       className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
                       content=""
                     >
                       <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
+                    </Tippy> */}
                   </div>
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
@@ -115,76 +114,66 @@ function Main() {
                   {/* {totalUsers !== null ? totalUsers : "Loading..."} */}
 
                   <div>
-                    <h1>Ksh {stats.houseRevenue}</h1>
+                    <h1>{stats.houseRevenue}</h1>
                   </div>
                 </div>
                 <div className="mt-1 text-base text-slate-500">
-                  Daily House Revenue{" "}
+                  Need Approval{" "}
                 </div>
               </div>
             </Link>
           </div>
         </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y box2">
+          <div className="">
             <Link to="">
               {/* <Link to="/attendees"> */}
 
               <div className="p-5 box">
                 <div className="flex">
-                  <Lucide
+                  {/* <Lucide
                     icon="FileCheck"
                     className="w-[28px] h-[28px] text-blue-800"
-                  />
+                  /> */}
+                  <h2>Teachers</h2>
                   <div className="ml-auto">
-                    <Tippy
+                    {/* <Tippy
                       as="div"
                       className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
                       content=""
                     >
                       <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
+                    </Tippy> */}
                   </div>
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
                   {/* {stats.attendees} */}
                   <h3>{stats.mpesaBalanceb2cTotal}</h3>
                 </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Mpesa Balance
-                </div>
+                <div className="mt-1 text-base text-slate-500">Active</div>
               </div>
             </Link>
           </div>
         </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
+        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y box3">
+          <div className="">
             <Link to="">
               {/* <Link to="/attendees"> */}
               <div className="p-5 box">
                 <div className="flex">
-                  <Lucide
+                  {/* <Lucide
                     icon="FileCheck"
                     className="w-[28px] h-[28px] text-blue-800"
-                  />
+                  /> */}
+                  <h2>Learners</h2>
                   <div className="ml-auto">
-                    <Tippy
+                    {/* <Tippy
                       as="div"
                       className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
                       content=""
                     >
                       <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
+                    </Tippy> */}
                   </div>
                 </div>
                 <div className="mt-6 text-3xl font-medium leading-8">
@@ -193,226 +182,10 @@ function Main() {
                   {/* {totalUsers !== null ? totalUsers : "Loading..."} */}
 
                   <div>
-                    <h1>Ksh {stats.mpesaBalancepaybill}</h1>
+                    <h1>{stats.mpesaBalancepaybill}</h1>
                   </div>
                 </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Paybill Total
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/speakers"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="Volume2"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto ">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.speakers} */}
-                  <h1>{stats.totalplayers}</h1>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Total Players
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/vendors"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="Volume2"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.vendors} */}
-                  <h3>{stats.playersonline}</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Players Online
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/exhibitors"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="UserCheck"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.exhibitors} */}
-                  <h3>Ksh {stats.withholdingTax}</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Withholding Tax Total
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/vendors"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="UserCheck"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.vendors} */}
-                  <h3>Ksh {stats.walletsTotal.toFixed(2)}</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Wallet Total
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
-
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/vendors"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="Briefcase"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.vendors} */}
-                  <h3>{stats.houseWins}</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">House Wins</div>
-              </div>
-            </Link>
-          </div>
-        </div>
-
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y">
-          <div
-            className={clsx([
-              "relative zoom-in",
-              "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-black before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-blue-800/70",
-            ])}
-          >
-            <Link to="">
-              {/* <Link to="/vendors"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  <Lucide
-                    icon="Briefcase"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  />
-                  <div className="ml-auto">
-                    <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.vendors} */}
-                  <h3>Ksh {stats.houseLosses}</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">House Loses</div>
+                <div className="mt-1 text-base text-slate-500">Registered</div>
               </div>
             </Link>
           </div>
@@ -421,38 +194,71 @@ function Main() {
 
       <div className="grid grid-cols-12 gap-6 mt-5">
         {/* BEGIN: simcard stats */}
+        <div className="col-span-8 intro-y money">
+          <div className="img">
+            <img alt="ACS" className="w-35" src={logoUrl} />
+          </div>
+          <div>
+            <h2>PesaPal Payment</h2>
+            <p>Your Account has been credited</p>
+          </div>
+          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+            <Button>
+              View Payment
+              {
+                <LoadingIcon
+                  icon="spinning-circles"
+                  color="white"
+                  className="w-4 h-4 ml-2"
+                />
+              }
+            </Button>
+          </div>
+          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+            <Button>
+              Mark as Read
+              {
+                <LoadingIcon
+                  icon="spinning-circles"
+                  color="white"
+                  className="w-4 h-4 ml-2"
+                />
+              }
+            </Button>
+          </div>
+        </div>
 
         <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
-          <div className="flex h-10 intro-y">
+          {/* <div className="flex h-10 intro-y">
             <h2 className="mr-5 text-lg font-medium truncate">
               Players Statistics
             </h2>
-          </div>
-          <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
+          </div> */}
+          {/* <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
             <ReportDonutChart height={290} width={300} />
-          </div>
+          </div> */}
         </div>
 
         {/* END: simcard stats */}
         {/* START: system users */}
 
         <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
-          <div className="flex h-10 intro-y">
+          {/* <div className="flex h-10 intro-y">
             <h2 className="text-lg font-medium truncate">Games Statistics</h2>
-          </div>
-          <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
+          </div> */}
+          {/* <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
             <ReportPieChart height={290} width={300} />
-          </div>
+          </div> */}
         </div>
         <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
-          <div className="flex h-10 intro-y">
+          {/* <div className="flex h-10 intro-y">
             <h2 className="text-lg font-medium truncate">
               Games wins vs loss statistics
             </h2>
-          </div>
-          <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
+          </div> */}
+          {/* <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
             <ReportPieChart height={290} width={300} />
-          </div>
+          </div> */}
         </div>
         {/* END: system users */}
 

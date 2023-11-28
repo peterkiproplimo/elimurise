@@ -19,7 +19,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        primary: "#152259",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
         success: "rgb(var(--color-success) / <alpha-value>)",
         info: "rgb(var(--color-info) / <alpha-value>)",
@@ -110,7 +110,6 @@ module.exports = {
       addBase({
         // Default colors
         ":root": {
-          
           "--color-primary": toRGB(colors.red["700"]),
           "--color-secondary": toRGB(colors.slate["200"]),
           "--color-success": toRGB(colors.blue["600"]),

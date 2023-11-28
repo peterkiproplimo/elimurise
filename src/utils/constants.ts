@@ -5,12 +5,12 @@
 // export const BASE_URL = 'https://palla.techsavanna.technology/palla-api/api/';
 // export const Login_URL =  'https://palla.techsavanna.technology:7000/fineract-provider/api/v1/authentication?username="admin"&password="password"&tenantIdentifier=default';
  
-export const BASE_URL='https://sb-backend-test.onrender.com/graphql'
+export const BASE_URL= "https://hero.techsavanna.technology/api/"
 //API Endpoints
 //devops has do it again
 export const REGISTER = `${BASE_URL}register`;
-export const LOGIN = `${BASE_URL}login`;
-export const FORGOT_PASSWORD = `${BASE_URL}send-password/`;
+export const LOGIN = `${BASE_URL}cms/login`;
+export const FORGOT_PASSWORD = `${BASE_URL}send-password/`; 
 export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
 export const ROLES = `${BASE_URL}users/roles`;
 export const CONFERENCES = `${BASE_URL}events-service/conference`;

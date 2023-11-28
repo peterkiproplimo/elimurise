@@ -28,7 +28,7 @@ import { FormTextarea } from "../../base-components/Form";
 import TomSelect from "../../base-components/TomSelect";
 import { User } from "../../type";
 
-function Main() {
+function Level() {
   const [countries] = useState([
     { name: "Afghanistan", code: "AF" },
     { name: "Åland Islands", code: "AX" },
@@ -60,8 +60,9 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
+  const [transactions, setAllTransactions] = useState([]);
   // const [selectedUserId, setSelectedUserId] = useState(null);
-  const [bets, setBets] = useState([]);
+
   const [users, setUsers] = useState<User[]>([]); // Initialize with appropriate type
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
@@ -94,14 +95,32 @@ function Main() {
   const [select, setSelect] = useState("1");
 
   useEffect(() => {
-    fetchBets();
+    getAllTransactions();
+    // getUsers();
     // getRoles();
     // getConferences();
   }, []);
 
-  const fetchBets = async () => {
-    let response = await ApiService.fetchBets();
-    setBets(response);
+  // const getUsers = async () => {
+  //   isLoading(true);
+  //   try {
+  //     let res = await ApiService.getUsers({ page: 1 });
+  //     setUsers(res.users);
+  //     console.log(res);
+  //     isLoading(false);
+  //     setNextPage((page < res.total_pages) ? page + 1 : res.total_pages);
+  //     setPreviousPage((page > 1) ? page - 1 : 1);
+  //     setPagination({ current_page: res.current_page, total: res.total, total_pages: res.total_pages, per_page: res.per_page });
+  //   } catch (error) {
+  //     isLoading(false);
+  //     console.log("Error fetching users");
+  //   }
+  // };
+
+  const getAllTransactions = async () => {
+    let res = await ApiService.getAllTransactions();
+    // console.log(res);
+    setAllTransactions(res);
   };
 
   // const getConferences = async () => {
@@ -110,30 +129,30 @@ function Main() {
   //   setPagination({ current_page: res.current_page, total: res.total, total_pages: res.total_pages, per_page: res.per_page });
   // };
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
-      isLoading(true);
-      try {
-        const data = await getValues();
-        // data.tenant = "64b199727fe94a1ea97a64cd";
-        let res = await ApiService.signup(data);
-        // getUsers();
-        await reset();
-        isLoading(false);
-        setDialog(false);
-        setSuccess(true);
-        setMessage(res.message);
-        notify.current?.showToast();
-      } catch (error: any) {
-        isLoading(false);
-        setSuccess(false);
-        setMessage(error.message);
-        notify.current?.showToast();
-      }
-    }
-  };
+  // const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   const result = await trigger();
+  //   if (result && !loading) {
+  //     isLoading(true);
+  //     try {
+  //       const data = await getValues();
+  //       // data.tenant = "64b199727fe94a1ea97a64cd";
+  //       let res = await ApiService.(data);
+  //       // getUsers();
+  //       await reset();
+  //       isLoading(false);
+  //       setDialog(false);
+  //       setSuccess(true);
+  //       setMessage(res.message);
+  //       notify.current?.showToast();
+  //     } catch (error: any) {
+  //       isLoading(false);
+  //       setSuccess(false);
+  //       setMessage(error.message);
+  //       notify.current?.showToast();
+  //     }
+  //   }
+  // };
 
   const deleteRecord = async () => {
     isLoading(true);
@@ -155,7 +174,7 @@ function Main() {
 
   return (
     <>
-      <h2 className="mt-10 text-lg font-medium intro-y">Bets Table</h2>
+      <h2 className="mt-10 text-lg font-medium intro-y">Levels</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           {/* <Button variant="primary" className="mr-2 shadow-md" onClick={(event: React.MouseEvent) => {
@@ -219,115 +238,110 @@ function Main() {
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   <FormCheck.Input type="checkbox" />
                 </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap"></Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  Bet ID
+                  No.
+                </Table.Th>
+                {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                Middle Name
+                </Table.Th> */}
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Level
+                </Table.Th>
+                {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                  Trans ID
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  Timestamp
+                  Type
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  Username
+                  Acc Balance
+                </Table.Th> */}
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Date
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  Bet Amount
+                  Time
                 </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  Cashout
-                </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  Bust Point
-                </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  Revenue
-                </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  WTH Tax
-                </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  Acc Bal
-                </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  Cashout Type
-                </Table.Th>
-
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   Status
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  ACTION
+                  Action
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {bets.map((bet: any, key) => (
+              {transactions.map((transaction: any, key) => (
                 <Table.Tr
                   key={key}
                   className="intro-x"
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
-                    setSelectedUserId(bet.id);
+                    setSelectedUserId(transaction.id);
                     setDialog(true);
                   }}
                 >
                   <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <FormCheck.Input type="checkbox" />
                   </Table.Td>
-                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div className="flex items-center">
                       <div className="w-9 h-9 image-fit zoom-in">
                         <Tippy
                           as="img"
                           alt=""
                           className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                          src={bet.profileImage}
-                          content={bet.firstName + " " + bet.lastname}
+                          src={transaction.profileImage}
+                          content={
+                            transaction.firstName + " " + transaction.lastname
+                          }
                         />
                       </div>
                     </div>
+                  </Table.Td>
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {user.middlename}
                   </Table.Td> */}
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet._id}
+                    {transaction.user.username}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.createdAt}
+                    {transaction.user.phone}
+                  </Table.Td>
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {transaction.trans_id}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.userId.username}
+                    {transaction.user.type}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.betAmount}
+                    {transaction.type}
+                  </Table.Td> */}
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {transaction.createdAt}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.phone}
+                    {transaction.trans_time}
                   </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.point}
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.phone}
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.withholdingtax}
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.phone}
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {bet.phone}
-                  </Table.Td>
+
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div
                       className={clsx([
                         "flex items-center justify-center",
-                        { "text-success": bet.approval_status },
-                        { "text-danger": !bet.approval_status },
+                        { "text-success": transaction.approval_status },
+                        { "text-danger": !transaction.approval_status },
                       ])}
                     >
                       <Lucide
-                        icon={bet.approval_status ? "CheckSquare" : "XSquare"}
+                        icon={
+                          transaction.approval_status
+                            ? "CheckSquare"
+                            : "XSquare"
+                        }
                         className="w-4 h-4 mr-2"
                       />
-                      {bet.approval_status ? "Active" : "Inactive"}
+                      {transaction.approval_status ? "Active" : "Inactive"}
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
@@ -344,7 +358,7 @@ function Main() {
                           </Menu.Item>
                           <Menu.Item
                             onClick={() => {
-                              setUserId(bet.id), setConfirmDelete(true);
+                              setUserId(transaction.id), setConfirmDelete(true);
                             }}
                           >
                             <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
@@ -381,33 +395,16 @@ function Main() {
         {/* BEGIN: Pagination */}
         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
           {/* <Pagination className="w-full sm:w-auto sm:mr-auto">
-            <Pagination.Link
-              onClick={() => (setPage(previous_page), getUsers())}
-            >
+            <Pagination.Link onClick={() => (setPage(previous_page), getUsers())} >
               <Lucide icon="ChevronLeft" className="w-4 h-4" />
             </Pagination.Link>
-            {_.times(pagination.total_pages).map((page, key) =>
-              page + 1 == pagination.current_page ? (
-                <Pagination.Link
-                  onClick={() => (setPage(page + 1), getUsers())}
-                  active
-                  key={key}
-                >
-                  {page + 1}
-                </Pagination.Link>
-              ) : (
-                <Pagination.Link
-                  onClick={() => (setPage(page + 1), getUsers())}
-                  key={key}
-                >
-                  {page + 1}
-                </Pagination.Link>
-              )
-            )}
-            <Pagination.Link onClick={() => (setPage(next_page), getUsers())}>
+            {_.times(pagination.total_pages).map((page, key) => (
+              page + 1 == pagination.current_page ? <Pagination.Link onClick={() => (setPage(page + 1), getUsers())} active key={key}>{page + 1}</Pagination.Link> : <Pagination.Link onClick={() => (setPage(page + 1), getUsers())} key={key}>{page + 1}</Pagination.Link>
+            ))}
+            <Pagination.Link onClick={() => (setPage(next_page), getUsers())} >
               <Lucide icon="ChevronRight" className="w-4 h-4" />
-            </Pagination.Link> */}
-          {/* </Pagination> */}
+            </Pagination.Link>
+          </Pagination> */}
           <FormSelect className="w-20 mt-3 !box sm:mt-0">
             <option>10</option>
             <option>25</option>
@@ -872,4 +869,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default Level;

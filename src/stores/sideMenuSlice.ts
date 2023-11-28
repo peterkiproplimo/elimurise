@@ -16,9 +16,12 @@ export interface SideMenuState {
   menu: Array<Menu | "divider">;
 }
 
+
 const initialState: SideMenuState = {
   menu: [
+ 
     {
+      
       icon: "Home",
       title: "Dashboard",
       pathname: "/",
@@ -38,12 +41,37 @@ const initialState: SideMenuState = {
     
 
     {
-        icon: "FileCheck",
-        pathname: "/extension",
-        title: "Transactions",
+        icon: "FileText",
+        pathname: "/level",
+        title: "Levels",
       },
-    
-    // {
+       {
+      icon: "Activity",
+      pathname: "/grade",
+      title: "Grades",
+    },
+      {
+        icon: "BarChart",
+        pathname: "/learning",
+        title: "Learning Area",
+      },
+      {
+        icon: "Activity",
+        pathname: "/strand",
+        title: " Strands",
+      },
+
+      {
+        icon: "FileCheck",
+        title: "SubStrands",
+        subMenu: [
+          {
+            icon: "Activity",
+            pathname: "/substrand",
+            title: "Substrand",
+          },
+  
+        // {
     //     icon: "FileCheck",
     //     title: "Transactions",
     //     subMenu: [
@@ -57,27 +85,10 @@ const initialState: SideMenuState = {
     //         icon: "Activity",
     //         pathname: "/extension",
     //         title: "Inactive Policy",
-    //       },
-        
-          
-          
+    //       },  
           
     //     ]},
-        {
-          icon: "Users",
-          title: "Accounts",
-          subMenu: [
-
-             {
-      icon: "Activity",
-      pathname: "/accounts",
-      title: "Players",
-    },
-    // {
-    //   icon: "Activity",
-    //   pathname: "/active",
-    //   title: "Admin",
-    // },
+   
             // {
             //   icon: "Activity",
             //   pathname: "/active",
@@ -98,55 +109,100 @@ const initialState: SideMenuState = {
             
             
           ]},
-  
+           {
+      icon: "Users",
+      title: "Users",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/user",
+          title: "Users",
+        },
+  ]},
+         
+          "divider",
+
+    
           {
-            icon: "Umbrella",
-            pathname: "/quotes",
-            title: "Bets",
+            icon: "Cog",
+            title: "Settings",
+            subMenu: [
+              {
+                icon: "Activity",
+                pathname: "/Role",
+                title: "Roles",
+              },
+              
+             
+      
+              // {
+              //   icon: "Activity",
+              //   pathname: "/Logs",
+              //   title: "Games Logs",
+              // },
+              // {
+              //   icon: "Activity",
+              //   pathname: "/Logs",
+              //   title: "System Logs",
+              // },
+            
+           
+      
+              {
+                icon: "Activity",
+                pathname: "/NewProfile",
+                title: "Change Password",
+              },
+              {
+                icon: "Activity",
+                pathname: "/Settings",
+                title: "Settings",
+              },
+            ],
           },
-       
+          // {
+     
+          //   icon: "Info",
+          //   title: "Contents",
+          //   subMenu: [
+          //  {
+          //   icon: "Activity",
+          //   pathname: "/Contents",
+          //   title: "Product Offers",
+          // },
+          // {
+          //   icon: "Activity",
+          //   pathname: "/FAQs",
+          //   title: "FAQs",
+          // },
+          // {
+          //   icon: "Activity",
+          //   pathname: "/CoversFAQs",
+          //   title: "Covers FAQs",
+          // },
+        //   {
+        //     icon: "Activity",
+        //     pathname: "/PrivacyPolicy",
+        //     title: "Privacy Policy",
+        //   },
+        //   {
+        //     icon: "Activity",
+        //     pathname: "/Terms",
+        //     title: "Terms & Conditions",
+        //   },
+          
+        // ]},
+        {
+          icon: "User",
+          pathname: "/update-profile",
+          title: "Profile",
+        }
 
-        // {
-        //   icon: "Umbrella",
-        //   title: "Bets",
-        //   subMenu: [
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/quotes",
-        //       title: "Private Comprehensive Cover",
-        //     },
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/Autocorrect",
-        //       title: "Autocorrect Cover",
-        //     },
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/Thirdparty",
-        //       title: "Third Party Cover",
-        //     },
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/Theft",
-        //       title: "Third Party Fire and Theft",
-        //     },
-
-
-            
-            
-        //   ]},
+    
 
 
 
-    // {
-    //   icon: "Users",
-    //   title: "Users",
-    //   subMenu: [
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/attendees",
-    //       title: "Attendees",
-    //     },
+   
        
     //     {
     //       icon: "Activity",
@@ -188,38 +244,7 @@ const initialState: SideMenuState = {
     //   ],
     // },
 
-    {
-     
-      icon: "Info",
-      title: "Contents",
-      subMenu: [
-    //  {
-    //   icon: "Activity",
-    //   pathname: "/Contents",
-    //   title: "Product Offers",
-    // },
-    {
-      icon: "Activity",
-      pathname: "/FAQs",
-      title: "FAQs",
-    },
-    // {
-    //   icon: "Activity",
-    //   pathname: "/CoversFAQs",
-    //   title: "Covers FAQs",
-    // },
-    {
-      icon: "Activity",
-      pathname: "/PrivacyPolicy",
-      title: "Privacy Policy",
-    },
-    {
-      icon: "Activity",
-      pathname: "/Terms",
-      title: "Terms & Conditions",
-    },
     
-  ]},
     // {
       // icon: "Car",
       // title: "Game Logs",
@@ -256,7 +281,35 @@ const initialState: SideMenuState = {
       //     title: "Financiers",
       //   },
         
-        
+            // {
+        //   icon: "Umbrella",
+        //   title: "Bets",
+        //   subMenu: [
+        //     {
+        //       icon: "Activity",
+        //       pathname: "/quotes",
+        //       title: "Private Comprehensive Cover",
+        //     },
+        //     {
+        //       icon: "Activity",
+        //       pathname: "/Autocorrect",
+        //       title: "Autocorrect Cover",
+        //     },
+        //     {
+        //       icon: "Activity",
+        //       pathname: "/Thirdparty",
+        //       title: "Third Party Cover",
+        //     },
+        //     {
+        //       icon: "Activity",
+        //       pathname: "/Theft",
+        //       title: "Third Party Fire and Theft",
+        //     },
+
+
+            
+            
+        //   ]},
         
       // ]},
     // {
@@ -281,73 +334,8 @@ const initialState: SideMenuState = {
     //   pathname: "/simcards",
     //   title: "Simcard Booking"
     // },
-    "divider",
-
+  
     
-    {
-      icon: "Shield",
-      title: "Security",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/Role",
-          title: "Roles",
-        },
-        {
-          icon: "Activity",
-          pathname: "/Permissions",
-          title: " Permissions",
-        },
-       
-        {
-          icon: "Activity",
-          pathname: "/users",
-          title: "System Users",
-        },
-
-        {
-          icon: "Activity",
-          pathname: "/Logs",
-          title: "Games Logs",
-        },
-        {
-          icon: "Activity",
-          pathname: "/Logs",
-          title: "System Logs",
-        },
-      
-        
-        // {
-        //   icon: "Activity",
-        //   pathname: "/Privacy",
-        //   title: "Privacy",
-        // },
-
-        {
-          icon: "Activity",
-          pathname: "/NewProfile",
-          title: "Change Password",
-        },
-        // {
-        //   icon: "Activity",
-        //   pathname: "/Settings",
-        //   title: "Settings",
-        // },
-
-        
-        // {
-        //   icon: "Activity",
-        //   pathname: "/change-password",
-        //   pathname: "/NewProfile",
-        //   title: "Change Password",
-        // },
-      ],
-    },
-    {
-      icon: "User",
-      pathname: "/update-profile",
-      title: "Profile",
-    }
   ],
 };
 

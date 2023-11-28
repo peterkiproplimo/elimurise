@@ -64,7 +64,6 @@ function Main() {
 
   const [users, setUsers] = useState<User[]>([]); // Initialize with appropriate type
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const [players, setPlayers] = useState([]);
 
   // Success notification
   const notify = useRef<NotificationElement>();
@@ -95,8 +94,7 @@ function Main() {
   const [select, setSelect] = useState("1");
 
   useEffect(() => {
-    getAllPlayers();
-    // getUsers();
+    getUsers();
     // getRoles();
     // getConferences();
   }, []);
@@ -104,23 +102,22 @@ function Main() {
   const getUsers = async () => {
     isLoading(true);
     try {
-      // let res = await ApiService.getUsers({ page: 1 });
-      // setUsers(res.users);
-      // console.log(res);
-      // isLoading(false);
-      // setNextPage((page < res.total_pages) ? page + 1 : res.total_pages);
-      // setPreviousPage((page > 1) ? page - 1 : 1);
-      // setPagination({ current_page: res.current_page, total: res.total, total_pages: res.total_pages, per_page: res.per_page });
+      let res = await ApiService.getUsers({ page: 1 });
+      setUsers(res.users);
+      console.log(res);
+      isLoading(false);
+      setNextPage(page < res.total_pages ? page + 1 : res.total_pages);
+      setPreviousPage(page > 1 ? page - 1 : 1);
+      setPagination({
+        current_page: res.current_page,
+        total: res.total,
+        total_pages: res.total_pages,
+        per_page: res.per_page,
+      });
     } catch (error) {
       isLoading(false);
       console.log("Error fetching users");
     }
-  };
-
-  const getAllPlayers = async () => {
-    const response = await ApiService.getAllPlayers();
-    setPlayers(response);
-    console.log(response);
   };
 
   // const getRoles = async () => {
@@ -143,7 +140,7 @@ function Main() {
         const data = await getValues();
         // data.tenant = "64b199727fe94a1ea97a64cd";
         let res = await ApiService.signup(data);
-        // getUsers();
+        getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -179,7 +176,7 @@ function Main() {
 
   return (
     <>
-      <h2 className="mt-10 text-lg font-medium intro-y">PLAYERS</h2>
+      <h2 className="mt-10 text-lg font-medium intro-y">Grades</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           {/* <Button variant="primary" className="mr-2 shadow-md" onClick={(event: React.MouseEvent) => {
@@ -243,35 +240,40 @@ function Main() {
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   <FormCheck.Input type="checkbox" />
                 </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap"></Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  USERNAME
-                </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  PHONE
+                  No.
                 </Table.Th>
                 {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                  EMAIL
+                Middle Name
                 </Table.Th> */}
                 {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                  ACCOUNT BALANCE
+                Last Name
                 </Table.Th> */}
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  STATUS
+                  Level
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  ACTION
+                  Grade
+                </Table.Th>
+                {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                NATIONALITY
+                </Table.Th> */}
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Status
+                </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Action
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {players.map((player: any, key) => (
+              {users.map((user: any, key) => (
                 <Table.Tr
                   key={key}
                   className="intro-x"
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
-                    setSelectedUserId(player.id);
+                    setSelectedUserId(user.id);
                     setDialog(true);
                   }}
                 >
@@ -285,41 +287,49 @@ function Main() {
                           as="img"
                           alt=""
                           className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                          src={player.profileImage}
-                          content={player.firstName + " " + player.lastname}
+                          src={user.profileImage}
+                          content={user.firstName + " " + user.lastname}
                         />
+                      </div>
+                      <div className="ml-4">
+                        {/* <a href="" className="font-medium whitespace-nowrap">
+                          {user.firstname + " " + user.lastname}
+                        </a> */}
+                        {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                          {user.role.role}
+                        </div> */}
+                        {user.firstname}
                       </div>
                     </div>
                   </Table.Td>
-
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {user.middlename}
+                  </Table.Td> */}
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {player.username}
+                    {user.lastname}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {player.phone}
+                    {user.phone}
                   </Table.Td>
-
-                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {player.account}
-                  </Table.Td> */}
-                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {player.nationality}
-                  </Table.Td> */}
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {user.email}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {user.nationality}
+                  </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div
                       className={clsx([
                         "flex items-center justify-center",
-                        { "text-success": player.approval_status },
-                        { "text-danger": !player.approval_status },
+                        { "text-success": user.approval_status },
+                        { "text-danger": !user.approval_status },
                       ])}
                     >
                       <Lucide
-                        icon={
-                          player.approval_status ? "CheckSquare" : "XSquare"
-                        }
+                        icon={user.approval_status ? "CheckSquare" : "XSquare"}
                         className="w-4 h-4 mr-2"
                       />
-                      {player.approval_status ? "Active" : "Inactive"}
+                      {user.approval_status ? "Active" : "Inactive"}
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
@@ -336,7 +346,7 @@ function Main() {
                           </Menu.Item>
                           <Menu.Item
                             onClick={() => {
-                              setUserId(player.id), setConfirmDelete(true);
+                              setUserId(user.id), setConfirmDelete(true);
                             }}
                           >
                             <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
@@ -412,7 +422,7 @@ function Main() {
       <Dialog
         staticBackdrop
         size="lg"
-        // open={dialog}
+        open={dialog}
         onClose={() => {
           setDialog(false);
         }}

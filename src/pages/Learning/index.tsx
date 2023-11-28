@@ -6,36 +6,39 @@ import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import Table from "../../base-components/Table";
 import { useState, useRef, useEffect } from "react";
-import { FormCheck, FormInput, FormLabel, FormSelect } from "../../base-components/Form";
+import {
+  FormCheck,
+  FormInput,
+  FormLabel,
+  FormSelect,
+} from "../../base-components/Form";
 import { Dialog, Menu } from "../../base-components/Headless";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as ApiService from "../../services/auth";
 import * as yup from "yup";
-import Notification, { NotificationElement } from "../../base-components/Notification";
+import Notification, {
+  NotificationElement,
+} from "../../base-components/Notification";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import Dropzone from "../../base-components/Dropzone";
 import AccountDetails from "../accountDetails";
 import fakerData from "../../utils/faker";
-import {
-  FormTextarea,
-} from "../../base-components/Form";
+import { FormTextarea } from "../../base-components/Form";
 import TomSelect from "../../base-components/TomSelect";
 import { User } from "../../type";
 
-
-function Main() {
+function Learning() {
   const [countries] = useState([
-    { name: 'Afghanistan', code: 'AF' },
-    { name: 'Åland Islands', code: 'AX' },
-    { name: 'Albania', code: 'AL' },
-    { name: 'Algeria', code: 'DZ' },
-    { name: 'American Samoa', code: 'AS' },
-    { name: 'AndorrA', code: 'AD' },
-    { name: 'Angola', code: 'AO' },
-    { name: 'Anguilla', code: 'AI' },
-    { name: 'Antarctica', code: 'AQ' },
- 
+    { name: "Afghanistan", code: "AF" },
+    { name: "Åland Islands", code: "AX" },
+    { name: "Albania", code: "AL" },
+    { name: "Algeria", code: "DZ" },
+    { name: "American Samoa", code: "AS" },
+    { name: "AndorrA", code: "AD" },
+    { name: "Angola", code: "AO" },
+    { name: "Anguilla", code: "AI" },
+    { name: "Antarctica", code: "AQ" },
   ]);
 
   const [dialog, setDialog] = useState(false);
@@ -45,7 +48,12 @@ function Main() {
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
   const [conferences, setConferences] = useState([]);
-  const [pagination, setPagination] = useState({ current_page: 1, total: 1, total_pages: 1, per_page: 1 });
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 1,
+    total_pages: 1,
+    per_page: 1,
+  });
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
@@ -53,12 +61,9 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   // const [selectedUserId, setSelectedUserId] = useState(null);
-
-  
+  const [bets, setBets] = useState([]);
   const [users, setUsers] = useState<User[]>([]); // Initialize with appropriate type
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-
-
 
   // Success notification
   const notify = useRef<NotificationElement>();
@@ -68,8 +73,12 @@ function Main() {
       role: yup.string().required("Role is required"),
       firstName: yup.string().required("First name is required"),
       lastName: yup.string().required("Last name is required"),
-      email: yup.string().required("Email is required").email("Email must be a valid")
-    }).required();
+      email: yup
+        .string()
+        .required("Email is required")
+        .email("Email must be a valid"),
+    })
+    .required();
 
   const {
     register,
@@ -82,35 +91,18 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-
   const [select, setSelect] = useState("1");
 
   useEffect(() => {
-    getUsers();
+    fetchBets();
     // getRoles();
     // getConferences();
   }, []);
 
-  const getUsers = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.getUsers({ page: 1 });
-      setUsers(res.users);
-      console.log(res);
-      isLoading(false);
-      setNextPage((page < res.total_pages) ? page + 1 : res.total_pages);
-      setPreviousPage((page > 1) ? page - 1 : 1);
-      setPagination({ current_page: res.current_page, total: res.total, total_pages: res.total_pages, per_page: res.per_page });
-    } catch (error) {
-      isLoading(false);
-      console.log("Error fetching users");
-    }
+  const fetchBets = async () => {
+    let response = await ApiService.fetchBets();
+    setBets(response);
   };
-
-  // const getRoles = async () => {
-  //   let res = await ApiService.getRoles();
-  //   setRoles(res);
-  // };
 
   // const getConferences = async () => {
   //   let res = await ApiService.getConferences();
@@ -127,7 +119,7 @@ function Main() {
         const data = await getValues();
         // data.tenant = "64b199727fe94a1ea97a64cd";
         let res = await ApiService.signup(data);
-        getUsers();
+        // getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -141,14 +133,13 @@ function Main() {
         notify.current?.showToast();
       }
     }
-
   };
 
   const deleteRecord = async () => {
     isLoading(true);
     try {
       let res = await ApiService.deleteUser(userId);
-      getUsers();
+      // getUsers();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -164,7 +155,7 @@ function Main() {
 
   return (
     <>
-      <h2 className="mt-10 text-lg font-medium intro-y">System Users</h2>
+      <h2 className="mt-10 text-lg font-medium intro-y">Learning Area</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           {/* <Button variant="primary" className="mr-2 shadow-md" onClick={(event: React.MouseEvent) => {
@@ -194,7 +185,13 @@ function Main() {
             </Menu.Items>
           </Menu>
           <div className="hidden mx-auto md:block text-slate-500">
-            Showing {pagination.current_page + " to " + pagination.total_pages + " of " + pagination.total} entries
+            Showing{" "}
+            {pagination.current_page +
+              " to " +
+              pagination.total_pages +
+              " of " +
+              pagination.total}{" "}
+            entries
           </div>
           <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
             <div className="relative w-56 text-slate-500">
@@ -223,102 +220,114 @@ function Main() {
                   <FormCheck.Input type="checkbox" />
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                USERNAME
-                </Table.Th>
-                {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                Middle Name
-                </Table.Th> */}
-                {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                Last Name
-                </Table.Th> */}
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  PHONE
-                </Table.Th>
-                {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                  EMAIL
+                  No.
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                NATIONALITY
-                </Table.Th> */}
+                  Level
+                </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  STATUS
+                  Grade
+                </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Learning Area
+                </Table.Th>
+                {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                  Cashout
+                </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Bust Point
+                </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Revenue
+                </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  WTH Tax
+                </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Acc Bal
+                </Table.Th>
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Cashout Type
+                </Table.Th> */}
+
+                <Table.Th className="border-b-0 whitespace-nowrap">
+                  Status
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   ACTION
                 </Table.Th>
-
-               
-               
-              
-              
-               
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {users.map((user: any, key) => (
-              <Table.Tr
-              key={key}
-              className="intro-x"
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                setSelectedUserId(user.id);
-                setDialog(true);
-
-
-  
-              }}
-            >
-
+              {bets.map((bet: any, key) => (
+                <Table.Tr
+                  key={key}
+                  className="intro-x"
+                  onClick={(event: React.MouseEvent) => {
+                    event.preventDefault();
+                    setSelectedUserId(bet.id);
+                    setDialog(true);
+                  }}
+                >
                   <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <FormCheck.Input type="checkbox" />
                   </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div className="flex items-center">
                       <div className="w-9 h-9 image-fit zoom-in">
                         <Tippy
                           as="img"
                           alt=""
                           className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                          src={user.profileImage}
-                          content={user.firstName + " " + user.lastname}
+                          src={bet.profileImage}
+                          content={bet.firstName + " " + bet.lastname}
                         />
                       </div>
-                      <div className="ml-4">
-                        {/* <a href="" className="font-medium whitespace-nowrap">
-                          {user.firstname + " " + user.lastname}
-                        </a> */}
-                        {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                          {user.role.role}
-                        </div> */}
-                        {user.firstname}
-                      </div>
                     </div>
-                  </Table.Td>
-                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.middlename}
                   </Table.Td> */}
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.lastname}
+                    {bet._id}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.phone}
+                    {bet.createdAt}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.email}
+                    {bet.userId.username}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.nationality}
+                    {bet.betAmount}
                   </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.phone}
+                  </Table.Td>
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.point}
+                  </Table.Td> */}
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.phone}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.withholdingtax}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.phone}
+                  </Table.Td>
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {bet.phone}
+                  </Table.Td> */}
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div
                       className={clsx([
                         "flex items-center justify-center",
-                        { "text-success": user.approval_status },
-                        { "text-danger": !user.approval_status },
+                        { "text-success": bet.approval_status },
+                        { "text-danger": !bet.approval_status },
                       ])}
                     >
-                      <Lucide icon={user.approval_status ? "CheckSquare" : "XSquare"} className="w-4 h-4 mr-2" />
-                      {user.approval_status ? "Active" : "Inactive"}
+                      <Lucide
+                        icon={bet.approval_status ? "CheckSquare" : "XSquare"}
+                        className="w-4 h-4 mr-2"
+                      />
+                      {bet.approval_status ? "Active" : "Inactive"}
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
@@ -333,20 +342,25 @@ function Main() {
                           <Menu.Item>
                             <Lucide icon="Edit" className="w-4 h-4 mr-2" /> Edit
                           </Menu.Item>
-                          <Menu.Item onClick={() => {
-                            setUserId(user.id),
-                              setConfirmDelete(true);
-                          }}>
-                            <Lucide icon="Trash" className="w-4 h-4 mr-2" /> Delete
+                          <Menu.Item
+                            onClick={() => {
+                              setUserId(bet.id), setConfirmDelete(true);
+                            }}
+                          >
+                            <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
+                            Delete
                           </Menu.Item>
                           <Menu.Item>
-                            <Lucide icon="View" className="w-4 h-4 mr-2" /> Profile
+                            <Lucide icon="View" className="w-4 h-4 mr-2" />{" "}
+                            Profile
                           </Menu.Item>
                           <Menu.Item>
-                            <Lucide icon="UserCheck" className="w-4 h-4 mr-2" /> Activate
+                            <Lucide icon="UserCheck" className="w-4 h-4 mr-2" />{" "}
+                            Activate
                           </Menu.Item>
                           <Menu.Item>
-                            <Lucide icon="Lock" className="w-4 h-4 mr-2" /> Email Credentials
+                            <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
+                            Email Credentials
                           </Menu.Item>
                         </Menu.Items>
                       </Menu>
@@ -357,41 +371,43 @@ function Main() {
             </Table.Tbody>
           </Table>
 
-
-
-          
- 
-
-
-
-
-
-
-
-          {
-            loading &&
+          {loading && (
             <div className="flex flex-col items-center">
-              <LoadingIcon
-                icon="spinning-circles"
-                className="w-8 h-8"
-              />
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
             </div>
-          }
+          )}
         </div>
         {/* END: Data List */}
         {/* BEGIN: Pagination */}
         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-          <Pagination className="w-full sm:w-auto sm:mr-auto">
-            <Pagination.Link onClick={() => (setPage(previous_page), getUsers())} >
+          {/* <Pagination className="w-full sm:w-auto sm:mr-auto">
+            <Pagination.Link
+              onClick={() => (setPage(previous_page), getUsers())}
+            >
               <Lucide icon="ChevronLeft" className="w-4 h-4" />
             </Pagination.Link>
-            {_.times(pagination.total_pages).map((page, key) => (
-              page + 1 == pagination.current_page ? <Pagination.Link onClick={() => (setPage(page + 1), getUsers())} active key={key}>{page + 1}</Pagination.Link> : <Pagination.Link onClick={() => (setPage(page + 1), getUsers())} key={key}>{page + 1}</Pagination.Link>
-            ))}
-            <Pagination.Link onClick={() => (setPage(next_page), getUsers())} >
+            {_.times(pagination.total_pages).map((page, key) =>
+              page + 1 == pagination.current_page ? (
+                <Pagination.Link
+                  onClick={() => (setPage(page + 1), getUsers())}
+                  active
+                  key={key}
+                >
+                  {page + 1}
+                </Pagination.Link>
+              ) : (
+                <Pagination.Link
+                  onClick={() => (setPage(page + 1), getUsers())}
+                  key={key}
+                >
+                  {page + 1}
+                </Pagination.Link>
+              )
+            )}
+            <Pagination.Link onClick={() => (setPage(next_page), getUsers())}>
               <Lucide icon="ChevronRight" className="w-4 h-4" />
-            </Pagination.Link>
-          </Pagination>
+            </Pagination.Link> */}
+          {/* </Pagination> */}
           <FormSelect className="w-20 mt-3 !box sm:mt-0">
             <option>10</option>
             <option>25</option>
@@ -401,225 +417,232 @@ function Main() {
         </div>
         {/* END: Pagination */}
       </div>
-      <Dialog staticBackdrop size="lg" open={dialog} onClose={() => {
-        setDialog(false);
-      }}
+      <Dialog
+        staticBackdrop
+        size="lg"
+        open={dialog}
+        onClose={() => {
+          setDialog(false);
+        }}
       >
         <Dialog.Panel>
-
-
-
-
-
-        <>
-      <div className="flex items-center mt-8 intro-y">
-        <h2 className="mr-auto text-lg font-medium">Account details</h2>
-      </div>
-      <div className="grid grid-cols-12 gap-6">
-       
-        <div className="col-span-12 lg:col-span-8 2xl:col-span-9">
-          
-          {/* BEGIN: Display Information */}
-
-{/* BEGIN: Personal Information */}
-<div className="mt-5 intro-y box">
-            <div className="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-              <h2 className="mr-auto text-base font-medium">
-                Personal Information
-              </h2>
+          <>
+            <div className="flex items-center mt-8 intro-y">
+              <h2 className="mr-auto text-lg font-medium">Account details</h2>
             </div>
-            <div className="p-5">
-              <div className="grid grid-cols-12 gap-x-5">
-                <div className="col-span-12 xl:col-span-6">
-                  <div>
-                  
-                    <FormLabel htmlFor="update-profile-form-6">first  name</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.firstname || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-12 lg:col-span-8 2xl:col-span-9">
+                {/* BEGIN: Display Information */}
+
+                {/* BEGIN: Personal Information */}
+                <div className="mt-5 intro-y box">
+                  <div className="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+                    <h2 className="mr-auto text-base font-medium">
+                      Personal Information
+                    </h2>
                   </div>
-                  <div>
-                  
-                  <FormLabel htmlFor="update-profile-form-6">middle name</FormLabel>
-                  <FormInput
-                    id="update-profile-form-6"
-                    type="text"
-                    placeholder="Input text"
-                    // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.middlename || "" : ""}
-         
-                    onChange={() => {}}
-                    disabled
-                  />   
-                   <FormLabel htmlFor="update-profile-form-6">last name</FormLabel>
-                  <FormInput
-                    id="update-profile-form-6"
-                    type="text"
-                    placeholder="Input text"
-                    // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.lastname || "" : ""}
-         
-                    onChange={() => {}}
-                    disabled
-                  />
-                  
-                  <FormLabel htmlFor="update-profile-form-6">Document Type</FormLabel>
-                  <FormInput
-                    id="update-profile-form-6"
-                    type="text"
-                    placeholder="Input text"
-                    // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.document_type || "" : ""}
-         
-                    onChange={() => {}}
-                    disabled
-                  />
-                  <FormLabel htmlFor="update-profile-form-6">ID Number</FormLabel>
-                  <FormInput
-                    id="update-profile-form-6"
-                    type="text"
-                    placeholder="Input text"
-                    // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.document_number || "" : ""}
-         
-                    onChange={() => {}}
-                    disabled
-                  />
-                  <FormLabel htmlFor="update-profile-form-6">Nationality</FormLabel>
-                  <FormInput
-                    id="update-profile-form-6"
-                    type="text"
-                    placeholder="Input text"
-                    // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.nationality || "" : ""}
-         
-                    onChange={() => {}}
-                    disabled
-                  />
-                  
+                  <div className="p-5">
+                    <div className="grid grid-cols-12 gap-x-5">
+                      <div className="col-span-12 xl:col-span-6">
+                        <div>
+                          <FormLabel htmlFor="update-profile-form-6">
+                            first name
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.firstname || "" : ""}
 
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                        <div>
+                          <FormLabel htmlFor="update-profile-form-6">
+                            middle name
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.middlename || "" : ""}
 
-                  <FormLabel htmlFor="update-profile-form-7">Gender</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.gender || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                 
+                            onChange={() => {}}
+                            disabled
+                          />
+                          <FormLabel htmlFor="update-profile-form-6">
+                            last name
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.lastname || "" : ""}
 
+                            onChange={() => {}}
+                            disabled
+                          />
 
+                          <FormLabel htmlFor="update-profile-form-6">
+                            Document Type
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.document_type || "" : ""}
 
+                            onChange={() => {}}
+                            disabled
+                          />
+                          <FormLabel htmlFor="update-profile-form-6">
+                            ID Number
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.document_number || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                          <FormLabel htmlFor="update-profile-form-6">
+                            Nationality
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.nationality || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+
+                          <FormLabel htmlFor="update-profile-form-7">
+                            Gender
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.gender || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                      <div className="col-span-12 xl:col-span-6">
+                        <div className="mt-3 xl:mt-0">
+                          <FormLabel htmlFor="update-profile-form-7">
+                            Phone Number
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.phone || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+
+                        <div className="mt-3">
+                          <FormLabel htmlFor="update-profile-form-7">
+                            Email
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.email || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+
+                        <div className="mt-3 xl:mt-0">
+                          <FormLabel htmlFor="update-profile-form-7">
+                            Marital status
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.maritalStatus || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                        <div className="mt-3 xl:mt-0">
+                          <FormLabel htmlFor="update-profile-form-7">
+                            Occupation
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.occupation || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                        <div className="mt-3 xl:mt-0">
+                          <FormLabel htmlFor="update-profile-form-7">
+                            Source of income
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.sourceOfIncome || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                        <div className="mt-3 xl:mt-0">
+                          <FormLabel htmlFor="update-profile-form-7">
+                            County
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.county || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                        <div className="mt-3 xl:mt-0">
+                          <FormLabel htmlFor="update-profile-form-7">
+                            Town
+                          </FormLabel>
+                          <FormInput
+                            id="update-profile-form-6"
+                            type="text"
+                            placeholder="Input text"
+                            // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.town || "" : ""}
+
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                
-                 
-              
-                </div>
-                <div className="col-span-12 xl:col-span-6">
-                  <div className="mt-3 xl:mt-0">
-                  <FormLabel htmlFor="update-profile-form-7">Phone Number</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.phone || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
+                {/* END: Personal Information */}
 
-                  <div className="mt-3">
-                    <FormLabel htmlFor="update-profile-form-7">Email</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.email || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                    
-                  </div>
-                 
-
-                  <div className="mt-3 xl:mt-0">
-                  <FormLabel htmlFor="update-profile-form-7">Marital status</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.maritalStatus || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
-                  <div className="mt-3 xl:mt-0">
-                  <FormLabel htmlFor="update-profile-form-7">Occupation</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.occupation || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
-                  <div className="mt-3 xl:mt-0">
-                  <FormLabel htmlFor="update-profile-form-7">Source of income</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.sourceOfIncome || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
-                  <div className="mt-3 xl:mt-0">
-                  <FormLabel htmlFor="update-profile-form-7">County</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.county || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
-                  <div className="mt-3 xl:mt-0">
-                  <FormLabel htmlFor="update-profile-form-7">Town</FormLabel>
-                    <FormInput
-                      id="update-profile-form-6"
-                      type="text"
-                      placeholder="Input text"
-                      // value={selectedUserId ? users.find(user => user.id === selectedUserId)?.town || "" : ""}
-           
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
-                </div>
-
-                
-              </div>
-             
-            </div>
-          </div>
-          {/* END: Personal Information */}
-
-
-
-          {/* <div className="intro-y box lg:mt-5">
+                {/* <div className="intro-y box lg:mt-5">
             <div className="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
               <h2 className="mr-auto text-base font-medium">
                 Display Information
@@ -755,38 +778,22 @@ function Main() {
               </div>
             </div>
           </div> */}
-          {/* END: Display Information */}
-          
-        </div>
-      </div>
-    </>
+                {/* END: Display Information */}
+              </div>
+            </div>
+          </>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-              <Button type="button" variant="outline-secondary" onClick={() => {
-                setDialog(false);
-              }}
-                className="w-20 mr-1"
-              >
-                Cancel
-              </Button>
-              {/* <Button variant="primary" type="submit" className="w-20">
+          <Button
+            type="button"
+            variant="outline-secondary"
+            onClick={() => {
+              setDialog(false);
+            }}
+            className="w-20 mr-1"
+          >
+            Cancel
+          </Button>
+          {/* <Button variant="primary" type="submit" className="w-20">
                 Save
                 {
                   loading && <LoadingIcon
@@ -797,7 +804,6 @@ function Main() {
                 }
               </Button>
             */}
-         
         </Dialog.Panel>
       </Dialog>
       {/* BEGIN: Delete Confirmation Modal */}
@@ -831,7 +837,8 @@ function Main() {
             >
               Cancel
             </Button>
-            <Button onClick={() => deleteRecord()}
+            <Button
+              onClick={() => deleteRecord()}
               variant="danger"
               type="button"
               className="w-24"
@@ -843,22 +850,26 @@ function Main() {
         </Dialog.Panel>
       </Dialog>
       {/* END: Delete Confirmation Modal */}
-      <Notification getRef={(el) => { notify.current = el; }}
+      <Notification
+        getRef={(el) => {
+          notify.current = el;
+        }}
         options={{
           duration: 3000,
         }}
         className="flex"
       >
-        <Lucide icon={success ? "CheckCircle" : "XCircle"} className={success ? "text-success" : "text-danger"} />
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
         <div className="ml-4 mr-4">
           <div className="font-medium">{success ? "Success" : "Failed"}</div>
-          <div className="mt-1 text-slate-500">
-            {message}
-          </div>
+          <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>
     </>
   );
 }
 
-export default Main;
+export default Learning;

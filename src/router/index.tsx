@@ -2,7 +2,7 @@ import { useRoutes } from "react-router-dom";
 import Layout from "../layouts";
 import Auth from "../layouts/auth";
 import Dashboard from "../pages/Dashboard";
-import Attendees from "../pages/Attendees";
+import User from "../pages/User";
 import Speakers from "../pages/Speakers";
 import Vendors from "../pages/Vendors";
 import Exhibitors from "../pages/Exhibitors";
@@ -16,7 +16,7 @@ import TransactionList from "../pages/TransactionList";
 // import Wallets from "../pages/Wallet";
 import TransactionDetail from "../pages/TransactionDetail";
 import SellerDetail from "../pages/SellerDetail";
-import Users from "../pages/Users";
+
 //beginning of auth
 import Profile from "../pages/Profile";
 import Login from "../pages/Auth/login";
@@ -30,7 +30,7 @@ import Privacy from "../pages/Auth/privacy";
 import NewProfile from "../pages/Auth/profile";
 
 import Role from "../pages/Auth/roles";
-import Permissions from "../pages/Auth/permissions";
+import Permissions from "../pages/Strand";
 import ForgotPassword from "../pages/Auth/forgot-password";
 import ForgotPasswordOTP from "../pages/Auth/forgot-passOTP";
 import CreateNewPassword from "../pages/Auth/create-newPassword";
@@ -43,13 +43,13 @@ import Vehicle from "../pages/vehicle";
 import Documents from "../pages/documents";
 import SecurityFeature from "../pages/security";
 import Financiers from "../pages/financiers";
-import Accounts from "../pages/accounts";
-import Quotes from "../pages/quotes";
+import Accounts from "../pages/Grade";
+import Learning from "../pages/Learning";
 import NewPolicy from "../pages/newPolicy";
-import Extension from "../pages/policyExtension";
+import Level from "../pages/Level";
 import Model from "../pages/model";
 import Valuers from "../pages/valuers";
-import ClaimActive from "../pages/ClaimActive";
+import Substrand from "../pages/Substrand";
 import ClaimPending from "../pages/ClaimPending";
 import ClaimRejected from "../pages/ClaimRejected";
 import AccountDetails from "../pages/accountDetails";
@@ -60,15 +60,17 @@ import Contents from "../pages/contents";
 import CoversFAQs from "../pages/coverFAQs";
 import FAQs from "../pages/FAQs";
 import Settings from "../pages/Auth/settings";
+import Grade from "../pages/Grade";
+import Strand from "../pages/Strand";
 
 function Router() {
   const routes = [
     {
       path: "/",
       element: (
-        // <AuthGuard>
-        <Layout />
-        // </AuthGuard>
+        <AuthGuard>
+          <Layout />
+        </AuthGuard>
       ),
       children: [
         {
@@ -100,8 +102,8 @@ function Router() {
           element: <TransactionDetail />,
         },
         {
-          path: "attendees",
-          element: <Attendees />,
+          path: "user",
+          element: <User />,
         },
         {
           path: "Vehicle",
@@ -125,12 +127,12 @@ function Router() {
         },
 
         {
-          path: "accounts",
-          element: <Accounts />,
+          path: "substrand",
+          element: <Substrand />,
         },
         {
-          path: "quotes",
-          element: <Quotes />,
+          path: "learning",
+          element: <Learning />,
         },
         {
           path: "policy",
@@ -142,16 +144,16 @@ function Router() {
         },
 
         {
-          path: "extension",
-          element: <Extension />,
+          path: "level",
+          element: <Level />,
         },
         {
           path: "model",
           element: <Model />,
         },
         {
-          path: "active",
-          element: <ClaimActive />,
+          path: "grade",
+          element: <Grade />,
         },
         {
           path: "pendingClaim",
@@ -196,8 +198,8 @@ function Router() {
           element: <Role />,
         },
         {
-          path: "Permissions",
-          element: <Permissions />,
+          path: "strand",
+          element: <Strand />,
         },
 
         {
@@ -249,10 +251,10 @@ function Router() {
           path: "seller-detail",
           element: <SellerDetail />,
         },
-        {
-          path: "users",
-          element: <Users />,
-        },
+        // {
+        //   path: "users",
+        //   element: <Users />,
+        // },
         {
           path: "profile-overview-1",
           element: <Profile />,

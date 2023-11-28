@@ -788,6 +788,25 @@ try {
     }
   };
   
+  export async function login(data: FieldValues) {
+    try {
+      let res = await axios.post(c.LOGIN, data);
+      const storeData = async () => {
+        try {
+          const jsonValue = JSON.stringify(res.data); //email:
+          await localStorage.setItem("user", jsonValue);
+        } catch (e) {
+          throw handler(e);
+        }
+      };
+      storeData();
+      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+      return res.data;
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+  
 
 //dashboard
 export const getDashboard  = async () => {
@@ -989,25 +1008,7 @@ axios.interceptors.response.use(
     }
 )
 
-export async function login(data: FieldValues) {
-    try {
-        let res = await axios.post(c.LOGIN, data);    
-        const storeData = async () => {
-            try {
-                const jsonValue = JSON.stringify(res.data)
-                await localStorage.setItem('user', jsonValue)
-            } catch (e) {
-                throw handler(e);
-            }
-        }
-        storeData();
-        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
-        return res.data;
 
-    } catch (e) {
-        throw handler(e);
-    }
-} 
 
 
 
