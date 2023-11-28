@@ -5,5 +5,5 @@ git add .
 # Commit changes with a specified message passed as an argument
 git commit -m "$1"
 
-# Push changes to the remote repository
+# Push changes to the remote repositorys
 git push
