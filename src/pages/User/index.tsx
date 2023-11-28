@@ -318,30 +318,30 @@ function Users() {
   });
 
   useEffect(() => {
-    getUsers();
+    // getUsers();
     getRoles();
     getConferences();
   }, []);
 
-  const getUsers = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.getUsers({ page: 1 });
-      setUsers(res.users);
-      isLoading(false);
-      setNextPage(page < res.total_pages ? page + 1 : res.total_pages);
-      setPreviousPage(page > 1 ? page - 1 : 1);
-      setPagination({
-        current_page: res.current_page,
-        total: res.total,
-        total_pages: res.total_pages,
-        per_page: res.per_page,
-      });
-    } catch (error) {
-      isLoading(false);
-      console.log("Error fetching users");
-    }
-  };
+  // const getUsers = async () => {
+  //   isLoading(true);
+  //   try {
+  //     let res = await ApiService.getUsers({ page: 1 });
+  //     setUsers(res.users);
+  //     isLoading(false);
+  //     setNextPage(page < res.total_pages ? page + 1 : res.total_pages);
+  //     setPreviousPage(page > 1 ? page - 1 : 1);
+  //     setPagination({
+  //       current_page: res.current_page,
+  //       total: res.total,
+  //       total_pages: res.total_pages,
+  //       per_page: res.per_page,
+  //     });
+  //   } catch (error) {
+  //     isLoading(false);
+  //     console.log("Error fetching users");
+  //   }
+  // };
 
   const getRoles = async () => {
     let res = await ApiService.getRoles();
@@ -368,7 +368,7 @@ function Users() {
         const data = await getValues();
         // data.tenant = "64b199727fe94a1ea97a64cd";
         let res = await ApiService.signup(data);
-        getUsers();
+        //getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -388,7 +388,7 @@ function Users() {
     isLoading(true);
     try {
       let res = await ApiService.deleteUser(userId);
-      getUsers();
+      //getUsers();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);

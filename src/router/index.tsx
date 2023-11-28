@@ -4,8 +4,6 @@ import Auth from "../layouts/auth";
 import Dashboard from "../pages/Dashboard";
 import User from "../pages/User";
 
-import Vendors from "../pages/Vendors";
-
 // import SimcardBooking from "../pages/SimcardBooking";
 import Categories from "../pages/Categories";
 
@@ -43,7 +41,6 @@ import Substrand from "../pages/Substrand";
 
 import AccountDetails from "../pages/accountDetails";
 
-import Contents from "../pages/contents";
 import FAQs from "../pages/FAQs";
 import Settings from "../pages/Auth/settings";
 import Grade from "../pages/Grade";

@@ -94,33 +94,33 @@ function Main() {
   const [select, setSelect] = useState("1");
 
   useEffect(() => {
-    getUsers();
+    // getUsers();
     // getRoles();
     // getConferences();
   }, []);
 
-  const getUsers = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.getUsers({ page: 1 });
-      setUsers(res.users);
-      console.log(res);
-      isLoading(false);
-      setNextPage(page < res.total_pages ? page + 1 : res.total_pages);
-      setPreviousPage(page > 1 ? page - 1 : 1);
-      setPagination({
-        current_page: res.current_page,
-        total: res.total,
-        total_pages: res.total_pages,
-        per_page: res.per_page,
-      });
-    } catch (error) {
-      isLoading(false);
-      console.log("Error fetching users");
-    }
-  };
+  // const getUsers = async () => {
+  //   isLoading(true);
+  //   try {
+  //     let res = await ApiService.getUsers({ page: 1 });
+  //     setUsers(res.users);
+  //     console.log(res);
+  //     isLoading(false);
+  //     setNextPage(page < res.total_pages ? page + 1 : res.total_pages);
+  //     setPreviousPage(page > 1 ? page - 1 : 1);
+  //     setPagination({
+  //       current_page: res.current_page,
+  //       total: res.total,
+  //       total_pages: res.total_pages,
+  //       per_page: res.per_page,
+  //     });
+  //   } catch (error) {
+  //     isLoading(false);
+  //     console.log("Error fetching users");
+  //   }
+  // };
 
-  // const getRoles = async () => {
+  // // const getRoles = async () => {
   //   let res = await ApiService.getRoles();
   //   setRoles(res);
   // };
