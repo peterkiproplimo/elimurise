@@ -57,7 +57,69 @@ export async function getUsers() {
   return {}
 }
 
+export const getGrades =async ({ page }: { page: number }) => {
+  try {
+      let res = await axios.get(c.GRADES);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+      return res.data;
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+  
+  export async function createGrade(data: FieldValues) {
+    try {
+      let res = await axios.post(c.GRADES, data);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+      return res.data;
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+  
+  export async function deleteGrade(gradeId: any) {
+    try {
+    
+      let res = await axios.delete(c.GRADES+'/'+gradeId);
+      console.log(res)
+      return res.data;
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+  
 
+  export const getLearningAreas =async ({ page }: { page: number }) => {
+    try {
+        let res = await axios.get(c.LEARNING_AREA);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }
+    
+    export async function createLearningArea(data: FieldValues) {
+      try {
+        let res = await axios.post(c.LEARNING_AREA, data);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }
+    
+    export async function deleteLearningArea(gradeId: any) {
+      try {
+      
+        let res = await axios.delete(c.LEARNING_AREA+'/'+gradeId);
+        console.log(res)
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }  
+  
 
 
 

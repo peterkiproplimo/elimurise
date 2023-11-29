@@ -216,6 +216,9 @@ function Level() {
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">
+                      No.
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
                       Level
                     </Table.Th>
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
@@ -232,6 +235,11 @@ function Level() {
                 <Table.Tbody>
                   {levels.map((level: any, key) => (
                     <Table.Tr key={key} className="intro-x">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {key + 1}
+                        </span>
+                      </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {level.name}
