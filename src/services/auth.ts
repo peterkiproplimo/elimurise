@@ -121,7 +121,37 @@ export const getGrades =async ({ page }: { page: number }) => {
     }  
   
 
-
+    export const getStrands =async ({ page }: { page: number },filter:data) => {
+      try {
+          let res = await axios.get( `${c.STRANDS}/${filter.learning_area}/${filter.term}`);
+          axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+          return res.data;
+        } catch (e) {
+          throw handler(e);
+        }
+      }
+      
+      export async function createStrand(data: FieldValues) {
+        try {
+          let res = await axios.post(c.STRANDS, data);
+          axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+          return res.data;
+        } catch (e) {
+          throw handler(e);
+        }
+      }
+      
+      export async function deleteStrand(gradeId: any) {
+        try {
+        
+          let res = await axios.delete(c.STRANDS+'/'+gradeId);
+          console.log(res)
+          return res.data;
+        } catch (e) {
+          throw handler(e);
+        }
+      }  
+    
 
 
 

@@ -175,7 +175,7 @@ function Main() {
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect {...register("grade_id")} name="level_id">
+                <FormSelect {...register("grade_id")} name="grade_id">
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}

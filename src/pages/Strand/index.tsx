@@ -1,7 +1,12 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
-import { FormInput, FormLabel, FormSelect } from "../../base-components/Form";
+import {
+  FormInput,
+  FormLabel,
+  FormSelect,
+  FormTextarea,
+} from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -14,6 +19,7 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
+import * as C from "../../utils/constants";
 
 interface TableRow {
   no: number;
@@ -26,7 +32,7 @@ function Main() {
 
   const [grades, setGrades] = useState([]);
   const [levels, setLevels] = useState([]);
-
+  const [learningAreas, setLearningAreas] = useState([]);
   // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
@@ -37,7 +43,18 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
-
+  const [hasTheme, setHasTheme] = useState(false);
+  const [strands, setStrands] = useState([]);
+  const [strandFilter, setStrandFilter] = useState({
+    grade: "na",
+    learning_area: "na",
+    term: "1",
+  });
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -65,13 +82,13 @@ function Main() {
       try {
         const data = await getValues();
         console.log(data);
-        await ApiService.createGrade(data);
-        await getGrades();
+        await ApiService.createStrand(data);
+        await getStrands();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Level created successfully.");
+        setMessage("Strand created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -87,7 +104,13 @@ function Main() {
   useEffect(() => {
     getGrades();
     getLevels();
+    getLearningAreas();
+    getStrands();
   }, []);
+  const getStrands = async (learning_area, term) => {
+    const response = await ApiService.getStrands({ page: 1 }, strandFilter);
+    setStrands(response.data);
+  };
   const getLevels = async () => {
     const response = await ApiService.getLevels({ page: 1 });
     setLevels(response.data);
@@ -96,12 +119,15 @@ function Main() {
     const response = await ApiService.getGrades({ page: 1 });
     setGrades(response.data);
   };
-
+  const getLearningAreas = async () => {
+    const response = await ApiService.getLearningAreas({ page: 1 });
+    setLearningAreas(response.data);
+  };
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteGrade(recordId);
-      getGrades();
+      let res = await ApiService.deleteStrand(recordId);
+      getStrands();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -127,7 +153,43 @@ function Main() {
     reset(record);
     setDialog(false);
   };
+  useEffect(() => {
+    setStrands([]);
+    getStrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [strandFilter]);
 
+  const handleGradeChange = async (event) => {
+    const selectedValue = event.target.value;
+    await setStrandFilter({
+      ...strandFilter,
+      grade: selectedValue,
+    });
+
+    // You might want to fetch filtered data here
+  };
+  const handleLearningAreaChange = async (event) => {
+    const selectedValue = event.target.value;
+    await setStrandFilter({
+      ...strandFilter,
+      learning_area: selectedValue,
+    });
+    // You might want to fetch filtered data here
+  };
+
+  const handleTermChange = async (event) => {
+    const selectedValue = event.target.value;
+    await setStrandFilter({
+      ...strandFilter,
+      term: selectedValue,
+    });
+    // You might want to fetch filtered data here
+  };
+  const handleHasThemeChange = async (event) => {
+    const isChecked = event.target.checked;
+    setHasTheme(isChecked);
+    // You might want to fetch filtered data here
+  };
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
@@ -172,16 +234,15 @@ function Main() {
                 href="#"
               ></a>
             </div>
-
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-                <FormSelect {...register("grade")} name="grade">
-                  {/* {grades.map((grade: any, key) => (
-        <option key={key} value={grade._id}>
-          {grade.name}
-        </option>
-      ))} */}
+                <FormSelect {...register("grade")} name="grade" disabled>
+                  {grades.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
@@ -192,15 +253,19 @@ function Main() {
               </div>
 
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">
-                  Select Learning Area
-                </FormLabel>
-                <FormSelect {...register("learning_area")} name="learning_area">
-                  {/* {learningAreas.map((area: any, key) => (
-        <option key={key} value={area._id}>
-          {area.name}
-        </option>
-      ))} */}
+                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+                <FormSelect
+                  {...register("learning_area")}
+                  name="learning_area"
+                  disabled
+                >
+                  {learningAreas
+                    .filter((area) => area.grade_id._id === strandFilter.grade)
+                    .map((filteredArea, key) => (
+                      <option key={key} value={filteredArea._id}>
+                        {filteredArea.name}
+                      </option>
+                    ))}
                 </FormSelect>
                 {errors.learning_area && (
                   <div className="mt-2 text-danger">
@@ -212,12 +277,12 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
-                <FormSelect {...register("term")} name="term">
-                  {/* {terms.map((term: any, key) => (
-        <option key={key} value={term._id}>
-          {term.name}
-        </option>
-      ))} */}
+                <FormSelect {...register("term")} name="term" disabled>
+                  {terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
                 </FormSelect>
                 {errors.term && (
                   <div className="mt-2 text-danger">
@@ -226,101 +291,65 @@ function Main() {
                   </div>
                 )}
               </div>
+            </div>{" "}
+            <div className="grid grid-cols-12 gap-4 gap-y-3 mt-5 m-auto">
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">Strand </FormLabel>
+                <FormTextarea
+                  {...register("name")}
+                  name="name"
+                  className="mr-2"
+                />
 
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Select Theme</FormLabel>
-                <FormSelect {...register("theme")} name="theme">
-                  {/* {themes.map((theme: any, key) => (
-        <option key={key} value={theme._id}>
-          {theme.name}
-        </option>
-      ))} */}
-                </FormSelect>
-                {errors.theme && (
+                {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
                   </div>
                 )}
               </div>
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Select Category</FormLabel>
-                <FormSelect {...register("theme")} name="theme">
-                  {/* {themes.map((theme: any, key) => (
-        <option key={key} value={theme._id}>
-          {theme.name}
-        </option>
-      ))} */}
-                </FormSelect>
-                {errors.theme && (
+                <FormLabel htmlFor="modal-form-6">Has Theme</FormLabel>
+                <FormInput
+                  type="checkbox"
+                  {...register("grade")}
+                  name="grade"
+                  checked={hasTheme}
+                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                  onChange={handleHasThemeChange}
+                />
+
+                {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
                   </div>
                 )}
               </div>
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
+              {hasTheme ? (
                 <div className="col-span-12 sm:col-span-3">
-                  <div className="flex items-center flex-nowrap">
-                    <input
-                      type="checkbox"
-                      {...register("grade")}
-                      name="grade"
-                      className="mr-2"
-                    />
-                    <span>Has Theme</span>
-                  </div>
-                  {errors.grade && (
+                  <FormLabel htmlFor="modal-form-6">Theme</FormLabel>
+                  <FormTextarea {...register("theme")} name="theme" />
+                  {errors.theme && (
                     <div className="mt-2 text-danger">
-                      {typeof errors.grade.message === "string" &&
-                        errors.grade.message}
+                      {typeof errors.theme.message === "string" &&
+                        errors.theme.message}
                     </div>
                   )}
                 </div>
-              </div>
+              ) : (
+                ""
+              )}
             </div>
-          </form>
-          <br />
-          <div className="mt-5 p-5 intro-y box validate-form">
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="col-span-12 sm:col-span-12 mt-3">
               <Button
-                variant="primary"
-                className="mr-2 shadow-md"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                }}
+                type="button"
+                variant="outline-secondary"
+                onClick={() => cancel({ name: "" })}
+                className="w-20 mr-1"
               >
-                +
+                Cancel
               </Button>
-              <Table className="border-spacing-y-[10px] border-separate -mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Level
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {grades.map((grade: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {key + 1} */}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {grade.name} */}
-                        </span>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
               <Button variant="primary" type="submit" className="w-20">
                 Save
                 {loading && (
@@ -332,12 +361,78 @@ function Main() {
                 )}
               </Button>
             </div>
-          </div>
+          </form>
         </>
       ) : (
         <>
           <h2 className="mt-10 text-lg font-medium intro-y">Strand</h2>
+
           <div className="grid grid-cols-12 gap-6 mt-5">
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
+              <FormSelect
+                {...register("grade")}
+                name="grade"
+                onChange={handleGradeChange}
+              >
+                {grades.map((grade: any, key) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.grade && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.grade.message === "string" &&
+                    errors.grade.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Learning Area</FormLabel>
+              <FormSelect
+                {...register("learning_area")}
+                name="learning_area"
+                onChange={handleLearningAreaChange}
+              >
+                {learningAreas
+                  .filter((area) => area.grade_id._id === strandFilter.grade)
+                  .map((filteredArea, key) => (
+                    <option key={key} value={filteredArea._id}>
+                      {filteredArea.name}
+                    </option>
+                  ))}
+              </FormSelect>
+              {errors.learning_area && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.learning_area.message === "string" &&
+                    errors.learning_area.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
+              <FormSelect
+                {...register("term")}
+                name="term"
+                onChange={handleTermChange}
+              >
+                {terms.map((term: any, key) => (
+                  <option key={key} value={term._id}>
+                    {term.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.term && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.term.message === "string" &&
+                    errors.term.message}
+                </div>
+              )}
+            </div>
+
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
                 variant="primary"
@@ -361,13 +456,7 @@ function Main() {
                       No.
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Level
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Grade
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Term
+                      Name
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Learning Area
@@ -375,12 +464,7 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Theme
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      School
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Category
-                    </Table.Th>
+
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Status
                     </Table.Th> */}
@@ -390,46 +474,29 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {grades.map((grade: any, key) => (
+                  {strands.map((strand: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {key + 1} */}
+                          {key + 1}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {grade.name} */}
+                          {strand?.name}
+                        </span>
+                      </Table.Td>
+
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {strand?.learning_area?.name}
+                          {" - "}
+                          {strand?.learning_area?.grade_id?.name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {grade?.level_id?.name} */}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {grade.createdAt} */}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {key + 1} */}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {strand.name} */}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {grade?.level_id?.name} */}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {grade.createdAt} */}
+                          {strand?.theme}
                         </span>
                       </Table.Td>
 
@@ -446,7 +513,7 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(grade)}>
+                                <Menu.Item onClick={() => editRecord(strand)}>
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
@@ -455,7 +522,7 @@ function Main() {
                                 </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(grade._id),
+                                    setRecordId(strand._id),
                                       setConfirmDelete(true);
                                   }}
                                 >
