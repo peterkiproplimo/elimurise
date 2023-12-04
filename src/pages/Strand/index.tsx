@@ -170,9 +170,7 @@ function Main() {
 
     // You might want to fetch filtered data here
   };
-  const handleLearningAreaChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleLearningAreaChange = async () => {
     const selectedValue = event.target.value;
     await setStrandFilter({
       ...strandFilter,
@@ -181,9 +179,7 @@ function Main() {
     // You might want to fetch filtered data here
   };
 
-  const handleTermChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleTermChange = async () => {
     const selectedValue = event.target.value;
     await setStrandFilter({
       ...strandFilter,
@@ -191,9 +187,7 @@ function Main() {
     });
     // You might want to fetch filtered data here
   };
-  const handleHasThemeChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleHasThemeChange = async () => {
     const isChecked = event.target.checked;
     setHasTheme(isChecked);
     // You might want to fetch filtered data here
@@ -279,8 +273,8 @@ function Main() {
                 </FormSelect>
                 {errors.learning_area && (
                   <div className="mt-2 text-danger">
-                    {typeof errors?.learning_area?.message === "string" &&
-                      errors?.learning_area?.message}
+                    {typeof errors.learning_area.message === "string" &&
+                      errors.learning_area.message}
                   </div>
                 )}
               </div>
@@ -319,7 +313,6 @@ function Main() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Has Theme</FormLabel>
                 <FormInput
                   type="checkbox"
                   {...register("grade")}
@@ -328,7 +321,7 @@ function Main() {
                   className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
                   onChange={handleHasThemeChange}
                 />
-
+                <FormLabel htmlFor="modal-form-6">Theme</FormLabel>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
                     {typeof errors.grade.message === "string" &&
@@ -407,7 +400,7 @@ function Main() {
                 onChange={handleLearningAreaChange}
               >
                 {learningAreas
-                  .filter((area) => area.grade_id._id === strandFilter.grade)
+                  .filter((area) => area?.grade_id?._id === strandFilter.grade)
                   .map((filteredArea, key) => (
                     <option key={key} value={filteredArea._id}>
                       {filteredArea.name}
@@ -466,7 +459,7 @@ function Main() {
                       No.
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Name
+                      Strand
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Learning Area

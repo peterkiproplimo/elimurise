@@ -121,7 +121,7 @@ export const getGrades =async ({ page }: { page: number }) => {
     }  
   
 
-    export const getStrands =async ({ page }: { page: number },filter:data) => {
+    export const getStrands =async ({ page }: { page: number },filter:any) => {
       try {
           let res = await axios.get( `${c.STRANDS}/${filter.learning_area}/${filter.term}`);
           axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
