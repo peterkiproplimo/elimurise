@@ -107,7 +107,7 @@ function Main() {
     getLearningAreas();
     getStrands();
   }, []);
-  const getStrands = async (learning_area, term) => {
+  const getStrands = async () => {
     const response = await ApiService.getStrands({ page: 1 }, strandFilter);
     setStrands(response.data);
   };
