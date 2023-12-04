@@ -268,17 +268,19 @@ function Main() {
                   disabled
                 >
                   {learningAreas
-                    .filter((area) => area.grade_id._id === strandFilter.grade)
+                    .filter(
+                      (area) => area?.grade_id?._id === strandFilter?.grade
+                    )
                     .map((filteredArea, key) => (
-                      <option key={key} value={filteredArea._id}>
+                      <option key={key} value={filteredArea?._id}>
                         {filteredArea.name}
                       </option>
                     ))}
                 </FormSelect>
                 {errors.learning_area && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
+                    {typeof errors?.learning_area?.message === "string" &&
+                      errors?.learning_area?.message}
                   </div>
                 )}
               </div>
