@@ -159,7 +159,9 @@ function Main() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter]);
 
-  const handleGradeChange = async (event) => {
+  const handleGradeChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const selectedValue = event.target.value;
     await setStrandFilter({
       ...strandFilter,
@@ -168,7 +170,9 @@ function Main() {
 
     // You might want to fetch filtered data here
   };
-  const handleLearningAreaChange = async (event) => {
+  const handleLearningAreaChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const selectedValue = event.target.value;
     await setStrandFilter({
       ...strandFilter,
@@ -177,7 +181,9 @@ function Main() {
     // You might want to fetch filtered data here
   };
 
-  const handleTermChange = async (event) => {
+  const handleTermChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const selectedValue = event.target.value;
     await setStrandFilter({
       ...strandFilter,
@@ -185,7 +191,9 @@ function Main() {
     });
     // You might want to fetch filtered data here
   };
-  const handleHasThemeChange = async (event) => {
+  const handleHasThemeChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const isChecked = event.target.checked;
     setHasTheme(isChecked);
     // You might want to fetch filtered data here
