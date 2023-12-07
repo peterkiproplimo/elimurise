@@ -170,7 +170,9 @@ function Main() {
 
     // You might want to fetch filtered data here
   };
-  const handleLearningAreaChange = async () => {
+  const handleLearningAreaChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const selectedValue = event.target.value;
     await setStrandFilter({
       ...strandFilter,
@@ -179,7 +181,9 @@ function Main() {
     // You might want to fetch filtered data here
   };
 
-  const handleTermChange = async () => {
+  const handleTermChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const selectedValue = event.target.value;
     await setStrandFilter({
       ...strandFilter,
@@ -187,7 +191,9 @@ function Main() {
     });
     // You might want to fetch filtered data here
   };
-  const handleHasThemeChange = async () => {
+  const handleHasThemeChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const isChecked = event.target.checked;
     setHasTheme(isChecked);
     // You might want to fetch filtered data here
@@ -263,9 +269,9 @@ function Main() {
                 >
                   {learningAreas
                     .filter(
-                      (area) => area?.grade_id?._id === strandFilter?.grade
+                      (area: any) => area?.grade_id?._id === strandFilter?.grade
                     )
-                    .map((filteredArea, key) => (
+                    .map((filteredArea: any, key) => (
                       <option key={key} value={filteredArea?._id}>
                         {filteredArea.name}
                       </option>
@@ -376,7 +382,9 @@ function Main() {
               <FormSelect
                 {...register("grade")}
                 name="grade"
-                onChange={handleGradeChange}
+                onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                  handleGradeChange
+                }
               >
                 {grades.map((grade: any, key) => (
                   <option key={key} value={grade._id}>
@@ -397,11 +405,15 @@ function Main() {
               <FormSelect
                 {...register("learning_area")}
                 name="learning_area"
-                onChange={handleLearningAreaChange}
+                onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                  handleLearningAreaChange
+                }
               >
                 {learningAreas
-                  .filter((area) => area?.grade_id?._id === strandFilter.grade)
-                  .map((filteredArea, key) => (
+                  .filter(
+                    (area: any) => area?.grade_id?._id === strandFilter.grade
+                  )
+                  .map((filteredArea: any, key) => (
                     <option key={key} value={filteredArea._id}>
                       {filteredArea.name}
                     </option>
@@ -420,7 +432,9 @@ function Main() {
               <FormSelect
                 {...register("term")}
                 name="term"
-                onChange={handleTermChange}
+                onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                  handleTermChange
+                }
               >
                 {terms.map((term: any, key) => (
                   <option key={key} value={term._id}>

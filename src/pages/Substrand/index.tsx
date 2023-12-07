@@ -25,8 +25,9 @@ function Main() {
   const deleteButtonRef = useRef(null);
 
   const [grades, setGrades] = useState([]);
-  const [levels, setLevels] = useState([]);
-
+  const [strands, setStrands] = useState([]);
+  const [substrands, setSubstrands] = useState([]);
+  const [learningAreas, setLearningAreas] = useState([]);
   // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
@@ -37,12 +38,22 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
-
+  const [hasTheme, setHasTheme] = useState(false);
+  const [strandFilter, setStrandFilter] = useState({
+    grade: "na",
+    learning_area: "na",
+    term: "1",
+  });
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Level is required"),
+      grade: yup.string().required("Level is required"),
     })
     .required();
 
@@ -65,13 +76,13 @@ function Main() {
       try {
         const data = await getValues();
         console.log(data);
-        await ApiService.createGrade(data);
-        await getGrades();
+        await ApiService.createSubstrand(data);
+        await getSubstrand();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Level created successfully.");
+        setMessage("Strand created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -86,22 +97,31 @@ function Main() {
 
   useEffect(() => {
     getGrades();
-    getLevels();
+    getSubstrand();
+    getLearningAreas();
+    getStrands();
   }, []);
-  const getLevels = async () => {
-    const response = await ApiService.getLevels({ page: 1 });
-    setLevels(response.data);
+  const getStrands = async () => {
+    const response = await ApiService.allStrands({ page: 1 }, strandFilter);
+    setStrands(response.data);
+  };
+  const getSubstrand = async () => {
+    const response = await ApiService.getSubstrand({ page: 1 });
+    setSubstrands(response.data);
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
     setGrades(response.data);
   };
-
+  const getLearningAreas = async () => {
+    const response = await ApiService.getLearningAreas({ page: 1 });
+    setLearningAreas(response.data);
+  };
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteGrade(recordId);
-      getGrades();
+      let res = await ApiService.deleteSubstrand(recordId);
+      getSubstrand();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -126,6 +146,43 @@ function Main() {
     setPermission([""]);
     reset(record);
     setDialog(false);
+  };
+  useEffect(() => {
+    setSubstrands([]);
+    getSubstrand();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [strandFilter]);
+
+  const handleGradeChange = (event: any) => {
+    // console.log("hello");
+    const selectedValue = event.target.value;
+    setStrandFilter({
+      ...strandFilter,
+      grade: selectedValue,
+    });
+
+    // You might want to fetch filtered data here
+  };
+  const handleLearningAreaChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    await setStrandFilter({
+      ...strandFilter,
+      learning_area: selectedValue,
+    });
+    // You might want to fetch filtered data here
+  };
+
+  const handleTermChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    await setStrandFilter({
+      ...strandFilter,
+      term: selectedValue,
+    });
+    // You might want to fetch filtered data here
   };
 
   const [rows, setRows] = useState<TableRow[]>([
@@ -176,12 +233,17 @@ function Main() {
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect {...register("grade")} name="grade">
-                  {/* {grades.map((grade: any, key) => (
-        <option key={key} value={grade._id}>
-          {grade.name}
-        </option>
-      ))} */}
+                <FormSelect
+                  {...register("grade")}
+                  name="grade"
+
+                  // onChange={handleGradeChange}
+                >
+                  {grades.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
@@ -192,13 +254,23 @@ function Main() {
               </div>
 
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-                <FormSelect {...register("learning_area")} name="learning_area">
-                  {/* {learningAreas.map((area: any, key) => (
-        <option key={key} value={area._id}>
-          {area.name}
-        </option>
-      ))} */}
+                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+                <FormSelect
+                  {...register("learning_area")}
+                  name="learning_area"
+                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                    handleLearningAreaChange(event)
+                  }
+                >
+                  {learningAreas
+                    .filter(
+                      (area: any) => area?.grade?._id === strandFilter.grade
+                    )
+                    .map((filteredArea: any, key) => (
+                      <option key={key} value={filteredArea?._id}>
+                        {filteredArea?.name}
+                      </option>
+                    ))}
                 </FormSelect>
                 {errors.learning_area && (
                   <div className="mt-2 text-danger">
@@ -209,13 +281,17 @@ function Main() {
               </div>
 
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormSelect {...register("term")} name="term">
-                  {/* {terms.map((term: any, key) => (
-        <option key={key} value={term._id}>
-          {term.name}
-        </option>
-      ))} */}
+                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+                <FormSelect
+                  {...register("term")}
+                  name="term"
+                  onChange={handleTermChange}
+                >
+                  {terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
                 </FormSelect>
                 {errors.term && (
                   <div className="mt-2 text-danger">
@@ -226,45 +302,13 @@ function Main() {
               </div>
 
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Select Theme</FormLabel>
-                <FormSelect {...register("theme")} name="theme">
-                  {/* {themes.map((theme: any, key) => (
-        <option key={key} value={theme._id}>
-          {theme.name}
-        </option>
-      ))} */}
-                </FormSelect>
-                {errors.theme && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Category</FormLabel>
-                <FormSelect {...register("theme")} name="theme">
-                  {/* {themes.map((theme: any, key) => (
-        <option key={key} value={theme._id}>
-          {theme.name}
-        </option>
-      ))} */}
-                </FormSelect>
-                {errors.theme && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
                 <FormSelect {...register("theme")} name="theme">
-                  {/* {themes.map((theme: any, key) => (
-        <option key={key} value={theme._id}>
-          {theme.name}
-        </option>
-      ))} */}
+                  {strands.map((strand: any, key) => (
+                    <option key={key} value={strand._id}>
+                      {strand.name}
+                    </option>
+                  ))}
                 </FormSelect>
                 {errors.theme && (
                   <div className="mt-2 text-danger">
@@ -275,17 +319,17 @@ function Main() {
               </div>
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
-                <FormSelect {...register("theme")} name="theme">
-                  {/* {themes.map((theme: any, key) => (
-        <option key={key} value={theme._id}>
-          {theme.name}
-        </option>
-      ))} */}
-                </FormSelect>
-                {errors.theme && (
+                <FormInput
+                  {...register("substrand")}
+                  type="text"
+                  name="substrand"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="substrand"
+                />
+                {errors.role && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
                   </div>
                 )}
               </div>
@@ -330,10 +374,10 @@ function Main() {
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Learning Outcome</FormLabel>
                 <textarea
-                  {...register("grade")}
-                  name="grade"
+                  {...register("learning_outcome")}
+                  name="learning_outcome"
                   className="border rounded-md w-full p-2"
-                  placeholder="Enter grade..."
+                  placeholder="Enter learning outcome..."
                 />
                 {errors.grade && (
                   <div className="mt-2 text-danger">
@@ -404,8 +448,89 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Strand</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y">Substrand</h2>
+
           <div className="grid grid-cols-12 gap-6 mt-5">
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
+              <FormSelect
+                {...register("grade")}
+                name="grade"
+                onChange={(event) => handleGradeChange(event)}
+              >
+                {grades.map((grade: any, key) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.grade && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.grade.message === "string" &&
+                    errors.grade.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+              <FormSelect
+                {...register("learning_area")}
+                name="learning_area"
+                disabled
+              >
+                {learningAreas
+                  .filter(
+                    (area: any) => area?.grade_id?._id === strandFilter?.grade
+                  )
+                  .map((filteredArea: any, key) => (
+                    <option key={key} value={filteredArea?._id}>
+                      {filteredArea.name}
+                    </option>
+                  ))}
+              </FormSelect>
+              {errors.learning_area && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.learning_area.message === "string" &&
+                    errors.learning_area.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+              <FormSelect {...register("term")} name="term">
+                {terms.map((term: any, key) => (
+                  <option key={key} value={term._id}>
+                    {term.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.term && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.term.message === "string" &&
+                    errors.term.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
+              <FormSelect {...register("theme")} name="theme">
+                {strands.map((strand: any, key) => (
+                  <option key={key} value={strand._id}>
+                    {strand.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.theme && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.theme.message === "string" &&
+                    errors.theme.message}
+                </div>
+              )}
+            </div>
+
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
                 variant="primary"
@@ -415,7 +540,7 @@ function Main() {
                   setDialog(true);
                 }}
               >
-                New Strand
+                New Substrand
               </Button>
 
               <div className="hidden mx-auto md:block text-slate-500"></div>
@@ -441,44 +566,36 @@ function Main() {
                       Learning Area
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Theme
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
                       Action
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {grades.map((grade: any, key) => (
+                  {substrands.map((substrand: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {key + 1} */}
+                          {key + 1}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {grade.name} */}
+                          {substrand.name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {grade?.level_id?.name} */}
+                          {substrand.grade}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {grade.createdAt} */}
+                          {substrand.term}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {/* {key + 1} */}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {/* {strand.name} */}
+                          {substrand.learning_area}
                         </span>
                       </Table.Td>
 
@@ -495,7 +612,9 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(grade)}>
+                                <Menu.Item
+                                  onClick={() => editRecord(substrand)}
+                                >
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
@@ -504,7 +623,7 @@ function Main() {
                                 </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(grade._id),
+                                    setRecordId(substrand._id),
                                       setConfirmDelete(true);
                                   }}
                                 >

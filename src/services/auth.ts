@@ -131,6 +131,16 @@ export const getGrades =async ({ page }: { page: number }) => {
         }
       }
       
+      export const allStrands =async ({ page }: { page: number },filter:any) => {
+        try {
+            let res = await axios.get(c.STRANDS);
+            axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+            return res.data;
+          } catch (e) {
+            throw handler(e);
+          }
+        }
+
       export async function createStrand(data: FieldValues) {
         try {
           let res = await axios.post(c.STRANDS, data);
@@ -152,108 +162,36 @@ export const getGrades =async ({ page }: { page: number }) => {
         }
       }  
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export const createUser = async (username:any, phone:any, password:any, roleId:any) => {
-    try {
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-  
-      const userInput = {
-        username: username,
-        phoneNumber: phone,
-        password: password,
-        role: roleId,
-      };
-  
-      const graphql = JSON.stringify({
-        query: `mutation createUser($userInput: CreateUserInput) {
-          createUser(userInput: $userInput) {
-            _id
-            phoneNumber
-            status
-            deleted
-            password
-            tokenValidity
-            username
-            role
-            createdAt
-            updatedAt
+      export const getUser =async ({ page }: { page: number }) => {
+        try {
+            let res = await axios.get(c.USERS);
+            axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+            return res.data;
+          } catch (e) {
+            throw handler(e);
           }
-        }`,
-        variables: { userInput }
-      });
-  
-      const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: graphql,
-        redirect: 'follow' as RequestRedirect
-      };
-  
-      const response = await fetch(c.BASE_URL, requestOptions);
-      const result = await response.text();
-      console.log(result);
-    } catch (error) {
-      console.error('error', error);
-    }
-  } 
-    
-  
-
-  //fetchusers
+        }
+        
+        export async function createUser(data: FieldValues) {
+          try {
+            let res = await axios.post(c.USERS, data);
+            axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+            return res.data;
+          } catch (e) {
+            throw handler(e);
+          }
+        }
+        
+        export async function deleteUser(userId: any) {
+          try {
+          
+            let res = await axios.delete(c.USERS+'/'+userId);
+            console.log(res)
+            return res.data;
+          } catch (e) {
+            throw handler(e);
+          }
+        }
 
   
   //updateusers
@@ -302,36 +240,36 @@ export const createUser = async (username:any, phone:any, password:any, roleId:a
     }
   }
 
- //deleteusers
- export const deleteUsers = async ()  =>{
-  try {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const requestBody = JSON.stringify({
-      query: `mutation deleteUser($username: String!) {
-        deleteUser(username: $username) {
-          status
-          message
-        }
-      }`,
-      variables: { username: "john" }
-    });
-
-    const requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: requestBody,
-      redirect: 'follow' as RequestRedirect
-    };
-
-    const response = await fetch(c.BASE_URL, requestOptions);
-    const result = await response.text();
-    console.log(result);
-  } catch (error) {
-    console.error('error', error);
-  }
-}
+  export const getSubstrand =async ({ page }: { page: number }) => {
+    try {
+        let res = await axios.get(c.SUBSTRAND);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }
+    
+    export async function createSubstrand(data: FieldValues) {
+      try {
+        let res = await axios.post(c.SUBSTRAND, data);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }
+    
+    export async function deleteSubstrand(substrandId: any) {
+      try {
+      
+        let res = await axios.delete(c.SUBSTRAND+'/'+ substrandId);
+        console.log(res)
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }
 
  
 
@@ -1476,14 +1414,7 @@ export async function deleteSecurity(securityId: any) {
     }
 }
 
-export async function deleteUser(userId: any) {
-    try {
-        let res = await axios.delete(c.USERS + "/" + userId);
-        return res.data;
-    } catch (e) {
-        throw handler(e);
-    }
-}
+
 
 
 export function handler(err: any) {

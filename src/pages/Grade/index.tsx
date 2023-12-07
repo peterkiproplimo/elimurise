@@ -18,7 +18,6 @@ import TomSelect from "../../base-components/TomSelect";
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
-
   const [grades, setGrades] = useState([]);
   const [levels, setLevels] = useState([]);
 

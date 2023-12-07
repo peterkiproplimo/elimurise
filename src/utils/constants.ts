@@ -12,29 +12,15 @@ export const LOGIN = `${BASE_URL}cms/login`;
 export const LEVEL=`${BASE_URL}cms/level`
 export const GRADES=`${BASE_URL}cms/grades`
 export const LEARNING_AREA=`${BASE_URL}cms/learning-areas`
+export const USERS=`${BASE_URL}cms/users`
+export const SUBSTRAND=`${BASE_URL}cms/substrand`
 const Terms = {
     Term1: '1',
     Term2: '2',
     Term3: '3'
   };
   
-  export const STRANDS=`${BASE_URL}cms/strand`
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const STRANDS=`${BASE_URL}cms/strand`
 export const REGISTER = `${BASE_URL}register`;
 export const FORGOT_PASSWORD = `${BASE_URL}send-password/`; 
 export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
@@ -43,7 +29,6 @@ export const CONFERENCES = `${BASE_URL}events-service/conference`;
 export const THEMES = `${BASE_URL}events-service/theme`;
 export const EVENTS = `${BASE_URL}events-service/event`;
 export const DASHBOARD = `${BASE_URL}events-service/event/dashboard`;
-export const USERS = `${BASE_URL}users`;
 export const MAKES = `${BASE_URL}vehicle/makes`;
 export const VALUERS = `${BASE_URL}vehicle/valuers`;
 export const SECURITY_FEATURES = `${BASE_URL}vehicle/security_features`;
