@@ -33,12 +33,15 @@ function Main() {
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
-  const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
+  const [dialog, setDialog] = useState(false);
+  const [dataInput, setDataInput] = useState("");
+  const [rows, setRows] = useState<string[]>([]);
   const [hasTheme, setHasTheme] = useState(false);
+  const [selectedStrand, setSelectedStrand] = useState("na");
   const [strandFilter, setStrandFilter] = useState({
     grade: "na",
     learning_area: "na",
@@ -184,18 +187,25 @@ function Main() {
     });
     // You might want to fetch filtered data here
   };
+  const handleStrandChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    await setSelectedStrand(selectedValue);
 
-  const [rows, setRows] = useState<TableRow[]>([
-    { no: 1, strandName: "Example Strand" },
-  ]);
+    ///call substrands for this strand
+    let res = await ApiService.getSubstrandByStrand(selectedValue);
+    setSubstrands([]);
+    setSubstrands(res.data);
+    // You might want to fetch filtered data here
+  };
 
-  const addRow = () => {
-    const newRow: TableRow = {
-      no: rows.length + 1,
-      strandName: "New Strand",
-    };
-
-    setRows([...rows, newRow]);
+  const addRow = (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (dataInput.trim() !== "") {
+      setRows((prevRows) => [...prevRows, dataInput]);
+      setDataInput("");
+    }
   };
   return (
     <>
@@ -233,12 +243,7 @@ function Main() {
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect
-                  {...register("grade")}
-                  name="grade"
-
-                  // onChange={handleGradeChange}
-                >
+                <FormSelect {...register("grade")} name="grade" disabled>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -258,9 +263,7 @@ function Main() {
                 <FormSelect
                   {...register("learning_area")}
                   name="learning_area"
-                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                    handleLearningAreaChange(event)
-                  }
+                  disabled
                 >
                   {learningAreas
                     .filter(
@@ -282,11 +285,7 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-                <FormSelect
-                  {...register("term")}
-                  name="term"
-                  onChange={handleTermChange}
-                >
+                <FormSelect {...register("term")} name="term" disabled>
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
@@ -303,7 +302,7 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-                <FormSelect {...register("theme")} name="theme">
+                <FormSelect {...register("strand")} name="strand" disabled>
                   {strands.map((strand: any, key) => (
                     <option key={key} value={strand._id}>
                       {strand.name}
@@ -339,7 +338,7 @@ function Main() {
                     <input
                       type="checkbox"
                       {...register("grade")}
-                      name="grade"
+                      name="strands"
                       className="mr-2"
                     />
                     <span>Has multiple Substrands</span>
@@ -394,45 +393,50 @@ function Main() {
               <Button
                 variant="primary"
                 className="mr-2 shadow-md"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                }}
+                onClick={addRow}
               >
                 +
               </Button>
-              <Table className="border-spacing-y-[10px] border-separate -mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Indicator
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+              <Table
+                id="myTable"
+                className="border-spacing-y-[20px] border-separate -mt-2"
+              >
+                <thead>
+                  <tr>
+                    <th className="border-b-0 whitespace-nowrap">Indicator</th>
+                    <th className="border-b-0 whitespace-nowrap">
+                      {" "}
                       Exceeding Expectation
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    </th>
+                    <th className="border-b-0 whitespace-nowrap">
+                      {" "}
                       Meeting Expectation
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    </th>
+                    <th className="border-b-0 whitespace-nowrap">
+                      {" "}
                       Approaching Expectation
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    </th>
+                    <th className="border-b-0 whitespace-nowrap">
+                      {" "}
                       Below Expectation
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {grades.map((grade: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"></Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"></Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"></Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"></Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"></Table.Td>
-                    </Table.Tr>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((rowData, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{rowData}</td>
+                    </tr>
                   ))}
-                </Table.Tbody>
+                </tbody>
               </Table>
+              <input
+                type="text"
+                value={dataInput}
+                onChange={(e) => setDataInput(e.target.value)}
+                placeholder="Enter data"
+              />
               <Button variant="primary" type="submit" className="w-20">
                 Save
                 {loading && (
@@ -477,7 +481,7 @@ function Main() {
               <FormSelect
                 {...register("learning_area")}
                 name="learning_area"
-                disabled
+                onChange={(event) => handleLearningAreaChange(event)}
               >
                 {learningAreas
                   .filter(
@@ -499,7 +503,11 @@ function Main() {
 
             <div className="col-span-12 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-              <FormSelect {...register("term")} name="term">
+              <FormSelect
+                {...register("term")}
+                name="term"
+                onChange={(event) => handleTermChange(event)}
+              >
                 {terms.map((term: any, key) => (
                   <option key={key} value={term._id}>
                     {term.name}
@@ -516,7 +524,11 @@ function Main() {
 
             <div className="col-span-12 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-              <FormSelect {...register("theme")} name="theme">
+              <FormSelect
+                {...register("strand")}
+                name="strand"
+                onChange={(event) => handleStrandChange(event)}
+              >
                 {strands.map((strand: any, key) => (
                   <option key={key} value={strand._id}>
                     {strand.name}

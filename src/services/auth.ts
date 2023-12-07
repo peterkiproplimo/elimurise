@@ -123,6 +123,10 @@ export const getGrades =async ({ page }: { page: number }) => {
 
     export const getStrands =async ({ page }: { page: number },filter:any) => {
       try {
+          if(filter.learning_area==="na"){
+            console.log("failed...")
+            return;
+          }
           let res = await axios.get( `${c.STRANDS}/${filter.learning_area}/${filter.term}`);
           axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
           return res.data;
@@ -271,6 +275,16 @@ export const getGrades =async ({ page }: { page: number }) => {
       }
     }
 
+    export async function getSubstrandByStrand(strandId: any) {
+      try {
+      
+        let res = await axios.get(c.SUBSTRANDBYSTRAND+'/'+ strandId);
+        console.log(res)
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }
  
 
   
