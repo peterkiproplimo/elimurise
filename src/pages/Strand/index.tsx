@@ -163,6 +163,8 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
+
+    setStrands([]);
     await setStrandFilter({
       ...strandFilter,
       grade: selectedValue,
@@ -174,6 +176,7 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
+    setStrands([]);
     await setStrandFilter({
       ...strandFilter,
       learning_area: selectedValue,
@@ -185,6 +188,7 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
+    setStrands([]);
     await setStrandFilter({
       ...strandFilter,
       term: selectedValue,
@@ -195,6 +199,7 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const isChecked = event.target.checked;
+    setStrands([]);
     setHasTheme(isChecked);
     // You might want to fetch filtered data here
   };
@@ -476,6 +481,9 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Theme
                     </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Term
+                    </Table.Th>
 
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Status
@@ -511,7 +519,11 @@ function Main() {
                           {strand?.theme}
                         </span>
                       </Table.Td>
-
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {strand?.term}
+                        </span>
+                      </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           {true && (

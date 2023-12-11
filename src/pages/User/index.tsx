@@ -829,16 +829,20 @@ export default Main;
 //   )}
 // </div>
 //         {/* END: Data List */}
-//         {/* BEGIN: Pagination */}
-//         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-//           <FormSelect className="w-20 mt-3 !box sm:mt-0">
-//             <option>10</option>
-//             <option>25</option>
-//             <option>35</option>
-//             <option>50</option>
-//           </FormSelect>
-//         </div>
-//         {/* END: Pagination */}
+{
+  /* BEGIN: Pagination */
+}
+<div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+  <FormSelect className="w-20 mt-3 !box sm:mt-0">
+    <option>10</option>
+    <option>25</option>
+    <option>35</option>
+    <option>50</option>
+  </FormSelect>
+</div>;
+{
+  /* END: Pagination */
+}
 //       </div>
 //       <Dialog
 //         staticBackdrop

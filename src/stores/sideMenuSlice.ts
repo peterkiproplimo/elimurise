@@ -60,55 +60,59 @@ const initialState: SideMenuState = {
         pathname: "/strand",
         title: " Strands",
       },
-
       {
-        icon: "FileCheck",
-        title: "SubStrands",
-        subMenu: [
-          {
-            icon: "Activity",
-            pathname: "/substrand",
-            title: "Substrand",
-          },
-  
-        // {
+        icon: "Activity",
+        pathname: "/substrand",
+        title: "Substrand",
+      },
+    //   {
     //     icon: "FileCheck",
-    //     title: "Transactions",
+    //     title: "SubStrands",
     //     subMenu: [
     //       {
     //         icon: "Activity",
-    //         pathname: "/policy",
-    //         title: "Active Policy",
+    //         pathname: "/substrand",
+    //         title: "Substrand",
     //       },
+  
+    //     // {
+    // //     icon: "FileCheck",
+    // //     title: "Transactions",
+    // //     subMenu: [
+    // //       {
+    // //         icon: "Activity",
+    // //         pathname: "/policy",
+    // //         title: "Active Policy",
+    // //       },
         
-    //       {
-    //         icon: "Activity",
-    //         pathname: "/extension",
-    //         title: "Inactive Policy",
-    //       },  
+    // //       {
+    // //         icon: "Activity",
+    // //         pathname: "/extension",
+    // //         title: "Inactive Policy",
+    // //       },  
           
-    //     ]},
+    // //     ]},
    
-            // {
-            //   icon: "Activity",
-            //   pathname: "/active",
-            //   title: "Regular Users",
-            // },
+    //         // {
+    //         //   icon: "Activity",
+    //         //   pathname: "/active",
+    //         //   title: "Regular Users",
+    //         // },
           
-            // {
-            //   icon: "Activity",
-            //   pathname: "/pendingClaim",
-            //   title: "Admin",
-            // },
-            // {
-            //   icon: "Activity",
-            //   pathname: "/rejectedClaim",
-            //   title: "Rejected Claims",
-            // },
+    //         // {
+    //         //   icon: "Activity",
+    //         //   pathname: "/pendingClaim",
+    //         //   title: "Admin",
+    //         // },
+    //         // {
+    //         //   icon: "Activity",
+    //         //   pathname: "/rejectedClaim",
+    //         //   title: "Rejected Claims",
+    //         // },
             
             
             
-          ]},
+    //       ]},
            {
       icon: "Users",
       title: "Users",

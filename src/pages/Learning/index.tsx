@@ -14,6 +14,7 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
+import Pagination from "../../base-components/Pagination";
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -30,7 +31,15 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
-
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 1,
+    total_pages: 1,
+    per_page: 1,
+  });
+  const [page, setPage] = useState(1);
+  const [next_page, setNextPage] = useState(1);
+  const [previous_page, setPreviousPage] = useState(1);
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -57,7 +66,6 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        console.log(data);
         await ApiService.createLearningArea(data);
         await getLearningAreas();
         await reset();
@@ -138,7 +146,7 @@ function Main() {
             </a>
             <h2 className="mr-auto text-lg font-medium">New Learning Area</h2>
           </div>
-          <br />
+
           <form
             className="mt-5 p-5 intro-y  box validate-form"
             onSubmit={onSubmit}
@@ -228,12 +236,59 @@ function Main() {
               >
                 New Learning Area
               </Button>
+              <Menu>
+                <Menu.Button as={Button} className="px-2 !box">
+                  <span className="flex items-center justify-center w-5 h-5">
+                    <Lucide icon="Plus" className="w-4 h-4" />
+                  </span>
+                </Menu.Button>
+                <Menu.Items className="w-40">
+                  <Menu.Item>
+                    <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
+                  </Menu.Item>
+                  <Menu.Item>
+                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
+                    to Excel
+                  </Menu.Item>
+                  <Menu.Item>
+                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
+                    to PDF
+                  </Menu.Item>
+                </Menu.Items>
+              </Menu>
+              <div className="hidden mx-auto md:block text-slate-500">
+                Showing{" "}
+                {pagination.current_page +
+                  " to " +
+                  pagination.total_pages +
+                  " of " +
+                  pagination.total}{" "}
+                entries
+              </div>
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                <div className="relative w-56 text-slate-500">
+                  <FormInput
+                    type="text"
+                    className="w-56 pr-10 !box"
+                    placeholder="Search..."
+                  />
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                </div>
+                <FormSelect className="w-56 ml-2 xl:w-auto !box">
+                  <option>Status</option>
+                  <option>Active</option>
+                  <option>Inactive</option>
+                </FormSelect>
+              </div>
 
-              <div className="hidden mx-auto md:block text-slate-500"></div>
+              {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
             </div>
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <Table className="border-spacing-y-[10px] border-separate -mt-2">
+            <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
+              <Table className="border-spacing-y-[10px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">
@@ -280,7 +335,7 @@ function Main() {
                         </span>
                       </Table.Td>
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
                         <div className="flex items-center justify-center">
                           {true && (
                             <Menu>
@@ -324,7 +379,43 @@ function Main() {
                 </Table.Tbody>
               </Table>
             </div>
-            {/* END: Data List */}
+            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+              <Pagination className="w-full sm:w-auto sm:mr-auto">
+                <Pagination.Link
+                  onClick={() => (setPage(previous_page), getFAQ())}
+                >
+                  <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                </Pagination.Link>
+                {_.times(pagination.total_pages).map((page, key) =>
+                  page + 1 == pagination.current_page ? (
+                    <Pagination.Link
+                      onClick={() => (setPage(page + 1), getFAQ())}
+                      active
+                      key={key}
+                    >
+                      {page + 1}
+                    </Pagination.Link>
+                  ) : (
+                    <Pagination.Link
+                      onClick={() => (setPage(page + 1), getFAQ())}
+                      key={key}
+                    >
+                      {page + 1}
+                    </Pagination.Link>
+                  )
+                )}
+                <Pagination.Link onClick={() => (setPage(next_page), getFAQ())}>
+                  <Lucide icon="ChevronRight" className="w-4 h-4" />
+                </Pagination.Link>
+              </Pagination>
+              <FormSelect className="w-20 mt-3 !box sm:mt-0">
+                <option>10</option>
+                <option>25</option>
+                <option>35</option>
+                <option>50</option>
+              </FormSelect>
+            </div>
+            {/* END: Pagination */}
           </div>
           <Dialog
             staticBackdrop

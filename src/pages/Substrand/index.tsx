@@ -1,7 +1,13 @@
 // import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
-import { FormInput, FormLabel, FormSelect } from "../../base-components/Form";
+import {
+  FormCheck,
+  FormInput,
+  FormLabel,
+  FormSelect,
+  FormTextarea,
+} from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -14,6 +20,7 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
+import ClassicEditor from "../../base-components/Ckeditor/ClassicEditor";
 
 interface TableRow {
   no: number;
@@ -207,6 +214,58 @@ function Main() {
       setDataInput("");
     }
   };
+  const [showExtraFields, setShowExtraFields] = useState(true);
+  const [numberOfFields, setNumberOfFields] = useState(1);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleAddField = () => {
+    setNumberOfFields((prev) => prev + 1);
+  };
+  const handleRemoveField = (index) => {
+    setNumberOfFields((prev) => prev - 1);
+  };
+  const renderExtraFields = () => {
+    const fields = [];
+    for (let i = 0; i < numberOfFields; i++) {
+      fields.push(
+        <div key={i} className="col-span-12 sm:col-span-3">
+          <div className="col-span-12 sm:col-span-3">
+            <div className="grid grid-cols-12 gap-4 gap-y-3">
+              <div className="col-span-4">
+                <FormLabel htmlFor="modal-form-6">Substrand 1.{i}</FormLabel>
+              </div>
+              <div className="col-span-3">
+                <Lucide
+                  icon="Minus"
+                  className="text-red border-gray-400 rounded-md focus:ring-indigo-500 cursor-pointer"
+                  onClick={(e) => handleRemoveField(i)}
+                />
+              </div>
+            </div>
+
+            <FormInput
+              {...register("substrand")}
+              type="text"
+              name="substrand"
+              className={errors.name ? "border-danger" : ""}
+              placeholder="substrand"
+            />
+            {errors.role && (
+              <div className="mt-2 text-danger">
+                {typeof errors.role.message === "string" && errors.role.message}
+              </div>
+            )}
+
+            {/* <button type="button" onClick={() => handleRemoveField(i)}>
+              Remove
+            </button> */}
+          </div>
+        </div>
+      );
+    }
+    return fields;
+  };
+
   return (
     <>
       {dialog ? (
@@ -332,17 +391,18 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
+              {/* <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-12 sm:col-span-3">
                   <div className="flex items-center">
-                    <input
+                    <FormInput
                       type="checkbox"
                       {...register("grade")}
                       name="strands"
-                      className="mr-2"
+                      className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
                     />
-                    <span>Has multiple Substrands</span>
+                    <span>More Substrands</span>
                   </div>
+
                   {errors.grade && (
                     <div className="mt-2 text-danger">
                       {typeof errors.grade.message === "string" &&
@@ -350,29 +410,28 @@ function Main() {
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-          </form>
-          <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
-            <div>
-              <a
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(false);
-                }}
-                className="absolute  top-0 right-0 mt-3 mr-3"
-                href="#"
-              ></a>
+              </div> */}
+              {showExtraFields && renderExtraFields()}
+
+              {showExtraFields && (
+                <div className="col-span-12 sm:col-span-3">
+                  <Lucide
+                    icon="Plus"
+                    className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500 cursor-pointer"
+                    onClick={handleAddField}
+                  />
+                </div>
+
+                // <button type="button" onClick={handleAddField}>
+                //   Add More
+                // </button>
+              )}
             </div>
 
-            <div className="grid grid-cols-12 gap-1 gap-y-3">
+            <div className="grid  gap-1 gap-y-3">
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Learning Outcome</FormLabel>
-                <textarea
+                <ClassicEditor
                   {...register("learning_outcome")}
                   name="learning_outcome"
                   className="border rounded-md w-full p-2"
@@ -386,69 +445,89 @@ function Main() {
                 )}
               </div>
             </div>
-          </form>
-          <br />
-          <div className="mt-5 p-5 intro-y box validate-form">
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <Button
-                variant="primary"
-                className="mr-2 shadow-md"
-                onClick={addRow}
-              >
-                +
-              </Button>
-              <Table
-                id="myTable"
-                className="border-spacing-y-[20px] border-separate -mt-2"
-              >
-                <thead>
-                  <tr>
-                    <th className="border-b-0 whitespace-nowrap">Indicator</th>
-                    <th className="border-b-0 whitespace-nowrap">
-                      {" "}
-                      Exceeding Expectation
-                    </th>
-                    <th className="border-b-0 whitespace-nowrap">
-                      {" "}
-                      Meeting Expectation
-                    </th>
-                    <th className="border-b-0 whitespace-nowrap">
-                      {" "}
-                      Approaching Expectation
-                    </th>
-                    <th className="border-b-0 whitespace-nowrap">
-                      {" "}
-                      Below Expectation
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((rowData, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{rowData}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-              <input
-                type="text"
-                value={dataInput}
-                onChange={(e) => setDataInput(e.target.value)}
-                placeholder="Enter data"
-              />
-              <Button variant="primary" type="submit" className="w-20">
-                Save
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
+            <div className="grid grid-cols-12 gap-1 gap-y-3 mt-3">
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
+                <FormTextarea
+                  {...register("substrand")}
+                  type="text"
+                  name="substrand"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="substrand"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
                 )}
-              </Button>
+              </div>
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">E.E</FormLabel>
+                <FormTextarea
+                  {...register("substrand")}
+                  type="text"
+                  name="substrand"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="substrand"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">M.E</FormLabel>
+                <FormTextarea
+                  {...register("substrand")}
+                  type="text"
+                  name="substrand"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="substrand"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">A.E</FormLabel>
+                <FormTextarea
+                  {...register("substrand")}
+                  type="text"
+                  name="substrand"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="substrand"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">B.E</FormLabel>
+                <FormTextarea
+                  {...register("substrand")}
+                  type="text"
+                  name="substrand"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="substrand"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </form>
         </>
       ) : (
         <>
@@ -524,8 +603,7 @@ function Main() {
 
             <div className="col-span-12 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-              <FormSelect
-                {...register("strand")}
+              <TomSelect
                 name="strand"
                 onChange={(event) => handleStrandChange(event)}
               >
@@ -534,7 +612,7 @@ function Main() {
                     {strand.name}
                   </option>
                 ))}
-              </FormSelect>
+              </TomSelect>
               {errors.theme && (
                 <div className="mt-2 text-danger">
                   {typeof errors.theme.message === "string" &&

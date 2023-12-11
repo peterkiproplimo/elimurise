@@ -101,7 +101,14 @@ export const getGrades =async ({ page }: { page: number }) => {
     
     export async function createLearningArea(data: FieldValues) {
       try {
-        let res = await axios.post(c.LEARNING_AREA, data);
+        let res:any
+        if(data._id!==null){
+          res = await axios.put(c.LEARNING_AREA+'/'+data._id, data);
+        }
+      else{
+         res = await axios.post(c.LEARNING_AREA, data);
+      }
+      
         axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
         return res.data;
       } catch (e) {
