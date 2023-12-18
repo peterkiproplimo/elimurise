@@ -17,7 +17,7 @@ import * as yup from "yup";
 import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import ClassicEditor from "../../base-components/Ckeditor/ClassicEditor";
@@ -231,38 +231,84 @@ function Main() {
     const fields = [];
     for (let i = 0; i < numberOfFields; i++) {
       fields.push(
-        <div key={i} className="col-span-12 sm:col-span-3">
+        <div className="grid grid-cols-12 gap-1 gap-y-3 mt-3">
           <div className="col-span-12 sm:col-span-3">
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-4">
-                <FormLabel htmlFor="modal-form-6"> 1.1.{i + 1}</FormLabel>
-              </div>
-              <div className="col-span-3">
-                <Lucide
-                  icon="Minus"
-                  className="text-red border-gray-400 rounded-md focus:ring-indigo-500 cursor-pointer"
-                  onClick={(e) => handleRemoveField(i)}
-                />
-              </div>
-            </div>
+            <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
 
-            <FormInput
-              {...register("substrand")}
-              type="text"
-              name="substrand"
+            <FormTextarea
+              {...register("indicators[" + i + "].description")}
+              name={`indicators[${i}].description`}
               className={errors.name ? "border-danger" : ""}
-              placeholder="sub-substrand"
+              placeholder="Indicator Description"
             />
             {errors.role && (
               <div className="mt-2 text-danger">
                 {typeof errors.role.message === "string" && errors.role.message}
               </div>
             )}
-
-            {/* <button type="button" onClick={() => handleRemoveField(i)}>
-              Remove
-            </button> */}
           </div>
+          <div className="col-span-12 sm:col-span-3">
+            <FormLabel htmlFor="modal-form-6">E.E</FormLabel>
+
+            <FormTextarea
+              {...register("indicators[" + i + "].EE")}
+              name={`indicators[${i}].EE`}
+              className={errors.name ? "border-danger" : ""}
+              placeholder="Exceeding Expectation"
+            />
+            {errors.role && (
+              <div className="mt-2 text-danger">
+                {typeof errors.role.message === "string" && errors.role.message}
+              </div>
+            )}
+          </div>
+          <div className="col-span-12 sm:col-span-3">
+            <FormLabel htmlFor="modal-form-6">M.E</FormLabel>
+
+            <FormTextarea
+              {...register("indicators[" + i + "].ME")}
+              name={`indicators[${i}].ME`}
+              className={errors.name ? "border-danger" : ""}
+              placeholder="Meeting Expectation"
+            />
+            {errors.role && (
+              <div className="mt-2 text-danger">
+                {typeof errors.role.message === "string" && errors.role.message}
+              </div>
+            )}
+          </div>
+          <div className="col-span-12 sm:col-span-3">
+            <FormLabel htmlFor="modal-form-6">A.E</FormLabel>
+
+            <FormTextarea
+              {...register("indicators[" + i + "].AE")}
+              name={`indicators[${i}].AE`}
+              className={errors.name ? "border-danger" : ""}
+              placeholder="Approaching Expectation"
+            />
+            {errors.role && (
+              <div className="mt-2 text-danger">
+                {typeof errors.role.message === "string" && errors.role.message}
+              </div>
+            )}
+          </div>
+          <div className="col-span-12 sm:col-span-3">
+            <FormLabel htmlFor="modal-form-6">B.E</FormLabel>
+            <FormTextarea
+              {...register("indicators[" + i + "].BE")}
+              name={`indicators[${i}].BE`}
+              className={errors.name ? "border-danger" : ""}
+              placeholder="Below Expectation"
+            />
+            {errors.role && (
+              <div className="mt-2 text-danger">
+                {typeof errors.role.message === "string" && errors.role.message}
+              </div>
+            )}
+          </div>
+          <button type="button" onClick={() => handleRemoveField(i)}>
+            Remove
+          </button>
         </div>
       );
     }
@@ -322,11 +368,15 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormSelect {...register("learning_area")} name="learning_area">
+                <FormSelect
+                  {...register("learning_area")}
+                  name="learning_area"
+                  disabled
+                >
                   {learningAreas
-                    .filter(
-                      (area: any) => area?.grade?._id === strandFilter.grade
-                    )
+                    // .filter(
+                    //   (area: any) => area?.grade?._id === strandFilter.grade
+                    // )
                     .map((filteredArea: any, key) => (
                       <option key={key} value={filteredArea?._id}>
                         {filteredArea?.name}
@@ -377,9 +427,9 @@ function Main() {
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
                 <FormInput
-                  {...register("substrand")}
+                  {...register("name")}
                   type="text"
-                  name="substrand"
+                  name="name"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="substrand"
                 />
@@ -458,7 +508,7 @@ function Main() {
             <div className="grid  gap-1 gap-y-3">
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Learning Outcome</FormLabel>
-                <ClassicEditor
+                <FormTextarea
                   {...register("learning_outcome")}
                   name="learning_outcome"
                   className="border rounded-md w-full p-2"
@@ -472,85 +522,20 @@ function Main() {
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-1 gap-y-3 mt-3">
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
-                <FormTextarea
-                  {...register("substrand")}
-                  type="text"
-                  name="substrand"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Indicator Description"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">E.E</FormLabel>
-                <FormTextarea
-                  {...register("substrand")}
-                  type="text"
-                  name="substrand"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Exceeding Expectation"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">M.E</FormLabel>
-                <FormTextarea
-                  {...register("substrand")}
-                  name="substrand"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Meeting Expectation"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">A.E</FormLabel>
-                <FormTextarea
-                  {...register("substrand")}
-                  name="substrand"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Approaching Expectation"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">B.E</FormLabel>
-                <FormTextarea
-                  {...register("substrand")}
-                  name="substrand"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Below Expectation"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
+            <div>
+              {showExtraFields && renderExtraFields()}
+
+              {showExtraFields && (
+                <div className="col-span-12 sm:col-span-3">
+                  <Lucide
+                    icon="Plus"
+                    className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500 cursor-pointer"
+                    onClick={handleAddField}
+                  />
+                </div>
+              )}
             </div>
+
             <div className="col-span-12 sm:col-span-12 mt-3">
               <Button
                 type="button"
@@ -692,14 +677,12 @@ function Main() {
                       Substrand
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Grade
+                      Parent
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Term
+                      Indicator
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Learning Area
-                    </Table.Th>
+
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Action
                     </Table.Th>
@@ -720,19 +703,20 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {substrand.grade}
+                          {substrand.is_child ? "false" : "true"}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {substrand.term}
+                          {substrand.learning_outcome}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {substrand.learning_area}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
