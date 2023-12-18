@@ -159,7 +159,9 @@ function Main() {
   };
   useEffect(() => {
     setSubstrands([]);
-    getSubstrand();
+    setStrands([]);
+    getStrands();
+    // getSubstrand();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter]);
 
@@ -232,7 +234,7 @@ function Main() {
           <div className="col-span-12 sm:col-span-3">
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-4">
-                <FormLabel htmlFor="modal-form-6">Substrand 1.{i}</FormLabel>
+                <FormLabel htmlFor="modal-form-6"> 1.1.{i + 1}</FormLabel>
               </div>
               <div className="col-span-3">
                 <Lucide
@@ -248,7 +250,7 @@ function Main() {
               type="text"
               name="substrand"
               className={errors.name ? "border-danger" : ""}
-              placeholder="substrand"
+              placeholder="sub-substrand"
             />
             {errors.role && (
               <div className="mt-2 text-danger">
@@ -453,7 +455,7 @@ function Main() {
                   type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="substrand"
+                  placeholder="Indicator Description"
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -469,7 +471,7 @@ function Main() {
                   type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="substrand"
+                  placeholder="Exceeding Expectation"
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -485,7 +487,7 @@ function Main() {
                   type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="substrand"
+                  placeholder="Meeting Expectation"
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -501,7 +503,7 @@ function Main() {
                   type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="substrand"
+                  placeholder="Approaching Expectation"
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -517,7 +519,7 @@ function Main() {
                   type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="substrand"
+                  placeholder="Below Expectation"
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -526,6 +528,26 @@ function Main() {
                   </div>
                 )}
               </div>
+            </div>
+            <div className="col-span-12 sm:col-span-12 mt-3">
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={() => cancel({ name: "" })}
+                className="w-20 mr-1"
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" className="w-20">
+                Save
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </Button>
             </div>
           </form>
         </>
