@@ -47,7 +47,7 @@ function Main() {
   const [dialog, setDialog] = useState(false);
   const [dataInput, setDataInput] = useState("");
   const [rows, setRows] = useState<string[]>([]);
-  const [hasTheme, setHasTheme] = useState(false);
+  const [is_child, setIs_child] = useState(false);
   const [selectedStrand, setSelectedStrand] = useState("na");
   const [strandFilter, setStrandFilter] = useState({
     grade: "na",
@@ -112,7 +112,7 @@ function Main() {
     getStrands();
   }, []);
   const getStrands = async () => {
-    const response = await ApiService.allStrands({ page: 1 }, strandFilter);
+    const response = await ApiService.getStrands({ page: 1 }, strandFilter);
     setStrands(response.data);
   };
   const getSubstrand = async () => {
@@ -196,6 +196,7 @@ function Main() {
     });
     // You might want to fetch filtered data here
   };
+
   const handleStrandChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -321,11 +322,7 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormSelect
-                  {...register("learning_area")}
-                  name="learning_area"
-                  disabled
-                >
+                <FormSelect {...register("learning_area")} name="learning_area">
                   {learningAreas
                     .filter(
                       (area: any) => area?.grade?._id === strandFilter.grade
@@ -393,6 +390,34 @@ function Main() {
                   </div>
                 )}
               </div>
+              <div className="col-span-12 sm:col-span-3">
+                <FormInput
+                  type="checkbox"
+                  {...register("is_child")}
+                  name="is_child"
+                  checked={is_child}
+                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                  onChange={(e: any) => setIs_child(!is_child)}
+                />
+                <FormLabel htmlFor="modal-form-6">Child</FormLabel>
+              </div>
+              {is_child && (
+                <div className="col-span-12 sm:col-span-3">
+                  <FormSelect {...register("parent")} name="parent">
+                    {substrands.map((strand: any, key) => (
+                      <option key={key} value={strand._id}>
+                        {strand.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                  {errors.theme && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.theme.message === "string" &&
+                        errors.theme.message}
+                    </div>
+                  )}
+                </div>
+              )}
               {/* <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-12 sm:col-span-3">
                   <div className="flex items-center">
@@ -413,8 +438,8 @@ function Main() {
                   )}
                 </div>
               </div> */}
-              {showExtraFields && renderExtraFields()}
-
+              {/* {showExtraFields && renderExtraFields()} */}
+              {/* 
               {showExtraFields && (
                 <div className="col-span-12 sm:col-span-3">
                   <Lucide
@@ -427,7 +452,7 @@ function Main() {
                 // <button type="button" onClick={handleAddField}>
                 //   Add More
                 // </button>
-              )}
+              )} */}
             </div>
 
             <div className="grid  gap-1 gap-y-3">
@@ -484,7 +509,6 @@ function Main() {
                 <FormLabel htmlFor="modal-form-6">M.E</FormLabel>
                 <FormTextarea
                   {...register("substrand")}
-                  type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="Meeting Expectation"
@@ -500,7 +524,6 @@ function Main() {
                 <FormLabel htmlFor="modal-form-6">A.E</FormLabel>
                 <FormTextarea
                   {...register("substrand")}
-                  type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="Approaching Expectation"
@@ -516,7 +539,6 @@ function Main() {
                 <FormLabel htmlFor="modal-form-6">B.E</FormLabel>
                 <FormTextarea
                   {...register("substrand")}
-                  type="text"
                   name="substrand"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="Below Expectation"
@@ -607,7 +629,7 @@ function Main() {
               <FormSelect
                 {...register("term")}
                 name="term"
-                onChange={(event) => handleTermChange(event)}
+                onChange={(event: any) => handleTermChange(event)}
               >
                 {terms.map((term: any, key) => (
                   <option key={key} value={term._id}>
@@ -625,16 +647,17 @@ function Main() {
 
             <div className="col-span-12 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-              <TomSelect
+              <FormSelect
+                {...register("strand")}
                 name="strand"
-                onChange={(event) => handleStrandChange(event)}
+                onChange={(event: any) => handleStrandChange(event)}
               >
                 {strands.map((strand: any, key) => (
                   <option key={key} value={strand._id}>
                     {strand.name}
                   </option>
                 ))}
-              </TomSelect>
+              </FormSelect>
               {errors.theme && (
                 <div className="mt-2 text-danger">
                   {typeof errors.theme.message === "string" &&

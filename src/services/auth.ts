@@ -144,7 +144,7 @@ export const getGrades =async ({ page }: { page: number }) => {
       
       export const allStrands =async ({ page }: { page: number },filter:any) => {
         try {
-            let res = await axios.get(c.STRANDS);
+            let res = await axios.get(c.STRANDS,filter);
             axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
             return res.data;
           } catch (e) {

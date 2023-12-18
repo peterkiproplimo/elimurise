@@ -14,7 +14,7 @@ export const GRADES=`${BASE_URL}cms/grades`
 export const LEARNING_AREA=`${BASE_URL}cms/learning-areas`
 export const USERS=`${BASE_URL}cms/users`
 export const SUBSTRAND=`${BASE_URL}cms/substrand`
-export const SUBSTRANDBYSTRAND=`${BASE_URL}cms/substrandsByStrand`
+export const SUBSTRANDBYSTRAND=`${BASE_URL}cms/substrand/ByStrand`
 export const LEARNING_OUTCOME=`${BASE_URL}cms/substrandsByStrand`
 const Terms = {
     Term1: '1',
