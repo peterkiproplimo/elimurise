@@ -32,11 +32,18 @@ try {
   }
 }
 
-export async function createLevel(data: FieldValues) {
+export async function createLevel(data: any) {
   try {
-    let res = await axios.post(c.LEVEL, data);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+    if(data._id){
+      let res = await axios.put(c.LEVEL, data);
+  
+      return res.data;
+    }
+    else{
+      let res = await axios.post(c.LEVEL, data);
+   
     return res.data;
+    }
   } catch (e) {
     throw handler(e);
   }
@@ -69,9 +76,15 @@ export const getGrades =async ({ page }: { page: number }) => {
   
   export async function createGrade(data: FieldValues) {
     try {
+      if(data._id){
+        let res = await axios.put(c.GRADES, data);
+        return res.data;
+      }
+     else{
       let res = await axios.post(c.GRADES, data);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
       return res.data;
+     }
+      
     } catch (e) {
       throw handler(e);
     }
@@ -102,7 +115,7 @@ export const getGrades =async ({ page }: { page: number }) => {
     export async function createLearningArea(data: FieldValues) {
       try {
         let res:any
-        if(data._id!==null){
+        if(data._id){
           res = await axios.put(c.LEARNING_AREA+'/'+data._id, data);
         }
       else{
@@ -154,9 +167,17 @@ export const getGrades =async ({ page }: { page: number }) => {
 
       export async function createStrand(data: FieldValues) {
         try {
-          let res = await axios.post(c.STRANDS, data);
-          axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
-          return res.data;
+          if(data._id){
+            let res = await axios.put(c.STRANDS, data);
+            return res.data;
+          }
+          else{
+            let res = await axios.post(c.STRANDS, data);
+            return res.data;
+          }
+         
+          
+          
         } catch (e) {
           throw handler(e);
         }

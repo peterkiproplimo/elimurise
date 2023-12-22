@@ -81,7 +81,6 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        console.log(data);
         await ApiService.createStrand(data);
         await getStrands();
         await reset();
@@ -117,6 +116,7 @@ function Main() {
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
+
     setGrades(response.data);
   };
   const getLearningAreas = async () => {
@@ -163,7 +163,7 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
-
+    console.log(learningAreas);
     setStrands([]);
     await setStrandFilter({
       ...strandFilter,
@@ -195,9 +195,7 @@ function Main() {
     });
     // You might want to fetch filtered data here
   };
-  const handleHasThemeChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleHasThemeChange = async (event: any) => {
     const isChecked = event.target.checked;
     setStrands([]);
     setHasTheme(isChecked);
@@ -330,7 +328,7 @@ function Main() {
                   name="grade"
                   checked={hasTheme}
                   className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                  onChange={handleHasThemeChange}
+                  onChange={(e: any) => handleHasThemeChange(e)}
                 />
                 <FormLabel htmlFor="modal-form-6">Theme</FormLabel>
                 {errors.grade && (
@@ -389,6 +387,7 @@ function Main() {
                 name="grade"
                 onChange={(event) => handleGradeChange(event)}
               >
+                <option>Select Grade</option>
                 {grades.map((grade: any, key) => (
                   <option key={key} value={grade._id}>
                     {grade.name}
@@ -436,6 +435,7 @@ function Main() {
                 name="term"
                 onChange={(event) => handleTermChange(event)}
               >
+                <option>Select Term</option>
                 {terms.map((term: any, key) => (
                   <option key={key} value={term._id}>
                     {term.name}

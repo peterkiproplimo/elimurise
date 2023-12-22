@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import Pagination from "../../base-components/Pagination";
-
+import { formatDate } from "../../utils/helper";
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -118,7 +118,7 @@ function Main() {
 
   const editRecord = (record: any) => {
     setGroup(record.groups);
-    reset(record);
+    reset({ ...record, grade_id: record.grade_id._id });
     setDialog(true);
   };
 
@@ -331,7 +331,10 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learningArea.createdAt}
+                          {formatDate(
+                            learningArea.createdAt,
+                            "YYYY-MM-DD HH:MM"
+                          )}
                         </span>
                       </Table.Td>
 
@@ -380,7 +383,7 @@ function Main() {
               </Table>
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <Pagination className="w-full sm:w-auto sm:mr-auto">
+              {/* <Pagination className="w-full sm:w-auto sm:mr-auto">
                 <Pagination.Link
                   onClick={() => (setPage(previous_page), getFAQ())}
                 >
@@ -407,7 +410,7 @@ function Main() {
                 <Pagination.Link onClick={() => (setPage(next_page), getFAQ())}>
                   <Lucide icon="ChevronRight" className="w-4 h-4" />
                 </Pagination.Link>
-              </Pagination>
+              </Pagination> */}
               <FormSelect className="w-20 mt-3 !box sm:mt-0">
                 <option>10</option>
                 <option>25</option>

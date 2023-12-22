@@ -14,7 +14,7 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
-
+import { formatDate } from "../../utils/helper";
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -31,6 +31,7 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
+  const [selectedLevel, setSelectedLevel] = useState("");
 
   // Success notification
   const notify = useRef<NotificationElement>();
@@ -110,8 +111,12 @@ function Main() {
   };
 
   const editRecord = (record: any) => {
+    setSelectedLevel(record.level_id._id);
+    console.log(selectedLevel);
     setGroup(record.groups);
-    reset(record);
+    reset({ ...record, level_id: record.level_id._id });
+
+    console.log({ ...record, level_id: record.level_id._id });
     setDialog(true);
   };
 
@@ -119,6 +124,7 @@ function Main() {
     setGroup([""]);
     setPermission([""]);
     reset(record);
+
     setDialog(false);
   };
 
@@ -175,8 +181,13 @@ function Main() {
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">Level</FormLabel>
-                <FormSelect {...register("level_id")} name="level_id">
-                  {levels.map((level: any, key) => (
+                <FormSelect
+                  {...register("level_id")}
+                  name="level_id"
+
+                  // defaultValue={selectedLevel}
+                >
+                  {levels.map((level: any, key: any) => (
                     <option key={key} value={level._id}>
                       {level.name}
                     </option>
@@ -277,7 +288,7 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {grade.createdAt}
+                          {formatDate(grade.createdAt, "YYYY-MM-DD")}
                         </span>
                       </Table.Td>
 

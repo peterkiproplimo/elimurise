@@ -63,7 +63,7 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      grade: yup.string().required("Level is required"),
+      // grade: yup.string().required("Level is required"),
     })
     .required();
 
@@ -92,7 +92,7 @@ function Main() {
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Strand created successfully.");
+        setMessage("Sub Strand created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -116,8 +116,8 @@ function Main() {
     setStrands(response.data);
   };
   const getSubstrand = async () => {
-    const response = await ApiService.getSubstrand({ page: 1 });
-    setSubstrands(response.data);
+    let res = await ApiService.getSubstrandByStrand(selectedStrand);
+    setSubstrands(res.data);
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
@@ -224,15 +224,18 @@ function Main() {
   const handleAddField = () => {
     setNumberOfFields((prev) => prev + 1);
   };
-  const handleRemoveField = (index) => {
+  const handleRemoveField = (index: any) => {
     setNumberOfFields((prev) => prev - 1);
   };
   const renderExtraFields = () => {
     const fields = [];
     for (let i = 0; i < numberOfFields; i++) {
       fields.push(
-        <div className="grid grid-cols-12 gap-1 gap-y-3 mt-3">
-          <div className="col-span-12 sm:col-span-3">
+        <div
+          className="grid  gap-1 "
+          style={{ borderTop: "2px dotted grey", paddingTop: "10px" }}
+        >
+          <div className="col-span-3 sm:col-span-3">
             <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
 
             <FormTextarea
@@ -247,68 +250,76 @@ function Main() {
               </div>
             )}
           </div>
-          <div className="col-span-12 sm:col-span-3">
-            <FormLabel htmlFor="modal-form-6">E.E</FormLabel>
+          <div className="grid grid-cols-12 gap-1 gap-y-3 mt-3">
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">E.E(4)</FormLabel>
 
-            <FormTextarea
-              {...register("indicators[" + i + "].EE")}
-              name={`indicators[${i}].EE`}
-              className={errors.name ? "border-danger" : ""}
-              placeholder="Exceeding Expectation"
-            />
-            {errors.role && (
-              <div className="mt-2 text-danger">
-                {typeof errors.role.message === "string" && errors.role.message}
-              </div>
-            )}
-          </div>
-          <div className="col-span-12 sm:col-span-3">
-            <FormLabel htmlFor="modal-form-6">M.E</FormLabel>
+              <FormTextarea
+                {...register("indicators[" + i + "].EE")}
+                name={`indicators[${i}].EE`}
+                className={errors.name ? "border-danger" : ""}
+                placeholder="Exceeding Expectation"
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">M.E(3)</FormLabel>
 
-            <FormTextarea
-              {...register("indicators[" + i + "].ME")}
-              name={`indicators[${i}].ME`}
-              className={errors.name ? "border-danger" : ""}
-              placeholder="Meeting Expectation"
-            />
-            {errors.role && (
-              <div className="mt-2 text-danger">
-                {typeof errors.role.message === "string" && errors.role.message}
-              </div>
-            )}
-          </div>
-          <div className="col-span-12 sm:col-span-3">
-            <FormLabel htmlFor="modal-form-6">A.E</FormLabel>
+              <FormTextarea
+                {...register("indicators[" + i + "].ME")}
+                name={`indicators[${i}].ME`}
+                className={errors.name ? "border-danger" : ""}
+                placeholder="Meeting Expectation"
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">A.E(2)</FormLabel>
 
-            <FormTextarea
-              {...register("indicators[" + i + "].AE")}
-              name={`indicators[${i}].AE`}
-              className={errors.name ? "border-danger" : ""}
-              placeholder="Approaching Expectation"
-            />
-            {errors.role && (
-              <div className="mt-2 text-danger">
-                {typeof errors.role.message === "string" && errors.role.message}
-              </div>
-            )}
+              <FormTextarea
+                {...register("indicators[" + i + "].AE")}
+                name={`indicators[${i}].AE`}
+                className={errors.name ? "border-danger" : ""}
+                placeholder="Approaching Expectation"
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">B.E(1)</FormLabel>
+              <FormTextarea
+                {...register("indicators[" + i + "].BE")}
+                name={`indicators[${i}].BE`}
+                className={errors.name ? "border-danger" : ""}
+                placeholder="Below Expectation"
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div>
+              <button type="button" onClick={() => handleRemoveField(i)}>
+                Remove
+              </button>
+            </div>
           </div>
-          <div className="col-span-12 sm:col-span-3">
-            <FormLabel htmlFor="modal-form-6">B.E</FormLabel>
-            <FormTextarea
-              {...register("indicators[" + i + "].BE")}
-              name={`indicators[${i}].BE`}
-              className={errors.name ? "border-danger" : ""}
-              placeholder="Below Expectation"
-            />
-            {errors.role && (
-              <div className="mt-2 text-danger">
-                {typeof errors.role.message === "string" && errors.role.message}
-              </div>
-            )}
-          </div>
-          <button type="button" onClick={() => handleRemoveField(i)}>
-            Remove
-          </button>
         </div>
       );
     }
@@ -570,6 +581,7 @@ function Main() {
                 name="grade"
                 onChange={(event) => handleGradeChange(event)}
               >
+                <option>Select Grade</option>
                 {grades.map((grade: any, key) => (
                   <option key={key} value={grade._id}>
                     {grade.name}
@@ -591,6 +603,7 @@ function Main() {
                 name="learning_area"
                 onChange={(event) => handleLearningAreaChange(event)}
               >
+                <option>Select Learning Area</option>
                 {learningAreas
                   .filter(
                     (area: any) => area?.grade_id?._id === strandFilter?.grade
@@ -616,6 +629,7 @@ function Main() {
                 name="term"
                 onChange={(event: any) => handleTermChange(event)}
               >
+                <option>Select Term</option>
                 {terms.map((term: any, key) => (
                   <option key={key} value={term._id}>
                     {term.name}
@@ -637,6 +651,7 @@ function Main() {
                 name="strand"
                 onChange={(event: any) => handleStrandChange(event)}
               >
+                <option>Select Strand</option>
                 {strands.map((strand: any, key) => (
                   <option key={key} value={strand._id}>
                     {strand.name}

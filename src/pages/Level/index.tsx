@@ -14,7 +14,7 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
-
+import { formatDate } from "../../utils/helper";
 function Level() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -133,7 +133,7 @@ function Level() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className="mr-auto text-lg font-medium">New Role</h2>
+            <h2 className="mr-auto text-lg font-medium">New Level</h2>
           </div>
           <br />
           <form
@@ -247,7 +247,7 @@ function Level() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {level.createdAt}
+                          {formatDate(level.createdAt, "YYYY-MM-DD")}
                         </span>
                       </Table.Td>
 
