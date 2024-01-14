@@ -64,7 +64,7 @@ const initialState: SideMenuState = {
         icon: "Activity",
         pathname: "/substrand",
         title: "Substrand",
-      },
+      }
     //   {
     //     icon: "FileCheck",
     //     title: "SubStrands",
@@ -113,57 +113,57 @@ const initialState: SideMenuState = {
             
             
     //       ]},
-           {
-      icon: "Users",
-      title: "Users",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/user",
-          title: "Users",
-        },
-  ]},
+          //  {
+  //     icon: "Users",
+  //     title: "Users",
+  //     subMenu: [
+  //       {
+  //         icon: "Activity",
+  //         pathname: "/user",
+  //         title: "Users",
+  //       },
+  // ]},
          
-          "divider",
+  //         "divider",
 
     
-          {
-            icon: "Cog",
-            title: "Settings",
-            subMenu: [
-              {
-                icon: "Activity",
-                pathname: "/Role",
-                title: "Roles",
-              },
+  //         {
+  //           icon: "Cog",
+  //           title: "Settings",
+  //           subMenu: [
+  //             {
+  //               icon: "Activity",
+  //               pathname: "/Role",
+  //               title: "Roles",
+  //             },
               
              
       
-              // {
-              //   icon: "Activity",
-              //   pathname: "/Logs",
-              //   title: "Games Logs",
-              // },
-              // {
-              //   icon: "Activity",
-              //   pathname: "/Logs",
-              //   title: "System Logs",
-              // },
+  //             // {
+  //             //   icon: "Activity",
+  //             //   pathname: "/Logs",
+  //             //   title: "Games Logs",
+  //             // },
+  //             // {
+  //             //   icon: "Activity",
+  //             //   pathname: "/Logs",
+  //             //   title: "System Logs",
+  //             // },
             
            
       
-              {
-                icon: "Activity",
-                pathname: "/NewProfile",
-                title: "Change Password",
-              },
-              {
-                icon: "Activity",
-                pathname: "/Settings",
-                title: "Settings",
-              },
-            ],
-          },
+  //             {
+  //               icon: "Activity",
+  //               pathname: "/NewProfile",
+  //               title: "Change Password",
+  //             },
+  //             {
+  //               icon: "Activity",
+  //               pathname: "/Settings",
+  //               title: "Settings",
+  //             },
+  //           ],
+  //         },
           // {
      
           //   icon: "Info",
@@ -196,11 +196,11 @@ const initialState: SideMenuState = {
         //   },
           
         // ]},
-        {
-          icon: "User",
-          pathname: "/update-profile",
-          title: "Profile",
-        }
+        // {
+        //   icon: "User",
+        //   pathname: "/update-profile",
+        //   title: "Profile",
+        // }
 
     
 
