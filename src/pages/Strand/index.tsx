@@ -2,9 +2,11 @@ import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
 import {
+  FormCheck,
   FormInput,
   FormLabel,
   FormSelect,
+  FormSwitch,
   FormTextarea,
 } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
@@ -48,7 +50,7 @@ function Main() {
   const [strandFilter, setStrandFilter] = useState({
     grade: "na",
     learning_area: "na",
-    term: "1",
+    term: "na",
   });
   const terms = [
     { _id: 1, name: "Term 1" },
@@ -166,7 +168,8 @@ function Main() {
     console.log(learningAreas);
     setStrands([]);
     await setStrandFilter({
-      ...strandFilter,
+      learning_area: "na",
+      term: "na",
       grade: selectedValue,
     });
 
@@ -248,7 +251,12 @@ function Main() {
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-                <FormSelect {...register("grade")} name="grade" disabled>
+                <FormSelect
+                  {...register("grade")}
+                  name="grade"
+                  value={strandFilter.grade}
+                  disabled
+                >
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -268,6 +276,7 @@ function Main() {
                 <FormSelect
                   {...register("learning_area")}
                   name="learning_area"
+                  value={strandFilter.learning_area}
                   disabled
                 >
                   {learningAreas
@@ -290,7 +299,12 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
-                <FormSelect {...register("term")} name="term" disabled>
+                <FormSelect
+                  {...register("term")}
+                  name="term"
+                  value={strandFilter.term}
+                  disabled
+                >
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
@@ -322,15 +336,22 @@ function Main() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-3">
-                <FormInput
-                  type="checkbox"
+                <FormCheck.Input
                   {...register("grade")}
+                  id="checkbox-switch-7"
+                  type="checkbox"
+                  className="mr-2"
                   name="grade"
-                  checked={hasTheme}
-                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
                   onChange={(e: any) => handleHasThemeChange(e)}
                 />
-                <FormLabel htmlFor="modal-form-6">Theme</FormLabel>
+
+                {/* <FormInput
+                  type="checkbox"
+                  checked={false}
+                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                /> */}
+
+                <FormLabel htmlFor="modal-form-6"> Theme</FormLabel>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
                     {typeof errors.grade.message === "string" &&
@@ -385,6 +406,7 @@ function Main() {
               <FormSelect
                 {...register("grade")}
                 name="grade"
+                value={strandFilter.grade}
                 onChange={(event) => handleGradeChange(event)}
               >
                 <option>Select Grade</option>
@@ -407,6 +429,7 @@ function Main() {
               <FormSelect
                 {...register("learning_area")}
                 name="learning_area"
+                value={strandFilter.learning_area}
                 onChange={(event) => handleLearningAreaChange(event)}
               >
                 <option>Select Learning Area</option>
@@ -433,6 +456,7 @@ function Main() {
               <FormSelect
                 {...register("term")}
                 name="term"
+                value={strandFilter.term}
                 onChange={(event) => handleTermChange(event)}
               >
                 <option>Select Term</option>

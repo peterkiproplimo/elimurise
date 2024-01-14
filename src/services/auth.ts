@@ -284,9 +284,15 @@ export const getGrades =async ({ page }: { page: number }) => {
     
     export async function createSubstrand(data: FieldValues) {
       try {
+        if(data._id){
+          let res = await axios.put(c.SUBSTRAND+"/"+ data._id, data);
+          return res.data;
+        }
+       else{
         let res = await axios.post(c.SUBSTRAND, data);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
         return res.data;
+       }
+       
       } catch (e) {
         throw handler(e);
       }

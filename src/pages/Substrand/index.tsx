@@ -21,7 +21,9 @@ import { useForm, Controller } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import ClassicEditor from "../../base-components/Ckeditor/ClassicEditor";
-
+import React from "react";
+import { setValue } from "../../base-components/TomSelect/tom-select";
+import "./substrand.css";
 interface TableRow {
   no: number;
   strandName: string;
@@ -49,11 +51,15 @@ function Main() {
   const [rows, setRows] = useState<string[]>([]);
   const [is_child, setIs_child] = useState(false);
   const [selectedStrand, setSelectedStrand] = useState("na");
+  const [selected, setSelected] = useState({
+    indicator: [],
+  });
   const [strandFilter, setStrandFilter] = useState({
     grade: "na",
     learning_area: "na",
-    term: "1",
+    term: "na",
   });
+  const [learningOutcome, setLearningOutcome] = useState("na");
   const terms = [
     { _id: 1, name: "Term 1" },
     { _id: 2, name: "Term 2" },
@@ -63,7 +69,7 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      // grade: yup.string().required("Level is required"),
+      name: yup.string().required("Substrand name is required"),
     })
     .required();
 
@@ -72,6 +78,7 @@ function Main() {
     trigger,
     getValues,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -92,7 +99,7 @@ function Main() {
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Sub Strand created successfully.");
+        setMessage("Substrand created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -146,12 +153,16 @@ function Main() {
   };
 
   const editRecord = (record: any) => {
+    setNumberOfFields(0);
     setGroup(record.groups);
     reset(record);
     setDialog(true);
+    console.log(record);
+    setSelected({ indicator: record?.indicators });
   };
 
   const cancel = (record: any) => {
+    setNumberOfFields(1);
     setGroup([""]);
     setPermission([""]);
     reset(record);
@@ -169,10 +180,11 @@ function Main() {
     // console.log("hello");
     const selectedValue = event.target.value;
     setStrandFilter({
-      ...strandFilter,
+      term: "na",
+      learning_area: "na",
       grade: selectedValue,
     });
-
+    setSelectedStrand("na");
     // You might want to fetch filtered data here
   };
   const handleLearningAreaChange = async (
@@ -227,21 +239,120 @@ function Main() {
   const handleRemoveField = (index: any) => {
     setNumberOfFields((prev) => prev - 1);
   };
-  const renderExtraFields = () => {
+
+  const renderExtraFields = (selected: any) => {
     const fields = [];
-    for (let i = 0; i < numberOfFields; i++) {
+
+    selected.indicator.map((indicator: any, i: any) => {
       fields.push(
-        <div
-          className="grid  gap-1 "
-          style={{ borderTop: "2px dotted grey", paddingTop: "10px" }}
-        >
+        <div className="grid  gap-1 box mt-5 p-5">
           <div className="col-span-3 sm:col-span-3">
             <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
-
             <FormTextarea
               {...register("indicators[" + i + "].description")}
               name={`indicators[${i}].description`}
-              className={errors.name ? "border-danger" : ""}
+              className={errors.indicator ? "border-danger" : ""}
+              placeholder="Indicator Description"
+              value={indicator[0].description}
+            />
+
+            {errors.role && (
+              <div className="mt-2 text-danger">
+                {typeof errors.role.message === "string" && errors.role.message}
+              </div>
+            )}
+          </div>
+          <div className="grid grid-cols-12 gap-1 gap-y-3 mt-3">
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">E.E(4)</FormLabel>
+
+              <FormTextarea
+                {...register("indicators[" + i + "].EE")}
+                name={`indicators[${i}].EE`}
+                className={errors.indicator ? "border-danger" : ""}
+                placeholder="Exceeding Expectation"
+                value={indicator[0].EE}
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">M.E(3)</FormLabel>
+
+              <FormTextarea
+                {...register("indicators[" + i + "].ME")}
+                name={`indicators[${i}].ME`}
+                className={errors.indicator ? "border-danger" : ""}
+                placeholder="Meeting Expectation"
+                value={indicator[0].ME}
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">A.E(2)</FormLabel>
+
+              <FormTextarea
+                {...register("indicators[" + i + "].AE")}
+                name={`indicators[${i}].AE`}
+                className={errors.indicator ? "border-danger" : ""}
+                placeholder="Approaching Expectation"
+                value={indicator[0].AE}
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-3 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">B.E(1)</FormLabel>
+              <FormTextarea
+                {...register("indicators[" + i + "].BE")}
+                name={`indicators[${i}].BE`}
+                className={errors.indicator ? "border-danger" : ""}
+                placeholder="Below Expectation"
+                value={indicator[0].BE}
+              />
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            <div>
+              <button type="button" onClick={() => handleRemoveField(i)}>
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    });
+
+    for (
+      let i = selected.indicator.length;
+      i < selected.indicator.length + numberOfFields;
+      i++
+    ) {
+      fields.push(
+        <div className="grid  gap-1 box mt-5 p-5">
+          <div className="col-span-3 sm:col-span-3">
+            <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
+            <FormTextarea
+              {...register("indicators[" + i + "].description")}
+              name={`indicators[${i}].description`}
+              className={errors.indicator ? "border-danger" : ""}
               placeholder="Indicator Description"
             />
             {errors.role && (
@@ -257,7 +368,7 @@ function Main() {
               <FormTextarea
                 {...register("indicators[" + i + "].EE")}
                 name={`indicators[${i}].EE`}
-                className={errors.name ? "border-danger" : ""}
+                className={errors.indicator ? "border-danger" : ""}
                 placeholder="Exceeding Expectation"
               />
               {errors.role && (
@@ -273,7 +384,7 @@ function Main() {
               <FormTextarea
                 {...register("indicators[" + i + "].ME")}
                 name={`indicators[${i}].ME`}
-                className={errors.name ? "border-danger" : ""}
+                className={errors.indicator ? "border-danger" : ""}
                 placeholder="Meeting Expectation"
               />
               {errors.role && (
@@ -289,7 +400,7 @@ function Main() {
               <FormTextarea
                 {...register("indicators[" + i + "].AE")}
                 name={`indicators[${i}].AE`}
-                className={errors.name ? "border-danger" : ""}
+                className={errors.indicator ? "border-danger" : ""}
                 placeholder="Approaching Expectation"
               />
               {errors.role && (
@@ -304,7 +415,7 @@ function Main() {
               <FormTextarea
                 {...register("indicators[" + i + "].BE")}
                 name={`indicators[${i}].BE`}
-                className={errors.name ? "border-danger" : ""}
+                className={errors.indicator ? "border-danger" : ""}
                 placeholder="Below Expectation"
               />
               {errors.role && (
@@ -344,10 +455,7 @@ function Main() {
             <h2 className="mr-auto text-lg font-medium">New Substrand</h2>
           </div>
           <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className=" intro-y  validate-form" onSubmit={onSubmit}>
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -359,10 +467,15 @@ function Main() {
               ></a>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
+            <div className="grid grid-cols-12 gap-4 gap-y-3 box mt-5 p-5">
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect {...register("grade")} name="grade" disabled>
+                <FormSelect
+                  {...register("grade")}
+                  name="grade"
+                  value={strandFilter.grade}
+                  disabled
+                >
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -382,6 +495,7 @@ function Main() {
                 <FormSelect
                   {...register("learning_area")}
                   name="learning_area"
+                  value={strandFilter.learning_area}
                   disabled
                 >
                   {learningAreas
@@ -404,7 +518,12 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-                <FormSelect {...register("term")} name="term" disabled>
+                <FormSelect
+                  {...register("term")}
+                  name="term"
+                  value={strandFilter.term}
+                  disabled
+                >
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
@@ -421,7 +540,12 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-                <FormSelect {...register("strand")} name="strand" disabled>
+                <FormSelect
+                  {...register("strand")}
+                  name="strand"
+                  disabled
+                  value={selectedStrand}
+                >
                   {strands.map((strand: any, key) => (
                     <option key={key} value={strand._id}>
                       {strand.name}
@@ -444,10 +568,10 @@ function Main() {
                   className={errors.name ? "border-danger" : ""}
                   placeholder="substrand"
                 />
-                {errors.role && (
+                {errors.name && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
                   </div>
                 )}
               </div>
@@ -516,12 +640,22 @@ function Main() {
               )} */}
             </div>
 
-            <div className="grid  gap-1 gap-y-3">
+            <div className="grid  gap-1 gap-y-3 box mt-5 p-5">
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Learning Outcome</FormLabel>
-                <FormTextarea
+                <FormLabel htmlFor="modal-form-6">
+                  Specific Learning Outcome
+                </FormLabel>
+                <FormInput
                   {...register("learning_outcome")}
                   name="learning_outcome"
+                  type="hidden"
+                  value={learningOutcome}
+                />
+                <ClassicEditor
+                  value={getValues("learning_outcome")}
+                  onChange={(data: any) => {
+                    setValue("learning_outcome", data); // Update the hidden input
+                  }}
                   className="border rounded-md w-full p-2"
                   placeholder="Enter learning outcome..."
                 />
@@ -533,8 +667,9 @@ function Main() {
                 )}
               </div>
             </div>
-            <div>
-              {showExtraFields && renderExtraFields()}
+
+            <div className="">
+              {showExtraFields && renderExtraFields(selected)}
 
               {showExtraFields && (
                 <div className="col-span-12 sm:col-span-3">
@@ -547,7 +682,7 @@ function Main() {
               )}
             </div>
 
-            <div className="col-span-12 sm:col-span-12 mt-3">
+            <div className="col-span-12 sm:col-span-12 mt-3 box mt-5 p-5">
               <Button
                 type="button"
                 variant="outline-secondary"
@@ -579,6 +714,7 @@ function Main() {
               <FormSelect
                 {...register("grade")}
                 name="grade"
+                value={strandFilter.grade}
                 onChange={(event) => handleGradeChange(event)}
               >
                 <option>Select Grade</option>
@@ -600,6 +736,7 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
               <FormSelect
                 {...register("learning_area")}
+                value={strandFilter.learning_area}
                 name="learning_area"
                 onChange={(event) => handleLearningAreaChange(event)}
               >
@@ -626,6 +763,7 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">Term</FormLabel>
               <FormSelect
                 {...register("term")}
+                value={strandFilter.term}
                 name="term"
                 onChange={(event: any) => handleTermChange(event)}
               >
@@ -648,6 +786,7 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
               <FormSelect
                 {...register("strand")}
+                value={selectedStrand}
                 name="strand"
                 onChange={(event: any) => handleStrandChange(event)}
               >
@@ -695,7 +834,7 @@ function Main() {
                       Parent
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Indicator
+                      Specific Learning Outcome
                     </Table.Th>
 
                     <Table.Th className="border-b-0 whitespace-nowrap">
@@ -721,10 +860,17 @@ function Main() {
                           {substrand.is_child ? "false" : "true"}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {substrand.learning_outcome}
-                        </span>
+                      <Table.Td
+                        className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                        style={{ maxWidth: "300px", whiteSpace: "normal" }}
+                      >
+                        <div
+                          className="font-medium inline-block richtext"
+                          style={{ listStyle: "auto" }}
+                          dangerouslySetInnerHTML={{
+                            __html: substrand.learning_outcome,
+                          }}
+                        ></div>
                       </Table.Td>
 
                       {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -753,8 +899,18 @@ function Main() {
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
                                   />{" "}
+                                  View
+                                </Menu.Item>
+                                <Menu.Item
+                                  onClick={() => editRecord(substrand)}
+                                >
+                                  <Lucide
+                                    icon="Edit"
+                                    className="w-4 h-4 mr-2"
+                                  />{" "}
                                   Edit
                                 </Menu.Item>
+
                                 <Menu.Item
                                   onClick={() => {
                                     setRecordId(substrand._id),

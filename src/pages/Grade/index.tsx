@@ -288,7 +288,7 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {formatDate(grade.createdAt, "YYYY-MM-DD")}
+                          {formatDate(grade.createdAt, "YYYY-MM-DD HH:MM")}
                         </span>
                       </Table.Td>
 

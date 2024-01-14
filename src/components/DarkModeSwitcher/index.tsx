@@ -22,7 +22,7 @@ function Main() {
   return (
     <>
       {/* BEGIN: Dark Mode Switcher */}
-      <div
+      {/* <div
         className="fixed bottom-0 right-0 z-50 flex items-center justify-center w-40 h-12 mb-10 mr-10 border rounded-full shadow-md cursor-pointer box"
         onClick={switchMode}
       >
@@ -37,7 +37,7 @@ function Main() {
             },
           ])}
         ></div>
-      </div>
+      </div> */}
       {/* END: Dark Mode Switcher */}
     </>
   );

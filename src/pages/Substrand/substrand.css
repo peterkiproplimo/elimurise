@@ -1,0 +1,12 @@
+.richtext {
+    ol {
+        list-style: auto;
+        margin: 0;
+        padding: 0;
+    }
+ ul {
+        list-style:  disc;
+        margin: 0;
+        padding: 0;
+    }
+}
