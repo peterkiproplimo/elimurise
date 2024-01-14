@@ -146,6 +146,9 @@ function Main() {
   const editRecord = (record: any) => {
     setGroup(record.groups);
     reset(record);
+    reset({ ...record, learning_area: record.learning_area._id });
+
+    console.log(record);
     setDialog(true);
   };
 
@@ -289,6 +292,7 @@ function Main() {
                       </option>
                     ))}
                 </FormSelect>
+
                 {errors.learning_area && (
                   <div className="mt-2 text-danger">
                     {typeof errors.learning_area.message === "string" &&
@@ -325,9 +329,10 @@ function Main() {
                 <FormTextarea
                   {...register("name")}
                   name="name"
+                  value={getValues("name")}
                   className="mr-2"
                 />
-
+                {/* <FormInput {...register("name")} name="name" type="text" /> */}
                 {errors.grade && (
                   <div className="mt-2 text-danger">
                     {typeof errors.grade.message === "string" &&

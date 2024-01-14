@@ -249,11 +249,11 @@ function Main() {
           <div className="col-span-3 sm:col-span-3">
             <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
             <FormTextarea
-              {...register("indicators[" + i + "].description")}
-              name={`indicators[${i}].description`}
+              {...register("indicators[" + i + "][0].description")}
+              name={`indicators[${i}][0].description`}
               className={errors.indicator ? "border-danger" : ""}
               placeholder="Indicator Description"
-              value={indicator[0].description}
+              // value={indicator[0].description}
             />
 
             {errors.role && (
@@ -267,11 +267,11 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">E.E(4)</FormLabel>
 
               <FormTextarea
-                {...register("indicators[" + i + "].EE")}
-                name={`indicators[${i}].EE`}
+                {...register("indicators[" + i + "][0].EE")}
+                name={`indicators[${i}][0].EE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Exceeding Expectation"
-                value={indicator[0].EE}
+                // value={indicator[0].EE}
               />
               {errors.role && (
                 <div className="mt-2 text-danger">
@@ -284,11 +284,11 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">M.E(3)</FormLabel>
 
               <FormTextarea
-                {...register("indicators[" + i + "].ME")}
-                name={`indicators[${i}].ME`}
+                {...register("indicators[" + i + "][0].ME")}
+                name={`indicators[${i}][0].ME`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Meeting Expectation"
-                value={indicator[0].ME}
+                // value={indicator[0].ME}
               />
               {errors.role && (
                 <div className="mt-2 text-danger">
@@ -301,11 +301,11 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">A.E(2)</FormLabel>
 
               <FormTextarea
-                {...register("indicators[" + i + "].AE")}
-                name={`indicators[${i}].AE`}
+                {...register("indicators[" + i + "][0].AE")}
+                name={`indicators[${i}].[0].AE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Approaching Expectation"
-                value={indicator[0].AE}
+                // value={indicator[0].AE}
               />
               {errors.role && (
                 <div className="mt-2 text-danger">
@@ -317,11 +317,11 @@ function Main() {
             <div className="col-span-3 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">B.E(1)</FormLabel>
               <FormTextarea
-                {...register("indicators[" + i + "].BE")}
-                name={`indicators[${i}].BE`}
+                {...register("indicators[" + i + "][0].BE")}
+                name={`indicators[${i}][0].BE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Below Expectation"
-                value={indicator[0].BE}
+                // value={indicator[0].BE}
               />
               {errors.role && (
                 <div className="mt-2 text-danger">
@@ -892,15 +892,6 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item
-                                  onClick={() => editRecord(substrand)}
-                                >
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  View
-                                </Menu.Item>
                                 <Menu.Item
                                   onClick={() => editRecord(substrand)}
                                 >
