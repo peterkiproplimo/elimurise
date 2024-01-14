@@ -350,7 +350,7 @@ function Main() {
           <div className="col-span-3 sm:col-span-3">
             <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
             <FormTextarea
-              {...register("indicators[" + i + "].description")}
+              {...register("indicators[" + i + "][0].description")}
               name={`indicators[${i}].description`}
               className={errors.indicator ? "border-danger" : ""}
               placeholder="Indicator Description"
@@ -366,7 +366,7 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">E.E(4)</FormLabel>
 
               <FormTextarea
-                {...register("indicators[" + i + "].EE")}
+                {...register("indicators[" + i + "][0].EE")}
                 name={`indicators[${i}].EE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Exceeding Expectation"
@@ -382,7 +382,7 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">M.E(3)</FormLabel>
 
               <FormTextarea
-                {...register("indicators[" + i + "].ME")}
+                {...register("indicators[" + i + "][0].ME")}
                 name={`indicators[${i}].ME`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Meeting Expectation"
@@ -398,7 +398,7 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">A.E(2)</FormLabel>
 
               <FormTextarea
-                {...register("indicators[" + i + "].AE")}
+                {...register("indicators[" + i + "][0].AE")}
                 name={`indicators[${i}].AE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Approaching Expectation"
@@ -413,7 +413,7 @@ function Main() {
             <div className="col-span-3 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">B.E(1)</FormLabel>
               <FormTextarea
-                {...register("indicators[" + i + "].BE")}
+                {...register("indicators[" + i + "][0].BE")}
                 name={`indicators[${i}].BE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Below Expectation"

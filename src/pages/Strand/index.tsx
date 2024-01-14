@@ -329,7 +329,6 @@ function Main() {
                 <FormTextarea
                   {...register("name")}
                   name="name"
-                  value={getValues("name")}
                   className="mr-2"
                 />
                 {/* <FormInput {...register("name")} name="name" type="text" /> */}
