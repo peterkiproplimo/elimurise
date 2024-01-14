@@ -245,7 +245,7 @@ function Main() {
 
     selected.indicator.map((indicator: any, i: any) => {
       fields.push(
-        <div className="grid  gap-1 box mt-5 p-5">
+        <div className="grid  gap-1 box mt-5 p-5" key={i}>
           <div className="col-span-3 sm:col-span-3">
             <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
             <FormTextarea
@@ -346,12 +346,12 @@ function Main() {
       i++
     ) {
       fields.push(
-        <div className="grid  gap-1 box mt-5 p-5">
+        <div className="grid  gap-1 box mt-5 p-5" key={i}>
           <div className="col-span-3 sm:col-span-3">
             <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
             <FormTextarea
               {...register("indicators[" + i + "][0].description")}
-              name={`indicators[${i}].description`}
+              name={`indicators[${i}][0].description`}
               className={errors.indicator ? "border-danger" : ""}
               placeholder="Indicator Description"
             />
@@ -367,7 +367,7 @@ function Main() {
 
               <FormTextarea
                 {...register("indicators[" + i + "][0].EE")}
-                name={`indicators[${i}].EE`}
+                name={`indicators[${i}][0].EE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Exceeding Expectation"
               />
@@ -383,7 +383,7 @@ function Main() {
 
               <FormTextarea
                 {...register("indicators[" + i + "][0].ME")}
-                name={`indicators[${i}].ME`}
+                name={`indicators[${i}][0].ME`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Meeting Expectation"
               />
@@ -399,7 +399,7 @@ function Main() {
 
               <FormTextarea
                 {...register("indicators[" + i + "][0].AE")}
-                name={`indicators[${i}].AE`}
+                name={`indicators[${i}][0].AE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Approaching Expectation"
               />
@@ -414,7 +414,7 @@ function Main() {
               <FormLabel htmlFor="modal-form-6">B.E(1)</FormLabel>
               <FormTextarea
                 {...register("indicators[" + i + "][0].BE")}
-                name={`indicators[${i}].BE`}
+                name={`indicators[${i}][0].BE`}
                 className={errors.indicator ? "border-danger" : ""}
                 placeholder="Below Expectation"
               />
