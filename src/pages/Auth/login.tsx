@@ -104,27 +104,28 @@ const Login = () => {
             </div>
             <div className="input-form">
               <label>Password</label>
-              <FormInput
-                {...register("password")}
-                id="validation-form-3"
-                type={showPassword ? "text" : "password"}
-                name="password"
-                // className={errors.password ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger" : 'block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]'}
-                className={
-                  errors.password
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
-                    : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
-                }
-                placeholder=" Enter Password"
-              />
-              <div
-                className="absolute inset-y-20 right-0 flex items-center pr-3 cursor-pointer eye-icon"
-                onClick={togglePasswordVisibility}
-              >
-                <FontAwesomeIcon
-                  icon={showPassword ? faEyeSlash : faEye}
-                  className="text-grey-800"
+              <div className="flex items-center">
+                <FormInput
+                  {...register("password")}
+                  id="validation-form-3"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  className={
+                    errors.password
+                      ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
+                      : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
+                  }
+                  placeholder="Enter Password"
                 />
+                <div
+                  className="flex items-center cursor-pointer eye-icon"
+                  onClick={togglePasswordVisibility}
+                >
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    className="text-grey-800"
+                  />
+                </div>
               </div>
 
               {errors.password && (
@@ -137,7 +138,7 @@ const Login = () => {
               {/* Eye Icon */}
             </div>
           </div>
-          {/* <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
+          <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
             <div className="flex items-center mr-auto">
               <FormCheck.Input
                 id="remember-me"
@@ -152,9 +153,12 @@ const Login = () => {
               </label>
             </div>
             <Link to="/forgot-password">Forgot Password?</Link>
-          </div> */}
+          </div>
           <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-            <Button>
+            <Button
+              variant="primary"
+              className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+            >
               Login
               {loading && (
                 <LoadingIcon

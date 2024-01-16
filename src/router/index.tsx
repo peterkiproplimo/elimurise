@@ -3,6 +3,7 @@ import Layout from "../layouts";
 import Auth from "../layouts/auth";
 import Dashboard from "../pages/Dashboard";
 import User from "../pages/User";
+import Role from "../pages/roles";
 
 // import SimcardBooking from "../pages/SimcardBooking";
 import Categories from "../pages/Categories";
@@ -15,7 +16,7 @@ import Logs from "../pages/Auth/audit-logs";
 // import Login from "../pages/Auth/forgot-password";
 // import LoginBacks from "../pages/Auth/loginsBacks";
 
-import Role from "../pages/Auth/roles";
+// import Role from "../pages/Auth/";
 
 import ForgotPassword from "../pages/Auth/forgot-password";
 import ForgotPasswordOTP from "../pages/Auth/forgot-passOTP";
@@ -85,7 +86,7 @@ function Router() {
 
         //security
         {
-          path: "Role",
+          path: "role",
           element: <Role />,
         },
         {

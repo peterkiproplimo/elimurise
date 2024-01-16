@@ -1,13 +1,13 @@
 /* Auth.css */
 
 .login-info {
-    background-image: url('../assets/images/background.png');
+
   background-size: cover;
   }
   
   .other-section {
-    background-color: #152259;
-    border-radius: 20px;
+    background-color: #000000;
+
   }
   .other-section .heading{
      padding-left: 10%;

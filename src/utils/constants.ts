@@ -8,7 +8,7 @@
 export const BASE_URL= "https://hero.techsavanna.technology/api/"
 //API Endpoints
 //devops has do it again
-export const LOGIN = `${BASE_URL}cms/login`;
+export const LOGIN = `${BASE_URL}cms/auth/login`;
 export const LEVEL=`${BASE_URL}cms/level`
 export const GRADES=`${BASE_URL}cms/grades`
 export const LEARNING_AREA=`${BASE_URL}cms/learning-areas`
@@ -21,12 +21,12 @@ const Terms = {
     Term2: '2',
     Term3: '3'
   };
-  
+export const ROLES = `${BASE_URL}cms/roles`;
 export const STRANDS=`${BASE_URL}cms/strand`
 export const REGISTER = `${BASE_URL}register`;
 export const FORGOT_PASSWORD = `${BASE_URL}send-password/`; 
 export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
-export const ROLES = `${BASE_URL}users/roles`;
+
 export const CONFERENCES = `${BASE_URL}events-service/conference`;
 export const THEMES = `${BASE_URL}events-service/theme`;
 export const EVENTS = `${BASE_URL}events-service/event`;

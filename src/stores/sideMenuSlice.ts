@@ -113,16 +113,22 @@ const initialState: SideMenuState = {
             
             
     //       ]},
-          //  {
-  //     icon: "Users",
-  //     title: "Users",
-  //     subMenu: [
-  //       {
-  //         icon: "Activity",
-  //         pathname: "/user",
-  //         title: "Users",
-  //       },
-  // ]},
+      ,{
+      icon: "Users",
+      title: "Users",
+      
+          pathname: "/user",
+         
+        
+  },
+  {
+    icon: "Users",
+    title: "Roles",
+    
+        pathname: "/role",
+       
+      
+},
          
   //         "divider",
 

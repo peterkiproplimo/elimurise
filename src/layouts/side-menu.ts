@@ -1,6 +1,6 @@
 import { NavigateFunction } from "react-router-dom";
-import { Menu } from "../stores/sideMenuSlice";
-import { slideUp, slideDown } from "../utils/helper";
+import { Menu } from "../../../hero-frontend/src/stores/sideMenuSlice";
+import { slideUp, slideDown } from "../../../hero-frontend/src/utils/helper";
 
 interface Location {
   pathname: string;
