@@ -72,9 +72,15 @@ const AuthProvider = (props: ContainerProps) => {
   };
   if (loading) {
     // You may want to render a loading spinner or some indicator here
-    return <div>Loading...</div>;
+    return (
+      <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-blue opacity-75">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-blue-500"></div>
+      </div>
+    );
   }
-
+  <AuthContext.Provider
+    value={{ authData, loading, signIn, signOut }}
+  ></AuthContext.Provider>;
   return (
     //This component will be used to encapsulate the whole App,
     //so all components will have access to the Context

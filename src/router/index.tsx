@@ -118,7 +118,7 @@ function Router() {
         },
 
         {
-          path: "/ForgotPasswordOTP",
+          path: "/otp",
           element: <ForgotPasswordOTP />,
         },
         {

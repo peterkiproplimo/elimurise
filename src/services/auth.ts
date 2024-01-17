@@ -518,17 +518,7 @@ export async function getUserData() {
     export async function addEmailOTP(data: FieldValues) {
     try {
         console.log(data);
- let res = await axios.post(c.REGISTER + "/otp", data);
- const storeData = async () => {
-    try {
-        const jsonValue = JSON.stringify(res.data)
-        await localStorage.setItem('otp', jsonValue)
-    } catch (e) {
-        throw handler(e);
-    }
-}
-storeData();
- 
+        let res = await axios.post(c.AUTH + "/forgot-password", data);
         return res.data;
 
     } catch (e) {
@@ -538,9 +528,8 @@ storeData();
 
 export async function verifyEmailOTP(data: FieldValues) {
     try {
-        console.log(data);
- let res = await axios.post(c.REGISTER + "/verify", data);
- 
+       
+        let res = await axios.post(c.AUTH + "/reset-password", data);
         return res.data;
 
     } catch (e) {
