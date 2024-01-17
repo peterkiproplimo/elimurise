@@ -501,14 +501,14 @@ export async function getEvents(data: { page: any; }) {
     }
 }
 
-// export async function getUsers(data: { page: number; }) {
-//     try {
-//         let res = await axios.get(c.USERS + "?page=" + data.page);
-//         return res.data;
-//     } catch (e) {
-//         throw handler(e);
-//     }
-// }
+export async function getUserData() {
+    try {
+        let res = await axios.get(c.USERS +"/profile");
+        return res.data;
+    } catch (e) {
+        throw handler(e);
+    }
+}
 
 
 
