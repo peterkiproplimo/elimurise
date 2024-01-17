@@ -2,20 +2,12 @@
 import axios from 'axios';
 import * as c from '../utils/constants';
 import { FieldValues } from 'react-hook-form';
-
+import { useAuth } from '../contexts/Auth';
 //Users
 export async function login(data: FieldValues) {
   try {
     let res = await axios.post(c.LOGIN, data);
-    const storeData = async () => {
-      try {
-        const jsonValue = JSON.stringify(res.data); //email:
-        await localStorage.setItem("user", jsonValue);
-      } catch (e) {
-        throw handler(e);
-      }
-    };
-    storeData();
+  
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -25,36 +17,36 @@ export async function login(data: FieldValues) {
 
 
 
-// Add a request interceptor
-axios.interceptors.request.use(
-  async (config) => {
-    try {
-      const user = await localStorage.getItem('user');
+// // Add a request interceptor
+// axios.interceptors.request.use(
+//   async (config) => {
+//     try {
+//       const user = await localStorage.getItem('@AuthData');
 
-      if (user !== null) {
-        const token = JSON.parse(user);
-        config.headers['Authorization'] = `Bearer ${token.token}`;
-      } else {
-        // No user data found, possibly logout the user or handle as needed
-        console.log('No user data found. Logging out...');
-        // Perform logout logic, e.g., redirect to login page
-        window.location.href = '/login';
-        return Promise.reject('No user data found');
-      }
+//       if (user !== null) {
+//         const token = JSON.parse(user);
+//         config.headers['Authorization'] = `Bearer ${token.token}`;
+//       } else {
+//         // No user data found, possibly logout the user or handle as needed
+//         console.log('No user data found. Logging out...');
+//         // Perform logout logic, e.g., redirect to login page
+//         window.location.href = '/login';
+//         return Promise.reject('No user data found');
+//       }
 
-      return config;
-    } catch (error) {
-      // Handle the error as needed
-      console.error('Interceptor error:', error);
-      return Promise.reject(error);
-    }
-  },
-  (error) => {
-    // Handle request error
-    console.error('Request interceptor error:', error);
-    return Promise.reject(error);
-  }
-);
+//       return config;
+//     } catch (error) {
+//       // Handle the error as needed
+//       console.error('Interceptor error:', error);
+//       return Promise.reject(error);
+//     }
+//   },
+//   (error) => {
+//     // Handle request error
+//     console.error('Request interceptor error:', error);
+//     return Promise.reject(error);
+//   }
+// );
 
 
 
@@ -412,7 +404,7 @@ axios.interceptors.response.use(
 export async function getUserData() {
     try {
       // Get user data from local storage
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem('@AuthData');
       if (userData) {
         const user = JSON.parse(userData);
         return user;

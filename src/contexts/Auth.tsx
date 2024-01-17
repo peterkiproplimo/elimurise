@@ -66,7 +66,7 @@ const AuthProvider = (props: ContainerProps) => {
 
     //Remove the data from Async Storage
     //to NOT be recoverede in next session.
-    await localStorage.removeItem("access_token");
+
     await localStorage.removeItem("@AuthData");
   };
 

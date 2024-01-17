@@ -45,6 +45,7 @@ const Login = () => {
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
+
     if (result && !loading) {
       isLoading(true);
       try {
