@@ -346,6 +346,16 @@ export const getGrades =async ({ page }: { page: number }) => {
         }
       }
 
+  
+      export async function getDashboard() {
+        try {
+          let res = await axios.get(c.USERS+"/profile");
+          console.log(res);
+          return res.data;
+        } catch (e) {
+          throw handler(e);
+        }
+      }
 
 
 
@@ -591,16 +601,6 @@ export async function deleteMakes(makeId: any) {
 }
 
 
-
-export async function getModel(selectedMakeId: any) {
-    try {
-        console.log(selectedMakeId);
-        let res = await axios.get(c.Models+ "/"+ selectedMakeId);
-        return res.data;
-    } catch (e) {
-        throw handler(e);
-    }
-}
 
 
 

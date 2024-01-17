@@ -11,7 +11,7 @@ import Categories from "../pages/Categories";
 //beginning of auth
 import Profile from "../pages/Profile";
 import Login from "../pages/Auth/login";
-import Logs from "../pages/Auth/audit-logs";
+
 // import Login from "../pages/Auth/change-password";
 // import Login from "../pages/Auth/forgot-password";
 // import LoginBacks from "../pages/Auth/loginsBacks";
@@ -96,11 +96,6 @@ function Router() {
         {
           path: "strand",
           element: <Strand />,
-        },
-
-        {
-          path: "Logs",
-          element: <Logs />,
         },
       ],
     },

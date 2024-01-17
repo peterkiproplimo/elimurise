@@ -97,11 +97,6 @@ function Roles() {
     setModule(response?.data?.module);
     setRoles(response?.data?.role);
   };
-  const getModules = async () => {
-    const response = await ApiService.getModules();
-    setModule(response.data);
-    console.log(module);
-  };
 
   const deleteRecord = async () => {
     isLoading(true);

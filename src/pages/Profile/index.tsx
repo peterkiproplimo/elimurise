@@ -16,7 +16,7 @@ import * as ApiService from "../../services/auth";
 
 function Main() {
   const [profile, setProfile] = useState(
-    JSON.parse(localStorage.getItem("user"))?.user
+    JSON.parse(localStorage.getItem("user") || "{}")?.user
   );
   useEffect(() => {
     getProfile();
