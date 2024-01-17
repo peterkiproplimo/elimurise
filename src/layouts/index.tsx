@@ -4,7 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { selectSideMenu } from "../..//src/stores/sideMenuSlice";
 import { useAppSelector } from "../../src/stores/hooks";
 import { FormattedMenu, linkTo, nestedMenu, enter, leave } from "./side-menu";
-import Lucide from "../../../hero-frontend/src/base-components/Lucide";
+import Lucide from "../../src/base-components/Lucide";
 import clsx from "clsx";
 import TopBar from "../../src/components/TopBar";
 import MobileMenu from "../../src/components/MobileMenu";
