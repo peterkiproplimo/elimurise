@@ -1,8 +1,8 @@
 import { Transition } from "react-transition-group";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { selectSideMenu } from "../../../hero-frontend/src/stores/sideMenuSlice";
-import { useAppSelector } from "../../../hero-frontend/src/stores/hooks";
+import { selectSideMenu } from "../..//src/stores/sideMenuSlice";
+import { useAppSelector } from "../../src/stores/hooks";
 import { FormattedMenu, linkTo, nestedMenu, enter, leave } from "./side-menu";
 import Lucide from "../../../hero-frontend/src/base-components/Lucide";
 import clsx from "clsx";
