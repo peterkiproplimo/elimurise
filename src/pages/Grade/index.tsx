@@ -28,7 +28,7 @@ function Main() {
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(false);
-  const [success, setSuccess] = useState(true);
+  const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState("");
@@ -37,7 +37,7 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Level is required"),
+      name: yup.string().required("Grade is required"),
     })
     .required();
 
@@ -66,14 +66,15 @@ function Main() {
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Level created successfully.");
+        setMessage("Grade created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
+        console.log(error.message);
         isLoading(false);
         setSuccess(false);
-        setMessage(
-          error.message || "An error occurred while creating the role."
-        );
+        setMessage(error.message);
+        console.log(success);
+        console.log(message);
         notify.current?.showToast();
       }
     }
@@ -390,26 +391,24 @@ function Main() {
             </Dialog.Panel>
           </Dialog>
           {/* END: Delete Confirmation Modal */}
-          <Notification
-            options={{ duration: 3000 }}
-            getRef={(el) => {
-              notify.current = el;
-            }}
-            className="flex"
-          >
-            <Lucide
-              icon={success ? "CheckCircle" : "XCircle"}
-              className={success ? "text-success" : "text-danger"}
-            />
-            <div className="ml-4 mr-4">
-              <div className="font-medium">
-                {success ? "Success" : "Failed"}
-              </div>
-              <div className="mt-1 text-slate-500">{message}</div>
-            </div>
-          </Notification>
         </>
       )}
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed"}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification>
     </>
   );
 }

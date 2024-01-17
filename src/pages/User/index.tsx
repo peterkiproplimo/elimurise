@@ -119,7 +119,7 @@ function Users() {
     isLoading(true);
     try {
       let res = await ApiService.deleteUsers(userId);
-      //getUsers();
+      getUsers();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -131,6 +131,11 @@ function Users() {
       setMessage(error.message);
       notify.current?.showToast();
     }
+  };
+  const cancel = (record: any) => {
+    setGroup([""]);
+    reset({});
+    setDialog(false);
   };
 
   return (
@@ -241,17 +246,14 @@ function Users() {
                     {user.email}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user.role_id}
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div
                       className={
-                        user.isPasswordChanged
+                        user.status == 1
                           ? "flex items-center text-success"
                           : "flex items-center text-danger"
                       }
                     >
-                      {user.isPasswordChanged ? "COMPLETE" : "INCOMPLETE"}
+                      {user.status == 1 ? "Active" : "InActive"}
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
@@ -371,7 +373,7 @@ function Users() {
 
               <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Role</FormLabel>
-                <FormSelect {...register("role")} name="role">
+                <FormSelect {...register("role_id")} name="role_id">
                   {roles.map((role: any, key) => (
                     <option key={key} value={role._id}>
                       {role.name}
@@ -458,7 +460,7 @@ function Users() {
                 type="button"
                 variant="outline-secondary"
                 onClick={() => {
-                  setDialog(false);
+                  cancel({ name: "" });
                 }}
                 className="w-20 mr-1"
               >

@@ -20,7 +20,44 @@ export async function login(data: FieldValues) {
   } catch (e) {
     throw handler(e);
   }
+  
 }
+
+
+
+// Add a request interceptor
+axios.interceptors.request.use(
+  async (config) => {
+    try {
+      const user = await localStorage.getItem('user');
+
+      if (user !== null) {
+        const token = JSON.parse(user);
+        config.headers['Authorization'] = `Bearer ${token.token}`;
+      } else {
+        // No user data found, possibly logout the user or handle as needed
+        console.log('No user data found. Logging out...');
+        // Perform logout logic, e.g., redirect to login page
+        window.location.href = '/login';
+        return Promise.reject('No user data found');
+      }
+
+      return config;
+    } catch (error) {
+      // Handle the error as needed
+      console.error('Interceptor error:', error);
+      return Promise.reject(error);
+    }
+  },
+  (error) => {
+    // Handle request error
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
+  }
+);
+
+
+
 export const getLevels =async ({ page }: { page: number }) => {
 try {
     let res = await axios.get(c.LEVEL);
@@ -200,8 +237,15 @@ export const getGrades =async ({ page }: { page: number }) => {
         
         export async function createUsers(data: FieldValues) {
           try {
-            let res = await axios.post(c.USERS, data);
-            return res.data;
+           
+            if(data._id){
+              let res = await axios.put(c.USERS+"/"+data._id, data);
+              return res.data;
+            }else{
+              let res = await axios.post(c.USERS, data);
+              return res.data;
+            }
+           
           } catch (e) {
             throw handler(e);
           }
@@ -292,62 +336,51 @@ export const getGrades =async ({ page }: { page: number }) => {
         }
       }
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export const getData = async () => {
-    try {
-        const user = await localStorage.getItem('user')
-        if (user !== null) {
-            // value previously stored
-            let token = JSON.parse(user);
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token.token}`;
-            // axios.defaults.headers.common["Content-Type"] = "multipart/form-data";
-            return JSON.parse(user);
+      export async function getProfile() {
+        try {
+          let res = await axios.get(c.USERS+"/profile");
+          console.log(res);
+          return res.data;
+        } catch (e) {
+          throw handler(e);
         }
-    } catch (e) {
-        // error reading value
-        console.log(e);
-    }
-}
+      }
 
 
 
 
-getData();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 axios.interceptors.response.use(
     response => {
@@ -685,11 +718,18 @@ export async function deleteSecurity(securityId: any) {
 
 
 export function handler(err: any) {
+  
     let error = err;
-
-    if (err.response && err.response.data.hasOwnProperty("message"))
-        error = err.response.data;
-    else if (!err.hasOwnProperty("message")) error = err.toJSON();
-
+    
+    if (err.response && err.response.data.hasOwnProperty("error")){
+    
+      error = err.response.data;
+      error.message=err.response.data.error
+      console.log(error)
+    }
+       
+    else if (!err.hasOwnProperty("error")) error = err.toJSON();
+    console.log("error")
+    console.log(error.message)
     return new Error(error.message);
 }

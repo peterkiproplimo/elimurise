@@ -90,6 +90,10 @@ function Router() {
           element: <Role />,
         },
         {
+          path: "profile",
+          element: <Profile />,
+        },
+        {
           path: "strand",
           element: <Strand />,
         },

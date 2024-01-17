@@ -129,6 +129,12 @@ const initialState: SideMenuState = {
        
       
 },
+{
+  icon: "Users",
+  title: "Profile",
+  pathname: "/profile",
+      
+},
          
   //         "divider",
 

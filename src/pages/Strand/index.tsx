@@ -650,26 +650,24 @@ function Main() {
             </Dialog.Panel>
           </Dialog>
           {/* END: Delete Confirmation Modal */}
-          <Notification
-            options={{ duration: 3000 }}
-            getRef={(el) => {
-              notify.current = el;
-            }}
-            className="flex"
-          >
-            <Lucide
-              icon={success ? "CheckCircle" : "XCircle"}
-              className={success ? "text-success" : "text-danger"}
-            />
-            <div className="ml-4 mr-4">
-              <div className="font-medium">
-                {success ? "Success" : "Failed"}
-              </div>
-              <div className="mt-1 text-slate-500">{message}</div>
-            </div>
-          </Notification>
         </>
       )}
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed"}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification>
     </>
   );
 }
