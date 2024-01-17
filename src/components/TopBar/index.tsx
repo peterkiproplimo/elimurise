@@ -11,6 +11,8 @@ import clsx from "clsx";
 import "./topbar.css";
 import { useAuth } from "../../contexts/Auth";
 import * as ApiService from "../../services/auth";
+import { selectDarkMode, setDarkMode } from "../../stores/darkModeSlice";
+import { useAppDispatch, useAppSelector } from "../../stores/hooks";
 
 function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   const auth = useAuth();
@@ -22,7 +24,20 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   useEffect(() => {
     //getConferences();
   }, []);
+  const dispatch = useAppDispatch();
+  const darkMode = useAppSelector(selectDarkMode);
 
+  const setDarkModeClass = () => {
+    const el = document.querySelectorAll("html")[0];
+    darkMode ? el.classList.add("dark") : el.classList.remove("dark");
+  };
+
+  const switchMode = () => {
+    dispatch(setDarkMode(!darkMode));
+    localStorage.setItem("darkMode", (!darkMode).toString());
+    setDarkModeClass();
+  };
+  setDarkModeClass();
   const getConferences = async () => {
     let res = await ApiService.getConferences();
     setConferences(res.conferences);
@@ -149,6 +164,9 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
               <Menu.Divider className="bg-white/[0.08]" />
               <Menu.Item className="hover:bg-white/5">
                 <Lucide icon="User" className="w-4 h-4 mr-2" /> Profile
+              </Menu.Item>
+              <Menu.Item className="hover:bg-white/5" onClick={switchMode}>
+                <Lucide icon="Moon" className="w-4 h-4 mr-2" /> Dark Mode
               </Menu.Item>
               <Link to="/original">
                 <Menu.Item className="hover:bg-white/5">

@@ -160,6 +160,7 @@ const ForgotPasswordOTP = () => {
                 {...register("password")}
                 id="validation-form-2"
                 type="password"
+                autoComplete="off"
                 name="password"
                 className={
                   errors.email
