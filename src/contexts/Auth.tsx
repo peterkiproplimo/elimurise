@@ -39,6 +39,7 @@ const AuthProvider = (props: ContainerProps) => {
         setAuthData(_authData);
       }
     } catch (error) {
+      console.log(error);
     } finally {
       //loading finished
       setLoading(false);
@@ -69,6 +70,10 @@ const AuthProvider = (props: ContainerProps) => {
 
     await localStorage.removeItem("@AuthData");
   };
+  if (loading) {
+    // You may want to render a loading spinner or some indicator here
+    return <div>Loading...</div>;
+  }
 
   return (
     //This component will be used to encapsulate the whole App,

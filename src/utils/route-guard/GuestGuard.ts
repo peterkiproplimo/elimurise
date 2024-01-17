@@ -16,6 +16,7 @@ const GuestGuard = ({ children }: any) => {
 
     useEffect(() => {
         if (authData) {
+            console.log(authData)
             navigate("/", { replace: true });
         }
     }, [authData, navigate]);

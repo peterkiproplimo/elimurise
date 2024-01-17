@@ -10,12 +10,16 @@ import { useAuth } from '../../contexts/Auth';
  * @param {PropTypes.node} children children element/node
  */
 const AuthGuard = ({ children }: any) => {
+    
     const { authData } = useAuth();
     const navigate = useNavigate();
-
+    console.log(authData)
     useEffect(() => {
+        
+       
         if (!authData) {
-            navigate('login', { replace: true });
+          
+           navigate('login', { replace: true });
         }
     }, [authData, navigate]);
 

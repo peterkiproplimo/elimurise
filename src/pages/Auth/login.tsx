@@ -56,7 +56,7 @@ const Login = () => {
         setSuccess(true);
         setMessage("Authenticated successfully");
         notify.current?.showToast();
-        navigate("/");
+        // navigate("/");
       } catch (error) {
         isLoading(false);
         setSuccess(false);
