@@ -6,11 +6,11 @@ import { useAppSelector } from "../../../hero-frontend/src/stores/hooks";
 import { FormattedMenu, linkTo, nestedMenu, enter, leave } from "./side-menu";
 import Lucide from "../../../hero-frontend/src/base-components/Lucide";
 import clsx from "clsx";
-import TopBar from "../../../hero-frontend/src/components/TopBar";
-import MobileMenu from "../../../hero-frontend/src/components/MobileMenu";
-import DarkModeSwitcher from "../../../hero-frontend/src/components/DarkModeSwitcher";
+import TopBar from "../../src/components/TopBar";
+import MobileMenu from "../../src/components/MobileMenu";
+import DarkModeSwitcher from "../../src/components/DarkModeSwitcher";
 // import MainColorSwitcher from "../components/MainColorSwitcher";
-import SideMenuTooltip from "../../../hero-frontend/src/components/SideMenuTooltip";
+import SideMenuTooltip from "../../src/components/SideMenuTooltip";
 
 function Layout() {
   const location = useLocation();
