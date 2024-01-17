@@ -19,11 +19,8 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   const signOut = () => {
     auth.signOut();
   };
-  const [conference, selectConference] = useState("64b2f66f6aecc56ae2999c0d");
-  const [conferences, setConferences] = useState([]);
-  useEffect(() => {
-    //getConferences();
-  }, []);
+  const [user, setUser] = useState<any>({});
+
   const dispatch = useAppDispatch();
   const darkMode = useAppSelector(selectDarkMode);
 
@@ -38,10 +35,10 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
     setDarkModeClass();
   };
   setDarkModeClass();
-  const getConferences = async () => {
-    let res = await ApiService.getConferences();
-    setConferences(res.conferences);
-  };
+
+  useEffect(() => {
+    setUser(auth.authData && auth.authData?.user?.user);
+  }, [user]);
 
   return (
     <>
@@ -87,19 +84,11 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           <div className="relative mr-3 intro-x sm:mr-6">
             <div className="relative hidden sm:block">
               <TomSelect
-                value={conference}
-                onChange={selectConference}
                 options={{
                   placeholder: "Search",
                 }}
                 className="border-transparent w-56 shadow-none rounded-full bg-slate-200 pr-8 transition-[width] duration-300 ease-in-out focus:border-transparent focus:w-72 dark:bg-darkmode-400"
-              >
-                {conferences.map((conference: any, key) => (
-                  <option key={key} value={conference._id}>
-                    {conference.name}
-                  </option>
-                ))}
-              </TomSelect>
+              ></TomSelect>
             </div>
           </div>
           {/* END: Search */}
@@ -156,23 +145,23 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
             </Menu.Button>
             <Menu.Items className="w-56 mt-px relative bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
               <Menu.Header className="font-normal">
-                <div className="font-medium">{fakerData[0].users[0].name}</div>
+                <div className="font-medium">
+                  {user.firstname} {user.lastname}
+                </div>
                 <div className="text-xs text-white/70 mt-0.5 dark:text-slate-500">
                   {fakerData[0].jobs[0]}
                 </div>
               </Menu.Header>
               <Menu.Divider className="bg-white/[0.08]" />
-              <Menu.Item className="hover:bg-white/5">
-                <Lucide icon="User" className="w-4 h-4 mr-2" /> Profile
-              </Menu.Item>
+              <Link to="/profile">
+                <Menu.Item className="hover:bg-white/5">
+                  <Lucide icon="User" className="w-4 h-4 mr-2" />
+                  Profile
+                </Menu.Item>
+              </Link>
               <Menu.Item className="hover:bg-white/5" onClick={switchMode}>
                 <Lucide icon="Moon" className="w-4 h-4 mr-2" /> Dark Mode
               </Menu.Item>
-              <Link to="/original">
-                <Menu.Item className="hover:bg-white/5">
-                  <Lucide icon="HelpCircle" className="w-4 h-4 mr-2" /> Help
-                </Menu.Item>
-              </Link>
               <Menu.Divider className="bg-white/[0.08]" />
               <Menu.Item className="hover:bg-white/5" onClick={signOut}>
                 <Lucide icon="ToggleRight" className="w-4 h-4 mr-2" /> Sign Out

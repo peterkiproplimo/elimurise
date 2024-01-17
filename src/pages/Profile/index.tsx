@@ -13,11 +13,14 @@ import { Menu, Tab } from "../../base-components/Headless";
 import { Tab as HeadlessTab } from "@headlessui/react";
 import { getProfile } from "../../services/auth";
 import * as ApiService from "../../services/auth";
-
+import { useAuth } from "../../contexts/Auth";
 function Main() {
-  const [profile, setProfile] = useState(
-    JSON.parse(localStorage.getItem("user") || "{}")?.user
-  );
+  const auth = useAuth();
+  const [user, setUser] = useState<any>({});
+  const [profile, setProfile] = useState<any>({});
+  useEffect(() => {
+    setUser(auth.authData && auth.authData?.user?.user);
+  }, [user]);
   useEffect(() => {
     getProfile();
     // getRoles();
