@@ -37,7 +37,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   setDarkModeClass();
 
   useEffect(() => {
-    setUser(auth.authData && auth.authData?.user?.user);
+    setUser(auth.authData && auth.authData?.user);
   }, [user]);
 
   return (
@@ -146,7 +146,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
             <Menu.Items className="w-56 mt-px relative bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
               <Menu.Header className="font-normal">
                 <div className="font-medium">
-                  {user.firstname} {user.lastname}
+                  {user?.user?.firstname} {user?.user?.lastname}
                 </div>
                 <div className="text-xs text-white/70 mt-0.5 dark:text-slate-500">
                   {fakerData[0].jobs[0]}
