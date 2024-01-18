@@ -144,9 +144,9 @@ export const getGrades =async ({ page }: { page: number }) => {
   }
   
 
-  export const getLearningAreas =async ({ page }: { page: number }) => {
+  export const getLearningAreas =async ({ page }: { page: Number }) => {
     try {
-        let res = await axios.get(c.LEARNING_AREA);
+        let res = await axios.get(c.LEARNING_AREA+"?page="+page);
         return res.data;
       } catch (e) {
         throw handler(e);

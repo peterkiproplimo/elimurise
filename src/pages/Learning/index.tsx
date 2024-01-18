@@ -33,10 +33,11 @@ function Main() {
   const [userPermissions, setUserPermissions] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
-    total: 1,
-    total_pages: 1,
+    total: 3,
+    total_pages: 3,
     per_page: 1,
   });
+  const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
@@ -67,7 +68,7 @@ function Main() {
       try {
         const data = await getValues();
         await ApiService.createLearningArea(data);
-        await getLearningAreas();
+        await getLearningAreas(1);
         await reset();
         isLoading(false);
         setDialog(false);
@@ -86,13 +87,19 @@ function Main() {
   };
 
   useEffect(() => {
-    getLearningAreas();
+    getLearningAreas(page);
     getGrades();
   }, []);
 
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({ page: 1 });
+  const getLearningAreas = async (page: Number) => {
+    const response = await ApiService.getLearningAreas({ page: page });
     setLearningAreas(response.data);
+    setPagination({
+      current_page: res.current_page,
+      total: res.total,
+      total_pages: res.total_pages,
+      per_page: res.per_page,
+    });
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
@@ -102,7 +109,7 @@ function Main() {
     isLoading(true);
     try {
       let res = await ApiService.deleteLearningArea(recordId);
-      getLearningAreas();
+      getLearningAreas(1);
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -383,40 +390,53 @@ function Main() {
               </Table>
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              {/* <Pagination className="w-full sm:w-auto sm:mr-auto">
-                <Pagination.Link
-                  onClick={() => (setPage(previous_page), getFAQ())}
-                >
-                  <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                </Pagination.Link>
-                {_.times(pagination.total_pages).map((page, key) =>
-                  page + 1 == pagination.current_page ? (
-                    <Pagination.Link
-                      onClick={() => (setPage(page + 1), getFAQ())}
-                      active
-                      key={key}
-                    >
-                      {page + 1}
-                    </Pagination.Link>
-                  ) : (
-                    <Pagination.Link
-                      onClick={() => (setPage(page + 1), getFAQ())}
-                      key={key}
-                    >
-                      {page + 1}
-                    </Pagination.Link>
-                  )
-                )}
-                <Pagination.Link onClick={() => (setPage(next_page), getFAQ())}>
-                  <Lucide icon="ChevronRight" className="w-4 h-4" />
-                </Pagination.Link>
-              </Pagination> */}
-              <FormSelect className="w-20 mt-3 !box sm:mt-0">
-                <option>10</option>
-                <option>25</option>
-                <option>35</option>
-                <option>50</option>
-              </FormSelect>
+              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                <Pagination className="w-full sm:w-auto sm:mr-auto">
+                  <button
+                    onClick={() => getLearningAreas(previous_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                  </button>
+                  {_.times(pagination.total_pages).map((page, key) =>
+                    page + 1 == pagination.current_page ? (
+                      <button
+                        onClick={() => getLearningAreas(page + 1)}
+                        key={key}
+                        className="py-2 px-4 bg-white rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => getLearningAreas(page + 1)}
+                        key={key}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={() => getLearningAreas(next_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronRight" className="w-4 h-4" />
+                  </button>
+                </Pagination>
+                <div className="text-slate-500">
+                  <span className="mr-3">Total {pagination.total}</span>
+                  <FormSelect
+                    className="w-30 mt-3 !box sm:mt-0"
+                    onChange={(e) => setLimit(parseInt(e.target.value))}
+                  >
+                    <option>10/page</option>
+                    <option>25/page</option>
+                    <option>50/page</option>
+                    <option>100/page</option>
+                  </FormSelect>
+                </div>
+              </div>
             </div>
             {/* END: Pagination */}
           </div>
