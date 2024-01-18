@@ -328,9 +328,9 @@ export const getGrades =async (data:any) => {
     }
  
 
-    export const getRole =async () => {
+    export const getRole =async (data:any) => {
       try {
-          let res = await axios.get(c.ROLES);
+          let res = await axios.get(c.ROLES,{params:data});
           return res.data;
         } catch (e) {
           throw handler(e);
