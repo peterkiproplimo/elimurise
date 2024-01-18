@@ -22,6 +22,7 @@ function Main() {
     setUser(auth.authData && auth.authData?.user);
   }, [user]);
   useEffect(() => {
+    setProfile(user.user);
     getProfile();
     // getRoles();
   }, []);
@@ -53,7 +54,7 @@ function Main() {
               </div>
               <div className="ml-5">
                 <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
-                  {profile.user.firstname} {profile.user.lastname}
+                  {profile.firstname} {profile.lastname}
                 </div>
                 <div className="text-slate-500">{fakerData[0].jobs[0]}</div>
               </div>
@@ -65,12 +66,12 @@ function Main() {
               <div className="flex flex-col items-center justify-center mt-4 lg:items-start">
                 <div className="flex items-center truncate sm:whitespace-normal">
                   <Lucide icon="Mail" className="w-4 h-4 mr-2" />
-                  {profile.user.email}
+                  {profile.email}
                 </div>
                 <div className="flex items-center mt-3 truncate sm:whitespace-normal">
                   <Lucide icon="Phone" className="w-4 h-4 mr-2" />
 
-                  {profile.user.phone}
+                  {profile.phone}
                 </div>
                 {/* <div className="flex items-center mt-3 truncate sm:whitespace-normal">
                   <Lucide icon="Twitter" className="w-4 h-4 mr-2" /> Twitter
