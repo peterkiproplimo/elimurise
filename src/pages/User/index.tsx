@@ -72,20 +72,32 @@ function Users() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-
   useEffect(() => {
-    getUsers();
     getRole();
   }, []);
+  useEffect(() => {
+    getUsers();
+  }, [search, limit, page]);
 
   const getUsers = async () => {
-    let res = await ApiService.getUsers({ page: 1 });
-    console.log(res.data);
+    let res = await ApiService.getUsers({
+      page: page,
+      search: search,
+      limit: limit,
+    });
+
+    const pagination = res.pagination;
+    setPagination({
+      current_page: pagination.current_page,
+      total: pagination.total,
+      total_pages: pagination.total_pages,
+      per_page: pagination.per_page,
+    });
     setUsers(res.data);
   };
   const getRole = async () => {
     let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
-    setRoles(res.data?.role);
+    setRoles(res.data?.roles);
   };
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
@@ -189,6 +201,7 @@ function Users() {
                 type="text"
                 className="w-56 pr-10 !box"
                 placeholder="Search..."
+                onChange={(e) => setSearch(e.target.value)}
               />
               <Lucide
                 icon="Search"
@@ -300,14 +313,55 @@ function Users() {
           )}
         </div>
         {/* END: Data List */}
-        {/* BEGIN: Pagination */}
+        {/* END: Data List */}
         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-          <FormSelect className="w-20 mt-3 !box sm:mt-0">
-            <option>10</option>
-            <option>25</option>
-            <option>35</option>
-            <option>50</option>
-          </FormSelect>
+          <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+            <Pagination className="w-full sm:w-auto sm:mr-auto">
+              <button
+                onClick={() => setPage(previous_page)}
+                className="py-2 px-4 rounded-md"
+              >
+                <Lucide icon="ChevronLeft" className="w-4 h-4" />
+              </button>
+              {_.times(pagination.total_pages).map((page, key) =>
+                page + 1 == pagination.current_page ? (
+                  <button
+                    onClick={() => setPage(page + 1)}
+                    key={key}
+                    className="py-2 px-4 bg-white rounded-md"
+                  >
+                    {page + 1}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setPage(page + 1)}
+                    key={key}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    {page + 1}
+                  </button>
+                )
+              )}
+              <button
+                onClick={() => setPage(next_page)}
+                className="py-2 px-4 rounded-md"
+              >
+                <Lucide icon="ChevronRight" className="w-4 h-4" />
+              </button>
+            </Pagination>
+            <div className="text-slate-500">
+              <span className="mr-3">Total {pagination.total}</span>
+              <FormSelect
+                className="w-30 mt-3 !box sm:mt-0"
+                onChange={(e) => setLimit(parseInt(e.target.value))}
+              >
+                <option value={10}>10/page</option>
+                <option value={25}>25/page</option>
+                <option value={50}>50/page</option>
+                <option value={100}>100/page</option>
+              </FormSelect>
+            </div>
+          </div>
         </div>
         {/* END: Pagination */}
       </div>

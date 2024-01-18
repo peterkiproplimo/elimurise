@@ -346,7 +346,7 @@ function Roles() {
           size="lg"
           open={newRole}
           onClose={() => {
-            setDialog(false);
+            setNewRole(false);
           }}
         >
           <Dialog.Panel>
@@ -356,6 +356,7 @@ function Roles() {
                 <a
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
+                    setNewRole(false);
                   }}
                   className="absolute top-0 right-0 mt-3 mr-3"
                   href="#"
@@ -492,16 +493,6 @@ function Roles() {
         </Dialog>
       </>
 
-      <Dialog
-        staticBackdrop
-        size="lg"
-        open={dialog}
-        onClose={() => {
-          setDialog(false);
-        }}
-      >
-        <Dialog.Panel></Dialog.Panel>
-      </Dialog>
       {/* BEGIN: Delete Confirmation Modal */}
       <Dialog
         open={confirmDelete}
