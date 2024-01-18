@@ -118,7 +118,7 @@ function Roles() {
       per_page: pagination.per_page,
     });
     setModule(response?.data?.module);
-    setRoles(response?.data?.role);
+    setRoles(response?.data?.roles);
   };
 
   const deleteRecord = async () => {
