@@ -66,9 +66,11 @@ getData();
 
 
 
-export const getLevels =async ({ page }: { page: number }) => {
+export const getLevels =async (data:any) => {
 try {
-    let res = await axios.get(c.LEVEL);
+    let res = await axios.get(c.LEVEL,{
+      params:data
+    });
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -107,9 +109,11 @@ export async function deleteLevel(levelId: any) {
 //   return {}
 // }
 
-export const getGrades =async ({ page }: { page: number }) => {
+export const getGrades =async (data:any) => {
   try {
-      let res = await axios.get(c.GRADES);
+      let res = await axios.get(c.GRADES,{
+        params:data
+      });
       return res.data;
     } catch (e) {
       throw handler(e);
@@ -144,9 +148,11 @@ export const getGrades =async ({ page }: { page: number }) => {
   }
   
 
-  export const getLearningAreas =async ({ page }: { page: Number }) => {
+  export const getLearningAreas =async (data: any) => {
     try {
-        let res = await axios.get(c.LEARNING_AREA+"?page="+page);
+        let res = await axios.get(c.LEARNING_AREA,{
+          params:data
+        });
         return res.data;
       } catch (e) {
         throw handler(e);
@@ -183,13 +189,15 @@ export const getGrades =async ({ page }: { page: number }) => {
     }  
   
 
-    export const getStrands =async ({ page }: { page: number },filter:any) => {
+    export const getStrands =async (data:any,filter:any) => {
       try {
           if(filter.learning_area==="na"){
             console.log("failed...")
             return;
           }
-          let res = await axios.get( `${c.STRANDS}/${filter.learning_area}/${filter.term}`);
+          let res = await axios.get( `${c.STRANDS}/${filter.learning_area}/${filter.term}`,{
+            params:data
+          });
           return res.data;
         } catch (e) {
           throw handler(e);
@@ -234,9 +242,9 @@ export const getGrades =async ({ page }: { page: number }) => {
         }
       }  
     
-      export const getUsers =async ({ page }: { page: number }) => {
+      export const getUsers =async (data:any) => {
         try {
-            let res = await axios.get(c.USERS);
+            let res = await axios.get(c.USERS,{params:data});
             return res.data;
           } catch (e) {
             throw handler(e);
@@ -272,9 +280,9 @@ export const getGrades =async ({ page }: { page: number }) => {
 
   
 
-  export const getSubstrand =async ({ page }: { page: number }) => {
+  export const getSubstrand =async (data:any) => {
     try {
-        let res = await axios.get(c.SUBSTRAND);
+        let res = await axios.get(c.SUBSTRAND,{params:data});
         return res.data;
       } catch (e) {
         throw handler(e);
@@ -308,10 +316,10 @@ export const getGrades =async ({ page }: { page: number }) => {
       }
     }
 
-    export async function getSubstrandByStrand(strandId: any) {
+    export async function getSubstrandByStrand(data:any,strandId: any) {
       try {
       
-        let res = await axios.get(c.SUBSTRANDBYSTRAND+'/'+ strandId);
+        let res = await axios.get(c.SUBSTRANDBYSTRAND+'/'+ strandId,{params:data});
         console.log(res)
         return res.data;
       } catch (e) {

@@ -32,19 +32,21 @@ function Users() {
   const [selectGroup, setGroup] = useState([""]);
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
-  const [pagination, setPagination] = useState({
-    current_page: 1,
-    total: 1,
-    total_pages: 1,
-    per_page: 1,
-  });
-  const [page, setPage] = useState(1);
-  const [next_page, setNextPage] = useState(1);
-  const [previous_page, setPreviousPage] = useState(1);
+
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 0,
+    total_pages: 1,
+    per_page: 0,
+  });
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [next_page, setNextPage] = useState(1);
+  const [previous_page, setPreviousPage] = useState(1);
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -193,11 +195,6 @@ function Users() {
                 className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
               />
             </div>
-            <FormSelect className="w-56 ml-2 xl:w-auto !box">
-              <option>Status</option>
-              <option>Active</option>
-              <option>Inactive</option>
-            </FormSelect>
           </div>
         </div>
         <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">

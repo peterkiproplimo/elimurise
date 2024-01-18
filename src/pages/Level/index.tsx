@@ -15,6 +15,8 @@ import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
+import Pagination from "../../base-components/Pagination";
+
 function Level() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -31,7 +33,17 @@ function Level() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
-
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 0,
+    total_pages: 1,
+    per_page: 0,
+  });
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [next_page, setNextPage] = useState(1);
+  const [previous_page, setPreviousPage] = useState(1);
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -80,11 +92,22 @@ function Level() {
 
   useEffect(() => {
     getLevels();
-  }, []);
+  }, [search, page, limit]);
 
   const getLevels = async () => {
-    const response = await ApiService.getLevels({ page: 1 });
+    const response = await ApiService.getLevels({
+      page: page,
+      search: search,
+      limit: limit,
+    });
     setLevels(response.data);
+    const pagination = response.pagination;
+    setPagination({
+      current_page: pagination.current_page,
+      total: pagination.total,
+      total_pages: pagination.total_pages,
+      per_page: pagination.per_page,
+    });
   };
 
   const deleteRecord = async () => {
@@ -207,8 +230,29 @@ function Level() {
               >
                 New Level
               </Button>
-
-              <div className="hidden mx-auto md:block text-slate-500"></div>
+              <div className="hidden mx-auto md:block text-slate-500">
+                Showing{" "}
+                {pagination.current_page +
+                  " to " +
+                  pagination.total_pages +
+                  " of " +
+                  pagination.total}{" "}
+                entries
+              </div>
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                <div className="relative w-56 text-slate-500">
+                  <FormInput
+                    type="text"
+                    className="w-56 pr-10 !box"
+                    placeholder="Search..."
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                </div>
+              </div>
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
@@ -292,6 +336,55 @@ function Level() {
                   ))}
                 </Table.Tbody>
               </Table>
+            </div>
+            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                <Pagination className="w-full sm:w-auto sm:mr-auto">
+                  <button
+                    onClick={() => setPage(previous_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                  </button>
+                  {_.times(pagination.total_pages).map((page, key) =>
+                    page + 1 == pagination.current_page ? (
+                      <button
+                        onClick={() => setPage(page + 1)}
+                        key={key}
+                        className="py-2 px-4 bg-white rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setPage(page + 1)}
+                        key={key}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={() => setPage(next_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronRight" className="w-4 h-4" />
+                  </button>
+                </Pagination>
+                <div className="text-slate-500">
+                  <span className="mr-3">Total {pagination.total}</span>
+                  <FormSelect
+                    className="w-30 mt-3 !box sm:mt-0"
+                    onChange={(e) => setLimit(parseInt(e.target.value))}
+                  >
+                    <option value={10}>10/page</option>
+                    <option value={25}>25/page</option>
+                    <option value={50}>50/page</option>
+                    <option value={100}>100/page</option>
+                  </FormSelect>
+                </div>
+              </div>
             </div>
             {/* END: Data List */}
           </div>

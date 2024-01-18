@@ -1,4 +1,4 @@
-// import _ from "lodash";
+import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
 import {
@@ -24,6 +24,8 @@ import ClassicEditor from "../../base-components/Ckeditor/ClassicEditor";
 import React from "react";
 import { setValue } from "../../base-components/TomSelect/tom-select";
 import "./substrand.css";
+import Pagination from "../../base-components/Pagination";
+
 interface TableRow {
   no: number;
   strandName: string;
@@ -54,6 +56,17 @@ function Main() {
   const [selected, setSelected] = useState({
     indicator: [],
   });
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 0,
+    total_pages: 1,
+    per_page: 0,
+  });
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [next_page, setNextPage] = useState(1);
+  const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
     grade: "na",
     learning_area: "na",
@@ -123,7 +136,22 @@ function Main() {
     setStrands(response.data);
   };
   const getSubstrand = async () => {
-    let res = await ApiService.getSubstrandByStrand(selectedStrand);
+    let res = await ApiService.getSubstrandByStrand(
+      {
+        page: page,
+        search: search,
+        limit: limit,
+      },
+      selectedStrand
+    );
+    const pagination = res.pagination;
+    setPagination({
+      current_page: pagination.current_page,
+      total: pagination.total,
+      total_pages: pagination.total_pages,
+      per_page: pagination.per_page,
+    });
+
     setSubstrands(res.data);
   };
   const getGrades = async () => {
@@ -175,7 +203,9 @@ function Main() {
     // getSubstrand();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter]);
-
+  useEffect(() => {
+    getSubstrand();
+  }, [search, limit, page, selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
     const selectedValue = event.target.value;
@@ -215,10 +245,10 @@ function Main() {
     const selectedValue = event.target.value;
     await setSelectedStrand(selectedValue);
 
-    ///call substrands for this strand
-    let res = await ApiService.getSubstrandByStrand(selectedValue);
-    setSubstrands([]);
-    setSubstrands(res.data);
+    // ///call substrands for this strand
+    // let res = await ApiService.getSubstrandByStrand(selectedValue);
+    // setSubstrands([]);
+    // setSubstrands(res.data);
     // You might want to fetch filtered data here
   };
 
@@ -816,8 +846,29 @@ function Main() {
               >
                 New Substrand
               </Button>
-
-              <div className="hidden mx-auto md:block text-slate-500"></div>
+              <div className="hidden mx-auto md:block text-slate-500">
+                Showing{" "}
+                {pagination.current_page +
+                  " to " +
+                  pagination.total_pages +
+                  " of " +
+                  pagination.total}{" "}
+                entries
+              </div>
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                <div className="relative w-56 text-slate-500">
+                  <FormInput
+                    type="text"
+                    className="w-56 pr-10 !box"
+                    placeholder="Search..."
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                </div>
+              </div>
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
@@ -923,6 +974,55 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
+            </div>
+            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                <Pagination className="w-full sm:w-auto sm:mr-auto">
+                  <button
+                    onClick={() => setPage(previous_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                  </button>
+                  {_.times(pagination.total_pages).map((page, key) =>
+                    page + 1 == pagination.current_page ? (
+                      <button
+                        onClick={() => setPage(page + 1)}
+                        key={key}
+                        className="py-2 px-4 bg-white rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setPage(page + 1)}
+                        key={key}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={() => setPage(next_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronRight" className="w-4 h-4" />
+                  </button>
+                </Pagination>
+                <div className="text-slate-500">
+                  <span className="mr-3">Total {pagination.total}</span>
+                  <FormSelect
+                    className="w-30 mt-3 !box sm:mt-0"
+                    onChange={(e) => setLimit(parseInt(e.target.value))}
+                  >
+                    <option value={10}>10/page</option>
+                    <option value={25}>25/page</option>
+                    <option value={50}>50/page</option>
+                    <option value={100}>100/page</option>
+                  </FormSelect>
+                </div>
+              </div>
             </div>
             {/* END: Data List */}
           </div>

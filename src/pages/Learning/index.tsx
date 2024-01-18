@@ -33,10 +33,11 @@ function Main() {
   const [userPermissions, setUserPermissions] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
-    total: 3,
-    total_pages: 3,
-    per_page: 1,
+    total: 0,
+    total_pages: 31,
+    per_page: 0,
   });
+  const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
@@ -68,7 +69,7 @@ function Main() {
       try {
         const data = await getValues();
         await ApiService.createLearningArea(data);
-        await getLearningAreas(1);
+        await getLearningAreas();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -87,18 +88,24 @@ function Main() {
   };
 
   useEffect(() => {
-    getLearningAreas(page);
+    getLearningAreas();
+  }, [search, page, limit]);
+  useEffect(() => {
     getGrades();
   }, []);
-
-  const getLearningAreas = async (page: Number) => {
-    const response = await ApiService.getLearningAreas({ page: page });
+  const getLearningAreas = async () => {
+    const response = await ApiService.getLearningAreas({
+      page: page,
+      search: search,
+      limit: limit,
+    });
     setLearningAreas(response.data);
+    const pagination = response.pagination;
     setPagination({
-      current_page: res.current_page,
-      total: res.total,
-      total_pages: res.total_pages,
-      per_page: res.per_page,
+      current_page: pagination.current_page,
+      total: pagination.total,
+      total_pages: pagination.total_pages,
+      per_page: pagination.per_page,
     });
   };
   const getGrades = async () => {
@@ -278,6 +285,7 @@ function Main() {
                     type="text"
                     className="w-56 pr-10 !box"
                     placeholder="Search..."
+                    onChange={(e) => setSearch(e.target.value)}
                   />
                   <Lucide
                     icon="Search"
@@ -393,7 +401,7 @@ function Main() {
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
-                    onClick={() => getLearningAreas(previous_page)}
+                    onClick={() => setPage(previous_page)}
                     className="py-2 px-4 rounded-md"
                   >
                     <Lucide icon="ChevronLeft" className="w-4 h-4" />
@@ -401,7 +409,7 @@ function Main() {
                   {_.times(pagination.total_pages).map((page, key) =>
                     page + 1 == pagination.current_page ? (
                       <button
-                        onClick={() => getLearningAreas(page + 1)}
+                        onClick={() => setPage(page + 1)}
                         key={key}
                         className="py-2 px-4 bg-white rounded-md"
                       >
@@ -409,7 +417,7 @@ function Main() {
                       </button>
                     ) : (
                       <button
-                        onClick={() => getLearningAreas(page + 1)}
+                        onClick={() => setPage(page + 1)}
                         key={key}
                         className="py-2 px-4 rounded-md"
                       >
@@ -418,7 +426,7 @@ function Main() {
                     )
                   )}
                   <button
-                    onClick={() => getLearningAreas(next_page)}
+                    onClick={() => setPage(next_page)}
                     className="py-2 px-4 rounded-md"
                   >
                     <Lucide icon="ChevronRight" className="w-4 h-4" />
@@ -430,10 +438,10 @@ function Main() {
                     className="w-30 mt-3 !box sm:mt-0"
                     onChange={(e) => setLimit(parseInt(e.target.value))}
                   >
-                    <option>10/page</option>
-                    <option>25/page</option>
-                    <option>50/page</option>
-                    <option>100/page</option>
+                    <option value={10}>10/page</option>
+                    <option value={25}>25/page</option>
+                    <option value={50}>50/page</option>
+                    <option value={100}>100/page</option>
                   </FormSelect>
                 </div>
               </div>
