@@ -292,11 +292,11 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
-                <FormSelect className="w-56 ml-2 xl:w-auto !box">
+                {/* <FormSelect className="w-56 ml-2 xl:w-auto !box">
                   <option>Status</option>
                   <option>Active</option>
                   <option>Inactive</option>
-                </FormSelect>
+                </FormSelect> */}
               </div>
 
               {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
