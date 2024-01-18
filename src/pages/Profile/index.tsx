@@ -19,7 +19,7 @@ function Main() {
   const [user, setUser] = useState<any>({});
   const [profile, setProfile] = useState<any>({});
   useEffect(() => {
-    setUser(auth.authData && auth.authData?.user?);
+    setUser(auth.authData && auth.authData?.user);
   }, [user]);
   useEffect(() => {
     getProfile();
