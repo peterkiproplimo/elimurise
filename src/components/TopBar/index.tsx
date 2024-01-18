@@ -62,7 +62,11 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
               props.layout == "top-menu" && "w-auto",
             ])}
           >
-            <img alt="ACS" className="w-35" src={logoUrl} />
+            <img
+              alt="ACS"
+              className="xl:w-35 md:w-10 xl:w-auto"
+              src={logoUrl}
+            />
           </Link>
           {/* END: Logo */}
           {/* BEGIN: Breadcrumb */}
@@ -83,12 +87,12 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           {/* BEGIN: Search */}
           <div className="relative mr-3 intro-x sm:mr-6">
             <div className="relative hidden sm:block">
-              <TomSelect
+              {/* <TomSelect
                 options={{
                   placeholder: "Search",
                 }}
                 className="border-transparent w-56 shadow-none rounded-full bg-slate-200 pr-8 transition-[width] duration-300 ease-in-out focus:border-transparent focus:w-72 dark:bg-darkmode-400"
-              ></TomSelect>
+              ></TomSelect> */}
             </div>
           </div>
           {/* END: Search */}
