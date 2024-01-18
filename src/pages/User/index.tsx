@@ -84,7 +84,7 @@ function Users() {
     setUsers(res.data);
   };
   const getRole = async () => {
-    let res = await ApiService.getRole();
+    let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
     setRoles(res.data?.role);
   };
 
