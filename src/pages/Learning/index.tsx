@@ -116,7 +116,7 @@ function Main() {
     isLoading(true);
     try {
       let res = await ApiService.deleteLearningArea(recordId);
-      getLearningAreas(1);
+      getLearningAreas();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
