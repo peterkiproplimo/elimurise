@@ -20,12 +20,13 @@ function Main() {
   const [profile, setProfile] = useState<any>({});
   useEffect(() => {
     setUser(auth.authData && auth.authData?.user);
-  }, [user]);
+  }, []);
   useEffect(() => {
-    setProfile(user.user);
+    setProfile(user);
+
     getProfile();
     // getRoles();
-  }, []);
+  }, [user]);
 
   const getProfile = async () => {
     let res = await ApiService.getProfile();

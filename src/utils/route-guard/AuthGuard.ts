@@ -13,7 +13,7 @@ const AuthGuard = ({ children }: any) => {
     
     const { authData } = useAuth();
     const navigate = useNavigate();
-    console.log(authData)
+  
     useEffect(() => {
         
        
