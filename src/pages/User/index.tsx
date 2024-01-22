@@ -32,7 +32,7 @@ function Users() {
   const [selectGroup, setGroup] = useState([""]);
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
-
+  const [isEditMode, setIsEditMode] = useState(false);
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
@@ -124,6 +124,7 @@ function Users() {
     }
   };
   const editRecord = (record: any) => {
+    setIsEditMode(true);
     setGroup(record.groups);
     console.log(record);
     reset(record);
@@ -214,9 +215,9 @@ function Users() {
           <Table className="border-spacing-y-[10px] border-separate -mt-2">
             <Table.Thead>
               <Table.Tr>
-                <Table.Th className="border-b-0 whitespace-nowrap">
+                {/* <Table.Th className="border-b-0 whitespace-nowrap">
                   <FormCheck.Input type="checkbox" />
-                </Table.Th>
+                </Table.Th> */}
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   First Name
                 </Table.Th>
@@ -240,9 +241,9 @@ function Users() {
             <Table.Tbody>
               {users.map((user: any, key) => (
                 <Table.Tr key={key} className="intro-x">
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <FormCheck.Input type="checkbox" />
-                  </Table.Td>
+                  </Table.Td> */}
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {user.firstname}
                   </Table.Td>
@@ -376,7 +377,10 @@ function Users() {
         <Dialog.Panel>
           <form className="validate-form" onSubmit={onSubmit}>
             <Dialog.Title>
-              <h2 className="mr-auto text-base font-medium">New User</h2>
+              <h2 className="mr-auto text-base font-medium">
+                {" "}
+                {isEditMode ? "Edit User" : "New User"}
+              </h2>
               <a
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();

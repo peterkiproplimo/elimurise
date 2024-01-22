@@ -19,6 +19,7 @@ import { formatDate } from "../../utils/helper";
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const [learningAreas, setLearningAreas] = useState([]);
   const [grades, setGrades] = useState([]);
@@ -131,6 +132,7 @@ function Main() {
   };
 
   const editRecord = (record: any) => {
+    setIsEditMode(true);
     setGroup(record.groups);
     reset({ ...record, grade_id: record.grade_id._id });
     setDialog(true);
@@ -158,7 +160,9 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className="mr-auto text-lg font-medium">New Learning Area</h2>
+            <h2 className="mr-auto text-lg font-medium">
+              {isEditMode ? "Edit Learning Area" : "New Learning Area"}
+            </h2>
           </div>
 
           <form

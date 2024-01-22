@@ -163,8 +163,15 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
                   Profile
                 </Menu.Item>
               </Link>
-              <Menu.Item className="hover:bg-white/5" onClick={switchMode}>
-                <Lucide icon="Moon" className="w-4 h-4 mr-2" /> Dark Mode
+              <Menu.Item
+                className={`hover:bg-${darkMode ? "white/5" : "black/5"}`}
+                onClick={switchMode}
+              >
+                <Lucide
+                  icon={darkMode ? "Sun" : "Moon"}
+                  className="w-4 h-4 mr-2"
+                />
+                {darkMode ? "Light Mode" : "Dark Mode"}
               </Menu.Item>
               <Menu.Divider className="bg-white/[0.08]" />
               <Menu.Item className="hover:bg-white/5" onClick={signOut}>

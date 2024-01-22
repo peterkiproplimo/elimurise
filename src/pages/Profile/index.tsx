@@ -13,7 +13,7 @@ import { Menu, Tab } from "../../base-components/Headless";
 import { Tab as HeadlessTab } from "@headlessui/react";
 import { getProfile } from "../../services/auth";
 import * as ApiService from "../../services/auth";
-import { useAuth } from "../../contexts/Auth";
+
 function Main() {
   const auth = useAuth();
   const [user, setUser] = useState<any>({});
@@ -71,7 +71,7 @@ function Main() {
                 </div>
                 <div className="flex items-center mt-3 truncate sm:whitespace-normal">
                   <Lucide icon="Phone" className="w-4 h-4 mr-2" />
-
+                  Phone
                   {profile.phone}
                 </div>
                 {/* <div className="flex items-center mt-3 truncate sm:whitespace-normal">
@@ -126,10 +126,10 @@ function Main() {
           </Tab.List>
         </div>
         {/* END: Profile Info */}
-        {/* <Tab.Panels className="mt-5 intro-y">
+        <Tab.Panels className="mt-5 intro-y">
           <Tab.Panel>
             <div className="grid grid-cols-12 gap-6">
-              
+              {/* BEGIN: Top Categories */}
               <div className="col-span-12 intro-y box lg:col-span-6">
                 <div className="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
                   <h2 className="mr-auto text-base font-medium">
@@ -158,7 +158,7 @@ function Main() {
                   <div className="flex flex-col sm:flex-row">
                     <div className="mr-auto">
                       <a href="" className="font-medium">
-                        Properties
+                        Levels
                       </a>
                       <div className="mt-1 text-slate-500">10000</div>
                     </div>
@@ -177,7 +177,7 @@ function Main() {
                   <div className="flex flex-col mt-5 sm:flex-row">
                     <div className="mr-auto">
                       <a href="" className="font-medium">
-                        Houses
+                        Grades
                       </a>
                       <div className="mt-1 text-slate-500">60,0000</div>
                     </div>
@@ -196,7 +196,7 @@ function Main() {
                   <div className="flex flex-col mt-5 sm:flex-row">
                     <div className="mr-auto">
                       <a href="" className="font-medium">
-                        Tenants
+                        Learning Areas
                       </a>
                       <div className="mt-1 text-slate-500">100k+</div>
                     </div>
@@ -214,7 +214,8 @@ function Main() {
                   </div>
                 </div>
               </div>
-             
+              {/* END: Top Categories */}
+              {/* BEGIN: Work In Progress */}
               <Tab.Group className="col-span-12 intro-y box lg:col-span-6">
                 <div className="flex items-center px-5 py-5 border-b sm:py-0 border-slate-200/60 dark:border-darkmode-400">
                   <h2 className="mr-auto text-base font-medium">
@@ -313,8 +314,8 @@ function Main() {
                 </div>
               </Tab.Group>
               {/* END: Work In Progress */}
-        {/* BEGIN: Daily Sales */}
-        {/* <div className="col-span-12 intro-y box lg:col-span-6">
+              {/* BEGIN: Daily Sales */}
+              {/* <div className="col-span-12 intro-y box lg:col-span-6">
                 <div className="flex items-center px-5 py-5 border-b sm:py-3 border-slate-200/60 dark:border-darkmode-400">
                   <h2 className="mr-auto text-base font-medium">Daily Sales</h2>
                   <Menu className="ml-auto sm:hidden">
@@ -402,9 +403,9 @@ function Main() {
                   </div>
                 </div>
               </div> */}
-        {/* END: Daily Sales */}
-        {/* BEGIN: Latest Tasks */}
-        {/* <Tab.Group className="col-span-12 intro-y box lg:col-span-6">
+              {/* END: Daily Sales */}
+              {/* BEGIN: Latest Tasks */}
+              {/* <Tab.Group className="col-span-12 intro-y box lg:col-span-6">
                 <div className="flex items-center px-5 py-5 border-b sm:py-0 border-slate-200/60 dark:border-darkmode-400">
                   <h2 className="mr-auto text-base font-medium">
                     Latest Tasks
@@ -479,10 +480,12 @@ function Main() {
                       </div>
                     </Tab.Panel>
                   </Tab.Panels>
-                </div> 
+                </div> */}
+              {/* </Tab.Group> */}
+              {/* END: Latest Tasks */}
             </div>
           </Tab.Panel>
-        </Tab.Panels> */}
+        </Tab.Panels>
       </Tab.Group>
     </>
   );
