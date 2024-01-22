@@ -39,9 +39,6 @@ axios.interceptors.request.use(
     try {
       
       const user=await getData();
-
-     
-
       return config;
     } catch (error) {
       // Handle the error as needed
