@@ -287,10 +287,7 @@ function Users() {
                             <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
                             Delete
                           </Menu.Item>
-                          <Menu.Item>
-                            <Lucide icon="View" className="w-4 h-4 mr-2" />{" "}
-                            Profile
-                          </Menu.Item>
+
                           <Menu.Item>
                             <Lucide icon="UserCheck" className="w-4 h-4 mr-2" />{" "}
                             Activate
@@ -490,25 +487,6 @@ function Users() {
                   placeholder="password"
                 />
               </div>
-
-              {/* <div className="col-span-12 sm:col-span-12">
-                <Dropzone
-                  getRef={(el) => {}}
-                  options={{
-                    url: "https://africaclimatesummit.org/",
-                    thumbnailWidth: 150,
-                    maxFilesize: 0.5,
-                    maxFiles: 1,
-                    headers: { "My-Awesome-Header": "header value" },
-                  }}
-                  className="dropzone"
-                >
-                  <div className="text-lg font-medium">
-                    Upload profile photo.
-                  </div>
-                  <div className="text-gray-600">Optional</div>
-                </Dropzone>
-              </div> */}
             </Dialog.Description>
             <Dialog.Footer>
               <Button

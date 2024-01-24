@@ -1,495 +1,372 @@
-import { useState, useRef, useEffect } from "react";
 import _ from "lodash";
-import fakerData from "../../utils/faker";
+import clsx from "clsx";
 import Button from "../../base-components/Button";
-import { FormSwitch } from "../../base-components/Form";
-import Progress from "../../base-components/Progress";
+import Pagination from "../../base-components/Pagination";
 import Lucide from "../../base-components/Lucide";
-import StackedBarChart1 from "../../components/StackedBarChart1";
-import SimpleLineChart from "../../components/SimpleLineChart";
-import SimpleLineChart1 from "../../components/SimpleLineChart1";
-import SimpleLineChart2 from "../../components/SimpleLineChart2";
-import { Menu, Tab } from "../../base-components/Headless";
-import { Tab as HeadlessTab } from "@headlessui/react";
-import { getProfile } from "../../services/auth";
-import * as ApiService from "../../services/auth";
+import Tippy from "../../base-components/Tippy";
+import Table from "../../base-components/Table";
 
-function Main() {
-  const [profile, setProfile] = useState({
-    firstname: "Melba",
-    lastname: "Gitau",
-    phone: "0718340345",
-    email: "melba.magiri@gmail.com",
-    avater: "test",
-    role_id: "1234",
-    status: "",
+import { useState, useRef, useEffect } from "react";
+import {
+  FormCheck,
+  FormInput,
+  FormLabel,
+  FormSelect,
+} from "../../base-components/Form";
+import { Dialog, Menu } from "../../base-components/Headless";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as ApiService from "../../services/auth";
+import * as yup from "yup";
+import Notification, {
+  NotificationElement,
+} from "../../base-components/Notification";
+import LoadingIcon from "../../base-components/LoadingIcon";
+import Dropzone from "../../base-components/Dropzone";
+
+function Users() {
+  const [dialog, setDialog] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const deleteButtonRef = useRef(null);
+  const [users, setUsers] = useState([]);
+  const [selectGroup, setGroup] = useState([""]);
+  const [role, setrole] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, isLoading] = useState(false);
+  const [success, setSuccess] = useState(true);
+  const [message, setMessage] = useState("");
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 0,
+    total_pages: 1,
+    per_page: 0,
+  });
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [next_page, setNextPage] = useState(1);
+  const [previous_page, setPreviousPage] = useState(1);
+  // Success notification
+  const notify = useRef<NotificationElement>();
+  const schema = yup
+    .object({
+      // tenant: yup.string().required("Conference is required"),
+      firstname: yup.string().required("First name is required"),
+      lastname: yup.string().required("Last name is required"),
+      email: yup
+        .string()
+        .required("Email is required")
+        .email("Email must be a valid"),
+    })
+    .required();
+
+  const {
+    register,
+    trigger,
+
+    getValues,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schema),
   });
   useEffect(() => {
-    getProfile();
-    // getRoles();
+    getRole();
   }, []);
+  useEffect(() => {
+    getUsers();
+  }, [search, limit, page]);
 
-  const getProfile = async () => {
-    let res = await ApiService.getProfile();
-    setProfile(res.data);
+  const getUsers = async () => {
+    let res = await ApiService.getUsers({
+      page: page,
+      search: search,
+      limit: limit,
+    });
+
+    const pagination = res.pagination;
+    setPagination({
+      current_page: pagination.current_page,
+      total: pagination.total,
+      total_pages: pagination.total_pages,
+      per_page: pagination.per_page,
+    });
+    setUsers(res.data);
   };
+  const getRole = async () => {
+    let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
+    setrole(res.data?.roles);
+  };
+
+  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const result = await trigger();
+    if (result && !loading) {
+      isLoading(true);
+      try {
+        const data = await getValues();
+        let res = await ApiService.createProfile(data);
+        getRole();
+        await reset();
+        isLoading(false);
+        setDialog(false);
+        setSuccess(true);
+        setMessage(res.message);
+        notify.current?.showToast();
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(error.message);
+        notify.current?.showToast();
+      }
+    }
+  };
+  const editRecord = (record: any) => {
+    setIsEditMode(true);
+    setGroup(record.groups);
+    console.log(record);
+    reset(record);
+    setDialog(true);
+  };
+  const deleteRecord = async () => {
+    isLoading(true);
+    try {
+      let res = await ApiService.deleteUsers(userId);
+      getUsers();
+      isLoading(false);
+      setConfirmDelete(false);
+      setSuccess(true);
+      setMessage(res.message);
+      notify.current?.showToast();
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+  const cancel = (record: any) => {
+    setGroup([""]);
+    reset({});
+    setDialog(false);
+  };
+
   return (
     <>
-      <div className="flex items-center mt-8 intro-y">
-        <h2 className="mr-auto text-lg font-medium">Profile</h2>
-      </div>
-      <Tab.Group>
-        {/* BEGIN: Profile Info */}
+      <h2 className="mt-10 text-lg font-medium intro-y">Profile</h2>
+      <div className="grid grid-cols-12 gap-6 mt-5">
+        {/* END: Data List */}
+        {/* END: Data List */}
 
-        <div className="px-5 pt-5 mt-5 intro-y box">
-          <div className="flex flex-col pb-5 -mx-5 border-b lg:flex-row border-slate-200/60 dark:border-darkmode-400">
-            <div className="flex items-center justify-center flex-1 px-5 lg:justify-start">
-              <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
-                <img
-                  alt="Midone Tailwind HTML Admin Template"
-                  className="rounded-full"
-                  src={fakerData[0].photos[0]}
-                />
-                <div className="absolute bottom-0 right-0 flex items-center justify-center p-2 mb-1 mr-1 rounded-full bg-primary">
-                  <Lucide icon="Camera" className="w-4 h-4 text-white" />
-                </div>
-              </div>
-              <div className="ml-5">
-                <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
-                  {profile.firstname} {profile.lastname}
-                </div>
-                <div className="text-slate-500">{fakerData[0].jobs[0]}</div>
+        {/* END: Pagination */}
+      </div>
+      <div className=" bg-white p-4 rounded">
+        <form className="validate-form" onSubmit={onSubmit}>
+          <div className="flex items-center justify-center flex-1 px-5 ">
+            <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
+              <img
+                alt="Midone Tailwind HTML Admin Template"
+                className="rounded-full"
+                src="http://bootdey.com/img/Content/avatar/avatar1.png"
+              />
+              <div className="absolute bottom-0 right-0 flex items-center justify-center p-2 mb-1 mr-1 rounded-full bg-primary">
+                <Lucide icon="Camera" className="w-4 h-4 text-white" />
               </div>
             </div>
-            <div className="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 border-slate-200/60 dark:border-darkmode-400 lg:border-t-0 lg:pt-0">
-              <div className="font-medium text-center lg:text-left lg:mt-3">
-                Contact Details
-              </div>
-              <div className="flex flex-col items-center justify-center mt-4 lg:items-start">
-                <div className="flex items-center truncate sm:whitespace-normal">
-                  <Lucide icon="Mail" className="w-4 h-4 mr-2" />
-                  {profile.email}
-                </div>
-                <div className="flex items-center mt-3 truncate sm:whitespace-normal">
-                  <Lucide icon="Phone" className="w-4 h-4 mr-2" />
-                  Phone
-                  {profile.phone}
-                </div>
-                {/* <div className="flex items-center mt-3 truncate sm:whitespace-normal">
-                  <Lucide icon="Twitter" className="w-4 h-4 mr-2" /> Twitter
-                  {fakerData[0].users[0].name}
-                </div> */}
-              </div>
-            </div>
-            <div className="flex-1 px-5 pt-5 mt-6 border-t lg:mt-0 lg:border-0 border-slate-200/60 dark:border-darkmode-400 lg:pt-0">
-              <div className="font-medium text-center lg:text-left lg:mt-5">
-                Profile
-              </div>
-              <div className="flex items-center justify-center mt-2 lg:justify-start">
-                <div className="flex w-20 mr-2">
-                  USP:{" "}
-                  <span className="ml-3 font-medium text-success">+23%</span>
-                </div>
-                <div className="w-3/4">
-                  <SimpleLineChart1 height={55} className="-mr-5" />
-                </div>
-              </div>
-              <div className="flex items-center justify-center lg:justify-start">
-                <div className="flex w-20 mr-2">
-                  STP: <span className="ml-3 font-medium text-danger">-2%</span>
-                </div>
-                <div className="w-3/4">
-                  <SimpleLineChart2 height={55} className="-mr-5" />
-                </div>
-              </div>
+            <div className="ml-5">
+              <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal"></div>
+              <div className="text-slate-500"></div>
             </div>
           </div>
-          <Tab.List
-            variant="link-tabs"
-            className="flex-col justify-center text-center sm:flex-row lg:justify-start"
-          >
-            <Tab fullWidth={false}>
-              <Tab.Button className="py-4 cursor-pointer">Dashboard</Tab.Button>
-            </Tab>
-            <Tab fullWidth={false}>
-              <Tab.Button className="py-4 cursor-pointer">
-                Account & Profile
-              </Tab.Button>
-            </Tab>
-            <Tab fullWidth={false}>
-              <Tab.Button className="py-4 cursor-pointer">
-                Activities
-              </Tab.Button>
-            </Tab>
-            <Tab fullWidth={false}>
-              <Tab.Button className="py-4 cursor-pointer">Tasks</Tab.Button>
-            </Tab>
-          </Tab.List>
-        </div>
-        {/* END: Profile Info */}
-        <Tab.Panels className="mt-5 intro-y">
-          <Tab.Panel>
-            <div className="grid grid-cols-12 gap-6">
-              {/* BEGIN: Top Categories */}
-              <div className="col-span-12 intro-y box lg:col-span-6">
-                <div className="flex items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                  <h2 className="mr-auto text-base font-medium">
-                    Top Categories
-                  </h2>
-                  <Menu className="ml-auto">
-                    <Menu.Button as="a" className="block w-5 h-5">
-                      <Lucide
-                        icon="MoreHorizontal"
-                        className="w-5 h-5 text-slate-500"
-                      />
-                    </Menu.Button>
-                    <Menu.Items className="w-40">
-                      <Menu.Item>
-                        <Lucide icon="Plus" className="w-4 h-4 mr-2" /> Add
-                        Category
-                      </Menu.Item>
-                      <Menu.Item>
-                        <Lucide icon="Settings" className="w-4 h-4 mr-2" />
-                        Settings
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Menu>
+          <div className="grid grid-cols-12 gap-4 gap-y-3">
+            <div className="col-span-12 sm:col-span-6">
+              <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
+              <FormInput
+                {...register("firstname")}
+                type="text"
+                name="firstname"
+                className={errors.firstName ? "border-danger" : ""}
+                placeholder="John"
+              />
+              {errors.firstName && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.firstName.message === "string" &&
+                    errors.firstName.message}
                 </div>
-                <div className="p-5">
-                  <div className="flex flex-col sm:flex-row">
-                    <div className="mr-auto">
-                      <a href="" className="font-medium">
-                        Levels
-                      </a>
-                      <div className="mt-1 text-slate-500">10000</div>
-                    </div>
-                    <div className="flex">
-                      <div className="w-32 mt-5 mr-auto -ml-2 sm:ml-0 sm:mr-5">
-                        <SimpleLineChart height={30} />
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium">6.5k</div>
-                        <div className="bg-success/20 text-success rounded px-2 mt-1.5">
-                          +150
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col mt-5 sm:flex-row">
-                    <div className="mr-auto">
-                      <a href="" className="font-medium">
-                        Grades
-                      </a>
-                      <div className="mt-1 text-slate-500">60,0000</div>
-                    </div>
-                    <div className="flex">
-                      <div className="w-32 mt-5 mr-auto -ml-2 sm:ml-0 sm:mr-5">
-                        <SimpleLineChart height={30} />
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium">2.5k</div>
-                        <div className="bg-pending/10 text-pending rounded px-2 mt-1.5">
-                          +150
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col mt-5 sm:flex-row">
-                    <div className="mr-auto">
-                      <a href="" className="font-medium">
-                        Learning Areas
-                      </a>
-                      <div className="mt-1 text-slate-500">100k+</div>
-                    </div>
-                    <div className="flex">
-                      <div className="w-32 mt-5 mr-auto -ml-2 sm:ml-0 sm:mr-5">
-                        <SimpleLineChart height={30} />
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium">3.4k</div>
-                        <div className="bg-primary/10 text-primary rounded px-2 mt-1.5">
-                          +150
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* END: Top Categories */}
-              {/* BEGIN: Work In Progress */}
-              <Tab.Group className="col-span-12 intro-y box lg:col-span-6">
-                <div className="flex items-center px-5 py-5 border-b sm:py-0 border-slate-200/60 dark:border-darkmode-400">
-                  <h2 className="mr-auto text-base font-medium">
-                    Work In Progress
-                  </h2>
-                  <Menu className="ml-auto sm:hidden">
-                    <Menu.Button as="a" className="block w-5 h-5">
-                      <Lucide
-                        icon="MoreHorizontal"
-                        className="w-5 h-5 text-slate-500"
-                      />
-                    </Menu.Button>
-                    <Menu.Items className="w-40">
-                      <Menu.Item className="w-full" as={HeadlessTab}>
-                        New
-                      </Menu.Item>
-                      <Menu.Item className="w-full" as={HeadlessTab}>
-                        Last Week
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Menu>
-                  <Tab.List
-                    variant="link-tabs"
-                    className="hidden w-auto ml-auto sm:flex"
-                  >
-                    <Tab fullWidth={false}>
-                      <Tab.Button className="py-5 cursor-pointer">
-                        New
-                      </Tab.Button>
-                    </Tab>
-                    <Tab fullWidth={false}>
-                      <Tab.Button className="py-5 cursor-pointer">
-                        Last Week
-                      </Tab.Button>
-                    </Tab>
-                  </Tab.List>
-                </div>
-                <div className="p-5">
-                  <Tab.Panels>
-                    <Tab.Panel>
-                      <div>
-                        <div className="flex">
-                          <div className="mr-auto">Pending Tasks</div>
-                          <div>20%</div>
-                        </div>
-                        <Progress className="h-1 mt-2">
-                          <Progress.Bar
-                            className="w-1/2 bg-primary"
-                            role="progressbar"
-                            aria-valuenow={0}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          ></Progress.Bar>
-                        </Progress>
-                      </div>
-                      <div className="mt-5">
-                        <div className="flex">
-                          <div className="mr-auto">Completed Tasks</div>
-                          <div>2 / 20</div>
-                        </div>
-                        <Progress className="h-1 mt-2">
-                          <Progress.Bar
-                            className="w-1/4 bg-primary"
-                            role="progressbar"
-                            aria-valuenow={0}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          ></Progress.Bar>
-                        </Progress>
-                      </div>
-                      <div className="mt-5">
-                        <div className="flex">
-                          <div className="mr-auto">Tasks In Progress</div>
-                          <div>42</div>
-                        </div>
-                        <Progress className="h-1 mt-2">
-                          <Progress.Bar
-                            className="w-3/4 bg-primary"
-                            role="progressbar"
-                            aria-valuenow={0}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          ></Progress.Bar>
-                        </Progress>
-                      </div>
-                      <Button
-                        as="a"
-                        variant="secondary"
-                        href=""
-                        className="block w-40 mx-auto mt-5"
-                      >
-                        View More Details
-                      </Button>
-                    </Tab.Panel>
-                  </Tab.Panels>
-                </div>
-              </Tab.Group>
-              {/* END: Work In Progress */}
-              {/* BEGIN: Daily Sales */}
-              {/* <div className="col-span-12 intro-y box lg:col-span-6">
-                <div className="flex items-center px-5 py-5 border-b sm:py-3 border-slate-200/60 dark:border-darkmode-400">
-                  <h2 className="mr-auto text-base font-medium">Daily Sales</h2>
-                  <Menu className="ml-auto sm:hidden">
-                    <Menu.Button as="a" className="block w-5 h-5">
-                      <Lucide
-                        icon="MoreHorizontal"
-                        className="w-5 h-5 text-slate-500"
-                      />
-                    </Menu.Button>
-                    <Menu.Items className="w-40">
-                      <Menu.Item>
-                        <Lucide icon="File" className="w-4 h-4 mr-2" /> Download
-                        Excel
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Menu>
-                  <Button
-                    variant="outline-secondary"
-                    className="hidden sm:flex"
-                  >
-                    <Lucide icon="File" className="w-4 h-4 mr-2" /> Download
-                    Excel
-                  </Button>
-                </div>
-                <div className="p-5">
-                  <div className="relative flex items-center">
-                    <div className="flex-none w-12 h-12 image-fit">
-                      <img
-                        alt="Midone Tailwind HTML Admin Template"
-                        className="rounded-full"
-                        src={fakerData[0].photos[0]}
-                      />
-                    </div>
-                    <div className="ml-4 mr-auto">
-                      <a href="" className="font-medium">
-                        {fakerData[0].users[0].name}
-                      </a>
-                      <div className="mr-5 text-slate-500 sm:mr-5">
-                        Bootstrap 4 HTML Admin Template
-                      </div>
-                    </div>
-                    <div className="font-medium text-slate-600 dark:text-slate-500">
-                      +$19
-                    </div>
-                  </div>
-                  <div className="relative flex items-center mt-5">
-                    <div className="flex-none w-12 h-12 image-fit">
-                      <img
-                        alt="Midone Tailwind HTML Admin Template"
-                        className="rounded-full"
-                        src={fakerData[1].photos[0]}
-                      />
-                    </div>
-                    <div className="ml-4 mr-auto">
-                      <a href="" className="font-medium">
-                        {fakerData[1].users[0].name}
-                      </a>
-                      <div className="mr-5 text-slate-500 sm:mr-5">
-                        Tailwind HTML Admin Template
-                      </div>
-                    </div>
-                    <div className="font-medium text-slate-600 dark:text-slate-500">
-                      +$25
-                    </div>
-                  </div>
-                  <div className="relative flex items-center mt-5">
-                    <div className="flex-none w-12 h-12 image-fit">
-                      <img
-                        alt="Midone Tailwind HTML Admin Template"
-                        className="rounded-full"
-                        src={fakerData[2].photos[0]}
-                      />
-                    </div>
-                    <div className="ml-4 mr-auto">
-                      <a href="" className="font-medium">
-                        {fakerData[2].users[0].name}
-                      </a>
-                      <div className="mr-5 text-slate-500 sm:mr-5">
-                        Vuejs HTML Admin Template
-                      </div>
-                    </div>
-                    <div className="font-medium text-slate-600 dark:text-slate-500">
-                      +$21
-                    </div>
-                  </div>
-                </div>
-              </div> */}
-              {/* END: Daily Sales */}
-              {/* BEGIN: Latest Tasks */}
-              {/* <Tab.Group className="col-span-12 intro-y box lg:col-span-6">
-                <div className="flex items-center px-5 py-5 border-b sm:py-0 border-slate-200/60 dark:border-darkmode-400">
-                  <h2 className="mr-auto text-base font-medium">
-                    Latest Tasks
-                  </h2>
-                  <Menu className="ml-auto sm:hidden">
-                    <Menu.Button as="a" className="block w-5 h-5">
-                      <Lucide
-                        icon="MoreHorizontal"
-                        className="w-5 h-5 text-slate-500"
-                      />
-                    </Menu.Button>
-                    <Menu.Items className="w-40">
-                      <Menu.Item className="w-full" as={HeadlessTab}>
-                        New
-                      </Menu.Item>
-                      <Menu.Item className="w-full" as={HeadlessTab}>
-                        Last Week
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Menu>
-                  <Tab.List
-                    variant="link-tabs"
-                    className="hidden w-auto ml-auto sm:flex"
-                  >
-                    <Tab fullWidth={false}>
-                      <Tab.Button className="py-5 cursor-pointer">
-                        New
-                      </Tab.Button>
-                    </Tab>
-                    <Tab fullWidth={false}>
-                      <Tab.Button className="py-5 cursor-pointer">
-                        Last Week
-                      </Tab.Button>
-                    </Tab>
-                  </Tab.List>
-                </div>
-                <div className="p-5">
-                  <Tab.Panels>
-                    <Tab.Panel>
-                      <div className="flex items-center">
-                        <div className="pl-4 border-l-2 border-primary dark:border-primary">
-                          <a href="" className="font-medium">
-                            Create New Campaign
-                          </a>
-                          <div className="text-slate-500">10:00 AM</div>
-                        </div>
-                        <FormSwitch className="ml-auto">
-                          <FormSwitch.Input type="checkbox" />
-                        </FormSwitch>
-                      </div>
-                      <div className="flex items-center mt-5">
-                        <div className="pl-4 border-l-2 border-primary dark:border-primary">
-                          <a href="" className="font-medium">
-                            Meeting With Client
-                          </a>
-                          <div className="text-slate-500">02:00 PM</div>
-                        </div>
-                        <FormSwitch className="ml-auto">
-                          <FormSwitch.Input type="checkbox" />
-                        </FormSwitch>
-                      </div>
-                      <div className="flex items-center mt-5">
-                        <div className="pl-4 border-l-2 border-primary dark:border-primary">
-                          <a href="" className="font-medium">
-                            Create New Repository
-                          </a>
-                          <div className="text-slate-500">04:00 PM</div>
-                        </div>
-                        <FormSwitch className="ml-auto">
-                          <FormSwitch.Input type="checkbox" />
-                        </FormSwitch>
-                      </div>
-                    </Tab.Panel>
-                  </Tab.Panels>
-                </div> */}
-              {/* </Tab.Group> */}
-              {/* END: Latest Tasks */}
+              )}
             </div>
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+            <div className="col-span-12 sm:col-span-6">
+              <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+              <FormInput
+                {...register("lastname")}
+                type="text"
+                name="lastname"
+                className={errors.lastName ? "border-danger" : ""}
+                placeholder="Doe"
+              />
+              {errors.lastName && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.lastName.message === "string" &&
+                    errors.lastName.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-6">
+              <FormLabel htmlFor="modal-form-6">role</FormLabel>
+              <FormSelect {...register("role_id")} name="role_id">
+                {role.map((role: any, key) => (
+                  <option key={key} value={role._id}>
+                    {role.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.role && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.role.message === "string" &&
+                    errors.role.message}
+                </div>
+              )}
+            </div>
+            {/* <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Country</FormLabel>
+                <FormSelect
+                  {...register("country")}
+                  name="country"
+                  value={"Kenya"}
+                >
+                  {countries.map((country, key) => (
+                    <option key={key} value={country.name}>
+                      {country.name}
+                    </option>
+                  ))}
+                </FormSelect>
+              </div> */}
+            <div className="col-span-12 sm:col-span-6">
+              <FormLabel htmlFor="modal-form-1">Phone Number</FormLabel>
+              <FormInput
+                {...register("phone")}
+                type="text"
+                name="phone"
+                placeholder="+254 712 345 6789"
+              />
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <FormLabel htmlFor="modal-form-1">Email</FormLabel>
+              <FormInput
+                {...register("email")}
+                type="email"
+                name="email"
+                className={errors.email ? "border-danger" : ""}
+                placeholder="info@example.com"
+              />
+              {errors.email && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.email.message === "string" &&
+                    errors.email.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <FormLabel htmlFor="modal-form-1">Password</FormLabel>
+              <FormInput
+                {...register("password")}
+                type="password"
+                name="password"
+                placeholder="password"
+              />
+            </div>
+
+            <Button
+              type="button"
+              variant="outline-secondary"
+              onClick={() => {
+                cancel({ name: "" });
+              }}
+              className="w-20 mr-1"
+            >
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" className="w-20">
+              Save
+              {loading && (
+                <LoadingIcon
+                  icon="spinning-circles"
+                  color="white"
+                  className="w-4 h-4 ml-2"
+                />
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* BEGIN: Delete Confirmation Modal */}
+      <Dialog
+        open={confirmDelete}
+        onClose={() => {
+          setConfirmDelete(false);
+        }}
+        initialFocus={deleteButtonRef}
+      >
+        <Dialog.Panel>
+          <div className="p-5 text-center">
+            <Lucide
+              icon="XCircle"
+              className="w-16 h-16 mx-auto mt-3 text-danger"
+            />
+            <div className="mt-5 text-3xl">Are you sure?</div>
+            <div className="mt-2 text-slate-500">
+              Do you really want to delete this record? <br />
+              This process cannot be undone.
+            </div>
+          </div>
+          <div className="px-5 pb-8 text-center">
+            <Button
+              variant="outline-secondary"
+              type="button"
+              onClick={() => {
+                setConfirmDelete(false);
+              }}
+              className="w-24 mr-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => deleteRecord()}
+              variant="danger"
+              type="button"
+              className="w-24"
+              ref={deleteButtonRef}
+            >
+              Delete
+            </Button>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+      {/* END: Delete Confirmation Modal */}
+      <Notification
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        options={{
+          duration: 3000,
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed"}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification>
     </>
   );
 }
 
-export default Main;
+export default Users;

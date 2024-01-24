@@ -352,6 +352,24 @@ export const getGrades =async (data:any) => {
           throw handler(e);
         }
       }
+
+      export async function createProfile(data: FieldValues) {
+        try {
+        
+          if(data._id){
+            let res = await axios.put(c.PROFILE+'/'+data._id, data);
+            return res.data;
+          }
+        else{
+          let res = await axios.post(c.PROFILE, data);
+           return res.data;
+        }
+        
+          
+        } catch (e) {
+          throw handler(e);
+        }
+      }
     
       export async function getProfile() {
         try {

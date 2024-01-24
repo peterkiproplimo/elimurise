@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Lucide from "../../base-components/Lucide";
-import logoUrl from "../../assets/images/hero.png";
+import logoUrl from "../../assets/images/heros.png";
 import Breadcrumb from "../../base-components/Breadcrumb";
 import { Menu, Popover } from "../../base-components/Headless";
 import TomSelect from "../../base-components/TomSelect";

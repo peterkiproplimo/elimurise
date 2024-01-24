@@ -14,6 +14,7 @@ export const LEVEL=`${BASE_URL}cms/level`
 export const GRADES=`${BASE_URL}cms/grades`
 export const LEARNING_AREA=`${BASE_URL}cms/learning-areas`
 export const USERS=`${BASE_URL}cms/users`
+export const PROFILE=`${BASE_URL}cms/profile`
 export const SUBSTRAND=`${BASE_URL}cms/substrand`
 export const SUBSTRANDBYSTRAND=`${BASE_URL}cms/substrand/ByStrand`
 export const LEARNING_OUTCOME=`${BASE_URL}cms/substrandsByStrand`
@@ -62,7 +63,5 @@ export const WALLETS = `${BASE_URL}payments-service/wallets`;
 export const TRANSACTIONS = `${BASE_URL}payments-service/transactions`; 
 
 
-export function PROFILE(PROFILE: any) {
-  throw new Error('Function not implemented.');
-}
+
 //samson devops push ss
