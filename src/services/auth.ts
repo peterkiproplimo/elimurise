@@ -7,7 +7,6 @@ import { FieldValues } from 'react-hook-form';
 export async function login(data: FieldValues) {
   try {
     let res = await axios.post(c.LOGIN, data);
-  
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -18,12 +17,13 @@ export async function login(data: FieldValues) {
 const getData = async () => {
   try {
     const auth = await localStorage.getItem('@AuthData')
-  
+    
     if (auth !== null) {
       // value previously stored
-      let token = JSON.parse(auth).user;
-      
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token.token}`;
+      let auth_data = JSON.parse(auth);
+      let user=auth_data.user;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
+      return user;
     }
   } catch (e) {
     // error reading value
@@ -34,35 +34,24 @@ getData();
 
 
 // // Add a request interceptor
-// axios.interceptors.request.use(
-//   async (config) => {
-//     try {
+axios.interceptors.request.use(
+  async (config) => {
+    try {
       
-
-//       // if (user !== null) {
-//       //   const token = JSON.parse(user);
-//       //   config.headers['Authorization'] = `Bearer ${token.token}`;
-//       // } else {
-//       //   // No user data found, possibly logout the user or handle as needed
-//       //   console.log('No user data found. Logging out...');
-//       //   // Perform logout logic, e.g., redirect to login page
-//       //   window.location.href = '/login';
-//       //   return Promise.reject('No user data found');
-//       // }
-
-//       return config;
-//     } catch (error) {
-//       // Handle the error as needed
-//       console.error('Interceptor error:', error);
-//       return Promise.reject(error);
-//     }
-//   },
-//   (error) => {
-//     // Handle request error
-//     console.error('Request interceptor error:', error);
-//     return Promise.reject(error);
-//   }
-// );
+      const user=await getData();
+      return config;
+    } catch (error) {
+      // Handle the error as needed
+      console.error('Interceptor error:', error);
+      return Promise.reject(error);
+    }
+  },
+  (error) => {
+    // Handle request error
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
+  }
+);
 
 
 
@@ -336,7 +325,7 @@ export const getGrades =async (data:any) => {
           throw handler(e);
         }
       }
-      
+
       export async function createRole(data: FieldValues) {
         try {
           if(data._id){
@@ -374,7 +363,7 @@ export const getGrades =async (data:any) => {
       export async function getProfile() {
         try {
           let res = await axios.get(c.USERS+"/profile");
-          console.log(res);
+         
           return res.data;
         } catch (e) {
           throw handler(e);
@@ -385,7 +374,7 @@ export const getGrades =async (data:any) => {
       export async function getDashboard() {
         try {
           let res = await axios.get(c.USERS+"/profile");
-          console.log(res);
+        
           return res.data;
         } catch (e) {
           throw handler(e);

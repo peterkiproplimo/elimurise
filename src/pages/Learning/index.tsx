@@ -35,7 +35,7 @@ function Main() {
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
-    total_pages: 31,
+    total_pages: 1,
     per_page: 0,
   });
   const [search, setSearch] = useState("");
@@ -307,25 +307,25 @@ function Main() {
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-              <Table className="border-spacing-y-[10px] border-separate mt-2">
+              <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Learning Area
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Grade
                     </Table.Th>
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       MODULES
                     </Table.Th> */}
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       ACTIONS
                     </Table.Th>
                   </Table.Tr>
@@ -333,22 +333,22 @@ function Main() {
                 <Table.Tbody>
                   {learningAreas.map((learningArea: any, key) => (
                     <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {learningArea.name}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {learningArea?.grade_id?.name}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {new Date(learningArea.createdAt).toLocaleString(
                             "en-US",
@@ -364,7 +364,7 @@ function Main() {
                         </span>
                       </Table.Td>
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
+                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
                         <div className="flex items-center justify-center">
                           {true && (
                             <Menu>

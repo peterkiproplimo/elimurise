@@ -5,7 +5,7 @@ import Pagination from "../../base-components/Pagination";
 import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import Table from "../../base-components/Table";
-
+import { useAuth } from "../../contexts/Auth";
 import { useState, useRef, useEffect } from "react";
 import {
   FormCheck,
@@ -72,46 +72,79 @@ function Users() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-  useEffect(() => {
-    getRole();
-  }, []);
-  useEffect(() => {
-    getUsers();
-  }, [search, limit, page]);
 
-  const getUsers = async () => {
-    let res = await ApiService.getUsers({
-      page: page,
-      search: search,
-      limit: limit,
-    });
+  function Main() {
+    const { authData } = useAuth();
+    const [user, setUser] = useState<any>({});
+    const [profile, setProfile] = useState<any>({});
+    useEffect(() => {
+      setUser(authData?.user);
+    }, []);
+    useEffect(() => {
+      getRole();
+    }, []);
+    useEffect(() => {
+      getUsers();
+    }, [search, limit, page]);
 
-    const pagination = res.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    setUsers(res.data);
-  };
-  const getRole = async () => {
-    let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
-    setrole(res.data?.roles);
-  };
+    const getUsers = async () => {
+      let res = await ApiService.getUsers({
+        page: page,
+        search: search,
+        limit: limit,
+      });
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
+      const pagination = res.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+      setUsers(res.data);
+    };
+    const getRole = async () => {
+      let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
+      setrole(res.data?.roles);
+    };
+
+    const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const result = await trigger();
+      if (result && !loading) {
+        isLoading(true);
+        try {
+          const data = await getValues();
+          let res = await ApiService.createProfile(data);
+          getRole();
+          await reset();
+          isLoading(false);
+          setDialog(false);
+          setSuccess(true);
+          setMessage(res.message);
+          notify.current?.showToast();
+        } catch (error: any) {
+          isLoading(false);
+          setSuccess(false);
+          setMessage(error.message);
+          notify.current?.showToast();
+        }
+      }
+    };
+    const editRecord = (record: any) => {
+      setIsEditMode(true);
+      setGroup(record.groups);
+      console.log(record);
+      reset(record);
+      setDialog(true);
+    };
+    const deleteRecord = async () => {
       isLoading(true);
       try {
-        const data = await getValues();
-        let res = await ApiService.createProfile(data);
-        getRole();
-        await reset();
+        let res = await ApiService.deleteUsers(userId);
+        getUsers();
         isLoading(false);
-        setDialog(false);
+        setConfirmDelete(false);
         setSuccess(true);
         setMessage(res.message);
         notify.current?.showToast();
@@ -121,116 +154,91 @@ function Users() {
         setMessage(error.message);
         notify.current?.showToast();
       }
-    }
-  };
-  const editRecord = (record: any) => {
-    setIsEditMode(true);
-    setGroup(record.groups);
-    console.log(record);
-    reset(record);
-    setDialog(true);
-  };
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteUsers(userId);
-      getUsers();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
-  const cancel = (record: any) => {
-    setGroup([""]);
-    reset({});
-    setDialog(false);
-  };
+    };
+    const cancel = (record: any) => {
+      setGroup([""]);
+      reset({});
+      setDialog(false);
+    };
 
-  return (
-    <>
-      <h2 className="mt-10 text-lg font-medium intro-y">Profile</h2>
-      <div className="grid grid-cols-12 gap-6 mt-5">
-        {/* END: Data List */}
-        {/* END: Data List */}
+    return (
+      <>
+        <h2 className="mt-10 text-lg font-medium intro-y">Profile</h2>
+        <div className="grid grid-cols-12 gap-6 mt-5">
+          {/* END: Data List */}
+          {/* END: Data List */}
 
-        {/* END: Pagination */}
-      </div>
-      <div className=" bg-white p-4 rounded">
-        <form className="validate-form" onSubmit={onSubmit}>
-          <div className="flex items-center justify-center flex-1 px-5 ">
-            <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
-              <img
-                alt="Midone Tailwind HTML Admin Template"
-                className="rounded-full"
-                src="http://bootdey.com/img/Content/avatar/avatar1.png"
-              />
-              <div className="absolute bottom-0 right-0 flex items-center justify-center p-2 mb-1 mr-1 rounded-full bg-primary">
-                <Lucide icon="Camera" className="w-4 h-4 text-white" />
+          {/* END: Pagination */}
+        </div>
+        <div className=" bg-white p-4 rounded">
+          <form className="validate-form" onSubmit={onSubmit}>
+            <div className="flex items-center justify-center flex-1 px-5 ">
+              <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
+                <img
+                  alt="Midone Tailwind HTML Admin Template"
+                  className="rounded-full"
+                  src="http://bootdey.com/img/Content/avatar/avatar1.png"
+                />
+                <div className="absolute bottom-0 right-0 flex items-center justify-center p-2 mb-1 mr-1 rounded-full bg-primary">
+                  <Lucide icon="Camera" className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              <div className="ml-5">
+                <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal"></div>
+                <div className="text-slate-500"></div>
               </div>
             </div>
-            <div className="ml-5">
-              <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal"></div>
-              <div className="text-slate-500"></div>
-            </div>
-          </div>
-          <div className="grid grid-cols-12 gap-4 gap-y-3">
-            <div className="col-span-12 sm:col-span-6">
-              <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
-              <FormInput
-                {...register("firstname")}
-                type="text"
-                name="firstname"
-                className={errors.firstName ? "border-danger" : ""}
-                placeholder="John"
-              />
-              {errors.firstName && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.firstName.message === "string" &&
-                    errors.firstName.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
-              <FormInput
-                {...register("lastname")}
-                type="text"
-                name="lastname"
-                className={errors.lastName ? "border-danger" : ""}
-                placeholder="Doe"
-              />
-              {errors.lastName && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.lastName.message === "string" &&
-                    errors.lastName.message}
-                </div>
-              )}
-            </div>
+            <div className="grid grid-cols-12 gap-4 gap-y-3">
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
+                <FormInput
+                  {...register("firstname")}
+                  type="text"
+                  name="firstname"
+                  className={errors.firstName ? "border-danger" : ""}
+                  placeholder="John"
+                />
+                {errors.firstName && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.firstName.message === "string" &&
+                      errors.firstName.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+                <FormInput
+                  {...register("lastname")}
+                  type="text"
+                  name="lastname"
+                  className={errors.lastName ? "border-danger" : ""}
+                  placeholder="Doe"
+                />
+                {errors.lastName && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.lastName.message === "string" &&
+                      errors.lastName.message}
+                  </div>
+                )}
+              </div>
 
-            <div className="col-span-12 sm:col-span-6">
-              <FormLabel htmlFor="modal-form-6">role</FormLabel>
-              <FormSelect {...register("role_id")} name="role_id">
-                {role.map((role: any, key) => (
-                  <option key={key} value={role._id}>
-                    {role.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.role && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.role.message === "string" &&
-                    errors.role.message}
-                </div>
-              )}
-            </div>
-            {/* <div className="col-span-12 sm:col-span-6">
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">role</FormLabel>
+                <FormSelect {...register("role_id")} name="role_id">
+                  {role.map((role: any, key) => (
+                    <option key={key} value={role._id}>
+                      {role.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Country</FormLabel>
                 <FormSelect
                   {...register("country")}
@@ -244,129 +252,129 @@ function Users() {
                   ))}
                 </FormSelect>
               </div> */}
-            <div className="col-span-12 sm:col-span-6">
-              <FormLabel htmlFor="modal-form-1">Phone Number</FormLabel>
-              <FormInput
-                {...register("phone")}
-                type="text"
-                name="phone"
-                placeholder="+254 712 345 6789"
-              />
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <FormLabel htmlFor="modal-form-1">Email</FormLabel>
-              <FormInput
-                {...register("email")}
-                type="email"
-                name="email"
-                className={errors.email ? "border-danger" : ""}
-                placeholder="info@example.com"
-              />
-              {errors.email && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.email.message === "string" &&
-                    errors.email.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <FormLabel htmlFor="modal-form-1">Password</FormLabel>
-              <FormInput
-                {...register("password")}
-                type="password"
-                name="password"
-                placeholder="password"
-              />
-            </div>
-
-            <Button
-              type="button"
-              variant="outline-secondary"
-              onClick={() => {
-                cancel({ name: "" });
-              }}
-              className="w-20 mr-1"
-            >
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit" className="w-20">
-              Save
-              {loading && (
-                <LoadingIcon
-                  icon="spinning-circles"
-                  color="white"
-                  className="w-4 h-4 ml-2"
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Phone Number</FormLabel>
+                <FormInput
+                  {...register("phone")}
+                  type="text"
+                  name="phone"
+                  placeholder="+254 712 345 6789"
                 />
-              )}
-            </Button>
-          </div>
-        </form>
-      </div>
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Email</FormLabel>
+                <FormInput
+                  {...register("email")}
+                  type="email"
+                  name="email"
+                  className={errors.email ? "border-danger" : ""}
+                  placeholder="info@example.com"
+                />
+                {errors.email && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.email.message === "string" &&
+                      errors.email.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Password</FormLabel>
+                <FormInput
+                  {...register("password")}
+                  type="password"
+                  name="password"
+                  placeholder="password"
+                />
+              </div>
 
-      {/* BEGIN: Delete Confirmation Modal */}
-      <Dialog
-        open={confirmDelete}
-        onClose={() => {
-          setConfirmDelete(false);
-        }}
-        initialFocus={deleteButtonRef}
-      >
-        <Dialog.Panel>
-          <div className="p-5 text-center">
-            <Lucide
-              icon="XCircle"
-              className="w-16 h-16 mx-auto mt-3 text-danger"
-            />
-            <div className="mt-5 text-3xl">Are you sure?</div>
-            <div className="mt-2 text-slate-500">
-              Do you really want to delete this record? <br />
-              This process cannot be undone.
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={() => {
+                  cancel({ name: "" });
+                }}
+                className="w-20 mr-1"
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" className="w-20">
+                Save
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </Button>
             </div>
-          </div>
-          <div className="px-5 pb-8 text-center">
-            <Button
-              variant="outline-secondary"
-              type="button"
-              onClick={() => {
-                setConfirmDelete(false);
-              }}
-              className="w-24 mr-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => deleteRecord()}
-              variant="danger"
-              type="button"
-              className="w-24"
-              ref={deleteButtonRef}
-            >
-              Delete
-            </Button>
-          </div>
-        </Dialog.Panel>
-      </Dialog>
-      {/* END: Delete Confirmation Modal */}
-      <Notification
-        getRef={(el) => {
-          notify.current = el;
-        }}
-        options={{
-          duration: 3000,
-        }}
-        className="flex"
-      >
-        <Lucide
-          icon={success ? "CheckCircle" : "XCircle"}
-          className={success ? "text-success" : "text-danger"}
-        />
-        <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Success" : "Failed"}</div>
-          <div className="mt-1 text-slate-500">{message}</div>
+          </form>
         </div>
-      </Notification>
-    </>
-  );
-}
 
+        {/* BEGIN: Delete Confirmation Modal */}
+        <Dialog
+          open={confirmDelete}
+          onClose={() => {
+            setConfirmDelete(false);
+          }}
+          initialFocus={deleteButtonRef}
+        >
+          <Dialog.Panel>
+            <div className="p-5 text-center">
+              <Lucide
+                icon="XCircle"
+                className="w-16 h-16 mx-auto mt-3 text-danger"
+              />
+              <div className="mt-5 text-3xl">Are you sure?</div>
+              <div className="mt-2 text-slate-500">
+                Do you really want to delete this record? <br />
+                This process cannot be undone.
+              </div>
+            </div>
+            <div className="px-5 pb-8 text-center">
+              <Button
+                variant="outline-secondary"
+                type="button"
+                onClick={() => {
+                  setConfirmDelete(false);
+                }}
+                className="w-24 mr-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => deleteRecord()}
+                variant="danger"
+                type="button"
+                className="w-24"
+                ref={deleteButtonRef}
+              >
+                Delete
+              </Button>
+            </div>
+          </Dialog.Panel>
+        </Dialog>
+        {/* END: Delete Confirmation Modal */}
+        <Notification
+          getRef={(el) => {
+            notify.current = el;
+          }}
+          options={{
+            duration: 3000,
+          }}
+          className="flex"
+        >
+          <Lucide
+            icon={success ? "CheckCircle" : "XCircle"}
+            className={success ? "text-success" : "text-danger"}
+          />
+          <div className="ml-4 mr-4">
+            <div className="font-medium">{success ? "Success" : "Failed"}</div>
+            <div className="mt-1 text-slate-500">{message}</div>
+          </div>
+        </Notification>
+      </>
+    );
+  }
+}
 export default Users;
