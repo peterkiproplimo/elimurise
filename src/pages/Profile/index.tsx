@@ -73,6 +73,7 @@ function Users() {
     resolver: yupResolver(schema),
   });
   useEffect(() => {
+    getProfile();
     getRole();
   }, []);
   useEffect(() => {
@@ -95,6 +96,10 @@ function Users() {
     });
     setUsers(res.data);
   };
+  const getProfile = async () => {
+    let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
+    setRoles(res.data?.profile);
+  };
   const getRole = async () => {
     let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
     setRoles(res.data?.roles);
@@ -107,8 +112,8 @@ function Users() {
       isLoading(true);
       try {
         const data = await getValues();
-        let res = await ApiService.createUsers(data);
-        getUsers();
+        let res = await ApiService.createProfile(data);
+        getProfile();
         await reset();
         isLoading(false);
         setDialog(false);

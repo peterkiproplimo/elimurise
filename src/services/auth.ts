@@ -346,11 +346,13 @@ export const getGrades =async (data:any) => {
         try {
         
           if(data._id){
-            let res = await axios.put(c.PROFILE+'/'+data._id, data);
+            let res = await axios.put(c.USERS+'/'+data._id, data, {
+              params:data
+            });
             return res.data;
           }
         else{
-          let res = await axios.post(c.PROFILE, data);
+          let res = await axios.post(c.USERS, data);
            return res.data;
         }
         
@@ -360,9 +362,11 @@ export const getGrades =async (data:any) => {
         }
       }
     
-      export async function getProfile() {
+      export async function getProfile(data: any) {
         try {
-          let res = await axios.get(c.USERS+"/profile");
+          let res = await axios.get(c.USERS+"/profile",{
+            params:data
+          });
          
           return res.data;
         } catch (e) {
