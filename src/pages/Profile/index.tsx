@@ -5,7 +5,7 @@ import Pagination from "../../base-components/Pagination";
 import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import Table from "../../base-components/Table";
-
+import "./profile.css";
 import { useState, useRef, useEffect } from "react";
 import {
   FormCheck,
@@ -37,7 +37,7 @@ function Users() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [profile, setProfile] = useState([]);
+  const [profile, setProfile] = useState<any>([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -53,13 +53,13 @@ function Users() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      // tenant: yup.string().required("Conference is required"),
-      firstname: yup.string().required("First name is required"),
-      lastname: yup.string().required("Last name is required"),
-      email: yup
-        .string()
-        .required("Email is required")
-        .email("Email must be a valid"),
+      // // tenant: yup.string().required("Conference is required"),
+      // firstname: yup.string().required("First name is required"),
+      // lastname: yup.string().required("Last name is required"),
+      // email: yup
+      //   .string()
+      //   .required("Email is required")
+      //   .email("Email must be a valid"),
     })
     .required();
 
@@ -100,7 +100,7 @@ function Users() {
   };
   const getProfile = async () => {
     let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
-    setRoles(res.data?.profile);
+    setProfile(res.data);
   };
   const getRole = async () => {
     let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
@@ -130,30 +130,7 @@ function Users() {
       }
     }
   };
-  const editRecord = (record: any) => {
-    setIsEditMode(true);
-    setGroup(record.groups);
-    console.log(record);
-    reset(record);
-    setDialog(true);
-  };
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteUsers(userId);
-      getUsers();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
+
   const cancel = (record: any) => {
     setGroup([""]);
     reset({});
@@ -177,6 +154,15 @@ function Users() {
             <div className="absolute bottom-0 right-0 flex items-center justify-center p-2 mb-1 mr-1 rounded-full bg-primary">
               <Lucide icon="Camera" className="w-4 h-4 text-white" />
             </div>
+          </div>
+          <div className="col-span-12 sm:col-span-6">
+            <FormLabel htmlFor="modal-form-1">Full Name </FormLabel>
+            <FormInput
+              type="text"
+              value={profile?.firstname + " " + profile?.lastname}
+              readOnly={true}
+              placeholder="+254 712 345 6789"
+            />
           </div>
           <div className="col-span-12 sm:col-span-6">
             <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
@@ -211,35 +197,6 @@ function Users() {
             )}
           </div>
 
-          {/* <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-6">Role</FormLabel>
-            <FormSelect {...register("role_id")} name="role_id">
-              {roles.map((role: any, key) => (
-                <option key={key} value={role._id}>
-                  {role.name}
-                </option>
-              ))}
-            </FormSelect>
-            {errors.role && (
-              <div className="mt-2 text-danger">
-                {typeof errors.role.message === "string" && errors.role.message}
-              </div>
-            )}
-          </div> */}
-          {/* <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Country</FormLabel>
-                <FormSelect
-                  {...register("country")}
-                  name="country"
-                  value={"Kenya"}
-                >
-                  {countries.map((country, key) => (
-                    <option key={key} value={country.name}>
-                      {country.name}
-                    </option>
-                  ))}
-                </FormSelect>
-              </div> */}
           <div className="col-span-12 sm:col-span-6">
             <FormLabel htmlFor="modal-form-1">Phone Number</FormLabel>
             <FormInput
@@ -249,29 +206,14 @@ function Users() {
               placeholder="+254 712 345 6789"
             />
           </div>
-          {/* <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-1">Email</FormLabel>
-            <FormInput
-              {...register("email")}
-              type="email"
-              name="email"
-              className={errors.email ? "border-danger" : ""}
-              placeholder="info@example.com"
-            />
-            {errors.email && (
-              <div className="mt-2 text-danger">
-                {typeof errors.email.message === "string" &&
-                  errors.email.message}
-              </div>
-            )}
-          </div> */}
           <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-1">Password</FormLabel>
+            <FormLabel htmlFor="modal-form-1">Email </FormLabel>
             <FormInput
-              {...register("password")}
-              type="password"
-              name="password"
-              placeholder="password"
+              type="text"
+              value={profile?.email}
+              name="email"
+              readOnly={true}
+              placeholder="+254 712 345 6789"
             />
           </div>
 
@@ -285,12 +227,7 @@ function Users() {
           >
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            type="submit"
-            className="w-20"
-            onClick={() => editRecord(profile)}
-          >
+          <Button variant="primary" type="submit" className="w-20">
             Save
             {loading && (
               <LoadingIcon
@@ -303,50 +240,6 @@ function Users() {
         </div>
       </form>
 
-      {/* BEGIN: Delete Confirmation Modal */}
-      <Dialog
-        open={confirmDelete}
-        onClose={() => {
-          setConfirmDelete(false);
-        }}
-        initialFocus={deleteButtonRef}
-      >
-        <Dialog.Panel>
-          <div className="p-5 text-center">
-            <Lucide
-              icon="XCircle"
-              className="w-16 h-16 mx-auto mt-3 text-danger"
-            />
-            <div className="mt-5 text-3xl">Are you sure?</div>
-            <div className="mt-2 text-slate-500">
-              Do you really want to delete this record? <br />
-              This process cannot be undone.
-            </div>
-          </div>
-          <div className="px-5 pb-8 text-center">
-            <Button
-              variant="outline-secondary"
-              type="button"
-              onClick={() => {
-                setConfirmDelete(false);
-              }}
-              className="w-24 mr-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => deleteRecord()}
-              variant="danger"
-              type="button"
-              className="w-24"
-              ref={deleteButtonRef}
-            >
-              Delete
-            </Button>
-          </div>
-        </Dialog.Panel>
-      </Dialog>
-      {/* END: Delete Confirmation Modal */}
       <Notification
         getRef={(el) => {
           notify.current = el;

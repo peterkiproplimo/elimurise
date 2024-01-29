@@ -1,4 +1,8 @@
-body{margin-top:20px;
+button{
+  height:50px;
+  margin-top: 10px;
+}
+/* body{margin-top:20px;
     background-color:#f2f6fc;
     color:#69707a;
     }
@@ -56,7 +60,7 @@ body{margin-top:20px;
         padding-right: 0;
         margin-left: 1rem;
         margin-right: 1rem;
-    }
+    } */
     /* <div className="flex items-center justify-center flex-1 px-5 ">
     <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
       <img

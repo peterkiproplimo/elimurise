@@ -345,17 +345,11 @@ export const getGrades =async (data:any) => {
       export async function createProfile(data: FieldValues) {
         try {
         
-          if(data._id){
-            let res = await axios.put(c.USERS+'/'+data._id, data, {
-              params:data
-            });
+       
+            let res = await axios.patch(c.USERS+"/profile", data);
             return res.data;
-          }
-        else{
-          let res = await axios.post(c.USERS, data);
-           return res.data;
-        }
-        
+         
+     
           
         } catch (e) {
           throw handler(e);

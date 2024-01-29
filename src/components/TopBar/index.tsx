@@ -150,11 +150,11 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
             <Menu.Items className="w-56 mt-px relative bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
               <Menu.Header className="font-normal">
                 <div className="font-medium">
-                  {user?.user?.firstname} {user?.user?.lastname}
+                  {user?.firstname} {user?.lastname}
                 </div>
-                <div className="text-xs text-white/70 mt-0.5 dark:text-slate-500">
+                {/* <div className="text-xs text-white/70 mt-0.5 dark:text-slate-500">
                   {fakerData[0].jobs[0]}
-                </div>
+                </div> */}
               </Menu.Header>
               <Menu.Divider className="bg-white/[0.08]" />
               <Link to="/profile">
