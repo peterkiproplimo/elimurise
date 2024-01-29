@@ -23,6 +23,7 @@ import Notification, {
 } from "../../base-components/Notification";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import Dropzone from "../../base-components/Dropzone";
+import Profile from "../UpdateProfile";
 
 function Users() {
   const [dialog, setDialog] = useState(false);
@@ -36,6 +37,7 @@ function Users() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
+  const [profile, setProfile] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -209,7 +211,7 @@ function Users() {
             )}
           </div>
 
-          <div className="col-span-12 sm:col-span-6">
+          {/* <div className="col-span-12 sm:col-span-6">
             <FormLabel htmlFor="modal-form-6">Role</FormLabel>
             <FormSelect {...register("role_id")} name="role_id">
               {roles.map((role: any, key) => (
@@ -223,7 +225,7 @@ function Users() {
                 {typeof errors.role.message === "string" && errors.role.message}
               </div>
             )}
-          </div>
+          </div> */}
           {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Country</FormLabel>
                 <FormSelect
@@ -247,7 +249,7 @@ function Users() {
               placeholder="+254 712 345 6789"
             />
           </div>
-          <div className="col-span-12 sm:col-span-6">
+          {/* <div className="col-span-12 sm:col-span-6">
             <FormLabel htmlFor="modal-form-1">Email</FormLabel>
             <FormInput
               {...register("email")}
@@ -262,7 +264,7 @@ function Users() {
                   errors.email.message}
               </div>
             )}
-          </div>
+          </div> */}
           <div className="col-span-12 sm:col-span-6">
             <FormLabel htmlFor="modal-form-1">Password</FormLabel>
             <FormInput
@@ -283,7 +285,12 @@ function Users() {
           >
             Cancel
           </Button>
-          <Button variant="primary" type="submit" className="w-20">
+          <Button
+            variant="primary"
+            type="submit"
+            className="w-20"
+            onClick={() => editRecord(profile)}
+          >
             Save
             {loading && (
               <LoadingIcon
