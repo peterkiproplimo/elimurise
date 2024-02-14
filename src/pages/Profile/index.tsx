@@ -6,6 +6,7 @@ import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import Table from "../../base-components/Table";
 import "./profile.css";
+import logoUrl from "../../assets/images/heros.png";
 import { useState, useRef, useEffect } from "react";
 import {
   FormCheck,
@@ -133,7 +134,7 @@ function Users() {
 
   const cancel = (record: any) => {
     setGroup([""]);
-    reset({});
+    reset(record);
     setDialog(false);
   };
 
@@ -143,17 +144,8 @@ function Users() {
 
       <form className="validate-form" onSubmit={onSubmit}>
         <div className=" bg-white p-5  mt-10 grid grid-cols-12 gap-4 gap-y-3 shadow-lg rounded-xl">
-          <div className=" col-span-12 relative flex-none w-20 h-20 mx-auto sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit ">
-            <img
-              alt="Midone Tailwind HTML Admin Template"
-              className="rounded-full"
-              src={
-                "https://w7.pngwing.com/pngs/236/917/png-transparent-computer-icons-avatar-woman-user-profile-avatar-face-heroes-head.png"
-              }
-            />
-            <div className="absolute bottom-0 right-0 flex items-center justify-center p-2 mb-1 mr-1 rounded-full bg-primary">
-              <Lucide icon="Camera" className="w-4 h-4 text-white" />
-            </div>
+          <div className=" col-span-12 relative flex-none w-20 h-20 mx-auto sm:w-24 sm:h-24 lg:w-40 lg:h-12  ">
+            <img alt="ACS" className="rounded-full" src={logoUrl} />
           </div>
           <div className="col-span-12 sm:col-span-6">
             <FormLabel htmlFor="modal-form-1">Full Name </FormLabel>
@@ -217,7 +209,7 @@ function Users() {
             />
           </div>
 
-          <Button
+          {/* <Button
             type="button"
             variant="outline-secondary"
             onClick={() => {
@@ -226,8 +218,8 @@ function Users() {
             className="w-20 mr-1"
           >
             Cancel
-          </Button>
-          <Button variant="primary" type="submit" className="w-20">
+          </Button> */}
+          <Button variant="primary" type="submit" className="w-20 h-10 mt-7">
             Save
             {loading && (
               <LoadingIcon
