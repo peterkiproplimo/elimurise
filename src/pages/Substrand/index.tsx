@@ -511,6 +511,7 @@ function Main() {
                       {grade.name}
                     </option>
                   ))}
+                  {/* substrand */}
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
