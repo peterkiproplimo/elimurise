@@ -255,6 +255,22 @@ export const getGrades =async (data:any) => {
             throw handler(e);
           }
         }
+
+        export async function activateorDeactivateUsers(data: FieldValues) {
+          try {
+           
+            if(data.status!==1){
+              const res = await axios.put(`${c.USERS}/${data._id}/activate`, data);
+              return res.data;
+            }else{
+              const res = await axios.put(`${c.USERS}/${data._id}/deactivate`, data);
+              return res.data;
+            }
+           
+          } catch (e) {
+            throw handler(e);
+          }
+        }
         
         export async function deleteUsers(userId: any) {
           try {

@@ -29,6 +29,7 @@ function Users() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [users, setUsers] = useState([]);
+  const [user, setUser] = useState<any>({});
   const [selectGroup, setGroup] = useState([""]);
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
@@ -100,6 +101,13 @@ function Users() {
     setRoles(res.data?.roles);
   };
 
+  const activateUser = async (data:any) => {
+    isLoading(true);
+    let res = await ApiService.activateorDeactivateUsers(data)
+    getUsers()
+    setConfirmDelete(false)
+    isLoading(false);
+  };
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
@@ -264,7 +272,7 @@ function Users() {
                           : "flex items-center text-danger"
                       }
                     >
-                      {user.status == 1 ? "Active" : "InActive"}
+                      {user.status == 1 ? "Active" : "Deactivated"}
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
@@ -281,21 +289,20 @@ function Users() {
                           </Menu.Item>
                           <Menu.Item
                             onClick={() => {
-                              setUserId(user._id), setConfirmDelete(true);
+                              // active(user)
+                              setUser(user);
+                              setConfirmDelete(true)
                             }}
                           >
                             <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
-                            Delete
+                            {user.status !== 1 ? "Activate" : "Deactivate"}
                           </Menu.Item>
 
-                          <Menu.Item>
-                            <Lucide icon="UserCheck" className="w-4 h-4 mr-2" />{" "}
-                            Activate
-                          </Menu.Item>
-                          <Menu.Item>
+                         
+                          {/* <Menu.Item>
                             <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
                             Email Credentials
-                          </Menu.Item>
+                          </Menu.Item> */}
                         </Menu.Items>
                       </Menu>
                     </div>
@@ -304,11 +311,7 @@ function Users() {
               ))}
             </Table.Tbody>
           </Table>
-          {loading && (
-            <div className="flex flex-col items-center">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-            </div>
-          )}
+          
         </div>
         {/* END: Data List */}
         {/* END: Data List */}
@@ -528,10 +531,10 @@ function Users() {
               className="w-16 h-16 mx-auto mt-3 text-danger"
             />
             <div className="mt-5 text-3xl">Are you sure?</div>
-            <div className="mt-2 text-slate-500">
-              Do you really want to delete this record? <br />
-              This process cannot be undone.
-            </div>
+            {/* <div className="mt-2 text-slate-500">
+              Do you want to{user.status !== 1 ? "Activate" : "Deactivate"} user? <br />
+             
+            </div> */}
           </div>
           <div className="px-5 pb-8 text-center">
             <Button
@@ -545,13 +548,20 @@ function Users() {
               Cancel
             </Button>
             <Button
-              onClick={() => deleteRecord()}
+              onClick={(data:any) => activateUser(user)}
               variant="danger"
               type="button"
               className="w-24"
               ref={deleteButtonRef}
             >
-              Delete
+             Yes
+             {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
+                  )}
             </Button>
           </div>
         </Dialog.Panel>
