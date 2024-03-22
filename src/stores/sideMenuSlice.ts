@@ -26,6 +26,16 @@ const initialState: SideMenuState = {
       title: "Dashboard",
       pathname: "/",
     },
+    {
+      icon: "FileText",
+      pathname: "/academic",
+      title: "Academic",
+    },
+    {
+      icon: "BarChart",
+      pathname: "/term",
+      title: "Term",
+    },
    
 
     // {
@@ -40,21 +50,13 @@ const initialState: SideMenuState = {
     // },
     
 
-    // {
-    //     icon: "FileText",
-    //     pathname: "/level",
-    //     title: "Levels",
-    //   },
+   
     //    {
     //   icon: "Activity",
     //   pathname: "/grade",
     //   title: "Grades",
     // },
-    //   {
-    //     icon: "BarChart",
-    //     pathname: "/learning",
-    //     title: "Learning Area",
-    //   },
+   
     //   {
     //     icon: "Activity",
     //     pathname: "/strand",

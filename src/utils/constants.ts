@@ -1,8 +1,8 @@
 
 //API URL
-export const BASE_URL = "http://localhost:3000/";
+// export const BASE_URL = "http://localhost:3000/";
 
-// export const BASE_URL= "https://hero.techsavanna.technology/api/"
+export const BASE_URL= "https://hero-staging.techsavanna.technology/api/"
 //API Endpoints
 //devops has do it again
 export const LOGIN = `${BASE_URL}portal/auth/login`;

@@ -23,6 +23,7 @@ import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
 import LoadingIcon from "../../base-components/LoadingIcon";
+import logo from "../../assets/images/teenyicons_tick-circle-solid.png"
 import Dropzone from "../../base-components/Dropzone";
 import Profile from "../UpdateProfile";
 
@@ -50,6 +51,8 @@ function Users() {
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [loadings, setLoadings] = useState(false);
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -67,7 +70,6 @@ function Users() {
   const {
     register,
     trigger,
-
     getValues,
     reset,
     formState: { errors },
@@ -75,13 +77,23 @@ function Users() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+  
   useEffect(() => {
     getProfile();
-    getRole();
   }, []);
   useEffect(() => {
     getUsers();
   }, [search, limit, page]);
+
+  const handlePayment = () => {
+    // Simulating payment process
+    setLoadings(true);
+    setTimeout(() => {
+      setLoadings(false);
+      setPaymentSuccess(true);
+    }, 2000); // Simulating 2 seconds of loading
+  };
 
   const getUsers = async () => {
     let res = await ApiService.getUsers({
@@ -103,10 +115,7 @@ function Users() {
     let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
     setProfile(res.data);
   };
-  const getRole = async () => {
-    let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
-    setRoles(res.data?.roles);
-  };
+ 
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -140,30 +149,22 @@ function Users() {
 
   return (
     <>
-      <h2 className="mt-10 text-lg font-medium intro-y">Profile</h2>
-
-      <form className="validate-form" onSubmit={onSubmit}>
-        <div className=" bg-white p-5  mt-10 grid grid-cols-12 gap-4 gap-y-3 shadow-lg rounded-xl">
-          <div className=" col-span-12 relative flex-none w-20 h-20 mx-auto sm:w-24 sm:h-24 lg:w-40 lg:h-12  ">
-            <img alt="ACS" className="rounded-full" src={logoUrl} />
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-1">Full Name </FormLabel>
-            <FormInput
-              type="text"
-              value={profile?.firstname + " " + profile?.lastname}
-              readOnly={true}
-              placeholder="+254 712 345 6789"
-            />
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
+   
+       <div className = " min-h-[70vh]  grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl border border-gray-100  dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2 mt-10">
+        <div className="group relative  dark:bg-gray-800 transition h m-4 ">
+       <form className="validate-form" onSubmit={onSubmit}>
+        <div className="  p-5  mt-10  rounded-xl">
+        <h2 className=" text-3xl font-bold intro-x">Generate A Quote</h2>
+         
+          <p className="mt-5 text-xl">Please provide the following details:</p>
+          <div className="col-span-12 sm:col-span-12 mt-5">
+            <FormLabel htmlFor="modal-form-1" className="font-bold">School Name</FormLabel>
             <FormInput
               {...register("firstname")}
               type="text"
               name="firstname"
               className={errors.firstName ? "border-danger" : ""}
-              placeholder="John"
+              placeholder="St.Marys"
             />
             {errors.firstName && (
               <div className="mt-2 text-danger">
@@ -172,14 +173,14 @@ function Users() {
               </div>
             )}
           </div>
-          <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+          <div className="col-span-12 sm:col-span-12 mt-5">
+            <FormLabel htmlFor="modal-form-1" className="font-bold">Number of Students</FormLabel>
             <FormInput
               {...register("lastname")}
               type="text"
               name="lastname"
               className={errors.lastName ? "border-danger" : ""}
-              placeholder="Doe"
+              placeholder="100"
             />
             {errors.lastName && (
               <div className="mt-2 text-danger">
@@ -189,38 +190,11 @@ function Users() {
             )}
           </div>
 
-          <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-1">Phone Number</FormLabel>
-            <FormInput
-              {...register("phone")}
-              type="text"
-              name="phone"
-              placeholder="+254 712 345 6789"
-            />
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <FormLabel htmlFor="modal-form-1">Email </FormLabel>
-            <FormInput
-              type="text"
-              value={profile?.email}
-              name="email"
-              readOnly={true}
-              placeholder="+254 712 345 6789"
-            />
-          </div>
+           
 
-          {/* <Button
-            type="button"
-            variant="outline-secondary"
-            onClick={() => {
-              cancel({ name: "" });
-            }}
-            className="w-20 mr-1"
-          >
-            Cancel
-          </Button> */}
-          <Button variant="primary" type="submit" className="w-20 h-10 mt-7">
-            Save
+        <div className="text-center">
+          <Button variant="primary" type="submit" className=" mt-7 p-4 text-center">
+            Generate a Quote
             {loading && (
               <LoadingIcon
                 icon="spinning-circles"
@@ -229,8 +203,81 @@ function Users() {
               />
             )}
           </Button>
+          </div>
         </div>
       </form>
+      </div>
+
+      <div className="group relative dark:bg-gray-800 transition  m-4 bg-white  shadow-lg rounded-xl ">
+      {!paymentSuccess ? (
+        <div className="  p-5 mt-10 text-center  ">
+          <div className="mt-10">
+          <p className="col-span-12 sm:col-span-6 font-bold ">
+             You will pay:
+          </p><br/>
+          <div className="mt-10">
+           <h2 className="col-span-12 sm:col-span-6 text-3xl "> KSH:</h2>
+           </div>
+           <p className="col-span-12 sm:col-span-6 mt-10">
+             This includes 3.5% discount.
+          </p>
+          <div className=" mt-10">
+          <Button variant="primary" type="submit"  onClick={handlePayment} disabled={loading} >
+            Proceed to Payment
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+          </div>
+        </div>
+        </div>
+           ) : (
+          
+            <div className="  p-10 mt-10 text-center  ">
+              <div className="flex justify-center m-5 ">
+              <img alt="ACS" className="xl:w-35  md:w-10 xl:w-auto" src={logo}/>
+                {/* <img src="success_image_url"  className="w-48 h-36" alt="" /> */}
+                </div>
+          <p className="col-span-12 sm:col-span-6 font-bold mt-5 text-m text-green-500">
+             Your payment is complete!<br/> Thank you for your support.
+          </p>
+          <div className=" mt-10 ">
+          <Button variant="primary" type="submit"  onClick={handlePayment} disabled={loading} >
+            Print Receipt
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+          <br/>
+          <Button variant="primary" type="submit" className="mt-2 p-6" onClick={handlePayment} disabled={loading} >
+            Proceed
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+          </div>
+          
+          
+          </div>
+       
+          )}
+ 
+      </div>
+
+       </div>
+      
 
       <Notification
         getRef={(el) => {
@@ -255,3 +302,4 @@ function Users() {
 }
 
 export default Users;
+

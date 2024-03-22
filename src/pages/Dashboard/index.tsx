@@ -94,37 +94,55 @@ function Main() {
           Please select a pricing plan that works for you
         </h2>
         {packages.length > 0 ? (
-          <div className="mt-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-20">
+          <div className="mt-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-20 relative">
             {packages.map((Package: any, key: any) => (
               <div
                 key={key}
-                className="p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md flex flex-col  min-h-[600px] min-h-[600px] text-white"
+                className="p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md flex flex-col  min-h-[500px] min-h-[500px] text-white"
                 style={{ backgroundColor: Package.color }}
               >
                 <div>
                   <h1 className="text-4xl font-bold mb-2">{Package.name}</h1>
                   <div
-                    className="text-xl  text-white"
+                    className="text-m  text-white"
                     dangerouslySetInnerHTML={{ __html: Package.description }}
                   />
                 </div>
                 <div className=" items-center">
-                  <h1 className="text-3xl font-bold mt-4">
+                  <h1 className="text-2xl font-bold mt-2">
                     Ksh. {Package.pricePerLearner}
                   </h1>
-                  <p className="text-xl text-white">(Per Learner Annually)</p>
+                  <p className="text-m text-white">(Per Learner Annually)</p>
                 </div>
+                <div className=" absolute bottom-5  ">
+            <Button
+              variant="primary"
+              className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+            >
+              <Link to="/profile">
+                Buy Now
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </Link>
+            </Button>
+          </div>
+                
               </div>
             ))}
           </div>
         ) : (
-          <div className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+          <div className="p-4 mt-5 bg-white dark:bg-gray-800 rounded-xl shadow-md">
             <p className="text-lg text-gray-700 dark:text-gray-300">
               No packages available
             </p>
           </div>
         )}
-        <div className="buttons flex justify-center items-center mt-10">
+        {/* <div className="buttons flex justify-center items-center mt-10">
           <div className=" text-center intro-x  xl:text-left">
             <Button
               variant="primary"
@@ -159,7 +177,7 @@ function Main() {
               </Link>
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

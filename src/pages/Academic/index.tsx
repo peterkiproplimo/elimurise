@@ -14,15 +14,17 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
-import Pagination from "../../base-components/Pagination";
 import { formatDate } from "../../utils/helper";
-function Main() {
+import Pagination from "../../base-components/Pagination";
+
+function Level() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
+
+  const [levels, setLevels] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [learningAreas, setLearningAreas] = useState([]);
-  const [grades, setGrades] = useState([]);
+  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -69,8 +71,9 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createLearningArea(data);
-        await getLearningAreas();
+        console.log(data);
+        await ApiService.createLevel(data);
+        await getLevels();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -89,18 +92,16 @@ function Main() {
   };
 
   useEffect(() => {
-    getLearningAreas();
+    getLevels();
   }, [search, page, limit]);
-  useEffect(() => {
-    getGrades();
-  }, []);
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({
+
+  const getLevels = async () => {
+    const response = await ApiService.getLevels({
       page: page,
       search: search,
       limit: limit,
     });
-    setLearningAreas(response.data);
+    setLevels(response.data);
     const pagination = response.pagination;
     setPagination({
       current_page: pagination.current_page,
@@ -109,15 +110,12 @@ function Main() {
       per_page: pagination.per_page,
     });
   };
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-    setGrades(response.data);
-  };
+
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearningArea(recordId);
-      getLearningAreas();
+      let res = await ApiService.deleteLevel(recordId);
+      getLevels();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -134,7 +132,7 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset({ ...record, grade_id: record.grade_id._id });
+    reset(record);
     setDialog(true);
   };
 
@@ -161,12 +159,12 @@ function Main() {
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
             <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Learning Area" : "New Learning Area"}
+              {isEditMode ? "Edit LAcademic Year" : "New Academic Year"}
             </h2>
           </div>
-
+          <br />
           <form
-            className="mt-5 p-5 intro-y  box validate-form"
+            className="mt-5 p-5 intro-y box validate-form"
             onSubmit={onSubmit}
           >
             <div>
@@ -181,13 +179,13 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Learning Area</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormInput
                   {...register("name")}
                   type="text"
                   name="name"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="Learning Area"
+                  placeholder="Name"
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -197,16 +195,17 @@ function Main() {
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect {...register("grade_id")} name="grade_id">
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
+            <div>
+            <div className="grid grid-cols-12 gap-4 gap-y-3 d-flex mt-2">
+              <div className="col-span-6 sm:col-span-12">
+                <FormLabel>Start Date</FormLabel>
+                <FormInput
+                  {...register("name")}
+                  type="date"
+                  name="name"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="Level"
+                />
                 {errors.role && (
                   <div className="mt-2 text-danger">
                     {typeof errors.role.message === "string" &&
@@ -214,6 +213,24 @@ function Main() {
                   </div>
                 )}
               </div>
+              <div className="col-span-6 sm:col-span-12">
+                <FormLabel>End Date</FormLabel>
+                <FormInput
+                  {...register("name")}
+                  type="date"
+                  name="name"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="Level"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+           
+            </div>
+            </div>
             </div>
             <div>
               <div className="col-span-12 sm:col-span-12 mt-3">
@@ -241,7 +258,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Learning Areas</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y">Academic</h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
@@ -252,28 +269,8 @@ function Main() {
                   setDialog(true);
                 }}
               >
-                New Learning Area
+                New Academia
               </Button>
-              <Menu>
-                <Menu.Button as={Button} className="px-2 !box">
-                  <span className="flex items-center justify-center w-5 h-5">
-                    <Lucide icon="Plus" className="w-4 h-4" />
-                  </span>
-                </Menu.Button>
-                <Menu.Items className="w-40">
-                  <Menu.Item>
-                    <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    to Excel
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    to PDF
-                  </Menu.Item>
-                </Menu.Items>
-              </Menu>
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
                 {pagination.current_page +
@@ -296,75 +293,73 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
-                {/* <FormSelect className="w-56 ml-2 xl:w-auto !box">
-                  <option>Status</option>
-                  <option>Active</option>
-                  <option>Inactive</option>
-                </FormSelect> */}
               </div>
-
-              {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
             </div>
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
+            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+              <Table className="border-spacing-y-[5px]  border-separate -mt-2">
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                    <Table.Th className="border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Learning Area
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Grade
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Academic Name
                     </Table.Th>
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       MODULES
                     </Table.Th> */}
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                     <Table.Th className="border-b-0 whitespace-nowrap">
+                      Start Date
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      End Date
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      ACTIONS
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Actions
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learningAreas.map((learningArea: any, key) => (
+                  {levels.map((level: any, key) => (
                     <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learningArea.name}
+                          {level.name}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learningArea?.grade_id?.name}
+                          {level.name}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {new Date(learningArea.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
+                          {level.name}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {new Date(level.createdAt).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </span>
                       </Table.Td>
 
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           {true && (
                             <Menu>
@@ -377,9 +372,7 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item
-                                  onClick={() => editRecord(learningArea)}
-                                >
+                                <Menu.Item onClick={() => editRecord(level)}>
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
@@ -388,7 +381,7 @@ function Main() {
                                 </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(learningArea._id),
+                                    setRecordId(level._id),
                                       setConfirmDelete(true);
                                   }}
                                 >
@@ -457,7 +450,7 @@ function Main() {
                 </div>
               </div>
             </div>
-            {/* END: Pagination */}
+            {/* END: Data List */}
           </div>
           <Dialog
             staticBackdrop
@@ -535,4 +528,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default Level;

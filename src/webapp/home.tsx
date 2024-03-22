@@ -126,8 +126,8 @@ const Home = () => {
             />
           </div>
         </div> */}
-<div className="p-10">
-        <div className="  grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl border border-gray-100 text-gray-600 dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
+         <div className="p-10">
+        <div className="grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl border border-gray-100 text-gray-600 dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
           <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
             <h1 className="xl:text-5xl sm:text-5xl md:text-3xl font-semibold mt-5 text-black w-full">
               Empowering Competency Based Curriculum (CBC) Education In Kenya

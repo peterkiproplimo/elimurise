@@ -25,8 +25,8 @@ import ErrorPage from "../pages/ErrorPage";
 import AuthGuard from "../utils/route-guard/AuthGuard";
 import GuestGuard from "../utils/route-guard/GuestGuard";
 import SecurityFeature from "../pages/security";
-import Learning from "../pages/Learning";
-import Level from "../pages/Level";
+import Term from "../pages/Term";
+import Academic from "../pages/Academic";
 import Substrand from "../pages/Substrand";
 import AccountDetails from "../pages/accountDetails";
 import Grade from "../pages/Grade";
@@ -67,13 +67,13 @@ function Router() {
           element: <Substrand />,
         },
         {
-          path: "learning",
-          element: <Learning />,
+          path: "term",
+          element: <Term/>,
         },
 
         {
-          path: "level",
-          element: <Level />,
+          path: "academic",
+          element: <Academic />,
         },
 
         {
