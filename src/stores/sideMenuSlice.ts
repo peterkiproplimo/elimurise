@@ -40,31 +40,31 @@ const initialState: SideMenuState = {
     // },
     
 
-    {
-        icon: "FileText",
-        pathname: "/level",
-        title: "Levels",
-      },
-       {
-      icon: "Activity",
-      pathname: "/grade",
-      title: "Grades",
-    },
-      {
-        icon: "BarChart",
-        pathname: "/learning",
-        title: "Learning Area",
-      },
-      {
-        icon: "Activity",
-        pathname: "/strand",
-        title: " Strands",
-      },
-      {
-        icon: "Activity",
-        pathname: "/substrand",
-        title: "Substrand",
-      }
+    // {
+    //     icon: "FileText",
+    //     pathname: "/level",
+    //     title: "Levels",
+    //   },
+    //    {
+    //   icon: "Activity",
+    //   pathname: "/grade",
+    //   title: "Grades",
+    // },
+    //   {
+    //     icon: "BarChart",
+    //     pathname: "/learning",
+    //     title: "Learning Area",
+    //   },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/strand",
+    //     title: " Strands",
+    //   },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/substrand",
+    //     title: "Substrand",
+    //   }
     //   {
     //     icon: "FileCheck",
     //     title: "SubStrands",
@@ -113,28 +113,28 @@ const initialState: SideMenuState = {
             
             
     //       ]},
-      ,{
-      icon: "Users",
-      title: "Users",
+//       ,{
+//       icon: "Users",
+//       title: "Users",
       
-          pathname: "/user",
+//           pathname: "/user",
          
         
-  },
-  {
-    icon: "Users",
-    title: "Roles",
+//   },
+//   {
+//     icon: "Users",
+//     title: "Roles",
     
-        pathname: "/role",
+//         pathname: "/role",
        
       
-},
-{
-  icon: "Users",
-  title: "Profile",
-  pathname: "/profile",
+// },
+// {
+//   icon: "Users",
+//   title: "Profile",
+//   pathname: "/profile",
       
-},
+// },
          
   //         "divider",
 

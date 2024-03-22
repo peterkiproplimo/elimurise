@@ -16,6 +16,7 @@ import * as yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./login.css";
+import logo from "../../assets/images/Untitled-1.png"
 
 const Login = () => {
   const auth = useAuth();
@@ -79,12 +80,14 @@ const Login = () => {
   return (
     <>
       <div className="form-container">
-        <h2 className="text-4xl font-medium">Login</h2>
-        <div className="mt-2 text-center intro-x text-slate-400 xl:hidden">
-          A few more clicks to sign in to your account.
+      <div className="icon flex justify-center items-center  ">
+             <img alt="ACS" className="xl:w-30 md:w-10 xl:w-auto" src={logo}/></div>  
+        <h2 className="text-3xl font-bold  ">Login</h2>
+        <div className="mt-2 text-center intro-x text-slate-900 xl text-xl">
+        Welcome, please log in to continue.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
-          <div className="mt-8 intro-x">
+          <div className="mt-5 intro-x">
             <div className="input-form">
               <label>Email</label>
               <FormInput
@@ -95,7 +98,7 @@ const Login = () => {
                 className={
                   errors.email
                     ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                 }
                 placeholder="Email"
               />
@@ -117,7 +120,7 @@ const Login = () => {
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
-                      : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
+                      : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10 bg-blue-100 border-blue-300"
                   }
                   placeholder="Enter Password"
                 />
@@ -147,7 +150,7 @@ const Login = () => {
               <FormCheck.Input
                 id="remember-me"
                 type="checkbox"
-                className="mr-2 border"
+                className="mr-2 border-blue-300"
               />
               <label
                 className="cursor-pointer select-none"
@@ -161,14 +164,14 @@ const Login = () => {
           <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
             <Button
               variant="primary"
-              className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+              className="w-full px-4 py-3 align-top xl:w-22 xl:mr-3"
             >
               Login
               {loading && (
                 <LoadingIcon
                   icon="spinning-circles"
                   color="white"
-                  className="w-4 h-4 ml-2"
+                  className="w-2 h-4 ml-2"
                 />
               )}
             </Button>

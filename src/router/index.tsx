@@ -31,6 +31,8 @@ import Substrand from "../pages/Substrand";
 import AccountDetails from "../pages/accountDetails";
 import Grade from "../pages/Grade";
 import Strand from "../pages/Strand";
+import Home from "../webapp/home";
+import Register from "../pages/Auth/register";
 //nn
 function Router() {
   const routes = [
@@ -116,6 +118,11 @@ function Router() {
           path: "/forgot-password",
           element: <ForgotPassword />,
         },
+        {
+          path: "/register",
+          element: <Register/>,
+        },
+
 
         {
           path: "/otp",
@@ -134,6 +141,10 @@ function Router() {
     {
       path: "*",
       element: <ErrorPage />,
+    },
+    {
+      path: "/home",
+      element: <Home />,
     },
   ];
 

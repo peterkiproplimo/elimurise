@@ -25,7 +25,7 @@ function Main() {
   const nextImportantNotes = () => {
     importantNotesRef.current?.tns.goTo("next");
   };
-
+  const [loading, isLoading] = useState(false);
   const [feeds, setFeeds] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);
@@ -86,309 +86,104 @@ function Main() {
   return (
     <>
       {/* BEGIN: Important Notes */}
-      <div className="grid grid-cols-12 gap-6 mt-5">
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y box1 ">
-          <div className="">
-            <Link to="">
-              {/* <Link to="/attendees"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  {/* <Lucide
-                    icon="UserCheck"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  /> */}
-                  <h2>Schools Registered</h2>
-                  <div className="ml-auto">
-                    {/* <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy> */}
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.attendees} */}
-                  {/* {totalUsers} */}
-                  {/* {totalUsers !== null ? totalUsers : "Loading..."} */}
+   
+      <div className="price mt-5 ">
+        <h2 className="text xl:text-xl sm:text-xl md:text-xl text-left">Please select a pricing plan that works for you</h2>
 
-                  <div>
-                    <h1>{stats.houseRevenue}</h1>
-                  </div>
-                </div>
-                <div className="mt-1 text-base text-slate-500">
-                  Need Approval{" "}
-                </div>
-              </div>
-            </Link>
+        <div className=" mt-2 pricess grid grid-cols-1 divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3 ">
+          <div className="tag1 p-2 m-4 mt-5 ">
+            <h1 className="m-5 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
+              HERO System
+            </h1>
+            <p className="ml-5 font-bold"> You get access to:</p>
+            <ul className="ml-10 text-sm">
+              <li>Online Formative Assessment.</li>
+              <li>Online SummativeAssessment.</li>
+              <li>Chat features with parents/guardians.</li>
+              <li>Branded Termly/AnnualPrintable Reports</li>
+            </ul>
+            <h1 className="ml-5 mt-5 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">1500Ksh</h1>
+            <p className="ml-5 text-left text-sm"> (Per Learner Annually)</p>
+          </div>
+          <div className="tag2 p-2 m-4 mt-3">
+            <h1 className="ml-5 mt-2 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
+              Evidence <br/>of Learning
+            </h1>
+            <h2 className="ml-5 mt-2 font-bold "> You get access to:</h2>
+            <p className="ml-5">
+              Hard copy assessment tool books for all grades with activities for
+              all the sub strands plus: A scoring guide, and teacher's
+              reflection.
+            </p>
+            <h2 className="ml-5 mt-2 "> Charges per book:</h2>
+            <p className="text-sm ml-5 mb-0"> Pre School</p>
+            <h1 className="ml-5  mt-0 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">250Ksh</h1>
+            <p className="text-sm  ml-5"> Lower Primary</p>
+            <h1 className="ml-5  mt-0 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">350Ksh</h1>
+            <p className="text-sm  ml-5"> Upper Primary</p>
+            <h1 className="ml-5  m-0 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">500Ksh</h1>
+            <p className="text-sm  ml-5"> Junior Secondary</p>
+            <h1 className="ml-5 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">600Ksh</h1>
+          </div>
+          <div className="tag3 p-2 m-4 ">
+            <h1 className="mt-2 ml-8 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold">
+              HERO<br/> All in One
+            </h1>
+            <h2 className="ml-8 xl:text-xl sm:text-xl md:text-xl"> (Recommended)</h2>
+            <p className="ml-5 mt-5 font-bold"> You get access to:</p>
+            <ul className="ml-10 text-sm">
+              <li>Online Formative Assessment.</li>
+              <li>Online SummativeAssessment.</li>
+              <li>Chat features with parents/guardians.</li>
+              <li>Branded Termly/AnnualPrintable Reports</li>
+              <li>
+                Hard copy assessment tool books for all grades with activities
+                for all the substrands plus: A scoring guide, and teacher's
+                reflection.
+              </li>
+            </ul>
+            <h1 className="ml-5 mt-5 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold">3000Ksh</h1>
+            <p className="ml-5 text-left text-sm"> (Per Learner Annually)</p>
           </div>
         </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y box2">
-          <div className="">
-            <Link to="">
-              {/* <Link to="/attendees"> */}
-
-              <div className="p-5 box">
-                <div className="flex">
-                  {/* <Lucide
-                    icon="FileCheck"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  /> */}
-                  <h2>Teachers</h2>
-                  <div className="ml-auto">
-                    {/* <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy> */}
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.attendees} */}
-                  <h3>{stats.mpesaBalanceb2cTotal}</h3>
-                </div>
-                <div className="mt-1 text-base text-slate-500">Active</div>
-              </div>
-            </Link>
-          </div>
-        </div>
-        <div className="col-span-12 sm:col-span-3 xl:col-span-3 intro-y box3">
-          <div className="">
-            <Link to="">
-              {/* <Link to="/attendees"> */}
-              <div className="p-5 box">
-                <div className="flex">
-                  {/* <Lucide
-                    icon="FileCheck"
-                    className="w-[28px] h-[28px] text-blue-800"
-                  /> */}
-                  <h2>Learners</h2>
-                  <div className="ml-auto">
-                    {/* <Tippy
-                      as="div"
-                      className="cursor-pointer bg-red-500 py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                      content=""
-                    >
-                      <Lucide icon="ChevronRight" className="w-4 h-4 ml-0.5" />
-                    </Tippy> */}
-                  </div>
-                </div>
-                <div className="mt-6 text-3xl font-medium leading-8">
-                  {/* {stats.attendees} */}
-                  {/* {totalUsers} */}
-                  {/* {totalUsers !== null ? totalUsers : "Loading..."} */}
-
-                  <div>
-                    <h1>{stats.mpesaBalancepaybill}</h1>
-                  </div>
-                </div>
-                <div className="mt-1 text-base text-slate-500">Registered</div>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-12 gap-6 mt-5">
-        {/* BEGIN: simcard stats */}
-        <div className="col-span-8 intro-y money">
-          <div className="img">
-            <img alt="ACS" className="w-35" src={logoUrl} />
-          </div>
-          <div>
-            <h2>PesaPal Payment</h2>
-            <p>Your Account has been credited</p>
-          </div>
-          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-            <Button>
-              View Payment
-              {
-                <LoadingIcon
-                  icon="spinning-circles"
-                  color="white"
-                  className="w-4 h-4 ml-2"
-                />
-              }
-            </Button>
-          </div>
-          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-            <Button>
-              Mark as Read
-              {
-                <LoadingIcon
-                  icon="spinning-circles"
-                  color="white"
-                  className="w-4 h-4 ml-2"
-                />
-              }
-            </Button>
-          </div>
-        </div>
-
-        <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
-          {/* <div className="flex h-10 intro-y">
-            <h2 className="mr-5 text-lg font-medium truncate">
-              Players Statistics
-            </h2>
-          </div> */}
-          {/* <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
-            <ReportDonutChart height={290} width={300} />
-          </div> */}
-        </div>
-
-        {/* END: simcard stats */}
-        {/* START: system users */}
-
-        <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
-          {/* <div className="flex h-10 intro-y">
-            <h2 className="text-lg font-medium truncate">Games Statistics</h2>
-          </div> */}
-          {/* <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
-            <ReportPieChart height={290} width={300} />
-          </div> */}
-        </div>
-        <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
-          {/* <div className="flex h-10 intro-y">
-            <h2 className="text-lg font-medium truncate">
-              Games wins vs loss statistics
-            </h2>
-          </div> */}
-          {/* <div className="p-5 mt-4 intro-y box padding-top:23 flex justify-center">
-            <ReportPieChart height={290} width={300} />
-          </div> */}
-        </div>
-        {/* END: system users */}
-
-        <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-4">
-          {/* <div className="h-12 flex intro-x">
-            <h2 className="mr-auto text-lg font-medium truncate">
-              Important Announcements
-            </h2>
-            <Button
-              data-carousel=" important-notes"
-              data-target="prev"
-              className="px-2 mr-2 border-slate-300 text-slate-600 dark:text-slate-300"
-              onClick={prevImportantNotes}
-            >
-              <Lucide icon="ChevronLeft" className="w-4 h-4" />
-            </Button>
-            <Button
-              data-carousel="important-notes"
-              data-target="next"
-              className="px-2 mr-2 border-slate-300 text-slate-600 dark:text-slate-300"
-              onClick={nextImportantNotes}
-            >
-              <Lucide icon="ChevronRight" className="w-4 h-4" />
-            </Button>
-          </div> */}
-          <div className="intro-x">
-            <div className="mt-2 intro-x ">
-              <div className=" box zoom-in">
-                <div className=" slide ">
-                  {feeds.length > 0 && (
-                    <TinySlider
-                      getRef={(el) => {
-                        importantNotesRef.current = el;
-                      }}
-                    >
-                      {feeds.map((feed: any, key) => (
-                        <div className="p-5" key={key}>
-                          <div className="text-base font-medium truncate">
-                            {feed.feed}
-                          </div>
-                          <div className="mt-1 text-slate-400">
-                            {timeAgo(feed.createdAt)}
-                          </div>
-                          <div
-                            className="mt-1 text-justify text-slate-500"
-                            dangerouslySetInnerHTML={{
-                              __html: feed.description,
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </TinySlider>
+        <div className="buttons flex justify-center items-center">
+            <div className=" text-center intro-x  xl:text-left">
+              <Button
+                variant="primary"
+                className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+              >
+                <Link to="/register">
+                 Get A Quote
+                  {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
                   )}
-                </div>
-              </div>
+                </Link>
+              </Button>
+            </div>
+            <div className=" text-center intro-x  xl:text-left">
+              <Button
+                variant="primary"
+                className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+              >
+                <Link to="/register">
+                  View Demo
+                  {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
+                  )}
+                </Link>
+              </Button>
             </div>
           </div>
-        </div>
-
-        {/* BEGIN: Recent Activities */}
-        <div className="col-span-12 sm:col-span-6 md:col-span-6 lg:col-span-6">
-          {/* <div className="flex h-10 intro-x">
-            <h2 className="mr-5 text-lg font-medium truncate">
-              Recent Questions
-            </h2>
-          </div> */}
-          <div className="mt-5 relative before:block before:absolute before:w-px before:h-[85%] before:bg-slate-200 before:dark:bg-darkmode-400 before:ml-5 before:mt-5">
-            {questions.map((question: any, key) => (
-              <div
-                key={key}
-                className="relative flex items-center mb-3 intro-x"
-              >
-                <div className="before:block before:absolute before:w-20 before:h-px before:bg-slate-200 before:dark:bg-darkmode-400 before:mt-5 before:ml-5">
-                  <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
-                    <img
-                      alt=""
-                      src={question.userId && question.userId.profileImage}
-                    />
-                  </div>
-                </div>
-                <div className="flex-1 px-5 py-3 ml-4 box zoom-in">
-                  <div className="flex items-center">
-                    <div className="font-medium">{question.eventId?.name}</div>
-                    <div className="ml-auto text-xs text-slate-500">
-                      {timeAgo(question.createdAt)}
-                    </div>
-                  </div>
-                  <div className="mt-1 text-slate-500">{question.question}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* END: Recent Activities */}
-        {/* BEGIN: Events */}
-        <div className="col-span-12 sm:col-span-6 md:col-span-6 lg:col-span-6">
-          {/* <div className="flex h-10 intro-x">
-            <h2 className="mr-5 text-lg font-medium truncate">
-              Upcoming Events
-            </h2>
-
-            <Link to="/events"> Show More</Link>
-          </div> */}
-          <Table className="border-spacing-y-[10px] border-separate mt-1 relative before:block before:absolute before:w-px before:h-[85%] before:bg-slate-200 before:dark:bg-darkmode-400 before:ml-5 before:mt-5">
-            <Table.Tbody>
-              {events &&
-                events.map((event: any, key) => (
-                  <Table.Tr key={key} className="intro-x">
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <Link
-                        to="/event"
-                        state={{ event: event }}
-                        className="font-medium "
-                      >
-                        {event.name}
-                      </Link>
-                      <div className="text-slate-500  mt-3">
-                        <b>Venue</b> {event.venue} <b>Date</b>{" "}
-                        {formatDate(event.startTime, "DD MMM YYYY hh:mmA") +
-                          " - " +
-                          formatDate(event.endTime, "DD MMM YYYY hh:mmA")}
-                      </div>
-                    </Table.Td>
-                  </Table.Tr>
-                ))}
-            </Table.Tbody>
-          </Table>
-        </div>
-        {/* END: Events */}
       </div>
+    
     </>
   );
 }

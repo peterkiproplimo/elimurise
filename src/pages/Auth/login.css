@@ -1,23 +1,22 @@
 /* LoginForm.css */
 .form-container {
-  width: 80%;
+  width: 100%;
   padding: 10%;
   border-radius: 32px;
-
-  border-radius: 32px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-left: 10%;
   text-align: center;
-  height: 60%;
   margin-top: 20%;
+}
+.icon{
+  align-items: center;
 }
 .form-container h2 {
   text-align: center;
   color: var(--all-colors-text-primary-color-text-primary, #282828);
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 36px;
-  margin-top: -5%;
+  
 }
 .form-container button {
   width: 100%;

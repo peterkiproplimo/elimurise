@@ -1,4 +1,4 @@
-.box h2{
+/* .box h2{
   font-size:20px;
   font-weight: bold;
   border-radius: 10px;
@@ -26,4 +26,35 @@ background-color: #FFEFE7;
     height:50px;
     padding:2%;
     
+} */
+.pricess{
+    width:82%;
+    height:80vh;
+    color:#ffff;
 }
+
+.pricess .tag1{
+    background-color: #FF1D86;
+    height:70%;
+    border-radius: 2%;
+}
+.pricess .tag2{
+    background-color: #101828;
+    height:78%;
+    border-radius: 2%;
+    
+}
+.pricess .tag3{
+    background-color: #152259;
+    height:80%;
+    border-radius: 2%;
+}
+
+.pricess .tag1 ul{
+    list-style-type: disc;
+} 
+
+.pricess .tag3 ul{
+    list-style-type: disc;
+}
+
