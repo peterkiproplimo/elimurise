@@ -54,6 +54,91 @@ axios.interceptors.request.use(
 );
 
 
+export const getPackages =async (data:any) => {
+  try {
+      let res = await axios.get(c.SUBSCRIPTION+"/packages",{
+        params:data
+      });
+      return res.data;
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const getLevels =async (data:any) => {
 try {

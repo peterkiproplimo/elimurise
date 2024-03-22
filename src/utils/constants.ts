@@ -1,6 +1,6 @@
 
 //API URL
-export const BASE_URL = "http://localhost:3000";
+export const BASE_URL = "http://localhost:3000/";
 
 // export const BASE_URL= "https://hero.techsavanna.technology/api/"
 //API Endpoints
@@ -37,6 +37,7 @@ export const FINANCIERS = `${BASE_URL}vehicle/financiers`;
 export const Models = `${BASE_URL}vehicle/models/`;
 export const POLICY = `${BASE_URL}vehicle/users/`;
 
+export const SUBSCRIPTION=`${BASE_URL}portal/subscription`
 
 
 
