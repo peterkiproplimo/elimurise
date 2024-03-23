@@ -29,7 +29,7 @@ import Term from "../pages/Term";
 import Academic from "../pages/Academic";
 import Substrand from "../pages/Substrand";
 import AccountDetails from "../pages/accountDetails";
-import Grade from "../pages/Grade";
+import Stream from "../pages/Stream";
 import Strand from "../pages/Strand";
 import Home from "../webapp/home";
 import Register from "../pages/Auth/register";
@@ -77,8 +77,8 @@ function Router() {
         },
 
         {
-          path: "grade",
-          element: <Grade />,
+          path: "stream",
+          element: <Stream />,
         },
 
         {

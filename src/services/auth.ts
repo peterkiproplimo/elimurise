@@ -12,7 +12,7 @@ export async function login(data: FieldValues) {
     throw handler(e);
   }
   
-}
+} 
 
 const getData = async () => {
   try {
@@ -130,19 +130,9 @@ export const getPackages =async (data:any) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-export const getLevels =async (data:any) => {
+export const getAcademic =async (data:any) => {
 try {
-    let res = await axios.get(c.LEVEL,{
+    let res = await axios.get(c.ACADEMIC,{
       params:data
     });
     return res.data;
@@ -151,15 +141,15 @@ try {
   }
 }
 
-export async function createLevel(data: any) {
+export async function createAcademic(data: any) {
   try {
     if(data._id){
-      let res = await axios.put(c.LEVEL, data);
+      let res = await axios.put(c.ACADEMIC, data);
   
       return res.data;
     }
     else{
-      let res = await axios.post(c.LEVEL, data);
+      let res = await axios.post(c.ACADEMIC, data);
    
     return res.data;
     }
@@ -168,10 +158,10 @@ export async function createLevel(data: any) {
   }
 }
 
-export async function deleteLevel(levelId: any) {
+export async function deleteAcademic(levelId: any) {
   try {
   
-    let res = await axios.delete(c.LEVEL+'/'+levelId);
+    let res = await axios.delete(c.ACADEMIC+'/'+levelId);
     console.log(res)
     return res.data;
   } catch (e) {
@@ -179,9 +169,48 @@ export async function deleteLevel(levelId: any) {
   }
 }
 
-// export async function getUsers() {
-//   return {}
-// }
+//term
+
+export const getTerm =async (data: any) => {
+  try {
+      let res = await axios.get(c.TERM,{
+        params:data
+      });
+      return res.data;
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+  
+  export async function createTerm(data: FieldValues) {
+    try {
+    
+      if(data._id){
+        let res = await axios.put(c.TERM +'/'+data._id, data);
+        return res.data;
+      }
+    else{
+      let res = await axios.post(c.TERM, data);
+       return res.data;
+    }
+    
+      
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+  
+  export async function deleteTerm(gradeId: any) {
+    try {
+    
+      let res = await axios.delete(c.TERM +'/'+gradeId);
+      console.log(res)
+      return res.data;
+    } catch (e) {
+      throw handler(e);
+    }
+  }  
+
 
 export const getGrades =async (data:any) => {
   try {
@@ -222,45 +251,6 @@ export const getGrades =async (data:any) => {
   }
   
 
-  export const getLearningAreas =async (data: any) => {
-    try {
-        let res = await axios.get(c.LEARNING_AREA,{
-          params:data
-        });
-        return res.data;
-      } catch (e) {
-        throw handler(e);
-      }
-    }
-    
-    export async function createLearningArea(data: FieldValues) {
-      try {
-      
-        if(data._id){
-          let res = await axios.put(c.LEARNING_AREA+'/'+data._id, data);
-          return res.data;
-        }
-      else{
-        let res = await axios.post(c.LEARNING_AREA, data);
-         return res.data;
-      }
-      
-        
-      } catch (e) {
-        throw handler(e);
-      }
-    }
-    
-    export async function deleteLearningArea(gradeId: any) {
-      try {
-      
-        let res = await axios.delete(c.LEARNING_AREA+'/'+gradeId);
-        console.log(res)
-        return res.data;
-      } catch (e) {
-        throw handler(e);
-      }
-    }  
   
 
     export const getStrands =async (data:any,filter:any) => {

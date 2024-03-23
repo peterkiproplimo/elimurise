@@ -7,9 +7,26 @@ export const BASE_URL= "https://hero-staging.techsavanna.technology/api/"
 //devops has do it again
 export const LOGIN = `${BASE_URL}portal/auth/login`;
 export const AUTH = `${BASE_URL}portal/auth`;
-export const LEVEL=`${BASE_URL}portal/level`
+export const SUBSCRIPTION =`${BASE_URL}portal/subscription`;
+export const ACADEMIC =`${BASE_URL}portal/academic-year`;
+export const TERM =`${BASE_URL}portal/term`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const GRADES=`${BASE_URL}portal/grades`
-export const LEARNING_AREA=`${BASE_URL}portal/learning-areas`
+
 export const USERS=`${BASE_URL}portal/users`
 export const PROFILE=`${BASE_URL}portal/profile`
 export const SUBSTRAND=`${BASE_URL}portal/substrand`
@@ -37,7 +54,7 @@ export const FINANCIERS = `${BASE_URL}vehicle/financiers`;
 export const Models = `${BASE_URL}vehicle/models/`;
 export const POLICY = `${BASE_URL}vehicle/users/`;
 
-export const SUBSCRIPTION=`${BASE_URL}portal/subscription`
+
 
 
 

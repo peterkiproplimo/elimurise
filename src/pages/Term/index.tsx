@@ -21,8 +21,8 @@ function Main() {
   const deleteButtonRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [learningAreas, setLearningAreas] = useState([]);
-  const [grades, setGrades] = useState([]);
+  const [terms, setTerms] = useState([]);
+  const [academic, setAcademic] = useState([]);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -69,19 +69,19 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createLearningArea(data);
-        await getLearningAreas();
+        await ApiService.createTerm(data);
+        await getTerms();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Level created successfully.");
+        setMessage("Term created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
         setSuccess(false);
         setMessage(
-          error.message || "An error occurred while creating the role."
+          error.message || "An error occurred while creating the term."
         );
         notify.current?.showToast();
       }
@@ -89,18 +89,18 @@ function Main() {
   };
 
   useEffect(() => {
-    getLearningAreas();
+    getTerms();
   }, [search, page, limit]);
   useEffect(() => {
-    getGrades();
+    getAcademicYear();
   }, []);
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({
+  const getTerms = async () => {
+    const response = await ApiService.getTerm({
       page: page,
       search: search,
       limit: limit,
     });
-    setLearningAreas(response.data);
+    setTerms(response.data);
     const pagination = response.pagination;
     setPagination({
       current_page: pagination.current_page,
@@ -109,15 +109,15 @@ function Main() {
       per_page: pagination.per_page,
     });
   };
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-    setGrades(response.data);
+  const getAcademicYear = async () => {
+    const response = await ApiService.getAcademic({ page: 1 });
+    setAcademic(response.data);
   };
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearningArea(recordId);
-      getLearningAreas();
+      let res = await ApiService.deleteTerm(recordId);
+      getTerms();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -199,9 +199,9 @@ function Main() {
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel>Start Date</FormLabel>
                 <FormInput
-                  {...register("name")}
+                  {...register("startDate")}
                   type="date"
-                  name="name"
+                  name="startDate"
                   className={errors.name ? "border-danger" : ""}
                   placeholder=""
                 />
@@ -215,9 +215,9 @@ function Main() {
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel>End Date</FormLabel>
                 <FormInput
-                  {...register("name")}
+                  {...register("endDate")}
                   type="date"
-                  name="name"
+                  name="endDate"
                   className={errors.name ? "border-danger" : ""}
                   placeholder=""
                 />
@@ -232,10 +232,10 @@ function Main() {
             <div className="grid grid-cols-12 gap-4 gap-y-3 mt-2">
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">Academic Year</FormLabel>
-                <FormSelect {...register("grade_id")} name="grade_id">
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
+                <FormSelect {...register("academic_id")} name="academic_id">
+                  {academic.map((academic: any, key) => (
+                    <option key={key} value={academic}>
+                      {academic.name}
                     </option>
                   ))}
                 </FormSelect>
@@ -366,7 +366,7 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learningAreas.map((learningArea: any, key) => (
+                  {terms.map((term: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
@@ -375,32 +375,32 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learningArea.name}
+                          {term.name}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learningArea.name}
+                          {term.startDate}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learningArea.name}
+                          {term.endDate}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learningArea.name}
+                          {term.academicYear}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {learningArea?.grade_id?.name}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {new Date(learningArea.createdAt).toLocaleString(
+                          {new Date(term.createdAt).toLocaleString(
                             "en-US",
                             {
                               timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
@@ -427,7 +427,7 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item
+                                {/* <Menu.Item
                                   onClick={() => editRecord(learningArea)}
                                 >
                                   <Lucide
@@ -435,10 +435,10 @@ function Main() {
                                     className="w-4 h-4 mr-2"
                                   />{" "}
                                   Edit
-                                </Menu.Item>
+                                </Menu.Item> */}
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(learningArea._id),
+                                    setRecordId(term._id),
                                       setConfirmDelete(true);
                                   }}
                                 >

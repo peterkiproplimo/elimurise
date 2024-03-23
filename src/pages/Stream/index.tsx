@@ -92,15 +92,15 @@ function Main() {
     }
   };
   useEffect(() => {
-    getLevels();
+    // getLevels();
   }, []);
   useEffect(() => {
     getGrades();
   }, [search, page, limit]);
-  const getLevels = async () => {
-    const response = await ApiService.getLevels({ page: 1 });
-    setLevels(response.data);
-  };
+  // const getLevels = async () => {
+  //   const response = await ApiService.getLevels({ page: 1 });
+  //   setLevels(response.data);
+  // };
   const getGrades = async () => {
     const response = await ApiService.getGrades({
       page: page,
@@ -170,7 +170,7 @@ function Main() {
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
             <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Grade" : "New Grade"}
+              {isEditMode ? "Edit Stream" : "New Stream"}
             </h2>
           </div>
           <br />
@@ -190,7 +190,7 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Grade Name</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormInput
                   {...register("name")}
                   type="text"
@@ -208,7 +208,7 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
-                <FormLabel htmlFor="modal-form-6">Level</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
                   {...register("level_id")}
                   name="level_id"
@@ -255,7 +255,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Grades</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y">Streams</h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
@@ -266,7 +266,7 @@ function Main() {
                   setDialog(true);
                 }}
               >
-                New Grade
+                New Stream
               </Button>
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
@@ -301,10 +301,10 @@ function Main() {
                       NO.
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Grade
+                      Name
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Level
+                      Grade
                     </Table.Th>
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       MODULES
@@ -313,7 +313,7 @@ function Main() {
                       Created At
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      ACTIONS
+                      Actions
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>

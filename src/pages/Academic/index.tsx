@@ -21,11 +21,10 @@ function Level() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
 
-  const [levels, setLevels] = useState([]);
+  const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
-  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
+
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
@@ -33,7 +32,6 @@ function Level() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -49,7 +47,7 @@ function Level() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Level is required"),
+      name: yup.string().required("Academic Year is required"),
     })
     .required();
 
@@ -72,13 +70,13 @@ function Level() {
       try {
         const data = await getValues();
         console.log(data);
-        await ApiService.createLevel(data);
-        await getLevels();
+        await ApiService.createAcademic(data);
+        await getAcademic();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Level created successfully.");
+        setMessage("Academic year created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -92,16 +90,16 @@ function Level() {
   };
 
   useEffect(() => {
-    getLevels();
+    getAcademic();
   }, [search, page, limit]);
 
-  const getLevels = async () => {
-    const response = await ApiService.getLevels({
+  const getAcademic = async () => {
+    const response = await ApiService.getAcademic({
       page: page,
       search: search,
       limit: limit,
     });
-    setLevels(response.data);
+    setAcademic(response.data);
     const pagination = response.pagination;
     setPagination({
       current_page: pagination.current_page,
@@ -114,8 +112,8 @@ function Level() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLevel(recordId);
-      getLevels();
+      let res = await ApiService.deleteAcademic(recordId);
+      getAcademic();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -159,13 +157,13 @@ function Level() {
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
             <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit LAcademic Year" : "New Academic Year"}
+              {isEditMode ? "Edit Academic Year" : "New Academic Year"}
             </h2>
           </div>
           <br />
           <form
             className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
+            // onSubmit={onSubmit}
           >
             <div>
               <a
@@ -181,7 +179,7 @@ function Level() {
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel>Name</FormLabel>
                 <FormInput
-                  {...register("name")}
+                  {...register("name")} 
                   type="text"
                   name="name"
                   className={errors.name ? "border-danger" : ""}
@@ -200,11 +198,11 @@ function Level() {
               <div className="col-span-6 sm:col-span-12">
                 <FormLabel>Start Date</FormLabel>
                 <FormInput
-                  {...register("name")}
+                  {...register("startDate")}
                   type="date"
-                  name="name"
+                  name="startDate"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="Level"
+                 
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -216,11 +214,11 @@ function Level() {
               <div className="col-span-6 sm:col-span-12">
                 <FormLabel>End Date</FormLabel>
                 <FormInput
-                  {...register("name")}
+                  {...register("endDate")}
                   type="date"
-                  name="name"
+                  name="endDate"
                   className={errors.name ? "border-danger" : ""}
-                  placeholder="Level"
+                
                 />
                 {errors.role && (
                   <div className="mt-2 text-danger">
@@ -305,10 +303,7 @@ function Level() {
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Academic Name
-                    </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      MODULES
-                    </Table.Th> */}
+                    </Table.Th>              
                      <Table.Th className="border-b-0 whitespace-nowrap">
                       Start Date
                     </Table.Th>
@@ -324,7 +319,7 @@ function Level() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {levels.map((level: any, key) => (
+                  {academic.map((academic: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
@@ -333,22 +328,22 @@ function Level() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {level.name}
+                          {academic?.name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {level.name}
+                          {academic?.startDate}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {level.name}
+                          {academic?.endDate}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {new Date(level.createdAt).toLocaleString("en-US", {
+                          {new Date(academic?.createdAt).toLocaleString("en-US", {
                             timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
                             year: "numeric",
                             month: "2-digit",
@@ -372,16 +367,16 @@ function Level() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(level)}>
+                                {/* <Menu.Item onClick={() => editRecord(academic)}>
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
                                   />{" "}
                                   Edit
-                                </Menu.Item>
+                                </Menu.Item> */}
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(level._id),
+                                    setRecordId(academic._id),
                                       setConfirmDelete(true);
                                   }}
                                 >

@@ -36,6 +36,11 @@ const initialState: SideMenuState = {
       pathname: "/term",
       title: "Term",
     },
+         {
+      icon: "Activity",
+      pathname: "/stream",
+      title: "Stream",
+    },
    
 
     // {
@@ -51,11 +56,7 @@ const initialState: SideMenuState = {
     
 
    
-    //    {
-    //   icon: "Activity",
-    //   pathname: "/grade",
-    //   title: "Grades",
-    // },
+  
    
     //   {
     //     icon: "Activity",
