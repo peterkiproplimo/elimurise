@@ -71,7 +71,7 @@ function Level() {
         const data = await getValues();
         console.log(data);
         await ApiService.createAcademic(data);
-        await getAcademic();
+        await getAcademics();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -90,16 +90,15 @@ function Level() {
   };
 
   useEffect(() => {
-    getAcademic();
+    getAcademics();
   }, [search, page, limit]);
 
-  const getAcademic = async () => {
+  const getAcademics = async () => {
     const response = await ApiService.getAcademic({
-      page: page,
-      search: search,
-      limit: limit,
+      page: 1
     });
     setAcademic(response.data);
+   
     const pagination = response.pagination;
     setPagination({
       current_page: pagination.current_page,
@@ -107,13 +106,14 @@ function Level() {
       total_pages: pagination.total_pages,
       per_page: pagination.per_page,
     });
+   
   };
 
   const deleteRecord = async () => {
     isLoading(true);
     try {
       let res = await ApiService.deleteAcademic(recordId);
-      getAcademic();
+      getAcademics();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -310,9 +310,9 @@ function Level() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       End Date
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
-                    </Table.Th>
+                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Actions
                     </Table.Th>
@@ -328,23 +328,13 @@ function Level() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {academic?.name}
+                          {academic.name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {academic?.startDate}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {academic?.endDate}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(academic?.createdAt).toLocaleString("en-US", {
-                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                        {new Date(academic.startDate).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", 
                             year: "numeric",
                             month: "2-digit",
                             day: "2-digit",
@@ -353,6 +343,30 @@ function Level() {
                           })}
                         </span>
                       </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {new Date(academic.endDate).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", 
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </Table.Td>
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {new Date(academic.createdAt).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", 
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </Table.Td> */}
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">

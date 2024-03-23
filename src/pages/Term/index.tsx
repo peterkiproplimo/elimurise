@@ -96,9 +96,7 @@ function Main() {
   }, []);
   const getTerms = async () => {
     const response = await ApiService.getTerm({
-      page: page,
-      search: search,
-      limit: limit,
+      page: 1 
     });
     setTerms(response.data);
     const pagination = response.pagination;
@@ -357,9 +355,9 @@ function Main() {
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                      Academic Year
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Created At
-                    </Table.Th>
+                    </Table.Th> */}
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Actions
                     </Table.Th>
@@ -380,12 +378,33 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {term.startDate}
+                        {new Date(term.startDate).toLocaleString(
+                            "en-US",
+                            {
+                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {term.endDate}
+                       
+                          {new Date(term.endDate).toLocaleString(
+                            "en-US",
+                            {
+                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -398,7 +417,7 @@ function Main() {
                           {learningArea?.grade_id?.name}
                         </span>
                       </Table.Td> */}
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {new Date(term.createdAt).toLocaleString(
                             "en-US",
@@ -412,7 +431,7 @@ function Main() {
                             }
                           )}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
 
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
                         <div className="flex items-center justify-center">

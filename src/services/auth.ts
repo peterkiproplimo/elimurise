@@ -54,6 +54,64 @@ axios.interceptors.request.use(
 );
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const getPackages =async (data:any) => {
   try {
       let res = await axios.get(c.SUBSCRIPTION+"/packages",{
@@ -67,74 +125,12 @@ export const getPackages =async (data:any) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const getAcademic =async (data:any) => {
 try {
     let res = await axios.get(c.ACADEMIC,{
       params:data
     });
+    console.log(data)
     return res.data;
   } catch (e) {
     throw handler(e);
