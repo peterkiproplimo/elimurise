@@ -230,10 +230,10 @@ function Main() {
             <div className="grid grid-cols-12 gap-4 gap-y-3 mt-2">
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">Academic Year</FormLabel>
-                <FormSelect {...register("academic_id")} name="academic_id">
-                  {academic.map((academic: any, key) => (
-                    <option key={key} value={academic}>
-                      {academic.name}
+                <FormSelect {...register("academicYear")} name="academicYear">
+                  {academic.map((academicYear: any, key) => (
+                    <option key={key} value={academicYear._id}>
+                      {academicYear.name}
                     </option>
                   ))}
                 </FormSelect>
@@ -353,7 +353,7 @@ function Main() {
                      End Date
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     Academic Year
+                    Year
                     </Table.Th>
                     {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Created At
@@ -409,7 +409,7 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {term.academicYear}
+                          {term?.academicYear?.name}
                         </span>
                       </Table.Td>
                       {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">

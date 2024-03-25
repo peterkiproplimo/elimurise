@@ -9,7 +9,7 @@ import Role from "../pages/roles";
 import Categories from "../pages/Categories";
 
 //beginning of auth
-import Profile from "../pages/Profile";
+import Subscription from "../pages/Subscription";
 import Login from "../pages/Auth/login";
 
 // import Login from "../pages/Auth/change-password";
@@ -92,8 +92,8 @@ function Router() {
           element: <Role />,
         },
         {
-          path: "profile",
-          element: <Profile />,
+          path: "subscription",
+          element: <Subscription />,
         },
         {
           path: "strand",

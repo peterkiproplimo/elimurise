@@ -123,6 +123,22 @@ export const getPackages =async (data:any) => {
     }
   }
 
+  export async function createSubscription(data: FieldValues) {
+    try {
+      if(data._id){
+        let res = await axios.put(c.SUBSCRIPTION, data);
+        return res.data;
+      }
+     else{
+      let res = await axios.post(c.SUBSCRIPTION, data);
+      return res.data;
+     }
+      
+    } catch (e) {
+      throw handler(e);
+    }
+  }
+
 
 
 export const getAcademic =async (data:any) => {
@@ -219,21 +235,7 @@ export const getGrades =async (data:any) => {
     }
   }
   
-  export async function createGrade(data: FieldValues) {
-    try {
-      if(data._id){
-        let res = await axios.put(c.GRADES, data);
-        return res.data;
-      }
-     else{
-      let res = await axios.post(c.GRADES, data);
-      return res.data;
-     }
-      
-    } catch (e) {
-      throw handler(e);
-    }
-  }
+
   
   export async function deleteGrade(gradeId: any) {
     try {

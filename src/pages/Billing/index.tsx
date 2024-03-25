@@ -10,14 +10,15 @@ import { formatDate, timeAgo, formatCurrency } from "../../utils/helper";
 import Tippy from "../../base-components/Tippy";
 import clsx from "clsx";
 import Table from "../../base-components/Table";
-import { Link } from "react-router-dom";
 import ReportPieChart from "../../components/ReportPieChart";
 import ReportDonutChart from "../../components/ReportDonutChart";
 import "./dashboard.css";
 import logoUrl from "../../assets/images/paypal.svg";
 import LoadingIcon from "../../base-components/LoadingIcon";
+import { Link, useNavigate } from "react-router-dom";
 
 function Main() {
+  const navigate=useNavigate()
   const importantNotesRef = useRef<TinySliderElement>();
   const prevImportantNotes = () => {
     importantNotesRef.current?.tns.goTo("prev");
@@ -56,6 +57,13 @@ function Main() {
 
     return color;
   }
+  const subscribe=async(data:any)=>{
+
+    navigate("/subscription", {
+      state: { package:data },
+     
+    });
+  }
   const getDashboard = async () => {
     try {
       let res = await ApiService.getPackages({});
@@ -90,6 +98,24 @@ function Main() {
               >
                 <div>
                   <h1 className="text-4xl font-bold mb-2">{Package.name}</h1>
+                  <div className=" mt-2 ">
+            <Button
+              variant="primary"
+              className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+              onClick={()=>subscribe(Package)}
+            >
+             
+                Buy Now
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+             
+            </Button>
+          </div>
                   <div
                     className="text-m  text-white"
                     dangerouslySetInnerHTML={{ __html: Package.description }}
@@ -101,23 +127,7 @@ function Main() {
                   </h1>
                   <p className="text-m text-white">(Per Learner Annually)</p>
                 </div>
-                <div className=" absolute bottom-5  ">
-            <Button
-              variant="primary"
-              className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
-            >
-              <Link to="/profile">
-                Buy Now
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Link>
-            </Button>
-          </div>
+           
                 
               </div>
             ))}
