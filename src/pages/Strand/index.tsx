@@ -115,9 +115,7 @@ function Main() {
   };
 
   useEffect(() => {
-    getGrades();
-    getLevels();
-    getLearningAreas();
+
   }, []);
   const getStrands = async () => {
     const response = await ApiService.getStrands(
@@ -137,19 +135,7 @@ function Main() {
     });
     setStrands(response.data);
   };
-  const getLevels = async () => {
-    const response = await ApiService.getLevels({ page: 1 });
-    setLevels(response.data);
-  };
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-
-    setGrades(response.data);
-  };
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({ page: 1 });
-    setLearningAreas(response.data);
-  };
+  
   const deleteRecord = async () => {
     isLoading(true);
     try {

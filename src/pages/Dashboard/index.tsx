@@ -74,19 +74,6 @@ function Main() {
     getDashboard();
   }, []);
 
-  const getTotalUsers = async () => {
-    try {
-      const page = 1; // Specify the page number or use a dynamic value
-      const data = { page };
-      const response = await ApiService.getLevels(data);
-      if (response && response.users) {
-        setTotalUsers(response.users.length);
-      }
-    } catch (error) {
-      console.error("Error fetching total number of users:", error);
-    }
-  };
-
   return (
     <>
       <div className="price mt-5 ">

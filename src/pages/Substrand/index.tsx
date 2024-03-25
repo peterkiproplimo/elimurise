@@ -128,7 +128,7 @@ function Main() {
   useEffect(() => {
     getGrades();
     getSubstrand();
-    getLearningAreas();
+  
     getStrands();
   }, []);
   const getStrands = async () => {
@@ -158,10 +158,7 @@ function Main() {
     const response = await ApiService.getGrades({ page: 1 });
     setGrades(response.data);
   };
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({ page: 1 });
-    setLearningAreas(response.data);
-  };
+
   const deleteRecord = async () => {
     isLoading(true);
     try {
