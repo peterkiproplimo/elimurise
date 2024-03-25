@@ -1,7 +1,7 @@
 import { useRoutes } from "react-router-dom";
 import Layout from "../layouts";
 import Auth from "../layouts/auth";
-import Dashboard from "../pages/Dashboard";
+import Billing from "../pages/Billing";
 import User from "../pages/User";
 import Role from "../pages/roles";
 
@@ -45,8 +45,8 @@ function Router() {
       ),
       children: [
         {
-          path: "/",
-          element: <Dashboard />,
+          path: "/billing",
+          element: <Billing />,
         },
         {
           path: "categories",

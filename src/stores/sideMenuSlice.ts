@@ -41,6 +41,11 @@ const initialState: SideMenuState = {
       pathname: "/stream",
       title: "Stream",
     },
+    {
+      icon: "FileText",
+      pathname: "/billing",
+      title: "Billing",
+    },
    
 
     // {

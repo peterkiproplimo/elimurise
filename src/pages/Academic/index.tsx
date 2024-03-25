@@ -163,7 +163,7 @@ function Level() {
           <br />
           <form
             className="mt-5 p-5 intro-y box validate-form"
-            // onSubmit={onSubmit}
+            onSubmit={onSubmit}
           >
             <div>
               <a
