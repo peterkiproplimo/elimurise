@@ -25,6 +25,7 @@ const initialState: SideMenuState = {
       icon: "Home",
       title: "Dashboard",
       pathname: "/",
+      
     },
     {
       icon: "FileText",
@@ -42,10 +43,16 @@ const initialState: SideMenuState = {
       title: "Stream",
     },
     {
+      icon: "Users",
+      pathname: "/learners",
+      title: "Learners",
+    },
+    {
       icon: "FileText",
       pathname: "/billing",
       title: "Billing",
     },
+   
    
 
     // {
@@ -369,6 +376,20 @@ export const sideMenuSlice = createSlice({
   reducers: {},
 });
 
-export const selectSideMenu = (state: RootState) => state.sideMenu.menu;
+// export const selectSideMenu = (state: RootState) => state.sideMenu.menu;
+export const selectSideMenu = (state: RootState) => {
+  const activeSection = localStorage.getItem("active");
+  if (activeSection === "billing") {
+    return state.sideMenu.menu.filter(item => {
+      if (typeof item === "object" && "pathname" in item) {
+        return item.pathname === "/billing";
+      }
+      return false;
+    });
+  } else {
+    return state.sideMenu.menu;
+  }
+};
+
 
 export default sideMenuSlice.reducer;

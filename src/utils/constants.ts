@@ -10,7 +10,8 @@ export const AUTH = `${BASE_URL}portal/auth`;
 export const SUBSCRIPTION =`${BASE_URL}portal/subscription`;
 export const ACADEMIC =`${BASE_URL}portal/academic-year`;
 export const TERM =`${BASE_URL}portal/term`
-
+export const STREAMS=`${BASE_URL}portal/streams`;
+export const LEARNERS=`${BASE_URL}portal/learners`
 
 
 

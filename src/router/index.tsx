@@ -30,7 +30,7 @@ import Academic from "../pages/Academic";
 import Substrand from "../pages/Substrand";
 import AccountDetails from "../pages/accountDetails";
 import Stream from "../pages/Stream";
-import Strand from "../pages/Strand";
+import Learners from "../pages/Learners";
 import Home from "../webapp/home";
 import Register from "../pages/Auth/register";
 //nn
@@ -96,8 +96,8 @@ function Router() {
           element: <Subscription />,
         },
         {
-          path: "strand",
-          element: <Strand />,
+          path: "learners",
+          element: <Learners />,
         },
       ],
     },

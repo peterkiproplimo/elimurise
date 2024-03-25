@@ -223,6 +223,57 @@ export const getTerm =async (data: any) => {
     }
   }  
 
+  //streams 
+  export const getStream=async (data: any) => {
+    try {
+        let res = await axios.get(c.STREAMS,{
+          params:data
+        });
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }
+    
+    export async function createStream(data: FieldValues) {
+      try {
+      
+        if(data._id){
+          let res = await axios.put(c.STREAMS +'/'+data._id, data);
+          return res.data;
+        }
+      else{
+        let res = await axios.post(c.STREAMS, data);
+         return res.data;
+      }
+      
+        
+      } catch (e) {
+        throw handler(e);
+      }
+    }
+    
+    export async function deleteStream(gradeId: any) {
+      try {
+      
+        let res = await axios.delete(c.STREAMS +'/'+gradeId);
+        console.log(res)
+        return res.data;
+      } catch (e) {
+        throw handler(e);
+      }
+    }  
+
+    
+  // export const getLearners =async (data:any, filter:any) => {
+  //   try {
+  //       let res = await axios.get(c.LEARNERS,{params:data});
+  //       return res.data;
+  //     } catch (e) {
+  //       throw handler(e);
+  //     }
+  //   }
+
 
 export const getGrades =async (data:any) => {
   try {
@@ -251,13 +302,13 @@ export const getGrades =async (data:any) => {
 
   
 
-    export const getStrands =async (data:any,filter:any) => {
+    export const  getLearners =async (data:any,filter:any) => {
       try {
           if(filter.learning_area==="na"){
             console.log("failed...")
             return;
           }
-          let res = await axios.get( `${c.STRANDS}/${filter.learning_area}/${filter.term}`,{
+          let res = await axios.get( `${c.LEARNERS}/${filter.learning_area}/${filter.term}`,{
             params:data
           });
           return res.data;

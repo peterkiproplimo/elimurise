@@ -72,13 +72,13 @@ function Main() {
       try {
         const data = await getValues();
         console.log(data);
-        await ApiService.createGrade(data);
+        await ApiService.createStream(data);
         await getGrades();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Grade created successfully.");
+        setMessage("Stream created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         console.log(error.message);
@@ -309,9 +309,9 @@ function Main() {
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       MODULES
                     </Table.Th> */}
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
-                    </Table.Th>
+                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Actions
                     </Table.Th>
@@ -335,7 +335,7 @@ function Main() {
                           {grade?.level_id?.name}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {new Date(grade.createdAt).toLocaleString("en-US", {
                             timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
@@ -346,7 +346,7 @@ function Main() {
                             minute: "2-digit",
                           })}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">

@@ -55,6 +55,7 @@ const Login = () => {
         isLoading(false);
         console.log(res.user);
         let token = res.token;
+        localStorage.setItem("active",res.active);
         await auth.signIn({ ...res.user, token });
 
         setSuccess(true);

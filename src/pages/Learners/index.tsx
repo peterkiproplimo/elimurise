@@ -35,7 +35,7 @@ function Main() {
 
   const [grades, setGrades] = useState([]);
   const [levels, setLevels] = useState([]);
-  const [learningAreas, setLearningAreas] = useState([]);
+  const [schools, setSchools] = useState([]);
   // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
@@ -47,7 +47,7 @@ function Main() {
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
   const [hasTheme, setHasTheme] = useState(false);
-  const [strands, setStrands] = useState([]);
+  const [learners, setLearners] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -60,15 +60,12 @@ function Main() {
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
+    school: "na",
     grade: "na",
-    learning_area: "na",
-    term: "na",
+    stream: "na",
   });
-  const terms = [
-    { _id: 1, name: "Term 1" },
-    { _id: 2, name: "Term 2" },
-    { _id: 3, name: "Term 3" },
-  ];
+  const [streams, setStreams] = useState([]);
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -96,7 +93,7 @@ function Main() {
       try {
         const data = await getValues();
         await ApiService.createStrand(data);
-        await getStrands();
+        await getStudents();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -117,8 +114,8 @@ function Main() {
   useEffect(() => {
 
   }, []);
-  const getStrands = async () => {
-    const response = await ApiService.getStrands(
+  const getStudents = async () => {
+    const response = await ApiService.getLearners(
       {
         page: page,
         search: search,
@@ -133,14 +130,14 @@ function Main() {
       total_pages: pagination.total_pages,
       per_page: pagination.per_page,
     });
-    setStrands(response.data);
+    setLearners(response.data);
   };
   
   const deleteRecord = async () => {
     isLoading(true);
     try {
       let res = await ApiService.deleteStrand(recordId);
-      getStrands();
+      getStudents();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -170,7 +167,7 @@ function Main() {
     setDialog(false);
   };
   useEffect(() => {
-    getStrands();
+    getStudents();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter, search, page, limit]);
 
@@ -178,24 +175,24 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
-    console.log(learningAreas);
-    setStrands([]);
+    console.log(schools);
+    setLearners([]);
     await setStrandFilter({
-      learning_area: "na",
-      term: "na",
+      school: "na",
+      stream: "na",
       grade: selectedValue,
     });
 
     // You might want to fetch filtered data here
   };
-  const handleLearningAreaChange = async (
+  const handleSchoolChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
-    setStrands([]);
+    setLearners([]);
     await setStrandFilter({
       ...strandFilter,
-      learning_area: selectedValue,
+      school: selectedValue,
     });
     // You might want to fetch filtered data here
   };
@@ -204,16 +201,16 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
-    setStrands([]);
+    setLearners([]);
     await setStrandFilter({
       ...strandFilter,
-      term: selectedValue,
+      stream: selectedValue,
     });
     // You might want to fetch filtered data here
   };
   const handleHasThemeChange = async (event: any) => {
     const isChecked = event.target.checked;
-    setStrands([]);
+    setLearners([]);
     setHasTheme(isChecked);
     // You might want to fetch filtered data here
   };
@@ -244,7 +241,7 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className="mr-auto text-lg font-medium">New Strand</h2>
+            <h2 className="mr-auto text-lg font-medium">New Learner</h2>
           </div>
           <br />
           <form
@@ -262,7 +259,33 @@ function Main() {
               ></a>
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-3">
+            <div className="col-span-4 sm:col-span-4">
+                <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
+                <FormSelect
+                  {...register("school")}
+                  name="school"
+                  value={strandFilter.school}
+                  disabled
+                >
+                  {schools
+                    .filter(
+                      (area: any) => area?.grade_id?._id === strandFilter?.grade
+                    )
+                    .map((filteredArea: any, key) => (
+                      <option key={key} value={filteredArea?._id}>
+                        {filteredArea.name}
+                      </option>
+                    ))}
+                </FormSelect>
+
+                {errors.learning_area && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.learning_area.message === "string" &&
+                      errors.learning_area.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-4 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
@@ -284,44 +307,19 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormSelect
-                  {...register("learning_area")}
-                  name="learning_area"
-                  value={strandFilter.learning_area}
-                  disabled
-                >
-                  {learningAreas
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter?.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea?._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
-                </FormSelect>
+           
 
-                {errors.learning_area && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
-                  </div>
-                )}
-              </div>
-
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
                 <FormSelect
                   {...register("term")}
                   name="term"
-                  value={strandFilter.term}
+                  value={strandFilter.stream}
                   disabled
                 >
-                  {terms.map((term: any, key) => (
-                    <option key={key} value={term._id}>
-                      {term.name}
+                  {streams.map((stream: any, key) => (
+                    <option key={key} value={stream._id}>
+                      {stream.name}
                     </option>
                   ))}
                 </FormSelect>
@@ -332,24 +330,92 @@ function Main() {
                   </div>
                 )}
               </div>
-            </div>{" "}
-            <div className="grid grid-cols-12 gap-4 gap-y-3 mt-5 m-auto">
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Strand </FormLabel>
-                <FormTextarea
-                  {...register("name")}
-                  name="name"
-                  className="mr-2"
+              
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel>First Name</FormLabel>
+                <FormInput
+                  {...register("duration")}
+                  type="text"
+                  name="duration"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="first name"
                 />
-                {/* <FormInput {...register("name")} name="name" type="text" /> */}
-                {errors.grade && (
+                {errors.role && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-3">
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel>Last Name</FormLabel>
+                <FormInput
+                  {...register("duration")}
+                  type="text"
+                  name="duration"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="last name"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel>Surname</FormLabel>
+                <FormInput
+                  {...register("duration")}
+                  type="text"
+                  name="duration"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="surname"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel>Admission Number</FormLabel>
+                <FormInput
+                  {...register("duration")}
+                  type="text"
+                  name="duration"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="adm_no"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel>Status</FormLabel>
+                <FormInput
+                  {...register("duration")}
+                  type="text"
+                  name="duration"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="status"
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+              
+          
+              {/* <div className="col-span-12 sm:col-span-3">
                 <FormCheck.Input
                   {...register("grade")}
                   id="checkbox-switch-7"
@@ -359,11 +425,7 @@ function Main() {
                   onChange={(e: any) => handleHasThemeChange(e)}
                 />
 
-                {/* <FormInput
-                  type="checkbox"
-                  checked={false}
-                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                /> */}
+                
 
                 <FormLabel htmlFor="modal-form-6"> Theme</FormLabel>
                 {errors.grade && (
@@ -387,7 +449,7 @@ function Main() {
               ) : (
                 ""
               )}
-            </div>
+            </div> */}
             <div className="col-span-12 sm:col-span-12 mt-3">
               <Button
                 type="button"
@@ -411,83 +473,8 @@ function Main() {
           </form>
         </>
       ) : (
-        <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Strand</h2>
-
-          <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-              <FormSelect
-                {...register("grade")}
-                name="grade"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Grade</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div>
-
-            <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select Learning Area</FormLabel>
-              <FormSelect
-                {...register("learning_area")}
-                name="learning_area"
-                value={strandFilter.learning_area}
-                onChange={(event) => handleLearningAreaChange(event)}
-              >
-                <option>Select Learning Area</option>
-                {learningAreas
-                  .filter(
-                    (area: any) => area?.grade_id?._id === strandFilter.grade
-                  )
-                  .map((filteredArea: any, key) => (
-                    <option key={key} value={filteredArea._id}>
-                      {filteredArea.name}
-                    </option>
-                  ))}
-              </FormSelect>
-              {errors.learning_area && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.learning_area.message === "string" &&
-                    errors.learning_area.message}
-                </div>
-              )}
-            </div>
-
-            <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
-              <FormSelect
-                {...register("term")}
-                name="term"
-                value={strandFilter.term}
-                onChange={(event) => handleTermChange(event)}
-              >
-                <option>Select Term</option>
-                {terms.map((term: any, key) => (
-                  <option key={key} value={term._id}>
-                    {term.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )}
-            </div>
-
+        <>  
+          <h2 className="mt-10 text-lg font-medium intro-y">Learners</h2>
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
                 variant="primary"
@@ -497,7 +484,7 @@ function Main() {
                   setDialog(true);
                 }}
               >
-                New Strand
+                New Learner
               </Button>
 
               <div className="hidden mx-auto md:block text-slate-500">
@@ -524,6 +511,83 @@ function Main() {
                 </div>
               </div>
             </div>
+        
+
+          <div className="grid grid-cols-12 gap-6 mt-5">
+
+          <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
+              <FormSelect
+                {...register("learning_area")}
+                name="learning_area"
+                value={strandFilter.school}
+                onChange={(event) => handleSchoolChange(event)}
+              >
+                <option>Select School</option>
+                {schools
+                  .filter(
+                    (area: any) => area?.grade_id?._id === strandFilter.grade
+                  )
+                  .map((filteredArea: any, key) => (
+                    <option key={key} value={filteredArea._id}>
+                      {filteredArea.name}
+                    </option>
+                  ))}
+              </FormSelect>
+              {errors.learning_area && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.learning_area.message === "string" &&
+                    errors.learning_area.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
+              <FormSelect
+                {...register("grade")}
+                name="grade"
+                value={strandFilter.grade}
+                onChange={(event) => handleGradeChange(event)}
+              >
+                <option>Select Grade</option>
+                {grades.map((grade: any, key) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.grade && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.grade.message === "string" &&
+                    errors.grade.message}
+                </div>
+              )}
+            </div>
+
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
+              <FormSelect
+                {...register("stream")}
+                name="stream"
+                value={strandFilter.stream}
+                onChange={(event) => handleTermChange(event)}
+              >
+                <option>Select Stream</option>
+                {streams.map((stream: any, key) => (
+                  <option key={key} value={stream._id}>
+                    {stream.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.term && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.term.message === "string" &&
+                    errors.term.message}
+                </div>
+              )}
+            </div>
+
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <Table className="border-spacing-y-[10px] border-separate -mt-2">
@@ -554,7 +618,7 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {strands.map((strand: any, key) => (
+                  {learners.map((strand: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
