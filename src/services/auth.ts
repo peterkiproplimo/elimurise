@@ -170,10 +170,10 @@ export async function createAcademic(data: any) {
   }
 }
 
-export async function deleteAcademic(levelId: any) {
+export async function deleteAcademic(Id: any) {
   try {
   
-    let res = await axios.delete(c.ACADEMIC+'/'+levelId);
+    let res = await axios.delete(c.ACADEMIC+'/'+Id);
     console.log(res)
     return res.data;
   } catch (e) {
@@ -224,7 +224,7 @@ export const getTerm =async (data: any) => {
   }  
 
   //streams 
-  export const getStream=async (data: any) => {
+  export const getStream =async (data: any) => {
     try {
         let res = await axios.get(c.STREAMS,{
           params:data
@@ -304,11 +304,14 @@ export const getGrades =async (data:any) => {
 
     export const  getLearners =async (data:any,filter:any) => {
       try {
-          if(filter.learning_area==="na"){
-            console.log("failed...")
-            return;
-          }
-          let res = await axios.get( `${c.LEARNERS}/${filter.learning_area}/${filter.term}`,{
+          // if(filter.learning_area==="na"){
+          //   console.log("failed...")
+          //   return;
+          // }
+          // let res = await axios.get( `${c.LEARNERS}/${filter.learning_area}/${filter.term}`,{
+          //   params:data
+          // });
+          let res = await axios.get(c.LEARNERS,{
             params:data
           });
           return res.data;
@@ -316,6 +319,134 @@ export const getGrades =async (data:any) => {
           throw handler(e);
         }
       }
+     
+      export async function createLearner(data: FieldValues) {
+        try {
+        
+          if(data._id){
+            let res = await axios.put(c.LEARNERS +'/'+data._id, data);
+            return res.data;
+          }
+        else{
+          let res = await axios.post(c.LEARNERS, data);
+           return res.data;
+        }
+        
+          
+        } catch (e) {
+          throw handler(e);
+        }
+      }
+      
+      export async function deleteLearner(gradeId: any) {
+        try {
+        
+          let res = await axios.delete(c.LEARNERS +'/'+gradeId);
+          console.log(res)
+          return res.data;
+        } catch (e) {
+          throw handler(e);
+        }
+      }  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       
       export const allStrands =async ({ page }: { page: number },filter:any) => {
         try {

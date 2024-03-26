@@ -178,7 +178,7 @@ function Main() {
               ></a>
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-12">
+              <div className="col-span-6 sm:col-span-6">
                 <FormLabel>Term</FormLabel>
                 <FormInput
                   {...register("name")}
@@ -194,41 +194,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Start Date</FormLabel>
-                <FormInput
-                  {...register("startDate")}
-                  type="date"
-                  name="startDate"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder=""
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel>End Date</FormLabel>
-                <FormInput
-                  {...register("endDate")}
-                  type="date"
-                  name="endDate"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder=""
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3 mt-2">
-              <div className="col-span-12 sm:col-span-12">
+              <div className="col-span-6 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Academic Year</FormLabel>
                 <FormSelect {...register("academicYear")} name="academicYear">
                   {academic.map((academicYear: any, key) => (
@@ -244,8 +210,38 @@ function Main() {
                   </div>
                 )}
               </div>
-            </div>
-            <div>
+              <div className="col-span-6 sm:col-span-6">
+                <FormLabel>Start Date</FormLabel>
+                <FormInput
+                  {...register("startDate")}
+                  type="date"
+                  name="startDate"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder=""
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-6 sm:col-span-6">
+                <FormLabel>End Date</FormLabel>
+                <FormInput
+                  {...register("endDate")}
+                  type="date"
+                  name="endDate"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder=""
+                />
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
               <div className="col-span-12 sm:col-span-12 mt-3">
                 <Button
                   type="button"
@@ -266,6 +262,8 @@ function Main() {
                   )}
                 </Button>
               </div>
+          
+             
             </div>
           </form>
         </>

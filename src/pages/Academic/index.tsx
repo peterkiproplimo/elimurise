@@ -192,10 +192,8 @@ function Level() {
                   </div>
                 )}
               </div>
-            </div>
-            <div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3 d-flex mt-2">
-              <div className="col-span-6 sm:col-span-12">
+        
+              <div className="col-span-6 sm:col-span-6">
                 <FormLabel>Start Date</FormLabel>
                 <FormInput
                   {...register("startDate")}
@@ -211,7 +209,7 @@ function Level() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-12">
+              <div className="col-span-6 sm:col-span-6">
                 <FormLabel>End Date</FormLabel>
                 <FormInput
                   {...register("endDate")}
@@ -226,9 +224,7 @@ function Level() {
                       errors.role.message}
                   </div>
                 )}
-           
-            </div>
-            </div>
+           </div>
             </div>
             <div>
               <div className="col-span-12 sm:col-span-12 mt-3">

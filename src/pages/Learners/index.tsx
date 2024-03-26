@@ -32,12 +32,8 @@ interface TableRow {
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
-
   const [grades, setGrades] = useState([]);
-  const [levels, setLevels] = useState([]);
   const [schools, setSchools] = useState([]);
-  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
-  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
@@ -45,9 +41,7 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
-  const [hasTheme, setHasTheme] = useState(false);
-  const [learners, setLearners] = useState([]);
+  const [learners, setLearners] = useState([{}]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -65,12 +59,13 @@ function Main() {
     stream: "na",
   });
   const [streams, setStreams] = useState([]);
+  const [academic, setAcademic] = useState([]);
 
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Level is required"),
+      first_name: yup.string().required("Learner is required"),
     })
     .required();
 
@@ -92,19 +87,19 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createStrand(data);
+        await ApiService.createLearner(data);
         await getStudents();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Strand created successfully.");
+        setMessage("Learner created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
         setSuccess(false);
         setMessage(
-          error.message || "An error occurred while creating the role."
+          error.message || "An error occurred while creating the learner."
         );
         notify.current?.showToast();
       }
@@ -112,14 +107,15 @@ function Main() {
   };
 
   useEffect(() => {
-
+    getStreams();
   }, []);
+  useEffect(() => {
+    getStudents(); 
+  }, [ search, page, limit]);
+
   const getStudents = async () => {
-    const response = await ApiService.getLearners(
-      {
-        page: page,
-        search: search,
-        limit: limit,
+    const response = await ApiService.getLearners( {
+        page: 1 
       },
       strandFilter
     );
@@ -132,6 +128,18 @@ function Main() {
     });
     setLearners(response.data);
   };
+
+  const getStreams = async () => {
+    const response = await ApiService.getStream({ page: 1 });
+    setStreams(response.data);
+    console.log(response)
+  };
+  const getAcademics = async () => {
+    const response = await ApiService.getAcademic({
+      page: 1
+    });
+    setAcademic(response.data);
+  }
   
   const deleteRecord = async () => {
     isLoading(true);
@@ -166,54 +174,49 @@ function Main() {
     reset(record);
     setDialog(false);
   };
-  useEffect(() => {
-    getStudents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [strandFilter, search, page, limit]);
 
-  const handleGradeChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    console.log(schools);
-    setLearners([]);
-    await setStrandFilter({
-      school: "na",
-      stream: "na",
-      grade: selectedValue,
-    });
 
-    // You might want to fetch filtered data here
-  };
-  const handleSchoolChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setLearners([]);
-    await setStrandFilter({
-      ...strandFilter,
-      school: selectedValue,
-    });
-    // You might want to fetch filtered data here
-  };
+  // const handleGradeChange = async (
+  //   event: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   const selectedValue = event.target.value;
+  //   console.log(schools);
+  //   setLearners([]);
+  //   await setStrandFilter({
+  //     school: "na",
+  //     stream: "na",
+  //     grade: selectedValue,
+  //   });
+  // };
+  // const handleSchoolChange = async (
+  //   event: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   const selectedValue = event.target.value;
+  //   setLearners([]);
+  //   await setStrandFilter({
+  //     ...strandFilter,
+  //     school: selectedValue,
+  //   });
+   
+  // };
 
-  const handleTermChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setLearners([]);
-    await setStrandFilter({
-      ...strandFilter,
-      stream: selectedValue,
-    });
-    // You might want to fetch filtered data here
-  };
-  const handleHasThemeChange = async (event: any) => {
-    const isChecked = event.target.checked;
-    setLearners([]);
-    setHasTheme(isChecked);
-    // You might want to fetch filtered data here
-  };
+  // const handleTermChange = async (
+  //   event: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   const selectedValue = event.target.value;
+  //   setLearners([]);
+  //   await setStrandFilter({
+  //     ...strandFilter,
+  //     stream: selectedValue,
+  //   });
+  //   // You might want to fetch filtered data here
+  // };
+  // const handleHasThemeChange = async (event: any) => {
+  //   const isChecked = event.target.checked;
+  //   setLearners([]);
+  //   setHasTheme(isChecked);
+  //   // You might want to fetch filtered data here
+  // };
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
@@ -259,7 +262,7 @@ function Main() {
               ></a>
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
-            <div className="col-span-4 sm:col-span-4">
+            {/* <div className="col-span-4 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
                 <FormSelect
                   {...register("school")}
@@ -284,7 +287,23 @@ function Main() {
                       errors.learning_area.message}
                   </div>
                 )}
-              </div>
+              </div> */}
+               <div className="col-span-12 sm:col-span-4">
+            <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
+                <FormSelect {...register("school")} name="school">
+                  {academic.map((school: any, key) => (
+                    <option key={key} value={school._id}>
+                      {school.schoolId}
+                    </option>
+                  ))}
+                </FormSelect>
+              {/* {errors.term && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.term.message === "string" &&
+                    errors.term.message}
+                </div>
+              )} */}
+            </div>
               <div className="col-span-4 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <FormSelect
@@ -306,10 +325,26 @@ function Main() {
                   </div>
                 )}
               </div>
-
+              
+            <div className="col-span-12 sm:col-span-4">
+            <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
+                <FormSelect {...register("stream")} name="stream">
+                  {streams.map((stream: any, key) => (
+                    <option key={key} value={stream._id}>
+                      {stream.name}
+                    </option>
+                  ))}
+                </FormSelect>
+              {/* {errors.term && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.term.message === "string" &&
+                    errors.term.message}
+                </div>
+              )} */}
+            </div>
            
 
-              <div className="col-span-4 sm:col-span-4">
+              {/* <div className="col-span-4 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
                 <FormSelect
                   {...register("term")}
@@ -329,7 +364,7 @@ function Main() {
                       errors.term.message}
                   </div>
                 )}
-              </div>
+              </div> */}
               
               <div className="col-span-4 sm:col-span-4">
                 <FormLabel>First Name</FormLabel>
@@ -515,7 +550,7 @@ function Main() {
 
           <div className="grid grid-cols-12 gap-6 mt-5">
 
-          <div className="col-span-12 sm:col-span-3">
+          {/* <div className="col-span-12 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
               <FormSelect
                 {...register("learning_area")}
@@ -562,31 +597,25 @@ function Main() {
                     errors.grade.message}
                 </div>
               )}
-            </div>
+            </div> */}
 
-
+{/* 
             <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
-              <FormSelect
-                {...register("stream")}
-                name="stream"
-                value={strandFilter.stream}
-                onChange={(event) => handleTermChange(event)}
-              >
-                <option>Select Stream</option>
-                {streams.map((stream: any, key) => (
-                  <option key={key} value={stream._id}>
-                    {stream.name}
-                  </option>
-                ))}
-              </FormSelect>
+            <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
+                <FormSelect {...register("stream")} name="stream">
+                  {streams.map((stream: any, key) => (
+                    <option key={key} value={stream._id}>
+                      {stream.name}
+                    </option>
+                  ))}
+                </FormSelect>
               {errors.term && (
                 <div className="mt-2 text-danger">
                   {typeof errors.term.message === "string" &&
                     errors.term.message}
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
@@ -596,24 +625,38 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
+                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                      Grade
+                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Strand
+                      Stream
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Learning Area
+                      First Name
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Theme
+                      Last Name
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
+                      Surname
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Adm_No
+                    </Table.Th>
+                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Term
                     </Table.Th>
-
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="border-b-0 whitespace-nowrap">
                       Status
                     </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      ACTION
+                      Created_At
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Updated_at
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Actions
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
@@ -625,29 +668,68 @@ function Main() {
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.name}
+                          {strand?.grade}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.learning_area?.name}
-                          {" - "}
-                          {strand?.learning_area?.grade_id?.name}
+                          {strand?.stream}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.theme}
+                          {strand?.first_name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.term}
+                          {strand?.last_name}
                         </span>
                       </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {strand?.surname}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {strand?.admn_no}
+                        </span>
+                      </Table.Td>
+                        <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {new Date(strand.createdAt).toLocaleString(
+                            "en-US",
+                            {
+                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {new Date(strand.updatedAt).toLocaleString(
+                            "en-US",
+                            {
+                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
+                        </span>
+                      </Table.Td>
+
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           {true && (
