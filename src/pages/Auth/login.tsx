@@ -177,6 +177,7 @@ const Login = () => {
               )}
             </Button>
           </div>
+          <p className="mt-2">Dont have an account?  <Link to="/register">Sign Up</Link></p>
         </form>
       </div>
       <Notification

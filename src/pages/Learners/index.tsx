@@ -144,7 +144,7 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteStrand(recordId);
+      let res = await ApiService.deleteLearner(recordId);
       getStudents();
       isLoading(false);
       setConfirmDelete(false);
@@ -288,7 +288,7 @@ function Main() {
                   </div>
                 )}
               </div> */}
-               <div className="col-span-12 sm:col-span-4">
+               {/* <div className="col-span-12 sm:col-span-4">
             <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
                 <FormSelect {...register("school")} name="school">
                   {academic.map((school: any, key) => (
@@ -297,14 +297,14 @@ function Main() {
                     </option>
                   ))}
                 </FormSelect>
-              {/* {errors.term && (
+              {errors.term && (
                 <div className="mt-2 text-danger">
                   {typeof errors.term.message === "string" &&
                     errors.term.message}
                 </div>
-              )} */}
-            </div>
-              <div className="col-span-4 sm:col-span-4">
+              )}
+            </div> */}
+              {/* <div className="col-span-4 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
@@ -324,7 +324,7 @@ function Main() {
                       errors.grade.message}
                   </div>
                 )}
-              </div>
+              </div> */}
               
             <div className="col-span-12 sm:col-span-4">
             <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
@@ -369,9 +369,9 @@ function Main() {
               <div className="col-span-4 sm:col-span-4">
                 <FormLabel>First Name</FormLabel>
                 <FormInput
-                  {...register("duration")}
+                  {...register("first_name")}
                   type="text"
-                  name="duration"
+                  name="first_name"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="first name"
                 />
@@ -385,9 +385,9 @@ function Main() {
               <div className="col-span-4 sm:col-span-4">
                 <FormLabel>Last Name</FormLabel>
                 <FormInput
-                  {...register("duration")}
+                  {...register("last_name")}
                   type="text"
-                  name="duration"
+                  name="last_name"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="last name"
                 />
@@ -401,9 +401,9 @@ function Main() {
               <div className="col-span-4 sm:col-span-4">
                 <FormLabel>Surname</FormLabel>
                 <FormInput
-                  {...register("duration")}
+                  {...register("surname")}
                   type="text"
-                  name="duration"
+                  name="surname"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="surname"
                 />
@@ -417,9 +417,9 @@ function Main() {
               <div className="col-span-4 sm:col-span-4">
                 <FormLabel>Admission Number</FormLabel>
                 <FormInput
-                  {...register("duration")}
+                  {...register("admn_no")}
                   type="text"
-                  name="duration"
+                  name="admn_no"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="adm_no"
                 />
@@ -430,22 +430,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Status</FormLabel>
-                <FormInput
-                  {...register("duration")}
-                  type="text"
-                  name="duration"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="status"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
+            
             </div>
             
               
@@ -661,47 +646,42 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learners.map((strand: any, key) => (
+                  {learners.map((learner: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {key + 1}
                         </span>
                       </Table.Td>
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {strand?.grade}
-                        </span>
-                      </Table.Td> */}
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.stream}
+                          {learner?.stream}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.first_name}
+                          {learner?.first_name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.last_name}
+                          {learner?.last_name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.surname}
+                          {learner?.surname}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {strand?.admn_no}
+                          {learner?.admn_no}
                         </span>
                       </Table.Td>
                         <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {new Date(strand.createdAt).toLocaleString(
+                          {new Date(learner.createdAt).toLocaleString(
                             "en-US",
                             {
                               timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
@@ -716,7 +696,7 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {new Date(strand.updatedAt).toLocaleString(
+                          {new Date(learner.updatedAt).toLocaleString(
                             "en-US",
                             {
                               timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
@@ -743,7 +723,7 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(strand)}>
+                                <Menu.Item onClick={() => editRecord(learner)}>
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
@@ -752,7 +732,7 @@ function Main() {
                                 </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(strand._id),
+                                    setRecordId(learner._id),
                                       setConfirmDelete(true);
                                   }}
                                 >

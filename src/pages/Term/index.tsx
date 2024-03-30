@@ -444,15 +444,15 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                {/* <Menu.Item
-                                  onClick={() => editRecord(learningArea)}
+                                <Menu.Item
+                                  onClick={() => editRecord(term)}
                                 >
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
                                   />{" "}
                                   Edit
-                                </Menu.Item> */}
+                                </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
                                     setRecordId(term._id),

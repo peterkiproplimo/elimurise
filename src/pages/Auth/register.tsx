@@ -51,7 +51,7 @@ const Register = () => {
       isLoading(true);
       try {
         const data = await getValues();
-        let res = await ApiService.login(data);
+        let res = await ApiService.signup(data);
         isLoading(false);
         console.log(res.user);
         let token = res.token;
@@ -88,6 +88,48 @@ const Register = () => {
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
           <div className="mt-8 intro-x">
+          <div className="input-form">
+              <label>First Name</label>
+              <FormInput
+                {...register("firstname")}
+                id="validation-form-2"
+                type="text"
+                name="firstname"
+                className={
+                  errors.email
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                }
+                placeholder="firstname"
+              />
+              {errors.name && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.name.message === "string" &&
+                    errors.name.message}
+                </div>
+              )}
+            </div>
+            <div className="input-form">
+              <label>Last Name</label>
+              <FormInput
+                {...register("lastname")}
+                id="validation-form-2"
+                type="text"
+                name="lastname"
+                className={
+                  errors.email
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                }
+                placeholder="lastname"
+              />
+              {errors.name && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.name.message === "string" &&
+                    errors.name.message}
+                </div>
+              )}
+            </div>
             <div className="input-form">
               <label>Email</label>
               <FormInput
@@ -112,10 +154,10 @@ const Register = () => {
             <div className="input-form">
               <label>Phone</label>
               <FormInput
-                {...register("email")}
+                {...register("phone")}
                 id="validation-form-2"
-                type="email"
-                name="email"
+                type="text"
+                name="phone"
                 className={
                   errors.email
                     ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
@@ -123,10 +165,10 @@ const Register = () => {
                 }
                 placeholder="Phone number"
               />
-              {errors.email && (
+              {errors.phone && (
                 <div className="mt-2 text-danger">
-                  {typeof errors.email.message === "string" &&
-                    errors.email.message}
+                  {typeof errors.phone.message === "string" &&
+                    errors.phone.message}
                 </div>
               )}
             </div>
@@ -197,6 +239,7 @@ const Register = () => {
               )}
             </Button>
           </div>
+         <p className="mt-2">Already have an account?  <Link to="/login">Login</Link></p>
         </form>
       </div>
       <Notification

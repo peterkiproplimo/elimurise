@@ -377,13 +377,13 @@ function Level() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                {/* <Menu.Item onClick={() => editRecord(academic)}>
+                                <Menu.Item onClick={() => editRecord(academic)}>
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
                                   />{" "}
                                   Edit
-                                </Menu.Item> */}
+                                </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
                                     setRecordId(academic._id),

@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormSelect,
 } from "../../base-components/Form";
-import { Dialog, Menu } from "../../base-components/Headless";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as ApiService from "../../services/auth";
@@ -24,8 +24,7 @@ import Notification, {
 } from "../../base-components/Notification";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import logo from "../../assets/images/teenyicons_tick-circle-solid.png"
-import Dropzone from "../../base-components/Dropzone";
-import Profile from "../UpdateProfile";
+
 import { useLocation } from "react-router-dom";
 import { formatCurrency } from "../../utils/helper";
 
@@ -253,6 +252,7 @@ function Users(props:any) {
           </Button>
           <br/>
           <Button variant="primary" type="submit" className="mt-2 p-6"  disabled={loading} >
+          <Link to="/"  >
             Proceed
             {loading && (
               <LoadingIcon
@@ -261,7 +261,8 @@ function Users(props:any) {
                 className="w-4 h-4 ml-2"
               />
             )}
-          </Button>
+            </Link>
+          </Button> 
           </div>
           
           

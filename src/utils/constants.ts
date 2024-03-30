@@ -6,6 +6,7 @@ export const BASE_URL= "https://hero-staging.techsavanna.technology/api/"
 //API Endpoints
 //devops has do it again
 export const LOGIN = `${BASE_URL}portal/auth/login`;
+export const REGISTER = `${BASE_URL}portal/auth/register`;
 export const AUTH = `${BASE_URL}portal/auth`;
 export const SUBSCRIPTION =`${BASE_URL}portal/subscription`;
 export const ACADEMIC =`${BASE_URL}portal/academic-year`;
@@ -26,7 +27,7 @@ export const LEARNERS=`${BASE_URL}portal/learners`
 
 
 
-export const GRADES=`${BASE_URL}portal/grades`
+export const GRADES=`${BASE_URL}cms/grades`
 
 export const USERS=`${BASE_URL}portal/users`
 export const PROFILE=`${BASE_URL}portal/profile`
@@ -40,7 +41,7 @@ const Terms = {
   };
 export const ROLES = `${BASE_URL}portal/roles`;
 export const STRANDS=`${BASE_URL}portal/strand`
-export const REGISTER = `${BASE_URL}register`;
+
 export const FORGOT_PASSWORD = `${BASE_URL}send-password/`; 
 export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
 

@@ -47,7 +47,7 @@ const Home = () => {
                 variant="primary"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
               >
-                <Link to="/register">
+                <Link to="/register"   className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3">
                   Register
                   {loading && (
                     <LoadingIcon

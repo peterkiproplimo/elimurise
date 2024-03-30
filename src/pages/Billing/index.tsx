@@ -99,7 +99,20 @@ function Main() {
                 <div>
                   <h1 className="text-4xl font-bold mb-2">{Package.name}</h1>
                   <div className=" mt-2 ">
-            <Button
+          
+          </div>
+                  <div
+                    className="text-m  text-white"
+                    dangerouslySetInnerHTML={{ __html: Package.description }}
+                  />
+                </div>
+                <div className=" items-center">
+                  <h1 className="text-2xl font-bold mt-2">
+                    Ksh. {Package.pricePerLearner}
+                  </h1>
+                  <p className="text-m text-white">(Per Learner Annually)</p>
+                </div>
+                <Button
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
               onClick={()=>subscribe(Package)}
@@ -115,19 +128,6 @@ function Main() {
                 )}
              
             </Button>
-          </div>
-                  <div
-                    className="text-m  text-white"
-                    dangerouslySetInnerHTML={{ __html: Package.description }}
-                  />
-                </div>
-                <div className=" items-center">
-                  <h1 className="text-2xl font-bold mt-2">
-                    Ksh. {Package.pricePerLearner}
-                  </h1>
-                  <p className="text-m text-white">(Per Learner Annually)</p>
-                </div>
-           
                 
               </div>
             ))}

@@ -214,7 +214,6 @@ export const getTerm =async (data: any) => {
   
   export async function deleteTerm(gradeId: any) {
     try {
-    
       let res = await axios.delete(c.TERM +'/'+gradeId);
       console.log(res)
       return res.data;

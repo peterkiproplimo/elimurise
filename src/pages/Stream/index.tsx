@@ -20,11 +20,9 @@ function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
-  const [levels, setLevels] = useState([]);
+  const [streams, setStreams] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
-  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
@@ -32,8 +30,7 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
-  const [selectedLevel, setSelectedLevel] = useState("");
+  const [selectedStream, setSelectedStream] = useState("");
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -49,7 +46,7 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Grade is required"),
+      name: yup.string().required("Stream is required"),
     })
     .required();
 
@@ -73,7 +70,7 @@ function Main() {
         const data = await getValues();
         console.log(data);
         await ApiService.createStream(data);
-        await getGrades();
+        await getStreams();
         await reset();
         isLoading(false);
         setDialog(false);
@@ -92,36 +89,41 @@ function Main() {
     }
   };
   useEffect(() => {
-    // getLevels();
+    getStreams();
   }, []);
   useEffect(() => {
     getGrades();
   }, [search, page, limit]);
-  // const getLevels = async () => {
-  //   const response = await ApiService.getLevels({ page: 1 });
-  //   setLevels(response.data);
-  // };
+  
   const getGrades = async () => {
-    const response = await ApiService.getGrades({
-      page: page,
-      search: search,
-      limit: limit,
-    });
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
+    const response = await ApiService.getGrades({ page: 1 });
     setGrades(response.data);
   };
+  const getStreams = async () => {
+    const response = await ApiService.getStream({ page: 1 });
+    setStreams(response.data);
+  };
+  // const getGrades = async () => {
+  //   const response = await ApiService.getGrades({
+  //     page: page,
+  //     search: search,
+  //     limit: limit,
+  //   });
+  //   const pagination = response.pagination;
+  //   setPagination({
+  //     current_page: pagination.current_page,
+  //     total: pagination.total,
+  //     total_pages: pagination.total_pages,
+  //     per_page: pagination.per_page,
+  //   });
+  //   setGrades(response.data);
+  // };
 
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteGrade(recordId);
-      getGrades();
+      let res = await ApiService.deleteStream(recordId);
+      getStreams();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
@@ -137,12 +139,12 @@ function Main() {
 
   const editRecord = (record: any) => {
     setIsEditMode(true);
-    setSelectedLevel(record.level_id._id);
-    console.log(selectedLevel);
+    setSelectedStream(record.stream_id._id);
+    console.log(selectedStream);
     setGroup(record.groups);
-    reset({ ...record, level_id: record.level_id._id });
+    reset({ ...record, stream_id: record.stream_id._id });
 
-    console.log({ ...record, level_id: record.level_id._id });
+    console.log({ ...record, stream_id: record.stream_id._id });
     setDialog(true);
   };
 
@@ -198,10 +200,10 @@ function Main() {
                   className={errors.name ? "border-danger" : ""}
                   placeholder="Grade"
                 />
-                {errors.role && (
+                {errors.name && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
                   </div>
                 )}
               </div>
@@ -210,21 +212,21 @@ function Main() {
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
-                  {...register("level_id")}
-                  name="level_id"
+                  {...register("grade")}
+                  name="grade"
 
                   // defaultValue={selectedLevel}
                 >
-                  {levels.map((level: any, key: any) => (
-                    <option key={key} value={level._id}>
-                      {level.name}
+                  {grades.map((grade: any, key: any) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
                     </option>
                   ))}
                 </FormSelect>
-                {errors.role && (
+                {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
                   </div>
                 )}
               </div>
@@ -306,19 +308,16 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Grade
                     </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      MODULES
-                    </Table.Th> */}
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
-                    </Table.Th> */}
+                    </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Actions
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {grades.map((grade: any, key) => (
+                  {streams.map((stream: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
@@ -327,17 +326,17 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {grade.name}
+                          {stream.name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {grade?.level_id?.name}
+                          {stream?.grade?.name}
                         </span>
                       </Table.Td>
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {new Date(grade.createdAt).toLocaleString("en-US", {
+                          {new Date(stream.createdAt).toLocaleString("en-US", {
                             timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
                             year: "numeric",
                             month: "2-digit",
@@ -346,7 +345,7 @@ function Main() {
                             minute: "2-digit",
                           })}
                         </span>
-                      </Table.Td> */}
+                      </Table.Td>
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
@@ -361,7 +360,7 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(grade)}>
+                                <Menu.Item onClick={() => editRecord(stream)}>
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
@@ -370,7 +369,7 @@ function Main() {
                                 </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(grade._id),
+                                    setRecordId(stream._id),
                                       setConfirmDelete(true);
                                   }}
                                 >

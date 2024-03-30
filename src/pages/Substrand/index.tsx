@@ -132,8 +132,8 @@ function Main() {
     getStrands();
   }, []);
   const getStrands = async () => {
-    const response = await ApiService.getStrands({ page: 1 }, strandFilter);
-    setStrands(response.data);
+ 
+  
   };
   const getSubstrand = async () => {
     let res = await ApiService.getSubstrandByStrand(
