@@ -184,13 +184,13 @@ function Menu(props: {
         {
           "text-slate-600 dark:text-slate-400":
             !props.menu.active && props.level != "first",
-          "bg-slate-100 dark:bg-transparent":
+          "bg-primary dark:bg-primary/30":
             props.menu.active && props.level == "first",
           "before:content-[''] before:block before:inset-0 before:rounded-xl before:absolute before:border-b-[3px] before:border-solid before:border-black/[0.08] before:dark:border-black/[0.08] before:dark:bg-darkmode-700":
             props.menu.active && props.level == "first",
           "after:content-[''] after:w-[20px] after:h-[80px] after:mr-[-27px] after:bg-menu-active after:bg-no-repeat after:bg-cover after:absolute after:top-0 after:bottom-0 after:right-0 after:my-auto after:dark:bg-menu-active-dark":
             props.menu.active && props.level == "first",
-          "hover:bg-slate-100 hover:dark:bg-transparent hover:before:content-[''] hover:before:block hover:before:inset-0 hover:before:rounded-xl hover:before:absolute hover:before:z-[-1] hover:before:border-b-[3px] hover:before:border-solid hover:before:border-black/[0.08] hover:before:dark:bg-darkmode-700":
+          "hover:bg-primary  hover:text-white hover:dark:bg-transparent hover:before:content-[''] hover:before:block hover:before:inset-0 hover:before:rounded-xl hover:before:absolute hover:before:z-[-1] hover:before:border-b-[3px] hover:before:border-solid hover:before:border-black[0.08] hover:before:dark:bg-darkmode-700":
             !props.menu.active &&
             !props.menu.activeDropdown &&
             props.level == "first",
@@ -209,9 +209,9 @@ function Menu(props: {
     >
       <div
         className={clsx({
-          "text-primary z-10 dark:text-slate-300":
+          "text-white z-10 dark:text-slate-300":
             props.menu.active && props.level == "first",
-          "text-slate-700 dark:text-slate-300":
+          "text-white dark:text-slate-300":
             props.menu.active && props.level != "first",
           "dark:text-slate-400": !props.menu.active,
         })}
@@ -222,11 +222,11 @@ function Menu(props: {
         className={clsx([
           "w-full ml-3 hidden xl:flex items-center",
           {
-            "text-primary font-medium z-10 dark:text-slate-300":
+            "text-white font-medium z-10 dark:text-slate-300":
               props.menu.active && props.level == "first",
-            "text-slate-700 font-medium dark:text-slate-300":
+            "text-white font-medium dark:text-slate-300":
               props.menu.active && props.level != "first",
-            "dark:text-slate-400": !props.menu.active,
+            "dark:text-slate-800": !props.menu.active,
           },
         ])}
       >

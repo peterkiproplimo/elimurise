@@ -2,8 +2,9 @@ import { useRoutes } from "react-router-dom";
 import Layout from "../layouts";
 import Auth from "../layouts/auth";
 import Billing from "../pages/Billing";
-import User from "../pages/User";
-import Role from "../pages/roles";
+import Parents from "../pages/Parents";
+import Teachers from "../pages/Teachers";
+import Strands from "../pages/Strands";
 
 // import SimcardBooking from "../pages/SimcardBooking";
 import Categories from "../pages/Categories";
@@ -12,11 +13,6 @@ import Categories from "../pages/Categories";
 import Subscription from "../pages/Subscription";
 import Login from "../pages/Auth/login";
 
-// import Login from "../pages/Auth/change-password";
-// import Login from "../pages/Auth/forgot-password";
-// import LoginBacks from "../pages/Auth/loginsBacks";
-
-// import Role from "../pages/Auth/";
 
 import ForgotPassword from "../pages/Auth/forgot-password";
 import ForgotPasswordOTP from "../pages/Auth/forgot-passOTP";
@@ -31,6 +27,7 @@ import Substrand from "../pages/Substrand";
 import AccountDetails from "../pages/accountDetails";
 import Stream from "../pages/Stream";
 import Learners from "../pages/Learners";
+import LearningAreas from "../pages/LearningAreas";
 import Home from "../webapp/home";
 import Register from "../pages/Auth/register";
 //nn
@@ -53,8 +50,8 @@ function Router() {
           element: <Categories />,
         },
         {
-          path: "user",
-          element: <User />,
+          path: "parents",
+          element: <Parents />,
         },
 
         {
@@ -88,8 +85,8 @@ function Router() {
 
         //securitye
         {
-          path: "role",
-          element: <Role />,
+          path: "teachers",
+          element: <Teachers />,
         },
         {
           path: "subscription",
@@ -98,6 +95,14 @@ function Router() {
         {
           path: "learners",
           element: <Learners />,
+        },
+        {
+          path: "learning_areas",
+          element: <LearningAreas />,
+        },
+        {
+          path: "Strands",
+          element: <Strands />,
         },
       ],
     },

@@ -303,13 +303,7 @@ export const getGrades =async (data:any) => {
 
     export const  getLearners =async (data:any,filter:any) => {
       try {
-          // if(filter.learning_area==="na"){
-          //   console.log("failed...")
-          //   return;
-          // }
-          // let res = await axios.get( `${c.LEARNERS}/${filter.learning_area}/${filter.term}`,{
-          //   params:data
-          // });
+     
           let res = await axios.get(c.LEARNERS,{
             params:data
           });
@@ -348,113 +342,242 @@ export const getGrades =async (data:any) => {
         }
       }  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       
-      export const allStrands =async ({ page }: { page: number },filter:any) => {
+      export const getParents =async (data:any) => {
         try {
-            let res = await axios.get(c.STRANDS,filter);
+            let res = await axios.get(c.PARENTS,{params:data});
             return res.data;
           } catch (e) {
             throw handler(e);
           }
         }
+        
+        export async function createParents(data: FieldValues) {
+          try {
+           
+            if(data._id){
+              let res = await axios.put(c.PARENTS+"/"+data._id, data);
+              return res.data;
+            }else{
+              let res = await axios.post(c.PARENTS, data);
+              return res.data;
+            }
+           
+          } catch (e) {
+            throw handler(e);
+          }
+        }
+
+        export async function deleteParents(userId: any) {
+          try {
+          
+            let res = await axios.delete(c.PARENTS+'/'+userId);
+            console.log(res)
+            return res.data;
+          } catch (e) {
+            throw handler(e);
+          }
+        }
+
+      
+
+        export const getTeachers =async (data:any) => {
+          try {
+              let res = await axios.get(c.TEACHERS,{params:data});
+              return res.data;
+            } catch (e) {
+              throw handler(e);
+            }
+          }
+          
+          export async function createTeachers(data: FieldValues) {
+            try {
+             
+              // if(data._id){
+              //   let res = await axios.put(c.TEACHERS+"/"+data._id, data);
+              //   return res.data;
+              // }else{
+                let res = await axios.post(c.TEACHERS, data);
+                return res.data;
+              // }
+             
+            } catch (e) {
+              throw handler(e);
+            }
+          }
+  
+          export async function deleteTeachers(userId: any) {
+            try {
+            
+              let res = await axios.delete(c.TEACHERS +'/'+userId);
+              console.log(res)
+              return res.data;
+            } catch (e) {
+              throw handler(e);
+            }
+          }
+  
+          export const getLearningAreas =async (data: any) => {
+            try {
+                let res = await axios.get(c.LEARNING_AREA,{
+                  params:data
+                });
+                return res.data;
+              } catch (e) {
+                throw handler(e);
+              }
+            }
+            
+            export async function createLearningArea(data: FieldValues) {
+              try {
+              
+                if(data._id){
+                  let res = await axios.put(c.LEARNING_AREA+'/'+data._id, data);
+                  return res.data;
+                }
+              else{
+                let res = await axios.post(c.LEARNING_AREA, data);
+                 return res.data;
+              }
+              
+                
+              } catch (e) {
+                throw handler(e);
+              }
+            }
+            
+            export async function deleteLearningArea(gradeId: any) {
+              try {
+              
+                let res = await axios.delete(c.LEARNING_AREA+'/'+gradeId);
+                console.log(res)
+                return res.data;
+              } catch (e) {
+                throw handler(e);
+              }
+            }  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            export const getStrands =async (data:any,filter:any) => {
+              try {
+                  if(filter.learning_area==="na"){
+                    console.log("failed...")
+                    return;
+                  }
+                  let res = await axios.get( `${c.STRANDS}/${filter.learning_area}/${filter.term}`,{
+                    params:data
+                  });
+                  return res.data;
+                } catch (e) {
+                  throw handler(e);
+                }
+              }
+
+      
+    //  export const getStrands =async (data: any) => {
+    //           try {
+    //               let res = await axios.get(c.STRANDS,{
+    //                 params:data
+    //               });
+    //               return res.data;
+    //             } catch (e) {
+    //               throw handler(e);
+    //             }
+    //           }
 
       export async function createStrand(data: FieldValues) {
         try {
@@ -484,31 +607,7 @@ export const getGrades =async (data:any) => {
           throw handler(e);
         }
       }  
-    
-      export const getUsers =async (data:any) => {
-        try {
-            let res = await axios.get(c.USERS,{params:data});
-            return res.data;
-          } catch (e) {
-            throw handler(e);
-          }
-        }
-        
-        export async function createUsers(data: FieldValues) {
-          try {
-           
-            if(data._id){
-              let res = await axios.put(c.USERS+"/"+data._id, data);
-              return res.data;
-            }else{
-              let res = await axios.post(c.USERS, data);
-              return res.data;
-            }
-           
-          } catch (e) {
-            throw handler(e);
-          }
-        }
+     
 
         export async function activateorDeactivateUsers(data: FieldValues) {
           try {
@@ -526,16 +625,7 @@ export const getGrades =async (data:any) => {
           }
         }
         
-        export async function deleteUsers(userId: any) {
-          try {
-          
-            let res = await axios.delete(c.USERS+'/'+userId);
-            console.log(res)
-            return res.data;
-          } catch (e) {
-            throw handler(e);
-          }
-        }
+       
 
   
 

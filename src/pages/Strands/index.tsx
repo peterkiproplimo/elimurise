@@ -32,8 +32,12 @@ interface TableRow {
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
+
   const [grades, setGrades] = useState([]);
-  const [schools, setSchools] = useState([]);
+  const [levels, setLevels] = useState([]);
+  const [learningAreas, setLearningAreas] = useState([]);
+  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
+  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
@@ -41,7 +45,9 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [learners, setLearners] = useState([{}]);
+  const [userPermissions, setUserPermissions] = useState([]);
+  const [hasTheme, setHasTheme] = useState(false);
+  const [strands, setStrands] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -54,18 +60,20 @@ function Main() {
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
-    school: "na",
     grade: "na",
-    stream: "na",
+    learning_area: "na",
+    term: "na",
   });
-  const [streams, setStreams] = useState([]);
-  const [academic, setAcademic] = useState([]);
-
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      first_name: yup.string().required("Learner is required"),
+      name: yup.string().required("Level is required"),
     })
     .required();
 
@@ -87,19 +95,19 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createLearner(data);
-        await getStudents();
+        await ApiService.createStrand(data);
+        await getStrands();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Learner added successfully.");
+        setMessage("Strand created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
         setSuccess(false);
         setMessage(
-          error.message || "An error occurred while creating the learner."
+          error.message || "An error occurred while creating the role."
         );
         notify.current?.showToast();
       }
@@ -107,15 +115,16 @@ function Main() {
   };
 
   useEffect(() => {
-    getStreams();
+    getGrades();
+    // getLevels();
+    getLearningAreas();
   }, []);
-  useEffect(() => {
-    getStudents(); 
-  }, [ search, page, limit]);
-
-  const getStudents = async () => {
-    const response = await ApiService.getLearners( {
-        page: 1 
+  const getStrands = async () => {
+    const response = await ApiService.getStrands(
+      {
+        page: page,
+        search: search,
+        limit: limit,
       },
       strandFilter
     );
@@ -126,30 +135,30 @@ function Main() {
       total_pages: pagination.total_pages,
       per_page: pagination.per_page,
     });
-    setLearners(response.data);
+    setStrands(response.data);
   };
+  // const getLevels = async () => {
+  //   const response = await ApiService.getLevels({ page: 1 });
+  //   setLevels(response.data);
+  // };
+  const getGrades = async () => {
+    const response = await ApiService.getGrades({ page: 1 });
 
-  const getStreams = async () => {
-    const response = await ApiService.getStream({ page: 1 });
-    setStreams(response.data);
-    console.log(response)
+    setGrades(response.data);
   };
-  const getAcademics = async () => {
-    const response = await ApiService.getAcademic({
-      page: 1
-    });
-    setAcademic(response.data);
-  }
-  
+  const getLearningAreas = async () => {
+    const response = await ApiService.getLearningAreas({ page: 1 });
+    setLearningAreas(response.data);
+  };
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearner(recordId);
-      getStudents();
+      let res = await ApiService.deleteStrand(recordId);
+      getStrands();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner record deleted successfully");
+      setMessage(res.message);
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -162,7 +171,7 @@ function Main() {
   const editRecord = (record: any) => {
     setGroup(record.groups);
     reset(record);
-    reset({ ...record, learners: record.learner._id });
+    reset({ ...record, learning_area: record.learning_area._id });
 
     console.log(record);
     setDialog(true);
@@ -174,49 +183,54 @@ function Main() {
     reset(record);
     setDialog(false);
   };
+  useEffect(() => {
+    getStrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [strandFilter, search, page, limit]);
 
+  const handleGradeChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    console.log(learningAreas);
+    setStrands([]);
+    await setStrandFilter({
+      learning_area: "na",
+      term: "na",
+      grade: selectedValue,
+    });
 
-  // const handleGradeChange = async (
-  //   event: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedValue = event.target.value;
-  //   console.log(schools);
-  //   setLearners([]);
-  //   await setStrandFilter({
-  //     school: "na",
-  //     stream: "na",
-  //     grade: selectedValue,
-  //   });
-  // };
-  // const handleSchoolChange = async (
-  //   event: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedValue = event.target.value;
-  //   setLearners([]);
-  //   await setStrandFilter({
-  //     ...strandFilter,
-  //     school: selectedValue,
-  //   });
-   
-  // };
+    // You might want to fetch filtered data here
+  };
+  const handleLearningAreaChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStrands([]);
+    await setStrandFilter({
+      ...strandFilter,
+      learning_area: selectedValue,
+    });
+    // You might want to fetch filtered data here
+  };
 
-  // const handleTermChange = async (
-  //   event: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedValue = event.target.value;
-  //   setLearners([]);
-  //   await setStrandFilter({
-  //     ...strandFilter,
-  //     stream: selectedValue,
-  //   });
-  //   // You might want to fetch filtered data here
-  // };
-  // const handleHasThemeChange = async (event: any) => {
-  //   const isChecked = event.target.checked;
-  //   setLearners([]);
-  //   setHasTheme(isChecked);
-  //   // You might want to fetch filtered data here
-  // };
+  const handleTermChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStrands([]);
+    await setStrandFilter({
+      ...strandFilter,
+      term: selectedValue,
+    });
+    // You might want to fetch filtered data here
+  };
+  const handleHasThemeChange = async (event: any) => {
+    const isChecked = event.target.checked;
+    setStrands([]);
+    setHasTheme(isChecked);
+    // You might want to fetch filtered data here
+  };
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
@@ -244,7 +258,7 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className="mr-auto text-lg font-medium">New Learner</h2>
+            <h2 className="mr-auto text-lg font-medium">New Strand</h2>
           </div>
           <br />
           <form
@@ -262,49 +276,7 @@ function Main() {
               ></a>
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
-            {/* <div className="col-span-4 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
-                <FormSelect
-                  {...register("school")}
-                  name="school"
-                  value={strandFilter.school}
-                  disabled
-                >
-                  {schools
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter?.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea?._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
-                </FormSelect>
-
-                {errors.learning_area && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
-                  </div>
-                )}
-              </div> */}
-               {/* <div className="col-span-12 sm:col-span-4">
-            <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
-                <FormSelect {...register("school")} name="school">
-                  {academic.map((school: any, key) => (
-                    <option key={key} value={school._id}>
-                      {school.schoolId}
-                    </option>
-                  ))}
-                </FormSelect>
-              {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )}
-            </div> */}
-              {/* <div className="col-span-4 sm:col-span-4">
+              <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
@@ -324,37 +296,46 @@ function Main() {
                       errors.grade.message}
                   </div>
                 )}
-              </div> */}
-              
-            <div className="col-span-12 sm:col-span-4">
-            <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
-                <FormSelect {...register("stream")} name="stream">
-                  {streams.map((stream: any, key) => (
-                    <option key={key} value={stream._id}>
-                      {stream.name}
-                    </option>
-                  ))}
-                </FormSelect>
-              {/* {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )} */}
-            </div>
-           
+              </div>
 
-              {/* <div className="col-span-4 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+                <FormSelect
+                  {...register("learning_area")}
+                  name="learning_area"
+                  value={strandFilter.learning_area}
+                  disabled
+                >
+                  {learningAreas
+                    .filter(
+                      (area: any) => area?.grade_id?._id === strandFilter?.grade
+                    )
+                    .map((filteredArea: any, key) => (
+                      <option key={key} value={filteredArea?._id}>
+                        {filteredArea.name}
+                      </option>
+                    ))}
+                </FormSelect>
+
+                {errors.learning_area && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.learning_area.message === "string" &&
+                      errors.learning_area.message}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
                 <FormSelect
                   {...register("term")}
                   name="term"
-                  value={strandFilter.stream}
+                  value={strandFilter.term}
                   disabled
                 >
-                  {streams.map((stream: any, key) => (
-                    <option key={key} value={stream._id}>
-                      {stream.name}
+                  {terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
                     </option>
                   ))}
                 </FormSelect>
@@ -364,78 +345,25 @@ function Main() {
                       errors.term.message}
                   </div>
                 )}
-              </div> */}
-              
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>First Name</FormLabel>
-                <FormInput
-                  {...register("first_name")}
-                  type="text"
-                  name="first_name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="first name"
+              </div>
+            </div>{" "}
+            <div className="grid grid-cols-12 gap-4 gap-y-3 mt-5 m-auto">
+              <div className="col-span-12 sm:col-span-3">
+                <FormLabel htmlFor="modal-form-6">Strand </FormLabel>
+                <FormTextarea
+                  {...register("name")}
+                  name="name"
+                  className="mr-2"
                 />
-                {errors.role && (
+                {/* <FormInput {...register("name")} name="name" type="text" /> */}
+                {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
                   </div>
                 )}
               </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Last Name</FormLabel>
-                <FormInput
-                  {...register("last_name")}
-                  type="text"
-                  name="last_name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="last name"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Surname</FormLabel>
-                <FormInput
-                  {...register("surname")}
-                  type="text"
-                  name="surname"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="surname"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Admission Number</FormLabel>
-                <FormInput
-                  {...register("admn_no")}
-                  type="text"
-                  name="admn_no"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="adm_no"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-            
-            </div>
-            
-              
-          
-              {/* <div className="col-span-12 sm:col-span-3">
+              <div className="col-span-12 sm:col-span-3">
                 <FormCheck.Input
                   {...register("grade")}
                   id="checkbox-switch-7"
@@ -445,7 +373,11 @@ function Main() {
                   onChange={(e: any) => handleHasThemeChange(e)}
                 />
 
-                
+                {/* <FormInput
+                  type="checkbox"
+                  checked={false}
+                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                /> */}
 
                 <FormLabel htmlFor="modal-form-6"> Theme</FormLabel>
                 {errors.grade && (
@@ -469,7 +401,7 @@ function Main() {
               ) : (
                 ""
               )}
-            </div> */}
+            </div>
             <div className="col-span-12 sm:col-span-12 mt-3">
               <Button
                 type="button"
@@ -493,10 +425,85 @@ function Main() {
           </form>
         </>
       ) : (
-        <>  
-          <h2 className="mt-10 text-lg font-medium intro-y">Learners</h2>
+        <>
+          <h2 className="mt-10 text-lg font-medium intro-y">Strand</h2>
+
+          <div className="grid grid-cols-12 gap-6 mt-5">
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
+              <FormSelect
+                {...register("grade")}
+                name="grade"
+                value={strandFilter.grade}
+                onChange={(event) => handleGradeChange(event)}
+              >
+                <option>Select Grade</option>
+                {grades.map((grade: any, key) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.grade && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.grade.message === "string" &&
+                    errors.grade.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Learning Area</FormLabel>
+              <FormSelect
+                {...register("learning_area")}
+                name="learning_area"
+                value={strandFilter.learning_area}
+                onChange={(event) => handleLearningAreaChange(event)}
+              >
+                <option>Select Learning Area</option>
+                {learningAreas
+                  .filter(
+                    (area: any) => area?.grade_id?._id === strandFilter.grade
+                  )
+                  .map((filteredArea: any, key) => (
+                    <option key={key} value={filteredArea._id}>
+                      {filteredArea.name}
+                    </option>
+                  ))}
+              </FormSelect>
+              {errors.learning_area && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.learning_area.message === "string" &&
+                    errors.learning_area.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-3">
+              <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
+              <FormSelect
+                {...register("term")}
+                name="term"
+                value={strandFilter.term}
+                onChange={(event) => handleTermChange(event)}
+              >
+                <option>Select Term</option>
+                {terms.map((term: any, key) => (
+                  <option key={key} value={term._id}>
+                    {term.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.term && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.term.message === "string" &&
+                    errors.term.message}
+                </div>
+              )}
+            </div>
+
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-              <Button
+              {/* <Button
                 variant="primary"
                 className="mr-2 shadow-md"
                 onClick={(event: React.MouseEvent) => {
@@ -504,8 +511,8 @@ function Main() {
                   setDialog(true);
                 }}
               >
-                New Learner
-              </Button>
+                New Strand
+              </Button> */}
 
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
@@ -531,59 +538,7 @@ function Main() {
                 </div>
               </div>
             </div>
-        
-
-          <div className="grid grid-cols-12 gap-6 mt-5">
-
-          {/* <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
-              <FormSelect
-                {...register("learning_area")}
-                name="learning_area"
-                value={strandFilter.school}
-                onChange={(event) => handleSchoolChange(event)}
-              >
-                <option>Select School</option>
-                {schools
-                  .filter(
-                    (area: any) => area?.grade_id?._id === strandFilter.grade
-                  )
-                  .map((filteredArea: any, key) => (
-                    <option key={key} value={filteredArea._id}>
-                      {filteredArea.name}
-                    </option>
-                  ))}
-              </FormSelect>
-              {errors.learning_area && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.learning_area.message === "string" &&
-                    errors.learning_area.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-              <FormSelect
-                {...register("grade")}
-                name="grade"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Grade</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div> */}
-
+            {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <Table className="border-spacing-y-[10px] border-separate -mt-2">
                 <Table.Thead>
@@ -591,143 +546,57 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Grade
-                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Stream
+                      Strand
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      First Name
+                      Learning Area
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Last Name
+                      Theme
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Surname
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Adm No
-                    </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Term
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+
+                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Status
                     </Table.Th> */}
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Created At
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Updated At
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Actions
-                    </Table.Th>
+                
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learners.map((learner: any, key) => (
+                  {strands.map((strand: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {key + 1}
                         </span>
                       </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {strand?.name}
+                        </span>
+                      </Table.Td>
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                        {learner?.stream?.grade?.name} - {learner?.stream?.name}  
+                          {strand?.learning_area?.name}
+                          {" - "}
+                          {strand?.learning_area?.grade_id?.name}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learner?.first_name}
+                          {strand?.theme}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learner?.last_name}
+                          {strand?.term}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.surname}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.admn_no}
-                        </span>
-                      </Table.Td>
-                        <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(learner?.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(learner?.updatedAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td>
-
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(learner)}>
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(learner._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td>
+                    
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
