@@ -127,12 +127,12 @@ function Main() {
       setMessage(error.message);
       notify.current?.showToast();
     }
-  };
+  }; 
 
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset({ ...record, grade_id: record.grade_id._id });
+    reset(record);
     setDialog(true);
   };
 

@@ -139,12 +139,8 @@ function Main() {
 
   const editRecord = (record: any) => {
     setIsEditMode(true);
-    setSelectedStream(record.stream_id._id);
-    console.log(selectedStream);
     setGroup(record.groups);
-    reset({ ...record, stream_id: record.stream_id._id });
-
-    console.log({ ...record, stream_id: record.stream_id._id });
+    reset(record);
     setDialog(true);
   };
 

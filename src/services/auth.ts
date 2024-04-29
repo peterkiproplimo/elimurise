@@ -156,7 +156,7 @@ try {
 export async function createAcademic(data: any) {
   try {
     if(data._id){
-      let res = await axios.put(c.ACADEMIC, data);
+      let res = await axios.put(c.ACADEMIC + "/"+ data?._id, data);
   
       return res.data;
     }
@@ -198,7 +198,7 @@ export const getTerm =async (data: any) => {
     try {
     
       if(data._id){
-        let res = await axios.put(c.TERM +'/'+data._id, data);
+        let res = await axios.put(c.TERM + '/' + data._id, data);
         return res.data;
       }
     else{
@@ -238,7 +238,7 @@ export const getTerm =async (data: any) => {
       try {
       
         if(data._id){
-          let res = await axios.put(c.STREAMS +'/'+data._id, data);
+          let res = await axios.put(c.STREAMS + '/' + data._id, data);
           return res.data;
         }
       else{
@@ -317,7 +317,7 @@ export const getGrades =async (data:any) => {
         try {
         
           if(data._id){
-            let res = await axios.put(c.LEARNERS +'/'+data._id, data);
+            let res = await axios.put(c.LEARNERS + '/' + data._id, data);
             return res.data;
           }
         else{
@@ -356,7 +356,7 @@ export const getGrades =async (data:any) => {
           try {
            
             if(data._id){
-              let res = await axios.put(c.PARENTS+"/"+data._id, data);
+              let res = await axios.put(c.PARENTS+ "/" +data._id, data);
               return res.data;
             }else{
               let res = await axios.post(c.PARENTS, data);
@@ -393,13 +393,13 @@ export const getGrades =async (data:any) => {
           export async function createTeachers(data: FieldValues) {
             try {
              
-              // if(data._id){
-              //   let res = await axios.put(c.TEACHERS+"/"+data._id, data);
-              //   return res.data;
-              // }else{
+              if(data._id){
+                let res = await axios.put(c.TEACHERS + "/" + data._id, data);
+                return res.data;
+              }else{
                 let res = await axios.post(c.TEACHERS, data);
                 return res.data;
-              // }
+              }
              
             } catch (e) {
               throw handler(e);

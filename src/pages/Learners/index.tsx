@@ -60,12 +60,15 @@ function Main() {
   });
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      first_name: yup.string().required("Learner is required"),
+      first_name: yup.string().required("Firstname is required"),
+      last_name: yup.string().required("Lastname is required"),
+   
     })
     .required();
 
@@ -160,11 +163,9 @@ function Main() {
   };
 
   const editRecord = (record: any) => {
+    setIsEditMode(true);
     setGroup(record.groups);
     reset(record);
-    reset({ ...record, learners: record.learner._id });
-
-    console.log(record);
     setDialog(true);
   };
 
@@ -244,7 +245,9 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className="mr-auto text-lg font-medium">New Learner</h2>
+            <h2 className="mr-auto text-lg font-medium">
+              {isEditMode ? "Edit Learner" : "New Learner"}
+            </h2>
           </div>
           <br />
           <form
@@ -372,13 +375,13 @@ function Main() {
                   {...register("first_name")}
                   type="text"
                   name="first_name"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.first_name? "border-danger" : ""}
                   placeholder="first name"
                 />
-                {errors.role && (
+                {errors.first_name && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.first_name.message === "string" &&
+                      errors.first_name.message}
                   </div>
                 )}
               </div>
@@ -388,13 +391,13 @@ function Main() {
                   {...register("last_name")}
                   type="text"
                   name="last_name"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.last_name ? "border-danger" : ""}
                   placeholder="last name"
                 />
-                {errors.role && (
+                {errors.last_name && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.last_name.message === "string" &&
+                      errors.last_name.message}
                   </div>
                 )}
               </div>
@@ -404,13 +407,13 @@ function Main() {
                   {...register("surname")}
                   type="text"
                   name="surname"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.surname ? "border-danger" : ""}
                   placeholder="surname"
                 />
-                {errors.role && (
+                {errors.surname && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.surname.message === "string" &&
+                      errors.surname.message}
                   </div>
                 )}
               </div>
@@ -423,10 +426,10 @@ function Main() {
                   className={errors.name ? "border-danger" : ""}
                   placeholder="adm_no"
                 />
-                {errors.role && (
+                {errors.adm_no && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.adm_no.message === "string" &&
+                      errors.adm_no.message}
                   </div>
                 )}
               </div>
