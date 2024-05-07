@@ -16,11 +16,15 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import Pagination from "../../base-components/Pagination";
 import { formatDate } from "../../utils/helper";
+import logoUrl from "../../assets/images/edit.png";
+import { useNavigate } from "react-router-dom";
+
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const navigate = useNavigate();
   const [learningAreas, setLearningAreas] = useState([]);
   const [grades, setGrades] = useState([]);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
@@ -110,6 +114,13 @@ function Main() {
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
     setGrades(response.data);
+  };
+
+  const openStrand = (learningArea: any) => {
+    navigate("/Strands", {
+      replace: true,
+      state: { data: learningArea },
+    });
   };
   const deleteRecord = async () => {
     isLoading(true);
@@ -310,15 +321,16 @@ function Main() {
                 key={key}
                 className="p-5 bg-primary dark:bg-gray-800 rounded-xl shadow-md m-5  min-h-[150px] min-w-[400px] text-white"
                 style={{ backgroundColor: learningArea.color }}
+                onClick={(e: any) => openStrand(learningArea)}
               >
-                <div>
+                <div className="flex flex-wrap justify-between">
                   <h1 className="text-4xl font-bold mb-2">{learningArea.name}</h1>
-              
+                  <img alt="ACS" className="w-10" src={logoUrl} />
               
                 </div>
-                <div className=" items-center">
-                  <h1 className="text-2xl font-bold mt-2 mb-2">
-                  {learningArea?.grade_id?.name}
+                <div className=" items-center  mt-5 ">
+                  <h1 className="text-xl font-bold">
+                  Grade {learningArea?.grade_id?.name}
                   </h1>
                 </div>
                 {/* <Button

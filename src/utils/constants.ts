@@ -16,19 +16,14 @@ export const STREAMS=`${BASE_URL}portal/streams`;
 export const LEARNERS=`${BASE_URL}portal/learners`;
 export const PARENTS =`${BASE_URL}portal/parents`;
 export const TEACHERS=`${BASE_URL}portal/teachers`
-
-
 export const GRADES=`${BASE_URL}cms/grades`;
 export const STRANDS=`${BASE_URL}cms/strand`;
 export const LEARNING_AREA=`${BASE_URL}cms/learning-areas`;
 
-
-
-
 export const USERS=`${BASE_URL}portal/users`
 export const PROFILE=`${BASE_URL}portal/profile`
-export const SUBSTRAND=`${BASE_URL}portal/substrand`
-export const SUBSTRANDBYSTRAND=`${BASE_URL}portal/substrand/ByStrand`
+export const SUBSTRAND=`${BASE_URL}cms/substrand`
+export const SUBSTRANDBYSTRAND=`${BASE_URL}cms/substrand/ByStrand`
 export const LEARNING_OUTCOME=`${BASE_URL}portal/substrandsByStrand`
 const Terms = {
     Term1: '1',

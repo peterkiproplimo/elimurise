@@ -23,6 +23,7 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface TableRow {
   no: number;
@@ -59,10 +60,23 @@ function Main() {
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
-  const [strandFilter, setStrandFilter] = useState({
-    grade: "na",
-    learning_area: "na",
-    term: "na",
+  const navigate = useNavigate();
+  const location = useLocation();
+  const learningArea = location?.state?.data;
+  const initialState = {
+    grade: learningArea?.grade_id?._id || "na",
+    learning_area: learningArea?._id || "na",
+    term: learningArea?._id ? 1 : "na",
+  };
+
+  // const [strandFilter, setStrandFilter] = useState({
+  //   grade: "na",
+  //   learning_area: "na",
+  //   term: "na",
+  // });
+  const [strandFilter, updateStrandFilter] = useState(() => {
+    const savedState = localStorage.getItem("strandFilter");
+    return initialState;
   });
   const terms = [
     { _id: 1, name: "Term 1" },
@@ -137,10 +151,7 @@ function Main() {
     });
     setStrands(response.data);
   };
-  // const getLevels = async () => {
-  //   const response = await ApiService.getLevels({ page: 1 });
-  //   setLevels(response.data);
-  // };
+
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
 
@@ -150,6 +161,18 @@ function Main() {
     const response = await ApiService.getLearningAreas({ page: 1 });
     setLearningAreas(response.data);
   };
+
+  const openSubStrand = (strand: any) => {
+    navigate("/substrand", {
+      replace: true,
+      state: { data: strand },
+    });
+  };
+
+  const setStrandFilter = (newFilter: any) => {
+    updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
+  }; 
+
   const deleteRecord = async () => {
     isLoading(true);
     try {
@@ -426,10 +449,12 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Strand</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y"> 
+          {learningArea.name}
+          </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 sm:col-span-3">
+            {/* <div className="col-span-12 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
               <FormSelect
                 {...register("grade")}
@@ -450,9 +475,9 @@ function Main() {
                     errors.grade.message}
                 </div>
               )}
-            </div>
+            </div> */}
 
-            <div className="col-span-12 sm:col-span-3">
+            {/* <div className="col-span-12 sm:col-span-3">
               <FormLabel htmlFor="modal-form-6">Select Learning Area</FormLabel>
               <FormSelect
                 {...register("learning_area")}
@@ -500,7 +525,7 @@ function Main() {
                     errors.term.message}
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               {/* <Button
@@ -550,13 +575,10 @@ function Main() {
                       Strand
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Learning Area
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
                       Theme
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Term
+                    <Table.Th className="border-b-0 whitespace-nowrap text-center">
+                      Actions
                     </Table.Th>
 
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
@@ -573,29 +595,31 @@ function Main() {
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                      onClick={(e: any) => openSubStrand(strand)}>
                         <span className="font-medium whitespace-nowrap">
                           {strand?.name}
                         </span>
                       </Table.Td>
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {strand?.learning_area?.name}
                           {" - "}
                           {strand?.learning_area?.grade_id?.name}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {strand?.theme}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {strand?.term}
-                        </span>
-                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  flex justify-center">
+                         <button className="w-1/2  px-3 py-4 bg-primary text-white rounded-md hover:bg-blue-600 "
+                          onClick={(e: any) => openSubStrand(strand)}>
+                            View Substrands....
+                          </button>
+                       </Table.Td>
                     
                     </Table.Tr>
                   ))}
