@@ -64,8 +64,8 @@ const initialState: SideMenuState = {
     },
       {
         icon: "Activity",
-        pathname: "/strands",
-        title: " Strands",
+        pathname: "/assessment",
+        title: " Assessment",
       },
     {
       icon: "FileText",
@@ -77,8 +77,8 @@ const initialState: SideMenuState = {
 
     // {
     //   icon: "Users",
-    //   pathname: "/accounts",
-    //   title: "Accounts",
+    //   pathname: "/categories",
+    //   title: "Categories",
     // },
     // {
     //   icon: "Users",

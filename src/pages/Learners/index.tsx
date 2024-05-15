@@ -588,7 +588,7 @@ function Main() {
             </div> */}
 
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <Table className="border-spacing-y-[10px] border-separate -mt-2">
+              <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">
@@ -660,7 +660,7 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learner?.admn_no}
+                          {learner?.admn_no} 
                         </span>
                       </Table.Td>
                         <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">

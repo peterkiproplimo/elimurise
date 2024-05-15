@@ -7,7 +7,7 @@ import Teachers from "../pages/Teachers";
 import Strands from "../pages/Strands";
 
 // import SimcardBooking from "../pages/SimcardBooking";
-import Categories from "../pages/Categories";
+import Assessment from "../pages/Assessment";
 
 //beginning of auth
 import Subscription from "../pages/Subscription";
@@ -30,6 +30,7 @@ import Learners from "../pages/Learners";
 import LearningAreas from "../pages/LearningAreas";
 import Home from "../webapp/home";
 import Register from "../pages/Auth/register";
+
 //nn
 function Router() {
   const routes = [
@@ -45,10 +46,10 @@ function Router() {
           path: "/billing",
           element: <Billing />,
         },
-        {
-          path: "categories",
-          element: <Categories />,
-        },
+        // {
+        //   path: "categories",
+        //   element: <Categories />,
+        // },
         {
           path: "parents",
           element: <Parents />,
@@ -83,6 +84,11 @@ function Router() {
           element: <AccountDetails />,
         },
 
+        {
+          path: "assessment",
+          element: <Assessment />,
+        },
+
         //securitye
         {
           path: "teachers",
@@ -101,9 +107,10 @@ function Router() {
           element: <LearningAreas />,
         },
         {
-          path: "Strands",
+          path: "strands",
           element: <Strands />,
         },
+       
       ],
     },
     

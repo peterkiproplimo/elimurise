@@ -25,7 +25,8 @@ import React from "react";
 import { setValue } from "../../base-components/TomSelect/tom-select";
 import "./substrand.css";
 import Pagination from "../../base-components/Pagination";
-import { useLocation } from "react-router-dom";
+import { useLocation , useNavigate} from "react-router-dom";
+import logo from "../../assets/images/Rectangle 6533.png"
 
 interface TableRow {
   no: number;
@@ -38,6 +39,7 @@ function Main() {
   const [grades, setGrades] = useState([]);
   const [strands, setStrands] = useState([]);
   const [substrands, setSubstrands] = useState([]);
+  const [substrand, setSubstrand] = useState<any>({});
   const [learningAreas, setLearningAreas] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -50,6 +52,7 @@ function Main() {
   const [dataInput, setDataInput] = useState("");
   const [rows, setRows] = useState<string[]>([]);
   const [is_child, setIs_child] = useState(false);
+  const [activeTab, setActiveTab] = useState('outcome');
   const [selected, setSelected] = useState({
     indicator: [],
   });
@@ -65,7 +68,10 @@ function Main() {
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const location = useLocation();
+  const navigate = useNavigate();
   const state_strand = location?.state?.data;
+  const learning_area = location?.state?.learningArea;
+console.log(learning_area);
   const [selectedStrand, setSelectedStrand] = useState(
     state_strand?._id || "na"
   );
@@ -74,6 +80,7 @@ function Main() {
     learning_area: state_strand?.learning_area?._id || "na",
     term: state_strand?.term || "na",
   });
+
   const [learningOutcome, setLearningOutcome] = useState("na");
   const terms = [
     { _id: 1, name: "Term 1" },
@@ -180,12 +187,18 @@ function Main() {
   };
 
   const editRecord = (record: any) => {
+    console.log(strandFilter)
+
     setNumberOfFields(0);
+    setSubstrand(record)
+console.log(record)
     setGroup(record.groups);
+    console.log(strandFilter)
     reset(record);
     setDialog(true);
     console.log(record);
     setSelected({ indicator: record?.indicators });
+    setSubstrand(record)
   };
 
   const cancel = (record: any) => {
@@ -207,49 +220,18 @@ function Main() {
   }, [search, limit, page, selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
-    const selectedValue = event.target.value;
-    setStrandFilter({
-      term: "na",
-      learning_area: "na",
-      grade: selectedValue,
-    });
-    setSelectedStrand("na");
-    // You might want to fetch filtered data here
-  };
-  const handleLearningAreaChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    await setStrandFilter({
-      ...strandFilter,
-      learning_area: selectedValue,
-    });
+  
     // You might want to fetch filtered data here
   };
 
-  const handleTermChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    await setStrandFilter({
-      ...strandFilter,
-      term: selectedValue,
+  const openStrand = (strand: any) => {
+    console.log(learning_area)
+    navigate("/Strands", {
+      replace: true,
+      state: { data: learning_area },
     });
-    // You might want to fetch filtered data here
   };
 
-  const handleStrandChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    await setSelectedStrand(selectedValue);
-
-    // ///call substrands for this strand
-    // let res = await ApiService.getSubstrandByStrand(selectedValue);
-    // setSubstrands([]);
-    // setSubstrands(res.data);
-    // You might want to fetch filtered data here
-  };
 
   const addRow = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -274,98 +256,91 @@ function Main() {
 
     selected.indicator.map((indicator: any, i: any) => {
       fields.push(
-        <div className="grid  gap-1 box mt-5 p-5" key={i}>
-          <div className="col-span-3 sm:col-span-3">
-            <FormLabel htmlFor="modal-form-6">Indicator</FormLabel>
-            <FormTextarea
-              {...register("indicators[" + i + "][0].description")}
-              name={`indicators[${i}][0].description`}
-              className={errors.indicator ? "border-danger" : ""}
-              placeholder="Indicator Description"
-              // value={indicator[0].description}
-            />
+        <div className="p-5 bg-white shadow rounded-lg mt-5">
+      <div className="mb-4 border-b border-gray-200">
+        <ul className="flex cursor-pointer w-full ">
+          <li
+            className={`mr-4 pb-2 font-bold  text-lg ${activeTab === 'outcome' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+            onClick={() => setActiveTab('outcome')}
+          >
+            Specific Learning Outcomes
+          </li>
+          <li
+            className={`mr-4 ml-8 pb-2 font-bold  text-lg ${activeTab === 'indicators' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+            onClick={() => setActiveTab('indicators')}
+          >
+            Indicators
+          </li>
+        </ul>
+      </div>
 
-            {errors.role && (
-              <div className="mt-2 text-danger">
-                {typeof errors.role.message === "string" && errors.role.message}
-              </div>
-            )}
-          </div>
-          <div className="grid grid-cols-12 gap-1 gap-y-3 mt-3">
-            <div className="col-span-3 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">E.E(4)</FormLabel>
-
-              <FormTextarea
-                {...register("indicators[" + i + "][0].EE")}
-                name={`indicators[${i}][0].EE`}
-                className={errors.indicator ? "border-danger" : ""}
-                placeholder="Exceeding Expectation"
-                // value={indicator[0].EE}
-              />
-              {errors.role && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.role.message === "string" &&
-                    errors.role.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-3 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">M.E(3)</FormLabel>
-
-              <FormTextarea
-                {...register("indicators[" + i + "][0].ME")}
-                name={`indicators[${i}][0].ME`}
-                className={errors.indicator ? "border-danger" : ""}
-                placeholder="Meeting Expectation"
-                // value={indicator[0].ME}
-              />
-              {errors.role && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.role.message === "string" &&
-                    errors.role.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-3 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">A.E(2)</FormLabel>
-
-              <FormTextarea
-                {...register("indicators[" + i + "][0].AE")}
-                name={`indicators[${i}].[0].AE`}
-                className={errors.indicator ? "border-danger" : ""}
-                placeholder="Approaching Expectation"
-                // value={indicator[0].AE}
-              />
-              {errors.role && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.role.message === "string" &&
-                    errors.role.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-3 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">B.E(1)</FormLabel>
-              <FormTextarea
-                {...register("indicators[" + i + "][0].BE")}
-                name={`indicators[${i}][0].BE`}
-                className={errors.indicator ? "border-danger" : ""}
-                placeholder="Below Expectation"
-                // value={indicator[0].BE}
-              />
-              {errors.role && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.role.message === "string" &&
-                    errors.role.message}
-                </div>
-              )}
-            </div>
-            <div>
-              <button type="button" onClick={() => handleRemoveField(i)}>
-                Remove
-              </button>
-            </div>
-          </div>
+      {activeTab === 'outcome' && (
+        <div className="mt-3">
+          {i+1}.  <div className="font-medium inline-block richtext"
+                style={{ listStyle: "auto" }}
+                dangerouslySetInnerHTML={{
+                __html: substrand.learning_outcome}}
+              ></div>
+         
         </div>
+      )}
+
+      {activeTab === 'indicators' && (
+        <div className="mt-3">
+          <h2 className="font-bold text-lg">Indicators</h2>
+          <p className="text-gray-700 mt-2">
+           {i+1}. {indicator[0].description} 
+          </p>
+          <table className="w-full table-auto border-collapse border border-gray-300 mt-2">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
+                  Key
+                </th>
+                <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  (a). Exceeding Expectation (4)
+                </td>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  {indicator[0].EE} {/* Adjust these properties based on your actual data structure */}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  (b). Meeting Expectation (3)
+                </td>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  {indicator[0].ME}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  (c). Approaching Expectation (2)
+                </td>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  {indicator[0].AE}
+                </td>
+              </tr>
+              <tr>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  (d). Below Expectation (1)
+                </td>
+                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                  {indicator[0].BE}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+      
       );
     });
 
@@ -455,9 +430,7 @@ function Main() {
               )}
             </div>
             <div>
-              <button type="button" onClick={() => handleRemoveField(i)}>
-                Remove
-              </button>
+            
             </div>
           </div>
         </div>
@@ -481,7 +454,13 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className="mr-auto text-lg font-medium">New Substrand</h2>
+            <h2 className=" text-lg font-medium intro-y">
+         
+             <span className="font-medium whitespace-nowrap">
+             Substrand - {substrand.name}
+           </span>
+          </h2>
+
           </div>
           <br />
           <form className=" intro-y  validate-form" onSubmit={onSubmit}>
@@ -498,7 +477,7 @@ function Main() {
 
             <div className="grid grid-cols-12 gap-4 gap-y-3 box mt-5 p-5">
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Grade{}</FormLabel>
                 <FormSelect
                   {...register("grade")}
                   name="grade"
@@ -522,16 +501,15 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormSelect
+                <FormInput type="text" value={learning_area?.name} disabled></FormInput>
+                {/* <FormSelect
                   {...register("learning_area")}
                   name="learning_area"
                   value={strandFilter.learning_area}
                   disabled
                 >
                   {learningAreas
-                    // .filter(
-                    //   (area: any) => area?.grade?._id === strandFilter.grade
-                    // )
+                  
                     .map((filteredArea: any, key) => (
                       <option key={key} value={filteredArea?._id}>
                         {filteredArea?.name}
@@ -543,7 +521,7 @@ function Main() {
                     {typeof errors.learning_area.message === "string" &&
                       errors.learning_area.message}
                   </div>
-                )}
+                )} */}
               </div>
 
               <div className="col-span-12 sm:col-span-3">
@@ -570,416 +548,77 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-                <FormSelect
-                  {...register("strand")}
-                  name="strand"
-                  disabled
-                  value={selectedStrand}
-                >
-                  {strands.map((strand: any, key) => (
-                    <option key={key} value={strand._id}>
-                      {strand.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.theme && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
-                <FormInput
-                  {...register("name")}
-                  type="text"
-                  name="name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="substrand"
-                />
-                {errors.name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.name.message === "string" &&
-                      errors.name.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormInput
-                  type="checkbox"
-                  {...register("is_child")}
-                  name="is_child"
-                  checked={is_child}
-                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                  onChange={(e: any) => setIs_child(!is_child)}
-                />
-                <FormLabel htmlFor="modal-form-6">Child</FormLabel>
-              </div>
-              {is_child && (
-                <div className="col-span-12 sm:col-span-3">
-                  <FormSelect {...register("parent")} name="parent">
-                    {substrands.map((strand: any, key) => (
-                      <option key={key} value={strand._id}>
-                        {strand.name}
-                      </option>
-                    ))}
-                  </FormSelect>
-                  {errors.theme && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.theme.message === "string" &&
-                        errors.theme.message}
-                    </div>
-                  )}
-                </div>
-              )}
-              {/* <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-12 sm:col-span-3">
-                  <div className="flex items-center">
-                    <FormInput
-                      type="checkbox"
-                      {...register("grade")}
-                      name="strands"
-                      className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                    />
-                    <span>More Substrands</span>
-                  </div>
+                
+                <FormInput type="text" value={state_strand?.name} disabled></FormInput>
 
-                  {errors.grade && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.grade.message === "string" &&
-                        errors.grade.message}
-                    </div>
-                  )}
-                </div>
-              </div> */}
-              {/* {showExtraFields && renderExtraFields()} */}
-              {/* 
-              {showExtraFields && (
-                <div className="col-span-12 sm:col-span-3">
-                  <Lucide
-                    icon="Plus"
-                    className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500 cursor-pointer"
-                    onClick={handleAddField}
-                  />
-                </div>
-
-                // <button type="button" onClick={handleAddField}>
-                //   Add More
-                // </button>
-              )} */}
+               
+               
+              </div>
             </div>
 
-            <div className="grid  gap-1 gap-y-3 box mt-5 p-5">
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">
-                  Specific Learning Outcome
-                </FormLabel>
-                <FormInput
-                  {...register("learning_outcome")}
-                  name="learning_outcome"
-                  type="hidden"
-                  value={learningOutcome}
-                />
-                <ClassicEditor
-                  value={getValues("learning_outcome")}
-                  onChange={(data: any) => {
-                    setValue("learning_outcome", data); // Update the hidden input
-                  }}
-                  className="border rounded-md w-full p-2"
-                  placeholder="Enter learning outcome..."
-                />
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-            </div>
+           
 
             <div className="">
               {showExtraFields && renderExtraFields(selected)}
 
               {showExtraFields && (
                 <div className="col-span-12 sm:col-span-3">
-                  <Lucide
-                    icon="Plus"
-                    className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500 cursor-pointer"
-                    onClick={handleAddField}
-                  />
+                  
                 </div>
               )}
             </div>
 
-            <div className="col-span-12 sm:col-span-12 mt-3 box mt-5 p-5">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={() => cancel({ name: "" })}
-                className="w-20 mr-1"
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit" className="w-20">
-                Save
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Button>
-            </div>
+        
           </form>
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">
-          {substrands.map((substrand: any, key) => (
-             <span className="font-medium whitespace-nowrap">
-             {substrand.name}
-           </span>))}
+         
+          <h2 className="mt-10 text-lg font-medium intro-y flex flex-wrap">
+          <a
+           onClick={(event: React.MouseEvent) => {
+            event.preventDefault();
+            openStrand(strands)}
+          }
+                className=" mr-5 "
+                href="#"
+              >
+                  <Lucide icon="ArrowLeft" className="text-slate-400 " />
+              </a>
+              {state_strand?.name}
           </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            {/* <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-              <FormSelect
-                {...register("grade")}
-                name="grade"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Grade</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div> */}
-
-            {/* <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-              <FormSelect
-                {...register("learning_area")}
-                value={strandFilter.learning_area}
-                name="learning_area"
-                onChange={(event) => handleLearningAreaChange(event)}
-              >
-                <option>Select Learning Area</option>
-                {learningAreas
-                  .filter(
-                    (area: any) => area?.grade_id?._id === strandFilter?.grade
-                  )
-                  .map((filteredArea: any, key) => (
-                    <option key={key} value={filteredArea?._id}>
-                      {filteredArea.name}
-                    </option>
-                  ))}
-              </FormSelect>
-              {errors.learning_area && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.learning_area.message === "string" &&
-                    errors.learning_area.message}
-                </div>
-              )}
-            </div> */}
-
-            {/* <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-              <FormSelect
-                {...register("term")}
-                value={strandFilter.term}
-                name="term"
-                onChange={(event: any) => handleTermChange(event)}
-              >
-                <option>Select Term</option>
-                {terms.map((term: any, key) => (
-                  <option key={key} value={term._id}>
-                    {term.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )}
-            </div> */}
-
-            {/* <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-              <FormSelect
-                {...register("strand")}
-                value={selectedStrand}
-                name="strand"
-                onChange={(event: any) => handleStrandChange(event)}
-              >
-                <option>Select Strand</option>
-                {strands.map((strand: any, key) => (
-                  <option key={key} value={strand._id}>
-                    {strand.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.theme && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.theme.message === "string" &&
-                    errors.theme.message}
-                </div>
-              )}
-            </div> */}
-
-            {/* <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-              <Button
-                variant="primary"
-                className="mr-2 shadow-md"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                }}
-              >
-                New Substrand
-              </Button>
-              <div className="hidden mx-auto md:block text-slate-500">
-                Showing{" "}
-                {pagination.current_page +
-                  " to " +
-                  pagination.total_pages +
-                  " of " +
-                  pagination.total}{" "}
-                entries
-              </div>
-              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                <div className="relative w-56 text-slate-500">
-                  <FormInput
-                    type="text"
-                    className="w-56 pr-10 !box"
-                    placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <Lucide
-                    icon="Search"
-                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                  />
-                </div>
-              </div>
-            </div> */}
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <Table className="border-spacing-y-[10px] border-separate -mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Substrand
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Parent
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Specific Learning Outcome
-                    </Table.Th>
-
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Action
-                    </Table.Th> */}
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
+          
+              
                   {substrands.map((substrand: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {substrand.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {substrand.is_child ? "false" : "true"}
-                        </span>
-                      </Table.Td>
-                      <Table.Td
-                        className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                        style={{ maxWidth: "300px", whiteSpace: "normal" }}
-                      >
-                        <div
-                          className="font-medium inline-block richtext"
-                          style={{ listStyle: "auto" }}
-                          dangerouslySetInnerHTML={{
-                            __html: substrand.learning_outcome,
-                          }}
-                        ></div>
-                      </Table.Td>
-
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {substrand.learning_area}
-                        </span>
-                      </Table.Td> */}
-
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item
-                                  onClick={() => editRecord(substrand)}
-                                >
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(substrand._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td> */}
-                    </Table.Tr>
+                       <div className="col-span-12 intro-y md:col-span-6">
+            
+                       <div className="box p-2"  onClick={() => editRecord(substrand)}>
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5  ">
+                             <div className="lg:flex lg:h-12 image-fit lg:justify-start">
+                             <div> 
+                              <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-14 h-14" src={logo}/>
+                              </div>
+                            <div className="mt-3 ml-4 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
+                                <h2 className="font-bold text-xl"> {substrand.name}</h2>
+                                <div className="flex flex-wrap gap-5">
+                            <div className="text  mt-0.5">Grade:  {learning_area?.grade_id.name}</div>
+                            <div className="text  mt-0.5">Term:  {state_strand?.term}</div>
+                            </div>
+                       </div>
+                     </div>
+                     <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                         <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">View Substrand</button>
+                         {/* <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-2 py-1">Profile</button> */}
+                     </div>
+                     </div>
+                   </div>
+                  
+                  </div>
                   ))}
-                </Table.Tbody>
-              </Table>
-            </div>
+        
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">

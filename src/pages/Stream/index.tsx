@@ -292,7 +292,7 @@ function Main() {
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <Table className="border-spacing-y-[10px] border-separate -mt-2">
+              <Table className="border-spacing-y-[3px] border-separate -mt-2">
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">

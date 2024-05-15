@@ -24,6 +24,8 @@ import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/images/Rectangle 6533.png"
+
 
 interface TableRow {
   no: number;
@@ -63,6 +65,7 @@ function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const learningArea = location?.state?.data;
+  console.log(learningArea)
   const initialState = {
     grade: learningArea?.grade_id?._id || "na",
     learning_area: learningArea?._id || "na",
@@ -101,6 +104,7 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -164,6 +168,13 @@ function Main() {
 
   const openSubStrand = (strand: any) => {
     navigate("/substrand", {
+      replace: true,
+      state: { data: strand,learningArea:learningArea },
+    });
+  };
+
+  const openLearningArea = (strand: any) => {
+    navigate("/learning_areas", {
       replace: true,
       state: { data: strand },
     });
@@ -449,8 +460,15 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y"> 
-          {learningArea.name}
+          <h2 className="mt-10 text-xl font-medium intro-y flex flex-wrap"> 
+          <a
+                onClick={(e: any) => openLearningArea(strands)}
+                className=" mr-5 "
+                href="#"
+              >
+                  <Lucide icon="ArrowLeft" className="text-slate-400 " />
+              </a>
+          {learningArea?.name}
           </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
@@ -564,7 +582,38 @@ function Main() {
               </div>
             </div>
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            {strands.map((strand: any, key) => (
+            <div className="col-span-12 intro-y md:col-span-6">
+            
+               <div className="box" onClick={(e: any) => openSubStrand(strand)}>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5  ">
+                     <div className="lg:flex lg:h-12 image-fit lg:justify-start">
+                     <div> 
+                      <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-14 h-14" src={logo}/>
+                      </div>
+                    <div className="mt-3 ml-4 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
+                        <h2 className="font-bold text-xl">{strand?.name}</h2>
+                    <div className="text  mt-0.5">Theme: {strand?.theme}</div>
+               </div>
+             </div>
+             <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                 <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">View Substrands</button>
+                 {/* <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-2 py-1">Profile</button> */}
+             </div>
+             </div>
+           </div>
+          
+          </div>
+            ))}
+          
+         
+
+
+
+
+
+
+            {/* <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <Table className="border-spacing-y-[10px] border-separate -mt-2">
                 <Table.Thead>
                   <Table.Tr>
@@ -581,9 +630,7 @@ function Main() {
                       Actions
                     </Table.Th>
 
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Status
-                    </Table.Th> */}
+                 
                 
                   </Table.Tr>
                 </Table.Thead>
@@ -601,14 +648,6 @@ function Main() {
                           {strand?.name}
                         </span>
                       </Table.Td>
-
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {strand?.learning_area?.name}
-                          {" - "}
-                          {strand?.learning_area?.grade_id?.name}
-                        </span>
-                      </Table.Td> */}
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {strand?.theme}
@@ -625,7 +664,7 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
-            </div>
+            </div> */}
             {/* END: Data List */}
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
