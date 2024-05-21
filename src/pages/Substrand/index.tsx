@@ -26,7 +26,7 @@ import { setValue } from "../../base-components/TomSelect/tom-select";
 import "./substrand.css";
 import Pagination from "../../base-components/Pagination";
 import { useLocation , useNavigate} from "react-router-dom";
-import logo from "../../assets/images/Rectangle 6533.png"
+import logo from "../../assets/images/subs.jpeg"
 
 interface TableRow {
   no: number;
@@ -253,11 +253,41 @@ console.log(record)
 
   const renderExtraFields = (selected: any) => {
     const fields = [];
+    fields.push(<>
+   
+    <div className="mb-4 border-b border-gray-200">
+      <ul className="flex cursor-pointer w-full ">
+        <li
+          className={`mr-4 pb-2 font-bold  text-lg ${activeTab === 'outcome' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+          onClick={() => setActiveTab('outcome')}
+        >
+          Specific Learning Outcomes
+        </li>
+        <li
+          className={`mr-4 ml-8 pb-2 font-bold  text-lg ${activeTab === 'indicators' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
+          onClick={() => setActiveTab('indicators')}
+        >
+          Indicators
+        </li>
+      </ul>
+    </div>
 
+    {activeTab === 'outcome' && (
+      <div className="mt-3">
+          <div className="font-medium inline-block richtext"
+              style={{ listStyle: "auto" }}
+              dangerouslySetInnerHTML={{
+              __html: substrand.learning_outcome}}
+            ></div>
+       
+      </div>
+    )}
+    </>)
+      
     selected.indicator.map((indicator: any, i: any) => {
       fields.push(
-        <div className="p-5 bg-white shadow rounded-lg mt-5">
-      <div className="mb-4 border-b border-gray-200">
+        <div className="p-5 bg-white">
+      {/* <div className="mb-4 border-b border-gray-200">
         <ul className="flex cursor-pointer w-full ">
           <li
             className={`mr-4 pb-2 font-bold  text-lg ${activeTab === 'outcome' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
@@ -272,9 +302,9 @@ console.log(record)
             Indicators
           </li>
         </ul>
-      </div>
+      </div> */}
 
-      {activeTab === 'outcome' && (
+      {/* {activeTab === 'outcome' && (
         <div className="mt-3">
           {i+1}.  <div className="font-medium inline-block richtext"
                 style={{ listStyle: "auto" }}
@@ -283,11 +313,11 @@ console.log(record)
               ></div>
          
         </div>
-      )}
+      )} */}
 
       {activeTab === 'indicators' && (
         <div className="mt-3">
-          <h2 className="font-bold text-lg">Indicators</h2>
+        
           <p className="text-gray-700 mt-2">
            {i+1}. {indicator[0].description} 
           </p>
@@ -559,6 +589,7 @@ console.log(record)
            
 
             <div className="">
+            <div className="p-5 bg-white shadow rounded-lg mt-5">
               {showExtraFields && renderExtraFields(selected)}
 
               {showExtraFields && (
@@ -567,7 +598,7 @@ console.log(record)
                 </div>
               )}
             </div>
-
+</div>
         
           </form>
         </>
@@ -585,7 +616,7 @@ console.log(record)
               >
                   <Lucide icon="ArrowLeft" className="text-slate-400 " />
               </a>
-              {state_strand?.name}
+             Substrands
           </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
@@ -595,18 +626,19 @@ console.log(record)
                   {substrands.map((substrand: any, key) => (
                        <div className="col-span-12 intro-y md:col-span-6">
             
-                       <div className="box p-2"  onClick={() => editRecord(substrand)}>
-                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5  ">
+                       <div className="box p-2 min-h-[100px]"  onClick={() => editRecord(substrand)}>
+                           <div className=" gap-4 p-5  ">
                              <div className="lg:flex lg:h-12 image-fit lg:justify-start">
                              <div> 
                               <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-14 h-14" src={logo}/>
                               </div>
                             <div className="mt-3 ml-4 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
                                 <h2 className="font-bold text-xl"> {substrand.name}</h2>
-                                <div className="flex flex-wrap gap-5">
-                            <div className="text  mt-0.5">Grade:  {learning_area?.grade_id.name}</div>
-                            <div className="text  mt-0.5">Term:  {state_strand?.term}</div>
-                            </div>
+                                <div className="font-bold text  mt-0.5">Strand:   {state_strand?.name}</div>  
+                                <div className="font-bold text  mt-0.5"> {learning_area?.grade_id.name}</div>
+                            <div className="font-bold text  mt-0.5">Term:  {state_strand?.term}</div>
+                         
+                            
                        </div>
                      </div>
                      <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">

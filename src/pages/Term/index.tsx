@@ -47,7 +47,9 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Level is required"),
+      name: yup.string().required("Term is required"),
+      startDate: yup.string().required("Start date is required"),
+      endDate: yup.string().required("End date is required"),
     })
     .required();
 
@@ -132,7 +134,8 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset(record);
+    reset({ ...record, academicYear: record.academicYear._id });
+    setMessage("Term updated successfully.");
     setDialog(true);
   };
 
@@ -187,10 +190,10 @@ function Main() {
                   className={errors.name ? "border-danger" : ""}
                   placeholder="Term"
                 />
-                {errors.role && (
+                {errors.name && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
                   </div>
                 )}
               </div>
@@ -216,13 +219,13 @@ function Main() {
                   {...register("startDate")}
                   type="date"
                   name="startDate"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.startDate ? "border-danger" : ""}
                   placeholder=""
                 />
-                {errors.role && (
+                {errors.startDate && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.startDate.message === "string" &&
+                      errors.startDate.message}
                   </div>
                 )}
               </div>
@@ -232,13 +235,13 @@ function Main() {
                   {...register("endDate")}
                   type="date"
                   name="endDate"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.endDate ? "border-danger" : ""}
                   placeholder=""
                 />
-                {errors.role && (
+                {errors.endDate && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.endDate.message === "string" &&
+                      errors.endDate.message}
                   </div>
                 )}
               </div>

@@ -140,7 +140,7 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset(record);
+    reset({ ...record, grade: record.grade._id });
     setDialog(true);
   };
 

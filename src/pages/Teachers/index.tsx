@@ -45,7 +45,13 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      first_name: yup.string().required("Name is required"),
+      first_name: yup.string().required("First Name is required"),
+      last_name: yup.string().required("Last Name is required"),
+      email: yup.string().required(" Email is required"),
+      surname: yup.string().required("Surname is required"),
+      phone: yup.string().required("Phone  Number is required"),
+              // .min(11, "Phone number must be at least 11 characters long")
+
     })
     .required();
 
@@ -214,7 +220,7 @@ function Main() {
                   {...register("last_name")}
                   type="text"
                   name="last_name"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.last_name ? "border-danger" : ""}
                   placeholder="last name"
                 />
                 {errors.last_name && (
@@ -230,7 +236,7 @@ function Main() {
                   {...register("surname")}
                   type="text"
                   name="surname"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.surname ? "border-danger" : ""}
                   placeholder="surname"
                 />
                 {errors.surname && (
@@ -243,10 +249,15 @@ function Main() {
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>Phone Number</FormLabel>
                 <FormInput
-                  {...register("phone")}
+                      {...register("phone", {
+    pattern: {
+      value: /^.{11,}$/,
+      message: "Phone number must be at least 11 characters long"
+    }
+  })}
                   type="text"
                   name="phone"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.phone ? "border-danger" : ""}
                   placeholder="phone"
                 />
                 {errors.phone && (

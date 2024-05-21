@@ -68,7 +68,8 @@ function Main() {
     .object({
       first_name: yup.string().required("Firstname is required"),
       last_name: yup.string().required("Lastname is required"),
-   
+      surname: yup.string().required("Surname is required"),
+      adm_no: yup.string().required("Adm.No is required"),
     })
     .required();
 
@@ -92,7 +93,7 @@ function Main() {
         const data = await getValues();
         await ApiService.createLearner(data);
         await getStudents();
-        await reset();
+        await reset({name:""});
         isLoading(false);
         setDialog(false);
         setSuccess(true);
@@ -165,14 +166,16 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset(record);
+    reset({ ...record, stream: record.stream._id });
     setDialog(true);
   };
 
   const cancel = (record: any) => {
     setGroup([""]);
     setPermission([""]);
-    reset(record);
+    reset(
+      {name:""}
+    );
     setDialog(false);
   };
 
@@ -265,32 +268,7 @@ function Main() {
               ></a>
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
-            {/* <div className="col-span-4 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
-                <FormSelect
-                  {...register("school")}
-                  name="school"
-                  value={strandFilter.school}
-                  disabled
-                >
-                  {schools
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter?.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea?._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
-                </FormSelect>
-
-                {errors.learning_area && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
-                  </div>
-                )}
-              </div> */}
+          
                {/* <div className="col-span-12 sm:col-span-4">
             <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
                 <FormSelect {...register("school")} name="school">
@@ -307,31 +285,13 @@ function Main() {
                 </div>
               )}
             </div> */}
-              {/* <div className="col-span-4 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-                <FormSelect
-                  {...register("grade")}
-                  name="grade"
-                  value={strandFilter.grade}
-                  disabled
-                >
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div> */}
+            
               
             <div className="col-span-12 sm:col-span-4">
             <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
-                <FormSelect {...register("stream")} name="stream">
+                <FormSelect 
+                {...register("stream")} 
+                name="stream">
                   {streams.map((stream: any, key) => (
                     <option key={key} value={stream._id}>
                       {stream.name}
@@ -423,7 +383,7 @@ function Main() {
                   {...register("admn_no")}
                   type="text"
                   name="admn_no"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.adm_no ? "border-danger" : ""}
                   placeholder="adm_no"
                 />
                 {errors.adm_no && (

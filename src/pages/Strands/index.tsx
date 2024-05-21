@@ -24,7 +24,7 @@ import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/images/Rectangle 6533.png"
+import logo from "../../assets/images/collection.jpeg"
 
 
 interface TableRow {
@@ -586,12 +586,12 @@ function Main() {
             <div className="col-span-12 intro-y md:col-span-6">
             
                <div className="box" onClick={(e: any) => openSubStrand(strand)}>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5  ">
+                   <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
                      <div className="lg:flex lg:h-12 image-fit lg:justify-start">
                      <div> 
-                      <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-14 h-14" src={logo}/>
+                      <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-20 h-20" src={logo}/>
                       </div>
-                    <div className="mt-3 ml-4 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
+                    <div className="mt-3 ml-4 lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
                         <h2 className="font-bold text-xl">{strand?.name}</h2>
                     <div className="text  mt-0.5">Theme: {strand?.theme}</div>
                </div>

@@ -47,7 +47,13 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      first_name: yup.string().required("Name is required"),
+      first_name: yup.string().required("First Name is required"),
+      last_name: yup.string().required("Last Name is required"),
+      email: yup.string().required(" Email is required"),
+      surname: yup.string().required("Surname is required"),
+      phone: yup.string().required("Phone  Number is required"),
+      id_no: yup.string().required("ID Number is required"),
+      
     })
     .required();
 
@@ -216,8 +222,8 @@ function Main() {
                   {...register("last_name")}
                   type="text"
                   name="last_name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="last name"
+                  className={errors.last_name ? "border-danger" : ""}
+                  placeholder="Last name"
                 />
                 {errors.last_name && (
                   <div className="mt-2 text-danger">
@@ -232,7 +238,7 @@ function Main() {
                   {...register("surname")}
                   type="text"
                   name="surname"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.surname ? "border-danger" : ""}
                   placeholder="surname"
                 />
                 {errors.surname && (
@@ -248,7 +254,7 @@ function Main() {
                   {...register("id_no")}
                   type="text"
                   name="id_no"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.id_no ? "border-danger" : ""}
                   placeholder="id_no"
                 />
                 {errors.id_no && (
@@ -264,7 +270,7 @@ function Main() {
                   {...register("email")}
                   type="text"
                   name="email"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.email ? "border-danger" : ""}
                   placeholder="email"
                 />
                 {errors.email && (
@@ -280,7 +286,7 @@ function Main() {
                   {...register("phone")}
                   type="text"
                   name="phone"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.phone ? "border-danger" : ""}
                   placeholder="phone"
                 />
                 {errors.phone && (

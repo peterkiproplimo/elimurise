@@ -1073,6 +1073,7 @@ export async function deleteSecurity(securityId: any) {
 export function handler(err: any) {
   
     let error = err;
+    console.log(err)
     
     if (err.response && err.response.data.hasOwnProperty("error")){
     
@@ -1080,6 +1081,12 @@ export function handler(err: any) {
       error.message=err.response.data.error
       console.log(error)
     }
+    if (err.response && err.response.data.hasOwnProperty("errors")){
+    
+      error = err.response.data;
+      error.message=err.response.data.errors[0].msg;
+    }
+       
        
     else if (!err.hasOwnProperty("error")) error = err.toJSON();
     console.log("error")

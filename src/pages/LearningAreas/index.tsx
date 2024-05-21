@@ -18,6 +18,7 @@ import Pagination from "../../base-components/Pagination";
 import { formatDate } from "../../utils/helper";
 import logoUrl from "../../assets/images/edit.png";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/images/Books.jpeg"
 
 
 function Main() {
@@ -101,6 +102,7 @@ function Main() {
   const getLearningAreas = async () => {
     const response = await ApiService.getLearningAreas({
       page: 1,
+      limit:1000
     });
     setLearningAreas(response.data);
     const pagination = response.pagination;
@@ -308,7 +310,7 @@ function Main() {
                 {/* <FormSelect className="w-56 ml-2 xl:w-auto !box">
                   <option>Status</option>
                   <option>Active</option>
-                  <option>Inactive</option>
+                  <option>Inactive</option> 
                 </FormSelect> */}
               </div>
 
@@ -319,19 +321,19 @@ function Main() {
             {learningAreas.map((learningArea: any, key) => (
               <div
                 key={key}
-                className="p-5 bg-primary dark:bg-gray-800 rounded-xl shadow-md m-5  min-h-[150px] min-w-[400px] text-white"
-                style={{ backgroundColor: learningArea.color }}
+                className="box p-5 bg-white dark:bg-gray-800 rounded-xl shadow-lg  m-5   w-[400px] "
                 onClick={(e: any) => openStrand(learningArea)}
               >
-                <div className="flex flex-wrap justify-between">
-                  <h1 className="text-4xl font-bold mb-2">{learningArea.name}</h1>
-                  <img alt="ACS" className="w-10" src={logoUrl} />
-              
+                <div className="flex  gap-5">
+                <div className=" ">
+                <img alt="ACS" className="w-20 h-full" src={logo} />
                 </div>
-                <div className=" items-center  mt-5 ">
+                <div className=" items-center ">
+                <h1 className="text-2xl font-bold mb-2">{learningArea.name}</h1>
                   <h1 className="text-xl font-bold">
-                  Grade {learningArea?.grade_id?.name}
+                   {learningArea?.grade_id?.name}
                   </h1>
+                </div>
                 </div>
                 {/* <Button
               variant="primary"

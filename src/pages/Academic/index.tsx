@@ -48,6 +48,8 @@ function Level() {
   const schema = yup
     .object({
       name: yup.string().required("Academic Year is required"),
+      startDate: yup.string().required("Start date is required"),
+      endDate: yup.string().required("End date is required"),
     })
     .required();
 
@@ -82,8 +84,9 @@ function Level() {
         isLoading(false);
         setSuccess(false);
         setMessage(
-          error.message || "An error occurred while creating the role."
+          error.message 
         );
+        console.log(error.errors)
         notify.current?.showToast();
       }
     }
@@ -130,7 +133,7 @@ function Level() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset(record);
+    reset({ ...record });
     setDialog(true);
   };
 
@@ -185,27 +188,29 @@ function Level() {
                   className={errors.name ? "border-danger" : ""}
                   placeholder="Name"
                 />
-                {errors.role && (
+                {errors.name && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
                   </div>
                 )}
               </div>
         
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>Start Date </FormLabel>
+                
                 <FormInput
                   {...register("startDate")}
                   type="date"
                   name="startDate"
-                  className={errors.name ? "border-danger" : ""}
+                //  value={formatDate(getValues("startDate"),"DD/MM/YYYY")}
+                  className={errors.startDate ? "border-danger" : ""}
                  
                 />
-                {errors.role && (
+                {errors.startDate && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.startDate.message === "string" &&
+                      errors.startDate.message}
                   </div>
                 )}
               </div>
@@ -215,13 +220,13 @@ function Level() {
                   {...register("endDate")}
                   type="date"
                   name="endDate"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.endDate ? "border-danger" : ""}
                 
                 />
-                {errors.role && (
+                {errors.endDate && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
+                    {typeof errors.endDate.message === "string" &&
+                      errors.endDate.message}
                   </div>
                 )}
            </div>
