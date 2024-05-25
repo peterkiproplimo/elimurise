@@ -226,6 +226,14 @@ function Main() {
     setSelectedStrand("na");
     // You might want to fetch filtered data here
   };
+
+  const openLearner = (event:any) => {
+    navigate("/assessLearner", {
+      replace: true,
+      // state: { data: strand,learningArea:learningArea },
+    });
+  };
+
   const handleLearningAreaChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -870,7 +878,7 @@ function Main() {
      
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            <div className="p-5 bg-white shadow-lg rounded-lg mt-5">
+            <div className="p-5 rounded-lg mt-5">
            
            <div className="mb-4 border-b border-gray-200">
              <ul className="flex cursor-pointer w-full justify-center  ">
@@ -894,65 +902,49 @@ function Main() {
                <div className="font-medium inline-block richtext"
                      style={{ listStyle: "auto" }}
                      dangerouslySetInnerHTML={{
-                     __html: substrand.learning_outcome}}
+                     __html: substrand.learning_outcome}} 
                    ></div>
               
              </div>
            )}
      
            {activeTab === 'indicators' && (
-             <div className="mt-3 bg-white  p-5">
-               <h2 className="font-bold text-lg">Indicators</h2>
-               <p className="text-gray-700 mt-2">
-                {/* {i+1}. {indicator[0].description}  */}
-               </p>
-               <table className="w-full table-auto border-collapse border border-gray-300 mt-2">
-                 <thead className="bg-gray-100">
-                   <tr>
-                     <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
-                       Key
-                     </th>
-                     <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
-                       Value
-                     </th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   <tr>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       (a). Exceeding Expectation (4)
-                     </td>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       {/* {indicator[0].EE} Adjust these properties based on your actual data structure */}
-                     </td>
-                   </tr>
-                   <tr>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       (b). Meeting Expectation (3)
-                     </td>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       {/* {indicator[0].ME} */}
-                     </td>
-                   </tr>
-                   <tr>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       (c). Approaching Expectation (2)
-                     </td>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       {/* {indicator[0].AE} */}
-                     </td>
-                   </tr>
-                   <tr>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       (d). Below Expectation (1)
-                     </td>
-                     <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                       {/* {indicator[0].BE} */}
-                     </td>
-                   </tr>
-                 </tbody>
-               </table>
-             </div>
+              <div className="col-span-6 overflow-auto intro-y 2xl:overflow-visible">
+              <Table className="border-spacing-y-[10px]  border-separate mt-2 ">
+               
+                <Table.Tbody>
+                
+                    <Table.Tr  className="intro-x shadow-lg ">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                        
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                          <button className="border items-center justify-center shadow-sm rounded-md font-bold text-lg cursor-pointer  bg-primary t border-primary text-white dark:border-primary px-20 py-1 mr-2"
+                          onClick={(e: any) => openLearner(event)}>Assess</button>
+                       </div>
+                      </Table.Td>
+   
+                    </Table.Tr >
+                    <Table.Tr  className="intro-x shadow-lg rounded-lg">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                        
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                          <button className="border items-center justify-center shadow-sm rounded-md text-lg  font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-20 py-1 mr-2">Assess</button>
+                       </div>
+                      </Table.Td>
+   
+                    </Table.Tr>
+               
+                </Table.Tbody>
+              </Table>
+            </div>
            )}
          </div>
              

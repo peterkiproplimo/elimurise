@@ -44,8 +44,19 @@ const initialState: SideMenuState = {
     },
     {
       icon: "Users",
-      pathname: "/learners",
       title: "Learners",
+      subMenu: [
+        {
+          icon: "User",
+          pathname: "/learners",
+          title: "Learners Details",
+        },
+        {
+          icon: "User",
+          pathname: "/enrollment",
+          title: "Learner Enrollment",
+        },
+      ]
     },
     {
       icon: "Users",
@@ -61,6 +72,7 @@ const initialState: SideMenuState = {
       icon: "FileCheck",
       pathname: "/learning_areas",
       title: "Learning Areas",
+         
     },
       {
         icon: "Activity",
