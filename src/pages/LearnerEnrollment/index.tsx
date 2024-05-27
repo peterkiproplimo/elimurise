@@ -478,13 +478,7 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap"> 
-          <a
-                // onClick={(e: any) => openLearningArea(strands)}
-                className=" mr-5 "
-                href="#"
-              >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 " />
-              </a>
+        
           {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
