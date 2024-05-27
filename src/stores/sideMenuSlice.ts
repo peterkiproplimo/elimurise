@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { icons } from "../base-components/Lucide";
-import { Car } from 'lucide-react';
-
+import { Car } from "lucide-react";
 
 export interface Menu {
   icon: keyof typeof icons;
@@ -16,16 +15,12 @@ export interface SideMenuState {
   menu: Array<Menu | "divider">;
 }
 
-
 const initialState: SideMenuState = {
   menu: [
- 
     {
-      
       icon: "Home",
       title: "Dashboard",
       pathname: "/",
-      
     },
     {
       icon: "FileText",
@@ -37,7 +32,7 @@ const initialState: SideMenuState = {
       pathname: "/term",
       title: "Term",
     },
-         {
+    {
       icon: "Activity",
       pathname: "/stream",
       title: "Stream",
@@ -49,31 +44,34 @@ const initialState: SideMenuState = {
     },
     {
       icon: "Users",
+      pathname: "/enrollments",
+      title: "Enrollments",
+    },
+    {
+      icon: "Users",
       title: "Parents",
-      pathname: "/parents",       
+      pathname: "/parents",
     },
     {
       icon: "Users",
       title: "Teachers",
-      pathname: "/teachers",       
+      pathname: "/teachers",
     },
     {
       icon: "FileCheck",
       pathname: "/learning_areas",
       title: "Learning Areas",
     },
-      {
-        icon: "Activity",
-        pathname: "/assessment",
-        title: " Assessment",
-      },
+    {
+      icon: "Activity",
+      pathname: "/assessment",
+      title: " Assessment",
+    },
     {
       icon: "FileText",
       pathname: "/billing",
       title: "Billing",
     },
-   
-   
 
     // {
     //   icon: "Users",
@@ -85,11 +83,7 @@ const initialState: SideMenuState = {
     //   pathname: "/accountDetails",
     //   title: "Account Details",
     // },
-    
 
-   
-  
-  
     //   {
     //     icon: "Activity",
     //     pathname: "/substrand",
@@ -104,7 +98,7 @@ const initialState: SideMenuState = {
     //         pathname: "/substrand",
     //         title: "Substrand",
     //       },
-  
+
     //     // {
     // //     icon: "FileCheck",
     // //     title: "Transactions",
@@ -114,21 +108,21 @@ const initialState: SideMenuState = {
     // //         pathname: "/policy",
     // //         title: "Active Policy",
     // //       },
-        
+
     // //       {
     // //         icon: "Activity",
     // //         pathname: "/extension",
     // //         title: "Inactive Policy",
-    // //       },  
-          
+    // //       },
+
     // //     ]},
-   
+
     //         // {
     //         //   icon: "Activity",
     //         //   pathname: "/active",
     //         //   title: "Regular Users",
     //         // },
-          
+
     //         // {
     //         //   icon: "Activity",
     //         //   pathname: "/pendingClaim",
@@ -139,110 +133,96 @@ const initialState: SideMenuState = {
     //         //   pathname: "/rejectedClaim",
     //         //   title: "Rejected Claims",
     //         // },
-            
-            
-            
+
     //       ]},
-//    
-//   {
-//     icon: "Users",
-//     title: "Roles",
-    
-//         pathname: "/role",
-       
-      
-// },
-// {
-//   icon: "Users",
-//   title: "Profile",
-//   pathname: "/profile",
-      
-// },
-         
-  //         "divider",
+    //
+    //   {
+    //     icon: "Users",
+    //     title: "Roles",
 
-    
-  //         {
-  //           icon: "Cog",
-  //           title: "Settings",
-  //           subMenu: [
-  //             {
-  //               icon: "Activity",
-  //               pathname: "/Role",
-  //               title: "Roles",
-  //             },
-              
-             
-      
-  //             // {
-  //             //   icon: "Activity",
-  //             //   pathname: "/Logs",
-  //             //   title: "Games Logs",
-  //             // },
-  //             // {
-  //             //   icon: "Activity",
-  //             //   pathname: "/Logs",
-  //             //   title: "System Logs",
-  //             // },
-            
-           
-      
-  //             {
-  //               icon: "Activity",
-  //               pathname: "/NewProfile",
-  //               title: "Change Password",
-  //             },
-  //             {
-  //               icon: "Activity",
-  //               pathname: "/Settings",
-  //               title: "Settings",
-  //             },
-  //           ],
-  //         },
-          // {
-     
-          //   icon: "Info",
-          //   title: "Contents",
-          //   subMenu: [
-          //  {
-          //   icon: "Activity",
-          //   pathname: "/Contents",
-          //   title: "Product Offers",
-          // },
-          // {
-          //   icon: "Activity",
-          //   pathname: "/FAQs",
-          //   title: "FAQs",
-          // },
-          // {
-          //   icon: "Activity",
-          //   pathname: "/CoversFAQs",
-          //   title: "Covers FAQs",
-          // },
-        //   {
-        //     icon: "Activity",
-        //     pathname: "/PrivacyPolicy",
-        //     title: "Privacy Policy",
-        //   },
-        //   {
-        //     icon: "Activity",
-        //     pathname: "/Terms",
-        //     title: "Terms & Conditions",
-        //   },
-          
-        // ]},
-        // {
-        //   icon: "User",
-        //   pathname: "/update-profile",
-        //   title: "Profile",
-        // }
+    //         pathname: "/role",
 
-    
+    // },
+    // {
+    //   icon: "Users",
+    //   title: "Profile",
+    //   pathname: "/profile",
 
+    // },
 
+    //         "divider",
 
-   
-       
+    //         {
+    //           icon: "Cog",
+    //           title: "Settings",
+    //           subMenu: [
+    //             {
+    //               icon: "Activity",
+    //               pathname: "/Role",
+    //               title: "Roles",
+    //             },
+
+    //             // {
+    //             //   icon: "Activity",
+    //             //   pathname: "/Logs",
+    //             //   title: "Games Logs",
+    //             // },
+    //             // {
+    //             //   icon: "Activity",
+    //             //   pathname: "/Logs",
+    //             //   title: "System Logs",
+    //             // },
+
+    //             {
+    //               icon: "Activity",
+    //               pathname: "/NewProfile",
+    //               title: "Change Password",
+    //             },
+    //             {
+    //               icon: "Activity",
+    //               pathname: "/Settings",
+    //               title: "Settings",
+    //             },
+    //           ],
+    //         },
+    // {
+
+    //   icon: "Info",
+    //   title: "Contents",
+    //   subMenu: [
+    //  {
+    //   icon: "Activity",
+    //   pathname: "/Contents",
+    //   title: "Product Offers",
+    // },
+    // {
+    //   icon: "Activity",
+    //   pathname: "/FAQs",
+    //   title: "FAQs",
+    // },
+    // {
+    //   icon: "Activity",
+    //   pathname: "/CoversFAQs",
+    //   title: "Covers FAQs",
+    // },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/PrivacyPolicy",
+    //     title: "Privacy Policy",
+    //   },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/Terms",
+    //     title: "Terms & Conditions",
+    //   },
+
+    // ]},
+    // {
+    //   icon: "User",
+    //   pathname: "/update-profile",
+    //   title: "Profile",
+    // }
+
     //     {
     //       icon: "Activity",
     //       pathname: "/speakers",
@@ -283,74 +263,70 @@ const initialState: SideMenuState = {
     //   ],
     // },
 
-    
     // {
-      // icon: "Car",
-      // title: "Game Logs",
-      // subMenu: [
-      //   {
-      //     icon: "Activity",
-      //     pathname: "/Vehicle",
-      //     title: "Vehicle Make",
-      //   },
-      //   {
-      //     icon: "Activity",
-      //     pathname: "/model",
-      //     title: "Vehicle Model",
-      //   },
-      //   {
-      //     icon: "Activity",
-      //     pathname: "/valuers",
-      //     title: "Valuers",
-      //   },
-        
-        // {
-        //   icon: "Activity",
-        //   pathname: "/documents",
-        //   title: "Documents Types",
-        // },
-      //   {
-      //     icon: "Activity",
-      //     pathname: "/securityFeature",
-      //     title: "Security Feature",
-      //   },
-      //   {
-      //     icon: "Activity",
-      //     pathname: "/financiers",
-      //     title: "Financiers",
-      //   },
-        
-            // {
-        //   icon: "Umbrella",
-        //   title: "Bets",
-        //   subMenu: [
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/quotes",
-        //       title: "Private Comprehensive Cover",
-        //     },
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/Autocorrect",
-        //       title: "Autocorrect Cover",
-        //     },
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/Thirdparty",
-        //       title: "Third Party Cover",
-        //     },
-        //     {
-        //       icon: "Activity",
-        //       pathname: "/Theft",
-        //       title: "Third Party Fire and Theft",
-        //     },
+    // icon: "Car",
+    // title: "Game Logs",
+    // subMenu: [
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/Vehicle",
+    //     title: "Vehicle Make",
+    //   },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/model",
+    //     title: "Vehicle Model",
+    //   },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/valuers",
+    //     title: "Valuers",
+    //   },
 
+    // {
+    //   icon: "Activity",
+    //   pathname: "/documents",
+    //   title: "Documents Types",
+    // },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/securityFeature",
+    //     title: "Security Feature",
+    //   },
+    //   {
+    //     icon: "Activity",
+    //     pathname: "/financiers",
+    //     title: "Financiers",
+    //   },
 
-            
-            
-        //   ]},
-        
-      // ]},
+    // {
+    //   icon: "Umbrella",
+    //   title: "Bets",
+    //   subMenu: [
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/quotes",
+    //       title: "Private Comprehensive Cover",
+    //     },
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/Autocorrect",
+    //       title: "Autocorrect Cover",
+    //     },
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/Thirdparty",
+    //       title: "Third Party Cover",
+    //     },
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/Theft",
+    //       title: "Third Party Fire and Theft",
+    //     },
+
+    //   ]},
+
+    // ]},
     // {
     //   icon: "CreditCard",
     //   title: "Payments",
@@ -367,14 +343,12 @@ const initialState: SideMenuState = {
     //     }
     //   ],
     // },
-    // 
+    //
     // {
     //   icon: "PhoneCall",
     //   pathname: "/simcards",
     //   title: "Simcard Booking"
     // },
-  
-    
   ],
 };
 
@@ -388,7 +362,7 @@ export const sideMenuSlice = createSlice({
 export const selectSideMenu = (state: RootState) => {
   const activeSection = localStorage.getItem("active");
   if (activeSection === "billing") {
-    return state.sideMenu.menu.filter(item => {
+    return state.sideMenu.menu.filter((item) => {
       if (typeof item === "object" && "pathname" in item) {
         return item.pathname === "/billing";
       }
@@ -398,6 +372,5 @@ export const selectSideMenu = (state: RootState) => {
     return state.sideMenu.menu;
   }
 };
-
 
 export default sideMenuSlice.reducer;

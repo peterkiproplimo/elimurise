@@ -103,7 +103,8 @@ function Main() {
         isLoading(false);
         setSuccess(false);
         setMessage(
-          error.message || "An error occurred while creating the learner."
+          error.message ||
+            "An error occurred while creating the enrollment?.learner."
         );
         notify.current?.showToast();
       }
@@ -118,7 +119,7 @@ function Main() {
   }, [search, page, limit]);
 
   const getStudents = async () => {
-    const response = await ApiService.getLearners(
+    const response = await ApiService.getEnrolments(
       {
         page: 1,
       },
@@ -558,12 +559,15 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Academic Year
+                    </Table.Th>
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Grade
                     </Table.Th> */}
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Stream
-                    </Table.Th> */}
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Grade
+                    </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       First Name
                     </Table.Th>
@@ -585,79 +589,82 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Updated At
-                    </Table.Th>
+                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Actions
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learners.map((learner: any, key) => (
+                  {learners.map((enrollment: any, key) => (
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {key + 1}
                         </span>
                       </Table.Td>
-                      {/* 
+
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learner?.stream?.grade?.name} -{" "}
-                          {learner?.stream?.name}
+                          {enrollment?.academicYear?.name}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {enrollment?.stream?.grade?.name} -{" "}
+                          {enrollment?.stream?.name}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {enrollment?.learner?.first_name}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {enrollment?.learner?.last_name}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {enrollment?.learner?.surname}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {enrollment?.learner?.admn_no}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {new Date(
+                            enrollment?.learner?.createdAt
+                          ).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            // hour: "2-digit",
+                            // minute: "2-digit",
+                          })}
+                        </span>
+                      </Table.Td>
+                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {new Date(
+                            enrollment?.learner?.updatedAt
+                          ).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            // hour: "2-digit",
+                            // minute: "2-digit",
+                          })}
                         </span>
                       </Table.Td> */}
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.first_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.last_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.surname}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.admn_no}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(learner?.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(learner?.updatedAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td>
 
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
@@ -672,7 +679,9 @@ function Main() {
                                 </span>
                               </Menu.Button>
                               <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(learner)}>
+                                <Menu.Item
+                                  onClick={() => editRecord(enrollment)}
+                                >
                                   <Lucide
                                     icon="Edit"
                                     className="w-4 h-4 mr-2"
@@ -681,7 +690,7 @@ function Main() {
                                 </Menu.Item>
                                 <Menu.Item
                                   onClick={() => {
-                                    setRecordId(learner._id),
+                                    setRecordId(enrollment),
                                       setConfirmDelete(true);
                                   }}
                                 >

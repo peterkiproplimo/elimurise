@@ -5,6 +5,7 @@ import Billing from "../pages/Billing";
 import Parents from "../pages/Parents";
 import Teachers from "../pages/Teachers";
 import Strands from "../pages/Strands";
+import Enrollment from "../pages/Enrolments";
 
 // import SimcardBooking from "../pages/SimcardBooking";
 import Assessment from "../pages/Assessment";
@@ -12,7 +13,6 @@ import Assessment from "../pages/Assessment";
 //beginning of auth
 import Subscription from "../pages/Subscription";
 import Login from "../pages/Auth/login";
-
 
 import ForgotPassword from "../pages/Auth/forgot-password";
 import ForgotPasswordOTP from "../pages/Auth/forgot-passOTP";
@@ -66,7 +66,11 @@ function Router() {
         },
         {
           path: "term",
-          element: <Term/>,
+          element: <Term />,
+        },
+        {
+          path: "enrollments",
+          element: <Enrollment />,
         },
 
         {
@@ -110,10 +114,9 @@ function Router() {
           path: "strands",
           element: <Strands />,
         },
-       
       ],
     },
-    
+
     {
       path: "/",
       element: (
@@ -133,9 +136,8 @@ function Router() {
         },
         {
           path: "/register",
-          element: <Register/>,
+          element: <Register />,
         },
-
 
         {
           path: "/otp",
