@@ -30,6 +30,8 @@ import Learners from "../pages/Learners";
 import LearningAreas from "../pages/LearningAreas";
 import Home from "../webapp/home";
 import Register from "../pages/Auth/register";
+import AssessLearner from "../pages/AssessLearner";
+import LearnerEnrollment from "../pages/LearnerEnrollment"
 
 //nn
 function Router() {
@@ -58,6 +60,14 @@ function Router() {
         {
           path: "securityFeature",
           element: <SecurityFeature />,
+        },
+        {
+          path: "assessLearner",
+          element: <AssessLearner/>,
+        },
+        {
+          path: "/enrollment",
+          element: <LearnerEnrollment/>,
         },
 
         {

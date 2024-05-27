@@ -69,7 +69,7 @@ function Main() {
       first_name: yup.string().required("Firstname is required"),
       last_name: yup.string().required("Lastname is required"),
       surname: yup.string().required("Surname is required"),
-      adm_no: yup.string().required("Adm.No is required"),
+      admn_no: yup.string().required("Adm.No is required"),
     })
     .required();
 
@@ -362,10 +362,10 @@ function Main() {
                   className={errors.adm_no ? "border-danger" : ""}
                   placeholder="adm_no"
                 />
-                {errors.adm_no && (
+                {errors.admn_no && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.adm_no.message === "string" &&
-                      errors.adm_no.message}
+                    {typeof errors.admn_no.message === "string" &&
+                      errors.admn_no.message}
                   </div>
                 )}
               </div>

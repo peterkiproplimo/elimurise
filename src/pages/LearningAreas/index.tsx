@@ -321,7 +321,7 @@ function Main() {
             {learningAreas.map((learningArea: any, key) => (
               <div
                 key={key}
-                className="box p-5 bg-white dark:bg-gray-800 rounded-xl shadow-lg  m-5   w-[400px] "
+                className="box cursor-pointer  p-5 bg-white dark:bg-gray-800 rounded-xl shadow-lg  m-5   w-[400px] "
                 onClick={(e: any) => openStrand(learningArea)}
               >
                 <div className="flex  gap-5">
