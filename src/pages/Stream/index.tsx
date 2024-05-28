@@ -307,7 +307,7 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="border-b-0 whitespace-nowrap text-center">
                       Actions
                     </Table.Th>
                   </Table.Tr>
@@ -342,8 +342,26 @@ function Main() {
                           })}
                         </span>
                       </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                    <div className="flex items-center justify-center">
+                      <a className="flex items-center mr-3" href="#" onClick={() => editRecord(stream)}>
+                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                        Edit
+                      </a>
+                      <a
+                        className="flex items-center text-danger"
+                        href="#"
+                        onClick={() => {
+                          setRecordId(stream._id),
+                            setConfirmDelete(true);
+                        }}
+                      >
+                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
+                      </a>
+                    </div>
+                  </Table.Td>
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           {true && (
                             <Menu>
@@ -379,7 +397,7 @@ function Main() {
                             </Menu>
                           )}
                         </div>
-                      </Table.Td>
+                      </Table.Td> */}
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
@@ -504,7 +522,7 @@ function Main() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Success" : "Failed"}</div>
+          <div className="font-medium">{success ? "Stream deleted Successfully" : "Failed to delete record"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>

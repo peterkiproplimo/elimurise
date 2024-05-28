@@ -61,6 +61,12 @@ function Main() {
   const [selectedStrand, setSelectedStrand] = useState(
     state_strand?._id || "na"
   );
+  const [selectedSubStrand, setSelectedSubStrand] = useState(""
+  );
+  const [selectedSubStrandOne, setSelectedSubStrandOne] = useState<any>({
+
+  }
+  );
   const [selected, setSelected] = useState({
     indicator: [],
   });
@@ -206,7 +212,7 @@ function Main() {
     setDialog(false);
   };
   useEffect(() => {
-    setSubstrands([]);
+    
     setStrands([]);
     getStrands();
     // getSubstrand();
@@ -214,7 +220,7 @@ function Main() {
   }, [strandFilter]);
   useEffect(() => {
     getSubstrand();
-  }, [search, limit, page, selectedStrand]);
+  }, [ selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
     const selectedValue = event.target.value;
@@ -224,6 +230,7 @@ function Main() {
       grade: selectedValue,
     });
     setSelectedStrand("na");
+    // setSelectedSubStrand("na");
     // You might want to fetch filtered data here
   };
 
@@ -242,6 +249,7 @@ function Main() {
       ...strandFilter,
       learning_area: selectedValue,
     });
+    console.log(substrands)
     // You might want to fetch filtered data here
   };
 
@@ -253,6 +261,7 @@ function Main() {
       ...strandFilter,
       term: selectedValue,
     });
+    console.log(substrands)
     // You might want to fetch filtered data here
   };
 
@@ -261,12 +270,27 @@ function Main() {
   ) => {
     const selectedValue = event.target.value;
     await setSelectedStrand(selectedValue);
+    console.log(substrands)
+    // ///call substrands for this strand
+    // let res = await ApiService.getSubstrandByStrand(selectedValue);
+    // setSubstrands([]);
+    // setSubstrands(res.data);
+    
+  };
+
+  const handleSubStrandChange = async (
+    data:any
+  ) => {
+    const selectedValue = data;
+
+    await setSelectedSubStrandOne(substrands?.at(selectedValue));
+    console.log(substrands.at(selectedValue))
 
     // ///call substrands for this strand
     // let res = await ApiService.getSubstrandByStrand(selectedValue);
     // setSubstrands([]);
     // setSubstrands(res.data);
-    // You might want to fetch filtered data here
+    
   };
 
   const addRow = (event: React.MouseEvent) => {
@@ -854,19 +878,19 @@ function Main() {
             </div>
             <div className="col-span-12 sm:col-span-4">
               <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
-              <FormSelect
+              <TomSelect
                 {...register("substrand")}
-                value={selectedStrand}
+                value={selectedSubStrand}
                 name="substrand"
-                onChange={(event: any) => handleStrandChange(event)}
+                onChange={(event: any) => handleSubStrandChange(event)}
               >
                 <option>Select Substrand</option>
-                {strands.map((strand: any, key) => (
-                  <option key={key} value={substrand._id}>
+                {substrands.map((substrand: any, key) => (
+                  <option key={key} value={key}>
                     {substrand.name}
                   </option>
                 ))}
-              </FormSelect>
+              </TomSelect>
               {errors.theme && (
                 <div className="mt-2 text-danger">
                   {typeof errors.theme.message === "string" &&
@@ -902,7 +926,7 @@ function Main() {
                <div className="font-medium inline-block richtext"
                      style={{ listStyle: "auto" }}
                      dangerouslySetInnerHTML={{
-                     __html: substrand.learning_outcome}} 
+                     __html: selectedSubStrandOne?.learning_outcome}} 
                    ></div>
               
              </div>
