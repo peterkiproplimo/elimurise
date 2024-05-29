@@ -94,7 +94,7 @@ function Main() {
   useEffect(() => {
     getGrades();
   }, [search, page, limit]);
-  
+
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
     setGrades(response.data);
@@ -185,25 +185,7 @@ function Main() {
                 className="absolute  top-0 right-0 mt-3 mr-3"
                 href="#"
               ></a>
-            </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Name</FormLabel>
-                <FormInput
-                  {...register("name")}
-                  type="text"
-                  name="name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Grade"
-                />
-                {errors.name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.name.message === "string" &&
-                      errors.name.message}
-                  </div>
-                )}
-              </div>
-            </div>
+            </div>{" "}
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
@@ -223,6 +205,24 @@ function Main() {
                   <div className="mt-2 text-danger">
                     {typeof errors.grade.message === "string" &&
                       errors.grade.message}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 gap-y-3">
+              <div className="col-span-12 sm:col-span-12">
+                <FormLabel>Name</FormLabel>
+                <FormInput
+                  {...register("name")}
+                  type="text"
+                  name="name"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="Stream"
+                />
+                {errors.name && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
                   </div>
                 )}
               </div>
@@ -343,23 +343,30 @@ function Main() {
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
-                      <a className="flex items-center mr-3" href="#" onClick={() => editRecord(stream)}>
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => {
-                          setRecordId(stream._id),
-                            setConfirmDelete(true);
-                        }}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </Table.Td>
+                        <div className="flex items-center justify-center">
+                          <a
+                            className="flex items-center mr-3"
+                            href="#"
+                            onClick={() => editRecord(stream)}
+                          >
+                            <Lucide
+                              icon="CheckSquare"
+                              className="w-4 h-4 mr-1"
+                            />{" "}
+                            Edit
+                          </a>
+                          <a
+                            className="flex items-center text-danger"
+                            href="#"
+                            onClick={() => {
+                              setRecordId(stream._id), setConfirmDelete(true);
+                            }}
+                          >
+                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                            Delete
+                          </a>
+                        </div>
+                      </Table.Td>
 
                       {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
@@ -522,7 +529,11 @@ function Main() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Stream deleted Successfully" : "Failed to delete record"}</div>
+          <div className="font-medium">
+            {success
+              ? "Stream deleted Successfully"
+              : "Failed to delete record"}
+          </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>

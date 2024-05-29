@@ -33,6 +33,8 @@ function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
+  const [grade, setGrade] = useState("");
+
   const [schools, setSchools] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -69,7 +71,7 @@ function Main() {
       first_name: yup.string().required("Firstname is required"),
       last_name: yup.string().required("Lastname is required"),
       surname: yup.string().required("Surname is required"),
-      admn_no: yup.string().required("Adm.No is required"),
+      adm_no: yup.string().required("Adm.No is required"),
     })
     .required();
 
@@ -109,10 +111,17 @@ function Main() {
       }
     }
   };
+  const getGrades = async () => {
+    const response = await ApiService.getGrades({ page: 1 });
 
+    setGrades(response.data);
+  };
+  useEffect(() => {
+    getGrades();
+  }, []);
   useEffect(() => {
     getStreams();
-  }, []);
+  }, [grade]);
   useEffect(() => {
     getStudents();
   }, [search, page, limit]);
@@ -135,7 +144,7 @@ function Main() {
   };
 
   const getStreams = async () => {
-    const response = await ApiService.getStream({ page: 1 });
+    const response = await ApiService.getStream({ grade: grade });
     setStreams(response.data);
     console.log(response);
   };
@@ -167,7 +176,7 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset({ ...record, stream: record.stream._id });
+    reset({ ...record, stream: record?.stream?._id });
     setDialog(true);
   };
 
@@ -356,20 +365,58 @@ function Main() {
               <div className="col-span-4 sm:col-span-4">
                 <FormLabel>Admission Number</FormLabel>
                 <FormInput
-                  {...register("admn_no")}
+                  {...register("adm_no")}
                   type="text"
                   name="adm_no"
                   className={errors.adm_no ? "border-danger" : ""}
                   placeholder="adm_no"
                 />
-                {errors.admn_no && (
+                {errors.adm_no && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.admn_no.message === "string" &&
-                      errors.admn_no.message}
+                    {typeof errors.adm_no.message === "string" &&
+                      errors.adm_no.message}
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-4">
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel>Nemis No</FormLabel>
+                <FormInput
+                  {...register("nemis_no")}
+                  type="text"
+                  name="nemis_no"
+                  className={errors.nemis_no ? "border-danger" : ""}
+                  placeholder="nemis no"
+                />
+                {errors.nemis_no && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.nemis_no.message === "string" &&
+                      errors.nemis_no.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-4 sm:col-span-4">
+                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
+                <FormSelect
+                  {...register("grade")}
+                  name="grade"
+                  value={grade}
+                  onChange={(event) => setGrade(event.target.value)}
+                >
+                  <option>Select Grade</option>
+                  {grades.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              {/* <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
                 <FormSelect {...register("stream")} name="stream">
                   {streams.map((stream: any, key) => (
@@ -378,13 +425,8 @@ function Main() {
                     </option>
                   ))}
                 </FormSelect>
-                {/* {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )} */}
-              </div>
+                
+              </div> */}
 
               <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
@@ -576,12 +618,9 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Adm No
                     </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Term
-                    </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Status
-                    </Table.Th> */}
+                      Nemis No.
+                    </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th>
@@ -625,7 +664,12 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {learner?.admn_no}
+                          {learner?.adm_no}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {learner?.nemis_no}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -659,23 +703,30 @@ function Main() {
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
-                      <a className="flex items-center mr-3" href="#" onClick={() => editRecord(learner)}>
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => {
-                          setRecordId(learner._id),
-                            setConfirmDelete(true);
-                        }}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </Table.Td>
+                        <div className="flex items-center justify-center">
+                          <a
+                            className="flex items-center mr-3"
+                            href="#"
+                            onClick={() => editRecord(learner)}
+                          >
+                            <Lucide
+                              icon="CheckSquare"
+                              className="w-4 h-4 mr-1"
+                            />{" "}
+                            Edit
+                          </a>
+                          <a
+                            className="flex items-center text-danger"
+                            href="#"
+                            onClick={() => {
+                              setRecordId(learner._id), setConfirmDelete(true);
+                            }}
+                          >
+                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                            Delete
+                          </a>
+                        </div>
+                      </Table.Td>
 
                       {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">

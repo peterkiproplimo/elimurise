@@ -26,8 +26,7 @@ import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
-import logo from "../../assets/images/assess.jpeg"
-
+import logo from "../../assets/images/assess.jpeg";
 
 interface TableRow {
   no: number;
@@ -53,6 +52,13 @@ function Main() {
   const [userPermissions, setUserPermissions] = useState([]);
   const [hasTheme, setHasTheme] = useState(false);
   const [strands, setStrands] = useState([]);
+  const [streams, setStreams] = useState([]);
+  const [substrands, setSubstrands] = useState([]);
+  const [stream, setStream] = useState("");
+  const [substrand, setSubstrand] = useState<any>({});
+  const [indicator, setIndicator] = useState("");
+  const [selectedSubStrand, setSelectedSubStrand] = useState("");
+  const [enrollments, setEnrollments] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -67,7 +73,6 @@ function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const learningArea = location?.state?.data;
-  console.log(learningArea)
   const initialState = {
     grade: learningArea?.grade_id?._id || "na",
     learning_area: learningArea?._id || "na",
@@ -110,7 +115,6 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
@@ -136,12 +140,27 @@ function Main() {
       }
     }
   };
+  const getEnrollments = async () => {
+    const enrollments = await ApiService.getEnrolments({ stream: stream }, {});
+    setEnrollments(enrollments?.data);
+  };
+  useEffect(() => {
+    getEnrollments();
+  }, [indicator]);
 
   useEffect(() => {
     getGrades();
     // getLevels();
     getLearningAreas();
   }, []);
+  const getStreams = async (selectedValue: any) => {
+    setStreams([]);
+    const response = await ApiService.getStream({
+      page: 1,
+      grade: selectedValue,
+    });
+    setStreams(response.data);
+  };
   const getStrands = async () => {
     const response = await ApiService.getStrands(
       {
@@ -174,7 +193,7 @@ function Main() {
   const openSubStrand = (strand: any) => {
     navigate("/substrand", {
       replace: true,
-      state: { data: strand,learningArea:learningArea },
+      state: { data: strand, learningArea: learningArea },
     });
   };
 
@@ -187,17 +206,34 @@ function Main() {
 
   const setStrandFilter = (newFilter: any) => {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
-  }; 
-  const handleStrandChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    // await setSelectedStrand(selectedValue);
+  };
+
+  const handleSubStrandChange = (data: any) => {
+    const selectedValue = data;
+    setSelectedSubStrand(selectedValue);
+    setSubstrand(substrands?.at(selectedValue));
+    console.log(substrands?.at(selectedValue));
+    console.log(substrand);
 
     // ///call substrands for this strand
     // let res = await ApiService.getSubstrandByStrand(selectedValue);
     // setSubstrands([]);
     // setSubstrands(res.data);
+  };
+
+  const handleStrandChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    // await setSelectedStrand(selectedValue);
+    setSubstrands([]);
+    // ///call substrands for this strand
+    let res = await ApiService.getSubstrandByStrand(
+      { limit: 10000 },
+      selectedValue
+    );
+
+    setSubstrands(res.data);
     // You might want to fetch filtered data here
   };
 
@@ -243,14 +279,14 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
-    console.log(learningAreas);
+
     setStrands([]);
     await setStrandFilter({
       learning_area: "na",
       term: "na",
       grade: selectedValue,
     });
-
+    getStreams(selectedValue);
     // You might want to fetch filtered data here
   };
   const handleLearningAreaChange = async (
@@ -477,256 +513,265 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap"> 
-          <a
-                // onClick={(e: any) => openLearningArea(strands)}
-                className=" mr-5 "
-                href="#"
-              >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 " />
-              </a>
-          {learningArea?.name}
+          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+            <a
+              // onClick={(e: any) => openLearningArea(strands)}
+              className=" mr-5 "
+              href="#"
+            >
+              <Lucide icon="ArrowLeft" className="text-slate-400 " />
+            </a>
+            {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-        <h2 className="mr-auto text-base font-medium border-b p-2" >
-          Learner Assessment
-        </h2>
-        <div className="grid grid-cols-12 gap-6 mt-10">
-        <div className="col-span-12 sm:col-span-2">
-              <FormLabel htmlFor="modal-form-6">Academic Year</FormLabel>
-              <FormSelect
-                {...register("year")}
-                name="year"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Year</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div>
-        <div className="col-span-12 sm:col-span-2">
-              <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-              <FormSelect
-                {...register("grade")}
-                name="grade"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Grade</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-2">
-              <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
-              <FormSelect
-                {...register("stream")}
-                name="stream"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Stream</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-2">
-              <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-              <FormSelect
-                {...register("learning_area")}
-                value={strandFilter.learning_area}
-                name="learning_area"
-                onChange={(event) => handleLearningAreaChange(event)}
-              >
-                <option>Select Learning Area</option>
-                {learningAreas
-                  .filter(
-                    (area: any) => area?.grade_id?._id === strandFilter?.grade
-                  )
-                  .map((filteredArea: any, key) => (
-                    <option key={key} value={filteredArea?._id}>
-                      {filteredArea.name}
+            <h2 className="mr-auto text-base font-medium border-b p-2">
+              Learner Assessment
+            </h2>
+            <div className="grid grid-cols-12 gap-6 mt-10">
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
+                <FormSelect
+                  {...register("grade")}
+                  name="grade"
+                  value={strandFilter.grade}
+                  onChange={(event) => handleGradeChange(event)}
+                >
+                  <option>Select Grade</option>
+                  {grades.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
                     </option>
                   ))}
-              </FormSelect>
-              {errors.learning_area && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.learning_area.message === "string" &&
-                    errors.learning_area.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-2">
-              <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-              <FormSelect
-                {...register("strand")}
-             
-                name="strand"
-                onChange={(event: any) => handleStrandChange(event)}
-              >
-                <option>Select Strand</option>
-                {strands.map((strand: any, key) => (
-                  <option key={key} value={strand._id}>
-                    {strand.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.theme && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.theme.message === "string" &&
-                    errors.theme.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-2">
-              <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
-              <FormSelect
-                {...register("substrand")}
-              
-                name="substrand"
-                onChange={(event: any) => handleStrandChange(event)}
-              >
-                <option>Select Substrand</option>
-                {strands.map((strand: any, key) => (
-                  <option key={key} >
-                   
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.theme && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.theme.message === "string" &&
-                    errors.theme.message}
-                </div>
-              )}
-            </div>
-          
-            </div>
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
+                <FormSelect
+                  {...register("stream")}
+                  name="stream"
+                  onChange={(event) => setStream(event.target.value)}
+                >
+                  <option>Select Stream</option>
 
-        </div>
+                  {streams.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+                <FormSelect
+                  {...register("learning_area")}
+                  value={strandFilter.learning_area}
+                  name="learning_area"
+                  onChange={(event) => handleLearningAreaChange(event)}
+                >
+                  <option>Select Learning Area</option>
+                  {learningAreas
+                    .filter(
+                      (area: any) => area?.grade_id?._id === strandFilter?.grade
+                    )
+                    .map((filteredArea: any, key) => (
+                      <option key={key} value={filteredArea?._id}>
+                        {filteredArea.name}
+                      </option>
+                    ))}
+                </FormSelect>
+                {errors.learning_area && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.learning_area.message === "string" &&
+                      errors.learning_area.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+                <FormSelect
+                  {...register("term")}
+                  value={strandFilter.term}
+                  name="term"
+                  onChange={(event: any) => handleTermChange(event)}
+                >
+                  <option>Select Term</option>
+                  {terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.term && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.term.message === "string" &&
+                      errors.term.message}
+                  </div>
+                )}
+              </div>
 
-        <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-          <Table className="border-spacing-y-[10px] border-separate -mt-2">
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  <FormCheck.Input type="checkbox" />
-                </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                 LEARNER NAME
-                </Table.Th>
-                <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                  ADMISSION NUMBER
-                </Table.Th>
-                <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                  GENDER
-                </Table.Th>
-                <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                  NAMEIST NO.
-                </Table.Th>
-                <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                  SCORE
-                </Table.Th>
-              
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {_.take(fakerData, 9).map((faker, fakerKey) => (
-                <Table.Tr key={fakerKey} className="intro-x">
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
+                <FormSelect
+                  {...register("strand")}
+                  name="strand"
+                  onChange={(event: any) => handleStrandChange(event)}
+                >
+                  <option>Select Strand</option>
+                  {strands.map((strand: any, key) => (
+                    <option key={key} value={strand._id}>
+                      {strand.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.theme && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.theme.message === "string" &&
+                      errors.theme.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-4">
+                <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
+                <TomSelect
+                  {...register("substrand")}
+                  value={selectedSubStrand}
+                  name="substrand"
+                  onChange={(event: any) => handleSubStrandChange(event)}
+                >
+                  <option>Select Substrand</option>
+                  {substrands.map((substrand: any, key: any) => (
+                    <option key={key} value={key}>
+                      {substrand.name}
+                    </option>
+                  ))}
+                </TomSelect>
+                {errors.theme && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.theme.message === "string" &&
+                      errors.theme.message}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-span-12 sm:col-span-4">
+                <FormLabel htmlFor="modal-form-6">Indicators</FormLabel>
+                <TomSelect
+                  {...register("indicator")}
+                  value={indicator}
+                  name="indicator"
+                  onChange={(event: any) => setIndicator(event)}
+                >
+                  <option>Select Substrand</option>
+                  {substrand?.indicators?.[0]?.map(
+                    (indicator: any, key: any) => (
+                      <option key={key} value={indicator?._id}>
+                        {indicator?.description}
+                      </option>
+                    )
+                  )}
+                </TomSelect>
+                {errors.theme && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.theme.message === "string" &&
+                      errors.theme.message}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <Table className="border-spacing-y-[10px] border-separate -mt-2">
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
                     <FormCheck.Input type="checkbox" />
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <div className="flex items-center">
-                      <div className="w-9 h-9 image-fit zoom-in">
-                        <Tippy
-                          as="img"
-                          alt="Midone - HTML Admin Template"
-                          className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                          src={faker.images[0]}
-                          content={`Uploaded at ${faker.dates[0]}`}
-                        />
-                      </div>
-                      <div className="ml-4">
-                        <a href="" className="font-medium whitespace-nowrap">
-                          {faker.users[0].name}
-                        </a>
-                        <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                          {faker.users[0].email}
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    LEARNER NAME
+                  </Table.Th>
+                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                    ADMISSION NUMBER
+                  </Table.Th>
+                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                    GENDER
+                  </Table.Th>
+                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                    NAMEIST NO.
+                  </Table.Th>
+                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                    SCORE
+                  </Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {enrollments.map((enrollment, key) => (
+                  <Table.Tr key={key} className="intro-x">
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <FormCheck.Input type="checkbox" />
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <div className="flex items-center">
+                        <div className="w-9 h-9 image-fit zoom-in">
+                          {/* <Tippy
+                            as="img"
+                            alt="Midone - HTML Admin Template"
+                            className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                            src={""}
+                            content={`Uploaded at `}
+                          /> */}
+                        </div>
+                        <div className="ml-4">
+                          <a href="" className="font-medium whitespace-nowrap">
+                            {enrollment?.learner?.first_name}
+                          </a>
+                          <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                            {enrollment?.learner?.last_name}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <a
-                      className="flex items-center justify-center underline decoration-dotted"
-                      href="#"
-                    >
-                      {
-                        ["Themeforest", "Codecanyon", "Graphicriver"][
-                          _.random(0, 2)
-                        ]
-                      }
-                    </a>
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md text-center capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {faker.users[0].gender}
-                  </Table.Td>
-               
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {faker.totals[0]} Items
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
-                      <a className="flex items-center mr-3" href="#">
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                     
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        </div>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="flex items-center justify-center underline decoration-dotted">
+                        {enrollment?.learner?.adm_no}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      Male
+                    </Table.Td>
 
-
-        
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      {enrollment?.learner?.nemis_no}
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                      <div className="flex items-center justify-center">
+                        <a className="flex items-center mr-3" href="#">
+                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                          Edit
+                        </a>
+                        <a className="flex items-center text-danger" href="#">
+                          <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                          Delete
+                        </a>
+                      </div>
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          </div>
 
           {/* <div className="grid grid-cols-12 gap-6">
            

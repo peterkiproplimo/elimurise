@@ -31,7 +31,7 @@ import LearningAreas from "../pages/LearningAreas";
 import Home from "../webapp/home";
 import Register from "../pages/Auth/register";
 import AssessLearner from "../pages/AssessLearner";
-import LearnerEnrollment from "../pages/LearnerEnrollment"
+import LearnerEnrollment from "../pages/LearnerEnrollment";
 
 //nn
 function Router() {
@@ -63,11 +63,11 @@ function Router() {
         },
         {
           path: "assessLearner",
-          element: <AssessLearner/>,
+          element: <AssessLearner />,
         },
         {
           path: "/enrollment",
-          element: <LearnerEnrollment/>,
+          element: <LearnerEnrollment />,
         },
 
         {
@@ -100,7 +100,7 @@ function Router() {
 
         {
           path: "assessment",
-          element: <Assessment />,
+          element: <AssessLearner />,
         },
 
         //securitye

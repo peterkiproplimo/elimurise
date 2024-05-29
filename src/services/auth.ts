@@ -789,7 +789,7 @@ export function handler(err: any) {
   if (err.response && err.response.data.hasOwnProperty("errors")) {
     error = err.response.data;
     error.message = err.response.data.errors[0].msg;
-  } else if (!err.hasOwnProperty("error")) error = err.toJSON();
+  } else if (!err.hasOwnProperty("error")) error = err?.toJSON();
   console.log("error");
   console.log(error.message);
   return new Error(error.message);

@@ -1,7 +1,12 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
-import { FormInput, FormLabel, FormSelect } from "../../base-components/Form";
+import {
+  FormCheck,
+  FormInput,
+  FormLabel,
+  FormSelect,
+} from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -23,7 +28,6 @@ function Level() {
 
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
-
 
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -83,10 +87,8 @@ function Level() {
       } catch (error: any) {
         isLoading(false);
         setSuccess(false);
-        setMessage(
-          error.message 
-        );
-        console.log(error.errors)
+        setMessage(error.message);
+        console.log(error.errors);
         notify.current?.showToast();
       }
     }
@@ -98,10 +100,10 @@ function Level() {
 
   const getAcademics = async () => {
     const response = await ApiService.getAcademic({
-      page: 1
+      page: 1,
     });
     setAcademic(response.data);
-   
+
     const pagination = response.pagination;
     setPagination({
       current_page: pagination.current_page,
@@ -109,7 +111,6 @@ function Level() {
       total_pages: pagination.total_pages,
       per_page: pagination.per_page,
     });
-   
   };
 
   const deleteRecord = async () => {
@@ -133,7 +134,7 @@ function Level() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    setMessage("Record edited successfully")
+    setMessage("Record edited successfully");
     reset({ ...record });
     setDialog(true);
   };
@@ -183,7 +184,7 @@ function Level() {
               <div className="col-span-12 sm:col-span-12">
                 <FormLabel>Name</FormLabel>
                 <FormInput
-                  {...register("name")} 
+                  {...register("name")}
                   type="text"
                   name="name"
                   className={errors.name ? "border-danger" : ""}
@@ -196,17 +197,30 @@ function Level() {
                   </div>
                 )}
               </div>
-        
+              <div className="col-span-12 sm:col-span-12">
+                <FormLabel>Is Current</FormLabel>
+                <FormInput
+                  {...register("isCurrent")}
+                  type="checkbox"
+                  name="isCurrent"
+                  className={" w-38 h-38 "}
+                />
+                {errors.name && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
+                  </div>
+                )}
+              </div>
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>Start Date </FormLabel>
-                
+
                 <FormInput
                   {...register("startDate")}
                   type="date"
                   name="startDate"
-                //  value={formatDate(getValues("startDate"),"DD/MM/YYYY")}
+                  //  value={formatDate(getValues("startDate"),"DD/MM/YYYY")}
                   className={errors.startDate ? "border-danger" : ""}
-                 
                 />
                 {errors.startDate && (
                   <div className="mt-2 text-danger">
@@ -222,7 +236,6 @@ function Level() {
                   type="date"
                   name="endDate"
                   className={errors.endDate ? "border-danger" : ""}
-                
                 />
                 {errors.endDate && (
                   <div className="mt-2 text-danger">
@@ -230,7 +243,7 @@ function Level() {
                       errors.endDate.message}
                   </div>
                 )}
-           </div>
+              </div>
             </div>
             <div>
               <div className="col-span-12 sm:col-span-12 mt-3">
@@ -305,12 +318,15 @@ function Level() {
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Academic Name
-                    </Table.Th>              
-                     <Table.Th className="border-b-0 whitespace-nowrap">
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
                       Start Date
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       End Date
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Is Current
                     </Table.Th>
                     {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
@@ -335,26 +351,30 @@ function Level() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                        {new Date(academic.startDate).toLocaleString("en-US", {
-                            timeZone: "Africa/Nairobi", 
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {new Date(academic.startDate).toLocaleString(
+                            "en-US",
+                            {
+                              timeZone: "Africa/Nairobi",
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                            }
+                          )}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {new Date(academic.endDate).toLocaleString("en-US", {
-                            timeZone: "Africa/Nairobi", 
+                            timeZone: "Africa/Nairobi",
                             year: "numeric",
                             month: "2-digit",
                             day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
                           })}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {academic.isCurrent ? "yes" : "no"}
                         </span>
                       </Table.Td>
                       {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -369,24 +389,31 @@ function Level() {
                           })}
                         </span>
                       </Table.Td> */}
-                       <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
-                      <a className="flex items-center mr-3" href="#" onClick={() => editRecord(academic)}>
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => {
-                          setRecordId(academic._id),
-                            setConfirmDelete(true);
-                        }}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                        <div className="flex items-center justify-center">
+                          <a
+                            className="flex items-center mr-3"
+                            href="#"
+                            onClick={() => editRecord(academic)}
+                          >
+                            <Lucide
+                              icon="CheckSquare"
+                              className="w-4 h-4 mr-1"
+                            />{" "}
+                            Edit
+                          </a>
+                          <a
+                            className="flex items-center text-danger"
+                            href="#"
+                            onClick={() => {
+                              setRecordId(academic._id), setConfirmDelete(true);
+                            }}
+                          >
+                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                            Delete
+                          </a>
+                        </div>
+                      </Table.Td>
 
                       {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
@@ -549,7 +576,11 @@ function Level() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Academic year deleted successfully" : "Failed to delete Record"}</div>
+          <div className="font-medium">
+            {success
+              ? "Academic year deleted successfully"
+              : "Failed to delete Record"}
+          </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>
