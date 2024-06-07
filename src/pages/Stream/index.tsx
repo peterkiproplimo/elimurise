@@ -351,7 +351,7 @@ function Main() {
                           >
                             <Lucide
                               icon="CheckSquare"
-                              className="w-4 h-4 mr-1"
+                              className="w-4 h-4 mr-1 text-success"
                             />{" "}
                             Edit
                           </a>

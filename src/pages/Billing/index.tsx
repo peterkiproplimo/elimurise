@@ -136,7 +136,7 @@ function Main() {
     <div style={{ backgroundColor: Package.color }} key={key} className=" rounded-xl shadow-md flex flex-col text-white">
       <div  className="p-5 rounded-t-xl  z-10 flex flex-col justify-between h-full">
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">{Package.name}</h1>
-        <p className="text-base">{Package.description}</p>
+        <p className="text-base" dangerouslySetInnerHTML={{ __html: Package.description }}></p>
       </div>
       <div className="flex flex-col justify-between p-5">
         <div>

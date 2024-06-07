@@ -709,7 +709,7 @@ function Main() {
                     GENDER
                   </Table.Th>
                   <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    NAMEIST NO.
+                   NEMIS No
                   </Table.Th>
                   <Table.Th className="text-center border-b-0 whitespace-nowrap">
                     SCORE
