@@ -14,6 +14,7 @@ export const TERM = `${BASE_URL}portal/term`;
 export const STREAMS = `${BASE_URL}portal/streams`;
 export const LEARNERS = `${BASE_URL}portal/learners`;
 export const ENROLLMENT = `${BASE_URL}portal/enrollment`;
+export const ASSESSMENT = `${BASE_URL}portal/assessment`;
 
 export const PARENTS = `${BASE_URL}portal/parents`;
 export const TEACHERS = `${BASE_URL}portal/teachers`;

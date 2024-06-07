@@ -36,6 +36,7 @@ interface TableRow {
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
+  const [lastSaved, setLastSaved] = useState(null);
 
   const [grades, setGrades] = useState([]);
   const [levels, setLevels] = useState([]);
@@ -57,6 +58,8 @@ function Main() {
   const [stream, setStream] = useState("");
   const [substrand, setSubstrand] = useState<any>({});
   const [indicator, setIndicator] = useState("");
+  const [selectedTerm, setSelectedTerm] = useState("");
+  const [strand, setStrand] = useState("");
   const [selectedSubStrand, setSelectedSubStrand] = useState("");
   const [enrollments, setEnrollments] = useState([]);
   const [pagination, setPagination] = useState({
@@ -78,6 +81,8 @@ function Main() {
     learning_area: learningArea?._id || "na",
     term: learningArea?._id ? 1 : "na",
   };
+  const [academic_terms, setTerms] = useState([]);
+
   // const [selectedStrand, setSelectedStrand] = useState(
   //   state_strand?._id || "na"
   // );
@@ -87,6 +92,9 @@ function Main() {
   //   learning_area: "na",
   //   term: "na",
   // });
+  // useState(() => {
+  //   console.log(selectedSubStrand);
+  // }, []);
   const [strandFilter, updateStrandFilter] = useState(() => {
     const savedState = localStorage.getItem("strandFilter");
     return initialState;
@@ -96,11 +104,23 @@ function Main() {
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
+  const getTerms = async () => {
+    const response = await ApiService.getTerm({});
+    setTerms(response.data);
+  };
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Level is required"),
+      score: yup
+        .array()
+        .of(
+          yup
+            .number()
+            .required("Score is required")
+            .min(1, "Minimum value is 1")
+            .max(4, "Maximum value is 4")
+        ),
     })
     .required();
 
@@ -109,6 +129,7 @@ function Main() {
     trigger,
     getValues,
     reset,
+
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -141,8 +162,8 @@ function Main() {
     }
   };
   const getEnrollments = async () => {
-    const enrollments = await ApiService.getEnrolments({ stream: stream }, {});
-    setEnrollments(enrollments?.data);
+    // const enrollments = await ApiService.getEnrolments({ stream: stream }, {});
+    // setEnrollments(enrollments?.data);
   };
   useEffect(() => {
     getEnrollments();
@@ -150,6 +171,7 @@ function Main() {
 
   useEffect(() => {
     getGrades();
+    getTerms();
     // getLevels();
     getLearningAreas();
   }, []);
@@ -186,7 +208,7 @@ function Main() {
     setGrades(response.data);
   };
   const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({ page: 1 });
+    const response = await ApiService.getLearningAreas({ limit: 100000 });
     setLearningAreas(response.data);
   };
 
@@ -208,12 +230,11 @@ function Main() {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
   };
 
-  const handleSubStrandChange = (data: any) => {
-    const selectedValue = data;
-    setSelectedSubStrand(selectedValue);
-    setSubstrand(substrands?.at(selectedValue));
-    console.log(substrands?.at(selectedValue));
-    console.log(substrand);
+  const handleSubStrandChange = (data: any, key: any) => {
+    setSelectedSubStrand(key);
+    setSubstrand(data);
+    // console.log(selectedSubStrand);
+    // console.log(substrand);
 
     // ///call substrands for this strand
     // let res = await ApiService.getSubstrandByStrand(selectedValue);
@@ -227,11 +248,13 @@ function Main() {
     const selectedValue = event.target.value;
     // await setSelectedStrand(selectedValue);
     setSubstrands([]);
+    setStrand(selectedValue);
     // ///call substrands for this strand
     let res = await ApiService.getSubstrandByStrand(
       { limit: 10000 },
       selectedValue
     );
+    console.log(res.data);
 
     setSubstrands(res.data);
     // You might want to fetch filtered data here
@@ -279,7 +302,7 @@ function Main() {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
-
+    setStream("");
     setStrands([]);
     await setStrandFilter({
       learning_area: "na",
@@ -321,6 +344,41 @@ function Main() {
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
+  const generateAssessment = async () => {
+    const data = { indicator, term: selectedTerm, stream };
+    console.log(substrand);
+    isLoading(true);
+    try {
+      let res = await ApiService.getAssessmentLerners(data);
+      setEnrollments(res);
+      setDialog(true);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      console.log(error);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+  const handleInputChange = async (data: any) => {
+    if (data.score < 1 || data.score > 4) {
+      return false;
+    }
+    const assessment = {
+      substrand: substrand?._id,
+      indicator,
+      term: selectedTerm,
+      learning_area: strandFilter.learning_area,
+      score: Number(data.score),
+      strand: strand,
+      enrollment: data?.enrollment?.enrollmentId,
+    };
+    let res = await ApiService.createAssessment(assessment);
+    console.log(assessment);
+    console.log(res);
+    generateAssessment();
+  };
 
   const addRow = () => {
     const newRow: TableRow = {
@@ -330,202 +388,194 @@ function Main() {
 
     setRows([...rows, newRow]);
   };
+  const [formData, setFormData] = useState({ score: 1 });
+
   return (
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
-            <a
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                reset({ name: "" });
-                setDialog(false);
-              }}
-              href="#"
-            >
-              <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-            </a>
-            <h2 className="mr-auto text-lg font-medium">New Strand</h2>
-          </div>
-          <br />
+          {/* path: 'strand',
+        populate: {
+            path: 'learning_area',
+            populate: {
+                path: 'grade_id'
+            }
+        } */}
           <form
-            className="mt-5 p-5 intro-y box validate-form"
+            className="mt-5 p-5 intro-y validate-form  "
             onSubmit={onSubmit}
           >
-            <div>
-              <a
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(false);
-                }}
-                className="absolute  top-0 right-0 mt-3 mr-3"
-                href="#"
-              ></a>
-            </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-                <FormSelect
-                  {...register("grade")}
-                  name="grade"
-                  value={strandFilter.grade}
-                  disabled
+            <div className="assessment-header">
+              <h2 className="text-2xl flex items-center font-semibold mb-4">
+                <a
+                  onClick={(event: React.MouseEvent) => {
+                    event.preventDefault();
+                    reset({ name: "" });
+                    setDialog(false);
+                  }}
+                  href="#"
                 >
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormSelect
-                  {...register("learning_area")}
-                  name="learning_area"
-                  value={strandFilter.learning_area}
-                  disabled
-                >
-                  {learningAreas
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter?.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea?._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
-                </FormSelect>
-
-                {errors.learning_area && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
-                  </div>
-                )}
-              </div>
-
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Select Term</FormLabel>
-                <FormSelect
-                  {...register("term")}
-                  name="term"
-                  value={strandFilter.term}
-                  disabled
-                >
-                  {terms.map((term: any, key) => (
-                    <option key={key} value={term._id}>
-                      {term.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div>
-            </div>{" "}
-            <div className="grid grid-cols-12 gap-4 gap-y-3 mt-5 m-auto">
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Strand </FormLabel>
-                <FormTextarea
-                  {...register("name")}
-                  name="name"
-                  className="mr-2"
-                />
-                {/* <FormInput {...register("name")} name="name" type="text" /> */}
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormCheck.Input
-                  {...register("grade")}
-                  id="checkbox-switch-7"
-                  type="checkbox"
-                  className="mr-2"
-                  name="grade"
-                  onChange={(e: any) => handleHasThemeChange(e)}
-                />
-
-                {/* <FormInput
-                  type="checkbox"
-                  checked={false}
-                  className="m-5 w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                /> */}
-
-                <FormLabel htmlFor="modal-form-6"> Theme</FormLabel>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-              {hasTheme ? (
-                <div className="col-span-12 sm:col-span-3">
-                  <FormLabel htmlFor="modal-form-6">Theme</FormLabel>
-                  <FormTextarea {...register("theme")} name="theme" />
-                  {errors.theme && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.theme.message === "string" &&
-                        errors.theme.message}
-                    </div>
-                  )}
+                  <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+                </a>{" "}
+                Assessment Score Entry Form
+              </h2>
+              <div className="meta-info grid grid-cols-2 gap-x-4 box p-5">
+                <div className="meta-row flex items-center">
+                  <label className="font-semibold text-l">Grade: </label>
+                  <span className="text-l">
+                    {" "}
+                    {substrand?.strand?.learning_area?.grade_id?.name}
+                  </span>
                 </div>
-              ) : (
-                ""
-              )}
+                <div className="meta-row flex items-center">
+                  <label className="font-semibold text-l">
+                    Learning Area:{" "}
+                  </label>
+                  <span className="text-l">
+                    {" "}
+                    {substrand?.strand?.learning_area?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center">
+                  <label className="font-semibold text-l">Strand: </label>
+                  <span className="text-l"> {substrand?.strand?.name}</span>
+                </div>
+                <div className="meta-row flex items-center">
+                  <label className="font-semibold text-l">Substrand: </label>
+                  <span className="text-l"> {substrand?.name}</span>
+                </div>
+                <div className="meta-row flex items-center">
+                  <label className="font-semibold text-l">Indicator: </label>
+                  <span className="text-l">
+                    {" "}
+                    {
+                      substrand?.indicators
+                        .flat()
+                        .find((ind: any) => ind._id === indicator).description
+                    }
+                    ;
+                  </span>
+                </div>
+
+                <div className="meta-row flex items-center col-span-2 ">
+                  <span className="text-sm text-success">(Auto-saving)</span>
+                </div>
+              </div>
             </div>
-            <div className="col-span-12 sm:col-span-12 mt-3">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={() => cancel({ name: "" })}
-                className="w-20 mr-1"
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit" className="w-20">
-                Save
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Button>
+            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+              <Table className="border-spacing-y-[3px] border-separate mt-8">
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      <FormCheck.Input type="checkbox" />
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      LEARNER NAME
+                    </Table.Th>
+                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
+                      ADMISSION NUMBER
+                    </Table.Th>
+                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
+                      NEMIS NO.
+                    </Table.Th>
+                    <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                      SCORE
+                    </Table.Th>
+                    <Table.Th className="text-center border-b-0 whitespace-wrap w-[400px] overflow-hidden">
+                      DESCRIPTION
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {enrollments.map((enrollment: any, key) => (
+                    <Table.Tr key={key} className="intro-x">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <FormCheck.Input type="checkbox" />
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <div className="flex items-center">
+                          <div className="w-9 h-9 bg-gray-300 rounded-full"></div>
+                          <div className="ml-4">
+                            <a href="#" className="font-semibold">
+                              {enrollment?.learner?.first_name}
+                            </a>
+                            <div className="text-gray-600 text-sm">
+                              {enrollment?.learner?.last_name}
+                            </div>
+                          </div>
+                        </div>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="flex items-center  ">
+                          {enrollment?.learner?.adm_no}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="flex items-center  ">
+                          {enrollment?.learner?.nemis_no}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <FormInput
+                          {...register("score[" + key + "]")}
+                          type="number"
+                          className={`form-control ${
+                            getValues("score") ? "is-invalid" : ""
+                          }`}
+                          defaultValue={enrollment?.assessmentDetails?.score}
+                          max={4}
+                          min={1}
+                          onChange={(e) => {
+                            const enteredValue = parseInt(e.target.value);
+                            if (enteredValue > 4) {
+                              e.target.value = "4"; // Set the value to the maximum allowed
+                            } else if (enteredValue < 1) {
+                              alert(
+                                "value should be within the range of 1, 2, 3, 4"
+                              );
+                              e.target.value = "1";
+                            }
+                            handleInputChange({
+                              score: e.target.value,
+                              enrollment,
+                            });
+                          }}
+                        />
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
+                        <span>
+                          <b>
+                            {enrollment?.assessmentDetails?.score == 4
+                              ? "Exceeding Expectation: "
+                              : ""}
+                            {enrollment?.assessmentDetails?.score == 3
+                              ? "Meeting Expectation: "
+                              : ""}
+                            {enrollment?.assessmentDetails?.score == 2
+                              ? "Approaching Expectation: "
+                              : ""}
+                            {enrollment?.assessmentDetails?.score == 1
+                              ? "Below Expectation: "
+                              : ""}
+                          </b>
+                          {enrollment?.assessmentDetails?.description}
+                        </span>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
             </div>
           </form>
         </>
       ) : (
         <>
           <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
-            <a
-              // onClick={(e: any) => openLearningArea(strands)}
-              className=" mr-5 "
-              href="#"
-            >
-              <Lucide icon="ArrowLeft" className="text-slate-400 " />
-            </a>
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <h2 className="mr-auto text-base font-medium border-b p-2">
-              Learner Assessment
+              Assessment Details
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2">
@@ -550,28 +600,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
-                <FormSelect
-                  {...register("stream")}
-                  name="stream"
-                  onChange={(event) => setStream(event.target.value)}
-                >
-                  <option>Select Stream</option>
 
-                  {streams.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
                 <FormSelect
@@ -620,12 +649,16 @@ function Main() {
                   </div>
                 )}
               </div>
+              {/* {substrands.map((substrand: any, key: any) => (
+                <span>{substrand.name}</span>
+              ))} */}
 
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
                 <FormSelect
                   {...register("strand")}
                   name="strand"
+                  value={strand}
                   onChange={(event: any) => handleStrandChange(event)}
                 >
                   <option>Select Strand</option>
@@ -644,11 +677,18 @@ function Main() {
               </div>
               <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
-                <TomSelect
+                <FormSelect
                   {...register("substrand")}
-                  value={selectedSubStrand}
+                  // Assuming selectedSubStrand is the selected object
                   name="substrand"
-                  onChange={(event: any) => handleSubStrandChange(event)}
+                  onChange={(selectedOption: any) => {
+                    // console.log(substrands);
+                    // console.log("jee");
+                    handleSubStrandChange(
+                      substrands.at(selectedOption),
+                      selectedOption
+                    );
+                  }}
                 >
                   <option>Select Substrand</option>
                   {substrands.map((substrand: any, key: any) => (
@@ -656,7 +696,7 @@ function Main() {
                       {substrand.name}
                     </option>
                   ))}
-                </TomSelect>
+                </FormSelect>
                 {errors.theme && (
                   <div className="mt-2 text-danger">
                     {typeof errors.theme.message === "string" &&
@@ -674,13 +714,11 @@ function Main() {
                   onChange={(event: any) => setIndicator(event)}
                 >
                   <option>Select Substrand</option>
-                  {substrand?.indicators?.[0]?.map(
-                    (indicator: any, key: any) => (
-                      <option key={key} value={indicator?._id}>
-                        {indicator?.description}
-                      </option>
-                    )
-                  )}
+                  {substrand?.indicators?.map((indicator: any, key: any) => (
+                    <option key={key} value={indicator[0]?._id}>
+                      {indicator[0]?.description}
+                    </option>
+                  ))}
                 </TomSelect>
                 {errors.theme && (
                   <div className="mt-2 text-danger">
@@ -690,9 +728,95 @@ function Main() {
                 )}
               </div>
             </div>
+            {/* <div className="px-5 pb-8 text-right">
+              <Button
+                onClick={() => generateAssessment()}
+                variant="primary"
+                type="button"
+                className="w-24 text-white"
+              >
+                Assess
+              </Button>
+            </div> */}
+          </div>
+          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+            <h2 className="mr-auto text-base font-medium border-b p-2">
+              Learner Details
+            </h2>
+            <div className="grid grid-cols-12 gap-6 mt-10">
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
+                <FormSelect
+                  {...register("stream")}
+                  name="stream"
+                  value={stream}
+                  onChange={(event) => setStream(event.target.value)}
+                >
+                  <option>Select Stream</option>
+
+                  {streams.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
+                <TomSelect
+                  name="stream"
+                  value={selectedTerm}
+                  onChange={(event: any) => setSelectedTerm(event)}
+                >
+                  <option>Select Academic Term</option>
+
+                  {academic_terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
+                </TomSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="px-5 pb-8 text-right">
+              <Button
+                onClick={() => generateAssessment()}
+                variant="primary"
+                type="button"
+                className="w-24 text-white"
+              >
+                Assess
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </Button>
+            </div>
           </div>
 
-          <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+          {/* <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <h2>Assessment Marks Entry Form</h2>
+            <div className="mb-4">
+              <span>
+                Last Saved: {lastSaved ? lastSaved : "Never"} (Auto-saving every
+                5 minutes)
+              </span>
+            </div>
             <Table className="border-spacing-y-[10px] border-separate -mt-2">
               <Table.Thead>
                 <Table.Tr>
@@ -709,7 +833,7 @@ function Main() {
                     GENDER
                   </Table.Th>
                   <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    NAMEIST NO.
+                    NEMIS NO.
                   </Table.Th>
                   <Table.Th className="text-center border-b-0 whitespace-nowrap">
                     SCORE
@@ -717,7 +841,7 @@ function Main() {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {enrollments.map((enrollment, key) => (
+                {enrollments.map((enrollment: any, key) => (
                   <Table.Tr key={key} className="intro-x">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <FormCheck.Input type="checkbox" />
@@ -725,13 +849,7 @@ function Main() {
                     <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <div className="flex items-center">
                         <div className="w-9 h-9 image-fit zoom-in">
-                          {/* <Tippy
-                            as="img"
-                            alt="Midone - HTML Admin Template"
-                            className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                            src={""}
-                            content={`Uploaded at `}
-                          /> */}
+                          
                         </div>
                         <div className="ml-4">
                           <a href="" className="font-medium whitespace-nowrap">
@@ -749,30 +867,24 @@ function Main() {
                       </span>
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md text-center capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      Male
+                      {enrollment?.learner?.gender}
                     </Table.Td>
-
                     <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {enrollment?.learner?.nemis_no}
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                      <div className="flex items-center justify-center">
-                        <a className="flex items-center mr-3" href="#">
-                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                          Edit
-                        </a>
-                        <a className="flex items-center text-danger" href="#">
-                          <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
-                          Delete
-                        </a>
-                      </div>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={enrollment.score || ""}
+                        onChange={(e) => handleInputChange(key, e)}
+                      />
                     </Table.Td>
                   </Table.Tr>
                 ))}
               </Table.Tbody>
             </Table>
-          </div>
-
+          </div> */}
           {/* <div className="grid grid-cols-12 gap-6">
            
 

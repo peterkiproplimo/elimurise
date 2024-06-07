@@ -435,7 +435,24 @@ export const getSubstrand = async (data: any) => {
     throw handler(e);
   }
 };
-
+export const getAssessmentLerners = async (data: any) => {
+  try {
+    let res = await axios.get(c.ASSESSMENT + "/assessment-learners", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const createAssessment = async (data: any) => {
+  try {
+    let res = await axios.post(c.ASSESSMENT, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export async function createSubstrand(data: FieldValues) {
   try {
     if (data._id) {
