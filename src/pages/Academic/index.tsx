@@ -182,7 +182,7 @@ function Level() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("name")}
                   type="text"
@@ -198,12 +198,12 @@ function Level() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Is Current</FormLabel>
+                <FormLabel className="mt-2">Is Current</FormLabel>
                 <FormInput
                   {...register("isCurrent")}
                   type="checkbox"
                   name="isCurrent"
-                  className={" w-38 h-38 "}
+                  className={" w-38 h-38 ml-2 "}
                 />
                 {errors.name && (
                   <div className="mt-2 text-danger">
@@ -213,7 +213,7 @@ function Level() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Start Date </FormLabel>
+                <FormLabel>Start Date <span className = "text-danger ml-0.5">*</span></FormLabel>
 
                 <FormInput
                   {...register("startDate")}
@@ -230,7 +230,7 @@ function Level() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>End Date</FormLabel>
+                <FormLabel>End Date<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("endDate")}
                   type="date"

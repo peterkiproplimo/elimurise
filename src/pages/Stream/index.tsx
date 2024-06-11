@@ -211,7 +211,7 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="mt-2">Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("name")}
                   type="text"
@@ -531,8 +531,8 @@ function Main() {
         <div className="ml-4 mr-4">
           <div className="font-medium">
             {success
-              ? "Stream deleted Successfully"
-              : "Failed to delete record"}
+              ? " Success"
+              : "Failed"}
           </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>

@@ -185,7 +185,7 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("first_name")}
                   type="text"
@@ -217,7 +217,7 @@ function Main() {
                 )}
               </div> */}
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>Last Name <span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("last_name")}
                   type="text"
@@ -249,7 +249,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>ID Number</FormLabel>
+                <FormLabel>ID Number<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("id_no")}
                   type="text"
@@ -265,7 +265,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Email<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("email")}
                   type="text"
@@ -281,7 +281,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Phone</FormLabel>
+                <FormLabel>Phone<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("phone")}
                   type="text"

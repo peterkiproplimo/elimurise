@@ -315,7 +315,7 @@ function Main() {
               </div> */}
 
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("first_name")}
                   type="text"
@@ -331,7 +331,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>Last Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("last_name")}
                   type="text"
@@ -363,7 +363,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Admission Number</FormLabel>
+                <FormLabel>Admission Number<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("adm_no")}
                   type="text"
@@ -395,7 +395,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Grade<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormSelect
                   {...register("grade")}
                   name="grade"
@@ -429,7 +429,7 @@ function Main() {
               </div> */}
 
               <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Select Stream<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormSelect {...register("stream")} name="stream">
                   {streams.map((stream: any, key) => (
                     <option key={key} value={stream._id}>

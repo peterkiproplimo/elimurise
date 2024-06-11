@@ -248,7 +248,7 @@ function Main() {
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
             <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Learner" : "New Learner"}
+              {isEditMode ? " Edit Enrollment" : " New Enrollment"}
             </h2>
           </div>
           <br />
@@ -307,7 +307,7 @@ function Main() {
               </div> */}
 
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("first_name")}
                   type="text"
@@ -323,7 +323,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>Last Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("last_name")}
                   type="text"
@@ -355,7 +355,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Admission Number</FormLabel>
+                <FormLabel>Admission Number<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("admn_no")}
                   type="text"
@@ -371,7 +371,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Select Stream<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormSelect {...register("stream")} name="stream">
                   {streams.map((stream: any, key) => (
                     <option key={key} value={stream._id}>
@@ -387,7 +387,7 @@ function Main() {
               )} */}
               </div>
 
-              <div className="col-span-12 sm:col-span-4">
+              {/* <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
                 <FormSelect {...register("stream")} name="stream">
                   {streams.map((stream: any, key) => (
@@ -396,13 +396,8 @@ function Main() {
                     </option>
                   ))}
                 </FormSelect>
-                {/* {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )} */}
-              </div>
+             
+              </div> */}
             </div>
 
             {/* <div className="col-span-12 sm:col-span-3">
@@ -464,7 +459,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Learners</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y">Learners Enrollment</h2>
           <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
             <Button
               variant="primary"
@@ -474,7 +469,7 @@ function Main() {
                 setDialog(true);
               }}
             >
-              New Learner
+              New Enrollment
             </Button>
 
             <div className="hidden mx-auto md:block text-slate-500">

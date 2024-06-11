@@ -182,7 +182,7 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Term</FormLabel>
+                <FormLabel>Term<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("name")}
                   type="text"
@@ -198,7 +198,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Academic Year</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Academic Year<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormSelect {...register("academicYear")} name="academicYear">
                   {academic.map((academicYear: any, key) => (
                     <option key={key} value={academicYear._id}>
@@ -214,7 +214,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>Start Date<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("startDate")}
                   type="date"
@@ -230,7 +230,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>End Date</FormLabel>
+                <FormLabel>End Date<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("endDate")}
                   type="date"

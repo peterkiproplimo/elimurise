@@ -47,17 +47,18 @@ const initialState: SideMenuState = {
           title: "Learners Details",
         },
         {
-          icon: "User",
-          pathname: "/enrollment",
-          title: "Learner Enrollment",
+          icon: "Users",
+          pathname: "/enrollments",
+          title: "Enrollments",
         },
+        // {
+        //   icon: "User",
+        //   pathname: "/enrollment",
+        //   title: "Learner Enrollment",
+        // },
       ]
     },
-    {
-      icon: "Users",
-      pathname: "/enrollments",
-      title: "Enrollments",
-    },
+   
     {
       icon: "Users",
       title: "Parents",

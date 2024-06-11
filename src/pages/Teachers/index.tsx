@@ -183,7 +183,7 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("first_name")}
                   type="text"
@@ -215,7 +215,7 @@ function Main() {
                 )}
               </div> */}
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Last Name</FormLabel>
+                <FormLabel>Last Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("last_name")}
                   type="text"
@@ -247,14 +247,14 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Phone Number<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                       {...register("phone", {
-    pattern: {
-      value: /^.{11,}$/,
-      message: "Phone number must be at least 11 characters long"
-    }
-  })}
+                           pattern: {
+                           value: /^.{11,}$/,
+                           message: "Phone number must be at least 11 characters long"
+                       }
+                     })}
                   type="text"
                   name="phone"
                   className={errors.phone ? "border-danger" : ""}
@@ -268,7 +268,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Email <span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("email")}
                   type="email"

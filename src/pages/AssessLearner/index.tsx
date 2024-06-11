@@ -192,13 +192,6 @@ function Main() {
       },
       strandFilter
     );
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
     setStrands(response.data);
   };
 
@@ -345,12 +338,19 @@ function Main() {
     { no: 1, strandName: "Example Strand" },
   ]);
   const generateAssessment = async () => {
-    const data = { indicator, term: selectedTerm, stream };
+    const data = { indicator, term: selectedTerm, stream ,page: 1, };
     console.log(substrand);
     isLoading(true);
     try {
       let res = await ApiService.getAssessmentLerners(data);
       setEnrollments(res);
+      const pagination = res.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
       setDialog(true);
       isLoading(false);
     } catch (error: any) {
@@ -463,7 +463,33 @@ function Main() {
               </div>
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <Table className="border-spacing-y-[3px] border-separate mt-8">
+            <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
+            
+              <div className="hidden mx-auto md:block text-slate-500 mt-5">
+                Showing{" "}
+                {pagination.current_page +
+                  " to " +
+                  pagination.total_pages +
+                  " of " +
+                  pagination.total}{" "}
+                entries
+              </div>
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
+                <div className="relative w-56 text-slate-500">
+                  <FormInput
+                    type="text"
+                    className="w-56 pr-10 !box"
+                    placeholder="Search..."
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                </div>
+              </div>
+            </div>
+              <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">
@@ -565,6 +591,55 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
+            </div>
+            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
+              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                <Pagination className="w-full sm:w-auto sm:mr-auto">
+                  <button
+                    onClick={() => setPage(previous_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                  </button>
+                  {_.times(pagination.total_pages).map((page, key) =>
+                    page + 1 == pagination.current_page ? (
+                      <button
+                        onClick={() => setPage(page + 1)}
+                        key={key}
+                        className="py-2 px-4 bg-white rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setPage(page + 1)}
+                        key={key}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        {page + 1}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={() => setPage(next_page)}
+                    className="py-2 px-4 rounded-md"
+                  >
+                    <Lucide icon="ChevronRight" className="w-4 h-4" />
+                  </button>
+                </Pagination>
+                <div className="text-slate-500">
+                  <span className="mr-3">Total {pagination.total}</span>
+                  <FormSelect
+                    className="w-30 mt-3 !box sm:mt-0"
+                    onChange={(e) => setLimit(parseInt(e.target.value))}
+                  >
+                    <option value={10}>10/page</option>
+                    <option value={25}>25/page</option>
+                    <option value={50}>50/page</option>
+                    <option value={100}>100/page</option>
+                  </FormSelect>
+                </div>
+              </div>
             </div>
           </form>
         </>
