@@ -9,6 +9,7 @@ import {
   FormSwitch,
   FormTextarea,
 } from "../../base-components/Form";
+import { Loader } from 'lucide-react';
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -26,7 +27,7 @@ import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
-import logo from "../../assets/images/assess.jpeg";
+import logo from "../../assets/images/student.jpeg";
 
 interface TableRow {
   no: number;
@@ -338,19 +339,19 @@ function Main() {
     { no: 1, strandName: "Example Strand" },
   ]);
   const generateAssessment = async () => {
-    const data = { indicator, term: selectedTerm, stream ,page: 1, };
+    const data = { indicator, term: selectedTerm, stream  };
     console.log(substrand);
     isLoading(true);
     try {
       let res = await ApiService.getAssessmentLerners(data);
       setEnrollments(res);
-      const pagination = res.pagination;
-      setPagination({
-        current_page: pagination.current_page,
-        total: pagination.total,
-        total_pages: pagination.total_pages,
-        per_page: pagination.per_page,
-      });
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination.current_page,
+      //   total: pagination.total,
+      //   total_pages: pagination.total_pages,
+      //   per_page: pagination.per_page,
+      // });
       setDialog(true);
       isLoading(false);
     } catch (error: any) {
@@ -380,6 +381,21 @@ function Main() {
     generateAssessment();
   };
 
+  const getDescriptionColor = (score:any) => {
+    switch (score) {
+      case 4:
+        return 'text-green-700'; // Exceeding Expectation
+      case 3:
+        return 'text-success'; // Meeting Expectation
+      case 2:
+        return 'text-purple-600'; // Approaching Expectation
+      case 1:
+        return 'text-danger'; // Below Expectation
+      default:
+        return 'text-gray-600';
+    }
+  };
+
   const addRow = () => {
     const newRow: TableRow = {
       no: rows.length + 1,
@@ -406,7 +422,7 @@ function Main() {
             onSubmit={onSubmit}
           >
             <div className="assessment-header">
-              <h2 className="text-2xl flex items-center font-semibold mb-4">
+              <h2 className="text-xl flex items-center font-semibold mb-5">
                 <a
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
@@ -419,48 +435,36 @@ function Main() {
                 </a>{" "}
                 Assessment Score Entry Form
               </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 box p-5">
-                <div className="meta-row flex items-center">
-                  <label className="font-semibold text-l">Grade: </label>
-                  <span className="text-l">
-                    {" "}
-                    {substrand?.strand?.learning_area?.grade_id?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center">
-                  <label className="font-semibold text-l">
-                    Learning Area:{" "}
-                  </label>
-                  <span className="text-l">
-                    {" "}
-                    {substrand?.strand?.learning_area?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center">
-                  <label className="font-semibold text-l">Strand: </label>
-                  <span className="text-l"> {substrand?.strand?.name}</span>
-                </div>
-                <div className="meta-row flex items-center">
-                  <label className="font-semibold text-l">Substrand: </label>
-                  <span className="text-l"> {substrand?.name}</span>
-                </div>
-                <div className="meta-row flex items-center">
-                  <label className="font-semibold text-l">Indicator: </label>
-                  <span className="text-l">
-                    {" "}
-                    {
-                      substrand?.indicators
-                        .flat()
-                        .find((ind: any) => ind._id === indicator).description
-                    }
-                    ;
-                  </span>
-                </div>
+              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
+  <div className="meta-row flex items-center mb-2">
+    <label className="font-semibold text-md text-gray-700">Grade:</label>
+    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.learning_area?.grade_id?.name}</span>
+  </div>
+  <div className="meta-row flex items-center mb-2">
+    <label className="font-semibold text-md text-gray-700">Learning Area:</label>
+    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.learning_area?.name}</span>
+  </div>
+  <div className="meta-row flex items-center mb-2">
+    <label className="font-semibold text-md text-gray-700">Strand:</label>
+    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.name}</span>
+  </div>
+  <div className="meta-row flex items-center mb-2">
+    <label className="font-semibold text-md text-gray-700">Substrand:</label>
+    <span className="text-md text-gray-800 ml-2">{substrand?.name}</span>
+  </div>
+  <div className="meta-row flex items-center mb-2">
+    <label className="font-semibold text-md text-gray-700">Indicator:</label>
+    <span className="text-md text-gray-800 ml-2">
+      {substrand?.indicators.flat().find((ind: any) => ind._id === indicator).description}
+    </span>
+  </div>
+  <div className="meta-row flex items-center col-span-2 mt-0.5">
+  <Loader className="text-success animate-spin mr-2" />
+  
+    <span className="text-sm text-success font-medium">(Auto-saving)</span>
+  </div>
+</div>
 
-                <div className="meta-row flex items-center col-span-2 ">
-                  <span className="text-sm text-success">(Auto-saving)</span>
-                </div>
-              </div>
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
             <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
@@ -504,10 +508,10 @@ function Main() {
                     <Table.Th className="text-left border-b-0 whitespace-nowrap">
                       NEMIS NO.
                     </Table.Th>
-                    <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
                       SCORE
                     </Table.Th>
-                    <Table.Th className="text-center border-b-0 whitespace-wrap w-[400px] overflow-hidden">
+                    <Table.Th className="text-left border-b-0 whitespace-wrap w-[500px] overflow-hidden">
                       DESCRIPTION
                     </Table.Th>
                   </Table.Tr>
@@ -519,14 +523,18 @@ function Main() {
                         <FormCheck.Input type="checkbox" />
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <div className="flex items-center">
-                          <div className="w-9 h-9 bg-gray-300 rounded-full"></div>
+                        <div className="flex">
+                        <img
+                         src={logo}
+                         alt="Learner"
+                         className="w-12 h-12   "
+                         />
                           <div className="ml-4">
                             <a href="#" className="font-semibold">
-                              {enrollment?.learner?.first_name}
+                              {enrollment?.learner?.first_name} {enrollment?.learner?.last_name}
                             </a>
-                            <div className="text-gray-600 text-sm">
-                              {enrollment?.learner?.last_name}
+                            <div className="text-gray-600 text-sm ">
+                              {enrollment?.learner?.surname}
                             </div>
                           </div>
                         </div>
@@ -568,7 +576,8 @@ function Main() {
                           }}
                         />
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
+                    <Table.Td className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  ${getDescriptionColor(enrollment?.assessmentDetails?.score)}`}>
+         
                         <span>
                           <b>
                             {enrollment?.assessmentDetails?.score == 4
@@ -584,6 +593,7 @@ function Main() {
                               ? "Below Expectation: "
                               : ""}
                           </b>
+                          <br/>
                           {enrollment?.assessmentDetails?.description}
                         </span>
                       </Table.Td>

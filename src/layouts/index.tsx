@@ -32,7 +32,7 @@ function Layout() {
       <TopBar layout="side-menu" />
       <div className="flex overflow-hidden">
         {/* BEGIN: Side Menu */}
-        <nav className="w-[105px] xl:w-[260px] px-5 pb-16 overflow-x-hidden z-50 pt-32 -mt-4 hidden md:block">
+        <nav className="w-[105px] bg-primary xl:w-[260px] px-5 pb-16 overflow-x-hidden z-50 pt-32 -mt-5  md:block">
           <ul>
             {/* BEGIN: First Child */}
             {formattedMenu.map((menu, menuKey) =>
@@ -180,17 +180,17 @@ function Menu(props: {
       content={props.menu.title}
       href={props.menu.subMenu ? "#" : props.menu.pathname}
       className={clsx([
-        "h-[50px] flex items-center pl-5 text-slate-600 mb-1 relative rounded-xl dark:text-slate-300",
+        "h-[50px] flex items-center pl-5 text-white mb-1 relative rounded-xl dark:text-slate-300",
         {
           "text-slate-600 dark:text-slate-400":
             !props.menu.active && props.level != "first",
-          "bg-primary dark:bg-primary/30":
+          "bg-white dark:bg-primary/30":
             props.menu.active && props.level == "first",
           "before:content-[''] before:block before:inset-0 before:rounded-xl before:absolute before:border-b-[3px] before:border-solid before:border-black/[0.08] before:dark:border-black/[0.08] before:dark:bg-darkmode-700":
             props.menu.active && props.level == "first",
           "after:content-[''] after:w-[20px] after:h-[80px] after:mr-[-27px] after:bg-menu-active after:bg-no-repeat after:bg-cover after:absolute after:top-0 after:bottom-0 after:right-0 after:my-auto after:dark:bg-menu-active-dark":
             props.menu.active && props.level == "first",
-          "hover:bg-primary  hover:text-white hover:dark:bg-transparent hover:before:content-[''] hover:before:block hover:before:inset-0 hover:before:rounded-xl hover:before:absolute hover:before:z-[-1] hover:before:border-b-[3px] hover:before:border-solid hover:before:border-black[0.08] hover:before:dark:bg-darkmode-700":
+          "hover:bg-white  hover:text-dark hover:dark:bg-transparent hover:before:content-[''] hover:before:block hover:before:inset-0 hover:before:rounded-xl hover:before:absolute hover:before:z-[-1] hover:before:border-b-[3px] hover:before:border-solid hover:before:border-black[0.08] hover:before:dark:bg-darkmode-700":
             !props.menu.active &&
             !props.menu.activeDropdown &&
             props.level == "first",
@@ -209,7 +209,7 @@ function Menu(props: {
     >
       <div
         className={clsx({
-          "text-white z-10 dark:text-slate-300":
+          "text-dark z-10 dark:text-slate-300":
             props.menu.active && props.level == "first",
           "text-white dark:text-slate-300":
             props.menu.active && props.level != "first",
@@ -222,7 +222,7 @@ function Menu(props: {
         className={clsx([
           "w-full ml-3 hidden xl:flex items-center",
           {
-            "text-white font-medium z-10 dark:text-slate-300":
+            "text-dark font-medium z-10 dark:text-slate-300":
               props.menu.active && props.level == "first",
             "text-white font-medium dark:text-slate-300":
               props.menu.active && props.level != "first",
