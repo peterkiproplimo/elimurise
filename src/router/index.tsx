@@ -36,6 +36,7 @@ import LearnerEnrollment from "../pages/LearnerEnrollment";
 import ForgotPasswordOTPParent from "../pages/Auth/forgot-passOTP-parent";
 import LearnerProfile from "../pages/LearnerPortal/profile";
 import LearnerDashboard from "../pages/LearnerPortal/dashboard";
+import LearnerProfiles from "../pages/LearnerProfiles";
 
 //nn
 function Router() {
@@ -139,6 +140,10 @@ function Router() {
         {
           path: "/v1/",
           element: <LearnerDashboard />,
+        },
+        {
+          path: "/v1/report",
+          element: <LearnerProfiles/>,
         },
       ],
     },

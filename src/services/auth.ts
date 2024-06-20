@@ -473,6 +473,16 @@ export const getReportByLearners = async (data: any) => {
     throw handler(e);
   }
 };
+export const getLearnerReport = async (data: any) => {
+  try {
+    let res = await axios.get(c.ASSESSMENT + "/report", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const createAssessment = async (data: any) => {
   try {
     let res = await axios.post(c.ASSESSMENT, data);

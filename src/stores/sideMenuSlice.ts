@@ -206,11 +206,11 @@ const parentState: SideMenuState = {
       pathname: "/v1",
     },
 
-    // {
-    //   icon: "Users",
-    //   title: "Parents",
-    //   pathname: "/parents",
-    // },
+    {
+      icon: "FileText",
+      title: "Reports",
+      pathname: "/v1/report",
+    },
     {
       icon: "Users",
       title: "Profile",
