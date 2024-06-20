@@ -462,6 +462,17 @@ export const getAssessmentLerners = async (data: any) => {
     throw handler(e);
   }
 };
+
+export const getReportByLearners = async (data: any) => {
+  try {
+    let res = await axios.get(c.ASSESSMENT + "/assessments", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const createAssessment = async (data: any) => {
   try {
     let res = await axios.post(c.ASSESSMENT, data);

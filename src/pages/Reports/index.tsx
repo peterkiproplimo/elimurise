@@ -165,7 +165,8 @@ function Main() {
   };
   const getEnrollments = async () => {
     const enrollments = await ApiService.getEnrolmentsByStream({ stream: stream }, {});
-    setEnrollments(enrollments);
+    setEnrollments(enrollments?.data);
+    console.log(enrollments)
   };
   useEffect(() => {
     getEnrollments();
@@ -340,12 +341,12 @@ function Main() {
     { no: 1, strandName: "Example Strand" },
   ]);
   const generateAssessment = async () => {
-    const data = { indicator, term: selectedTerm, stream  };
-    console.log(substrand);
+    const data = { learning_area:strandFilter.learning_area, term: selectedTerm, learner };
+    console.log(data);
     isLoading(true);
     try {
-      let res = await ApiService.getAssessmentLerners(data);
-      setEnrollments(res);
+      let res = await ApiService.getReportByLearners(data);
+      // setEnrollments(res);
       // const pagination = res.pagination;
       // setPagination({
       //   current_page: pagination.current_page,
@@ -494,7 +495,7 @@ function Main() {
                 </div>
               </div>
             </div>
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
+              {/* <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">
@@ -601,7 +602,7 @@ function Main() {
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
-              </Table>
+              </Table> */}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
