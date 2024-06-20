@@ -43,7 +43,7 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [learners, setLearners] = useState([{}]);
+  const [learners, setLearners] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -835,7 +835,9 @@ function Main() {
                     )
                   )}
                   <button
-                    onClick={() => setPage(page + 1)}
+                    onClick={() =>
+                      setPage(page < pagination.total_pages ? page - 1 : 1)
+                    }
                     className="py-2 px-4 rounded-md"
                   >
                     <Lucide icon="ChevronRight" className="w-4 h-4" />

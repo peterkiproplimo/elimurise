@@ -1,7 +1,14 @@
 import { Transition } from "react-transition-group";
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { selectSideMenu } from "../..//src/stores/sideMenuSlice";
+import {
+  setMenuState,
+  selectSideMenu,
+  initialState,
+  teacherState,
+  parentState,
+} from "../../src/stores/sideMenuSlice";
+
 import { useAppSelector } from "../../src/stores/hooks";
 import { FormattedMenu, linkTo, nestedMenu, enter, leave } from "./side-menu";
 import Lucide from "../../src/base-components/Lucide";
@@ -9,6 +16,8 @@ import clsx from "clsx";
 import TopBar from "../../src/components/TopBar";
 import MobileMenu from "../../src/components/MobileMenu";
 import DarkModeSwitcher from "../../src/components/DarkModeSwitcher";
+import { useDispatch, useSelector } from "react-redux";
+
 // import MainColorSwitcher from "../components/MainColorSwitcher";
 import SideMenuTooltip from "../../src/components/SideMenuTooltip";
 
@@ -19,11 +28,32 @@ function Layout() {
   >([]);
   const sideMenuStore = useAppSelector(selectSideMenu);
   const sideMenu = () => nestedMenu(sideMenuStore, location);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setFormattedMenu(sideMenu());
   }, [sideMenuStore, location.pathname]);
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const type = localStorage.getItem("type");
+      if (type === "parent") {
+        dispatch(setMenuState(parentState));
+      } else if (type === "teacher") {
+        dispatch(setMenuState(teacherState));
+      } else {
+        dispatch(setMenuState(initialState));
+      }
+    };
 
+    window.addEventListener("storage", handleStorageChange);
+
+    // Call handleStorageChange once to set initial state based on localStorage
+    handleStorageChange();
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [dispatch]);
   return (
     <div className="py-5 md:py-0">
       <DarkModeSwitcher />

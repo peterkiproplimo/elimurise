@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { icons } from "../base-components/Lucide";
 import { Car } from "lucide-react";
@@ -84,8 +84,7 @@ const initialState: SideMenuState = {
           pathname: "/reports",
           title: "By Learner",
         },
-       
-      ]
+      ],
     },
     {
       icon: "Users",
@@ -218,13 +217,20 @@ const parentState: SideMenuState = {
     },
   ],
 };
-const activeSection = localStorage.getItem("type");
+let activeSection = localStorage.getItem("type");
 
 export const sideMenuSlice = createSlice({
   name: "sideMenu",
-  initialState: activeSection == "parent" ? parentState : initialState,
-  reducers: {},
+  initialState:
+    localStorage.getItem("type") === "parent" ? parentState : initialState,
+  reducers: {
+    setMenuState: (state, action: PayloadAction<SideMenuState>) => {
+      return action.payload;
+    },
+  },
 });
+
+export const { setMenuState } = sideMenuSlice.actions;
 
 // export const selectSideMenu = (state: RootState) => state.sideMenu.menu;
 export const selectSideMenu = (state: RootState) => {
@@ -242,3 +248,4 @@ export const selectSideMenu = (state: RootState) => {
 };
 
 export default sideMenuSlice.reducer;
+export { initialState, teacherState, parentState };

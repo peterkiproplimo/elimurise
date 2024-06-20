@@ -41,7 +41,7 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [learners, setLearners] = useState([{}]);
+  const [learners, setLearners] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -307,7 +307,9 @@ function Main() {
               </div> */}
 
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  First Name<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("first_name")}
                   type="text"
@@ -323,7 +325,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Last Name<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Last Name<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("last_name")}
                   type="text"
@@ -355,7 +359,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Admission Number<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Admission Number<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("admn_no")}
                   type="text"
@@ -371,7 +377,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Stream<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel htmlFor="modal-form-6">
+                  Select Stream<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormSelect {...register("stream")} name="stream">
                   {streams.map((stream: any, key) => (
                     <option key={key} value={stream._id}>
@@ -459,7 +467,9 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Learners Enrollment</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y">
+            Learners Enrollment
+          </h2>
           <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
             <Button
               variant="primary"
