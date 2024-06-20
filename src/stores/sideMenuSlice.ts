@@ -22,21 +22,7 @@ const initialState: SideMenuState = {
       title: "Dashboard",
       pathname: "/",
     },
-    {
-      icon: "FileText",
-      pathname: "/academic",
-      title: "Academic",
-    },
-    {
-      icon: "BarChart",
-      pathname: "/term",
-      title: "Term",
-    },
-    {
-      icon: "Activity",
-      pathname: "/stream",
-      title: "Stream",
-    },
+
     {
       icon: "Users",
       title: "Learners",
@@ -51,15 +37,19 @@ const initialState: SideMenuState = {
           pathname: "/enrollments",
           title: "Enrollments",
         },
-       
-      ]
+        // {
+        //   icon: "User",
+        //   pathname: "/enrollment",
+        //   title: "Learner Enrollment",
+        // },
+      ],
     },
-   
-    {
-      icon: "Users",
-      title: "Parents",
-      pathname: "/parents",
-    },
+
+    // {
+    //   icon: "Users",
+    //   title: "Parents",
+    //   pathname: "/parents",
+    // },
     {
       icon: "Users",
       title: "Teachers",
@@ -69,7 +59,6 @@ const initialState: SideMenuState = {
       icon: "FileCheck",
       pathname: "/learning_areas",
       title: "Learning Areas",
-         
     },
     {
       icon: "Activity",
@@ -98,296 +87,148 @@ const initialState: SideMenuState = {
        
       ]
     },
-  
-
-    // {
-    //   icon: "Users",
-    //   pathname: "/categories",
-    //   title: "Categories",
-    // },
-    // {
-    //   icon: "Users",
-    //   pathname: "/accountDetails",
-    //   title: "Account Details",
-    // },
-
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/substrand",
-    //     title: "Substrand",
-    //   }
-    //   {
-    //     icon: "FileCheck",
-    //     title: "SubStrands",
-    //     subMenu: [
-    //       {
-    //         icon: "Activity",
-    //         pathname: "/substrand",
-    //         title: "Substrand",
-    //       },
-
-    //     // {
-    // //     icon: "FileCheck",
-    // //     title: "Transactions",
-    // //     subMenu: [
-    // //       {
-    // //         icon: "Activity",
-    // //         pathname: "/policy",
-    // //         title: "Active Policy",
-    // //       },
-
-    // //       {
-    // //         icon: "Activity",
-    // //         pathname: "/extension",
-    // //         title: "Inactive Policy",
-    // //       },
-
-    // //     ]},
-
-    //         // {
-    //         //   icon: "Activity",
-    //         //   pathname: "/active",
-    //         //   title: "Regular Users",
-    //         // },
-
-    //         // {
-    //         //   icon: "Activity",
-    //         //   pathname: "/pendingClaim",
-    //         //   title: "Admin",
-    //         // },
-    //         // {
-    //         //   icon: "Activity",
-    //         //   pathname: "/rejectedClaim",
-    //         //   title: "Rejected Claims",
-    //         // },
-
-    //       ]},
-    //
-    //   {
-    //     icon: "Users",
-    //     title: "Roles",
-
-    //         pathname: "/role",
-
-    // },
-    // {
-    //   icon: "Users",
-    //   title: "Profile",
-    //   pathname: "/profile",
-
-    // },
-
-    //         "divider",
-
-    //         {
-    //           icon: "Cog",
-    //           title: "Settings",
-    //           subMenu: [
-    //             {
-    //               icon: "Activity",
-    //               pathname: "/Role",
-    //               title: "Roles",
-    //             },
-
-    //             // {
-    //             //   icon: "Activity",
-    //             //   pathname: "/Logs",
-    //             //   title: "Games Logs",
-    //             // },
-    //             // {
-    //             //   icon: "Activity",
-    //             //   pathname: "/Logs",
-    //             //   title: "System Logs",
-    //             // },
-
-    //             {
-    //               icon: "Activity",
-    //               pathname: "/NewProfile",
-    //               title: "Change Password",
-    //             },
-    //             {
-    //               icon: "Activity",
-    //               pathname: "/Settings",
-    //               title: "Settings",
-    //             },
-    //           ],
-    //         },
-    // {
-
-    //   icon: "Info",
-    //   title: "Contents",
-    //   subMenu: [
-    //  {
-    //   icon: "Activity",
-    //   pathname: "/Contents",
-    //   title: "Product Offers",
-    // },
-    // {
-    //   icon: "Activity",
-    //   pathname: "/FAQs",
-    //   title: "FAQs",
-    // },
-    // {
-    //   icon: "Activity",
-    //   pathname: "/CoversFAQs",
-    //   title: "Covers FAQs",
-    // },
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/PrivacyPolicy",
-    //     title: "Privacy Policy",
-    //   },
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/Terms",
-    //     title: "Terms & Conditions",
-    //   },
-
-    // ]},
-    // {
-    //   icon: "User",
-    //   pathname: "/update-profile",
-    //   title: "Profile",
-    // }
-
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/speakers",
-    //       title: "Speakers",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/vendors",
-    //       title: "Vendors",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/exhibitors",
-    //       title: "Exhibitors",
-    //     },
-    //   ],
-    // },
-
-    // {
-    //   icon: "Calendar",
-    //   title: "Events",
-    //   subMenu: [
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/conferences",
-    //       title: "Conferences",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/themes",
-    //       title: "Themes",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/events",
-    //       title: "Events",
-    //     }
-    //   ],
-    // },
-
-    // {
-    // icon: "Car",
-    // title: "Game Logs",
-    // subMenu: [
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/Vehicle",
-    //     title: "Vehicle Make",
-    //   },
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/model",
-    //     title: "Vehicle Model",
-    //   },
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/valuers",
-    //     title: "Valuers",
-    //   },
-
-    // {
-    //   icon: "Activity",
-    //   pathname: "/documents",
-    //   title: "Documents Types",
-    // },
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/securityFeature",
-    //     title: "Security Feature",
-    //   },
-    //   {
-    //     icon: "Activity",
-    //     pathname: "/financiers",
-    //     title: "Financiers",
-    //   },
-
-    // {
-    //   icon: "Umbrella",
-    //   title: "Bets",
-    //   subMenu: [
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/quotes",
-    //       title: "Private Comprehensive Cover",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/Autocorrect",
-    //       title: "Autocorrect Cover",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/Thirdparty",
-    //       title: "Third Party Cover",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/Theft",
-    //       title: "Third Party Fire and Theft",
-    //     },
-
-    //   ]},
-
-    // ]},
-    // {
-    //   icon: "CreditCard",
-    //   title: "Payments",
-    //   subMenu: [
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/wallets",
-    //       title: "Wallets",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/transaction-list",
-    //       title: "Transactions",
-    //     }
-    //   ],
-    // },
-    //
-    // {
-    //   icon: "PhoneCall",
-    //   pathname: "/simcards",
-    //   title: "Simcard Booking"
-    // },
+    {
+      icon: "Users",
+      title: "Settings",
+      subMenu: [
+        {
+          icon: "FileText",
+          pathname: "/academic",
+          title: "Year",
+        },
+        {
+          icon: "BarChart",
+          pathname: "/term",
+          title: "Term",
+        },
+        {
+          icon: "Activity",
+          pathname: "/stream",
+          title: "Stream",
+        },
+        // {
+        //   icon: "User",
+        //   pathname: "/enrollment",
+        //   title: "Learner Enrollment",
+        // },
+      ],
+    },
   ],
 };
+const teacherState: SideMenuState = {
+  menu: [
+    {
+      icon: "Home",
+      title: "Parent",
+      pathname: "/",
+    },
+
+    {
+      icon: "Users",
+      title: "Learners",
+      subMenu: [
+        {
+          icon: "User",
+          pathname: "/learners",
+          title: "Learners Details",
+        },
+        {
+          icon: "Users",
+          pathname: "/enrollments",
+          title: "Enrollments",
+        },
+        // {
+        //   icon: "User",
+        //   pathname: "/enrollment",
+        //   title: "Learner Enrollment",
+        // },
+      ],
+    },
+
+    // {
+    //   icon: "Users",
+    //   title: "Parents",
+    //   pathname: "/parents",
+    // },
+    {
+      icon: "Users",
+      title: "Teachers",
+      pathname: "/teachers",
+    },
+    {
+      icon: "FileCheck",
+      pathname: "/learning_areas",
+      title: "Learning Areas",
+    },
+    {
+      icon: "Activity",
+      pathname: "/assessment",
+      title: " Assessment",
+    },
+    {
+      icon: "FileText",
+      pathname: "/billing",
+      title: "Billing",
+    },
+    {
+      icon: "Users",
+      title: "Settings",
+      subMenu: [
+        {
+          icon: "FileText",
+          pathname: "/academic",
+          title: "Year",
+        },
+        {
+          icon: "BarChart",
+          pathname: "/term",
+          title: "Term",
+        },
+        {
+          icon: "Activity",
+          pathname: "/stream",
+          title: "Stream",
+        },
+        // {
+        //   icon: "User",
+        //   pathname: "/enrollment",
+        //   title: "Learner Enrollment",
+        // },
+      ],
+    },
+  ],
+};
+const parentState: SideMenuState = {
+  menu: [
+    {
+      icon: "Home",
+      title: "Dashboard",
+      pathname: "/v1",
+    },
+
+    // {
+    //   icon: "Users",
+    //   title: "Parents",
+    //   pathname: "/parents",
+    // },
+    {
+      icon: "Users",
+      title: "Profile",
+      pathname: "/v1/profile",
+    },
+  ],
+};
+const activeSection = localStorage.getItem("type");
 
 export const sideMenuSlice = createSlice({
   name: "sideMenu",
-  initialState,
+  initialState: activeSection == "parent" ? parentState : initialState,
   reducers: {},
 });
 
 // export const selectSideMenu = (state: RootState) => state.sideMenu.menu;
 export const selectSideMenu = (state: RootState) => {
-  const activeSection = localStorage.getItem("active");
+  // const activeSection = "billing";
   if (activeSection === "billing") {
     return state.sideMenu.menu.filter((item) => {
       if (typeof item === "object" && "pathname" in item) {

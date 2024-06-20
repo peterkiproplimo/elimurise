@@ -13,6 +13,7 @@ import Assessment from "../pages/Assessment";
 //beginning of auth
 import Subscription from "../pages/Subscription";
 import Login from "../pages/Auth/login";
+import ParentForgotPassword from "../pages/Auth/parent-forgot-password";
 
 import ForgotPassword from "../pages/Auth/forgot-password";
 import ForgotPasswordOTP from "../pages/Auth/forgot-passOTP";
@@ -32,6 +33,9 @@ import Home from "../webapp/home";
 import Register from "../pages/Auth/register";
 import AssessLearner from "../pages/AssessLearner";
 import LearnerEnrollment from "../pages/LearnerEnrollment";
+import ForgotPasswordOTPParent from "../pages/Auth/forgot-passOTP-parent";
+import LearnerProfile from "../pages/LearnerPortal/profile";
+import LearnerDashboard from "../pages/LearnerPortal/dashboard";
 
 //nn
 function Router() {
@@ -124,6 +128,18 @@ function Router() {
           path: "strands",
           element: <Strands />,
         },
+        {
+          path: "/v1/profile",
+          element: <LearnerProfile />,
+        },
+        {
+          path: "/v1/assessments",
+          element: <Strands />,
+        },
+        {
+          path: "/v1/",
+          element: <LearnerDashboard />,
+        },
       ],
     },
 
@@ -145,6 +161,10 @@ function Router() {
           element: <ForgotPassword />,
         },
         {
+          path: "/v1/forgot-password",
+          element: <ParentForgotPassword />,
+        },
+        {
           path: "/register",
           element: <Register />,
         },
@@ -152,6 +172,10 @@ function Router() {
         {
           path: "/otp",
           element: <ForgotPasswordOTP />,
+        },
+        {
+          path: "/v1/otp",
+          element: <ForgotPasswordOTPParent />,
         },
         {
           path: "/CreateNewPassword",
