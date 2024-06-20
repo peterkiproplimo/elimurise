@@ -10,7 +10,14 @@ export async function login(data: FieldValues) {
     throw handler(e);
   }
 }
-
+export async function login_parent(data: FieldValues) {
+  try {
+    let res = await axios.post(c.PARENT + "/auth/login", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 const getData = async () => {
   try {
     const auth = await localStorage.getItem("@AuthData");
@@ -673,121 +680,19 @@ export async function passwordReset(data: FieldValues) {
   }
 }
 
-export async function addMake(data: FieldValues) {
+export async function addEmailOTPParent(data: FieldValues) {
   try {
     console.log(data);
-    let res = await axios.post(c.MAKES, data);
+    let res = await axios.post(c.PARENT + "/auth/forgot-password", data);
     return res.data;
   } catch (e) {
     throw handler(e);
   }
 }
 
-export async function getMakes(data: { page: number }) {
+export async function verifyEmailOTPParent(data: FieldValues) {
   try {
-    let res = await axios.get(c.MAKES + "?page=" + data.page);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function deleteMakes(makeId: any) {
-  try {
-    let res = await axios.delete(c.MAKES + "/" + makeId);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function addFinanciers(data: FieldValues) {
-  try {
-    console.log(data);
-    let res = await axios.post(c.FINANCIERS, data);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function getFinancier(data: { page: number }) {
-  try {
-    let res = await axios.get(c.FINANCIERS + "?page=" + data.page);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function deleteFinancier(financierId: any) {
-  try {
-    let res = await axios.delete(c.FINANCIERS + "/" + financierId);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function getValuers(data: { page: number }) {
-  try {
-    let res = await axios.get(c.VALUERS + "?page=" + data.page);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function exportValuers() {
-  try {
-    let res = await axios.get(c.VALUERS);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function deleteValuer(valuerId: any) {
-  try {
-    let res = await axios.delete(c.VALUERS + "/" + valuerId);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function addValuers(data: FieldValues) {
-  try {
-    console.log(data);
-    let res = await axios.post(c.VALUERS, data);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function addSecurity(data: FieldValues) {
-  try {
-    console.log(data);
-    let res = await axios.post(c.SECURITY_FEATURES, data);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function getSecurity(data: { page: number }) {
-  try {
-    let res = await axios.get(c.SECURITY_FEATURES + "?page=" + data.page);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function deleteSecurity(securityId: any) {
-  try {
-    let res = await axios.delete(c.SECURITY_FEATURES + "/" + securityId);
+    let res = await axios.post(c.PARENT + "/auth/reset-password", data);
     return res.data;
   } catch (e) {
     throw handler(e);

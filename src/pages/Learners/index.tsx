@@ -129,7 +129,8 @@ function Main() {
   const getStudents = async () => {
     const response = await ApiService.getLearners(
       {
-        page: 1,
+        page: page,
+        limit: limit,
       },
       strandFilter
     );
@@ -270,217 +271,253 @@ function Main() {
                   event.preventDefault();
                   setDialog(false);
                 }}
-                className="absolute  top-0 right-0 mt-3 mr-3"
+                className="absolute top-0 right-0 mt-3 mr-3"
                 href="#"
               ></a>
             </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              {/* <div className="col-span-12 sm:col-span-4">
-            <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
-                <FormSelect {...register("school")} name="school">
-                  {academic.map((school: any, key) => (
-                    <option key={key} value={school._id}>
-                      {school.schoolId}
-                    </option>
-                  ))}
-                </FormSelect>
-              {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )}
-            </div> */}
-
-              {/* <div className="col-span-4 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
-                <FormSelect
-                  {...register("term")}
-                  name="term"
-                  value={strandFilter.stream}
-                  disabled
-                >
-                  {streams.map((stream: any, key) => (
-                    <option key={key} value={stream._id}>
-                      {stream.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div> */}
-
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
-                <FormInput
-                  {...register("first_name")}
-                  type="text"
-                  name="first_name"
-                  className={errors.first_name ? "border-danger" : ""}
-                  placeholder="first name"
-                />
-                {errors.first_name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.first_name.message === "string" &&
-                      errors.first_name.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Last Name<span className = "text-danger ml-0.5">*</span></FormLabel>
-                <FormInput
-                  {...register("last_name")}
-                  type="text"
-                  name="last_name"
-                  className={errors.last_name ? "border-danger" : ""}
-                  placeholder="last name"
-                />
-                {errors.last_name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.last_name.message === "string" &&
-                      errors.last_name.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Surname</FormLabel>
-                <FormInput
-                  {...register("surname")}
-                  type="text"
-                  name="surname"
-                  className={errors.surname ? "border-danger" : ""}
-                  placeholder="surname"
-                />
-                {errors.surname && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.surname.message === "string" &&
-                      errors.surname.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Admission Number<span className = "text-danger ml-0.5">*</span></FormLabel>
-                <FormInput
-                  {...register("adm_no")}
-                  type="text"
-                  name="adm_no"
-                  className={errors.adm_no ? "border-danger" : ""}
-                  placeholder="admission no"
-                />
-                {errors.adm_no && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.adm_no.message === "string" &&
-                      errors.adm_no.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel>Nemis No</FormLabel>
-                <FormInput
-                  {...register("nemis_no")}
-                  type="text"
-                  name="nemis_no"
-                  className={errors.nemis_no ? "border-danger" : ""}
-                  placeholder="nemis no"
-                />
-                {errors.nemis_no && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.nemis_no.message === "string" &&
-                      errors.nemis_no.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-4 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Grade<span className = "text-danger ml-0.5">*</span></FormLabel>
-                <FormSelect
-                  {...register("grade")}
-                  name="grade"
-                  value={grade}
-                  onChange={(event) => setGrade(event.target.value)}
-                >
-                  <option>Select Grade</option>
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-              {/* <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Stream</FormLabel>
-                <FormSelect {...register("stream")} name="stream">
-                  {streams.map((stream: any, key) => (
-                    <option key={key} value={stream._id}>
-                      {stream.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                
-              </div> */}
-
-              <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Select Stream<span className = "text-danger ml-0.5">*</span></FormLabel>
-                <FormSelect {...register("stream")} name="stream">
-                  {streams.map((stream: any, key) => (
-                    <option key={key} value={stream._id}>
-                      {stream.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {/* {errors.term && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.term.message === "string" &&
-                    errors.term.message}
-                </div>
-              )} */}
-              </div>
-            </div>
-
-            {/* <div className="col-span-12 sm:col-span-3">
-                <FormCheck.Input
-                  {...register("grade")}
-                  id="checkbox-switch-7"
-                  type="checkbox"
-                  className="mr-2"
-                  name="grade"
-                  onChange={(e: any) => handleHasThemeChange(e)}
-                />
-
-                
-
-                <FormLabel htmlFor="modal-form-6"> Theme</FormLabel>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-              {hasTheme ? (
-                <div className="col-span-12 sm:col-span-3">
-                  <FormLabel htmlFor="modal-form-6">Theme</FormLabel>
-                  <FormTextarea {...register("theme")} name="theme" />
-                  {errors.theme && (
+            <fieldset className="mt-5 p-5 intro-y box validate-form">
+              <legend className="text-lg font-semibold">Learner Details</legend>
+              <div className="grid grid-cols-12 gap-4 gap-y-3">
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    First Name<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("first_name")}
+                    type="text"
+                    name="first_name"
+                    className={errors.first_name ? "border-danger" : ""}
+                    placeholder="first name"
+                  />
+                  {errors.first_name && (
                     <div className="mt-2 text-danger">
-                      {typeof errors.theme.message === "string" &&
-                        errors.theme.message}
+                      {typeof errors.first_name.message === "string" &&
+                        errors.first_name.message}
                     </div>
                   )}
                 </div>
-              ) : (
-                ""
-              )}
-            </div> */}
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Last Name<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("last_name")}
+                    type="text"
+                    name="last_name"
+                    className={errors.last_name ? "border-danger" : ""}
+                    placeholder="last name"
+                  />
+                  {errors.last_name && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.last_name.message === "string" &&
+                        errors.last_name.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Surname</FormLabel>
+                  <FormInput
+                    {...register("surname")}
+                    type="text"
+                    name="surname"
+                    className={errors.surname ? "border-danger" : ""}
+                    placeholder="surname"
+                  />
+                  {errors.surname && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.surname.message === "string" &&
+                        errors.surname.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Admission Number
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("adm_no")}
+                    type="text"
+                    name="adm_no"
+                    className={errors.adm_no ? "border-danger" : ""}
+                    placeholder="admission no"
+                  />
+                  {errors.adm_no && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.adm_no.message === "string" &&
+                        errors.adm_no.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Nemis No</FormLabel>
+                  <FormInput
+                    {...register("nemis_no")}
+                    type="text"
+                    name="nemis_no"
+                    className={errors.nemis_no ? "border-danger" : ""}
+                    placeholder="nemis no"
+                  />
+                  {errors.nemis_no && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.nemis_no.message === "string" &&
+                        errors.nemis_no.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel htmlFor="modal-form-6">
+                    Grade<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormSelect
+                    {...register("grade")}
+                    name="grade"
+                    value={grade}
+                    onChange={(event) => setGrade(event.target.value)}
+                  >
+                    <option>Select Grade</option>
+                    {grades.map((grade: any, key) => (
+                      <option key={key} value={grade._id}>
+                        {grade.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                  {errors.grade && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.grade.message === "string" &&
+                        errors.grade.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-12 sm:col-span-4">
+                  <FormLabel htmlFor="modal-form-6">
+                    Select Stream<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormSelect {...register("stream")} name="stream">
+                    {streams.map((stream: any, key) => (
+                      <option key={key} value={stream._id}>
+                        {stream.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset className="mt-5 p-5 intro-y box validate-form">
+              <legend className="text-lg font-semibold">
+                Guardian Details
+              </legend>
+              <div className="grid grid-cols-12 gap-4 gap-y-3">
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Guardian First Name
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian_first_name")}
+                    type="text"
+                    name="guardian_first_name"
+                    className={
+                      errors.guardian_first_name ? "border-danger" : ""
+                    }
+                    placeholder="guardian first name"
+                  />
+                  {errors.guardian_first_name && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_first_name.message === "string" &&
+                        errors.guardian_first_name.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Guardian Surname</FormLabel>
+                  <FormInput
+                    {...register("guardian_surname")}
+                    type="text"
+                    name="guardian_surname"
+                    className={errors.guardian_surname ? "border-danger" : ""}
+                    placeholder="guardian surname"
+                  />
+                  {errors.guardian_surname && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_surname.message === "string" &&
+                        errors.guardian_surname.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Guardian Last Name
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian_last_name")}
+                    type="text"
+                    name="guardian_last_name"
+                    className={errors.guardian_last_name ? "border-danger" : ""}
+                    placeholder="guardian last name"
+                  />
+                  {errors.guardian_last_name && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_last_name.message === "string" &&
+                        errors.guardian_last_name.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Guardian ID Number
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian_id_no")}
+                    type="text"
+                    name="guardian_id_no"
+                    className={errors.guardian_id_no ? "border-danger" : ""}
+                    placeholder="guardian ID number"
+                  />
+                  {errors.guardian_id_no && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_id_no.message === "string" &&
+                        errors.guardian_id_no.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Guardian Email</FormLabel>
+                  <FormInput
+                    {...register("guardian_email")}
+                    type="email"
+                    name="guardian_email"
+                    className={errors.guardian_email ? "border-danger" : ""}
+                    placeholder="guardian email"
+                  />
+                  {errors.guardian_email && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_email.message === "string" &&
+                        errors.guardian_email.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Guardian Phone</FormLabel>
+                  <FormInput
+                    {...register("guardian_phone")}
+                    type="text"
+                    name="guardian_phone"
+                    className={errors.guardian_phone ? "border-danger" : ""}
+                    placeholder="guardian phone"
+                  />
+                  {errors.guardian_phone && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_phone.message === "string" &&
+                        errors.guardian_phone.message}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </fieldset>
+
             <div className="col-span-12 sm:col-span-12 mt-3">
               <Button
                 type="button"
@@ -600,12 +637,6 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Grade
-                    </Table.Th> */}
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Stream
-                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       First Name
                     </Table.Th>
@@ -619,14 +650,32 @@ function Main() {
                       Adm No
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Nemis No.
+                      Nemis No
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
+                      Guardian First Name
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Guardian Last Name
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Guardian Surname
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Guardian ID No
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Guardian Email
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Guardian Phone
+                    </Table.Th>
+                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Updated At
-                    </Table.Th>
+                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap text-center">
                       Actions
                     </Table.Th>
@@ -640,13 +689,6 @@ function Main() {
                           {key + 1}
                         </span>
                       </Table.Td>
-                      {/* 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.stream?.grade?.name} -{" "}
-                          {learner?.stream?.name}
-                        </span>
-                      </Table.Td> */}
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {learner?.first_name}
@@ -672,7 +714,37 @@ function Main() {
                           {learner?.nemis_no}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {learner?.guardian_first_name}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {learner?.guardian_last_name}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {learner?.guardian_surname}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {learner?.guardian_id_no}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {learner?.guardian_email}
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <span className="font-medium whitespace-nowrap">
+                          {learner?.guardian_phone}
+                        </span>
+                      </Table.Td>
+                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {new Date(learner?.createdAt).toLocaleString(
                             "en-US",
@@ -701,7 +773,7 @@ function Main() {
                             }
                           )}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
                       <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           <a
@@ -727,55 +799,18 @@ function Main() {
                           </a>
                         </div>
                       </Table.Td>
-
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(learner)}>
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(learner._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td> */}
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
               </Table>
             </div>
+
             {/* END: Data List */}
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
-                    onClick={() => setPage(previous_page)}
+                    onClick={() => setPage(page > 1 ? page - 1 : 1)}
                     className="py-2 px-4 rounded-md"
                   >
                     <Lucide icon="ChevronLeft" className="w-4 h-4" />
@@ -800,7 +835,7 @@ function Main() {
                     )
                   )}
                   <button
-                    onClick={() => setPage(next_page)}
+                    onClick={() => setPage(page + 1)}
                     className="py-2 px-4 rounded-md"
                   >
                     <Lucide icon="ChevronRight" className="w-4 h-4" />
