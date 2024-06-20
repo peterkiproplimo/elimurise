@@ -34,6 +34,9 @@ import Register from "../pages/Auth/register";
 import AssessLearner from "../pages/AssessLearner";
 import LearnerEnrollment from "../pages/LearnerEnrollment";
 import ForgotPasswordOTPParent from "../pages/Auth/forgot-passOTP-parent";
+import LearnerProfile from "../pages/LearnerPortal/profile";
+import LearnerDashboard from "../pages/LearnerPortal/dashboard";
+
 //nn
 function Router() {
   const routes = [
@@ -124,6 +127,18 @@ function Router() {
         {
           path: "strands",
           element: <Strands />,
+        },
+        {
+          path: "/v1/profile",
+          element: <LearnerProfile />,
+        },
+        {
+          path: "/v1/assessments",
+          element: <Strands />,
+        },
+        {
+          path: "/v1/",
+          element: <LearnerDashboard />,
         },
       ],
     },

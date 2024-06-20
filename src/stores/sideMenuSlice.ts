@@ -185,8 +185,8 @@ const parentState: SideMenuState = {
   menu: [
     {
       icon: "Home",
-      title: "Parent",
-      pathname: "/",
+      title: "Dashboard",
+      pathname: "/v1",
     },
 
     // {
@@ -196,8 +196,8 @@ const parentState: SideMenuState = {
     // },
     {
       icon: "Users",
-      title: "Teachers",
-      pathname: "/teachers",
+      title: "Profile",
+      pathname: "/v1/profile",
     },
   ],
 };
