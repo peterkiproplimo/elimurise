@@ -51,11 +51,7 @@ const initialState: SideMenuState = {
           pathname: "/enrollments",
           title: "Enrollments",
         },
-        // {
-        //   icon: "User",
-        //   pathname: "/enrollment",
-        //   title: "Learner Enrollment",
-        // },
+       
       ]
     },
    
@@ -85,6 +81,24 @@ const initialState: SideMenuState = {
       pathname: "/billing",
       title: "Billing",
     },
+    {
+      icon: "Users",
+      title: "Reports",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/assessment",
+          title: "By Indicators",
+        },
+        {
+          icon: "User",
+          pathname: "/reports",
+          title: "By Learner",
+        },
+       
+      ]
+    },
+  
 
     // {
     //   icon: "Users",

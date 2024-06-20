@@ -6,7 +6,7 @@ import Parents from "../pages/Parents";
 import Teachers from "../pages/Teachers";
 import Strands from "../pages/Strands";
 import Enrollment from "../pages/Enrolments";
-
+import Reports from "../pages/Reports";
 // import SimcardBooking from "../pages/SimcardBooking";
 import Assessment from "../pages/Assessment";
 
@@ -48,10 +48,10 @@ function Router() {
           path: "/billing",
           element: <Billing />,
         },
-        // {
-        //   path: "categories",
-        //   element: <Categories />,
-        // },
+        {
+          path: "reports",
+          element: <Reports />,
+        },
         {
           path: "parents",
           element: <Parents />,
