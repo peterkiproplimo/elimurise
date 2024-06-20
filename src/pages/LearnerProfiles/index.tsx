@@ -1,7 +1,15 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
-import { FormInput, FormLabel, FormSelect } from "../../base-components/Form";
+import {
+  FormCheck,
+  FormInput,
+  FormLabel,
+  FormSelect,
+  FormSwitch,
+  FormTextarea,
+} from "../../base-components/Form";
+import { Loader } from "lucide-react";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -14,23 +22,50 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
-import { formatDate } from "../../utils/helper";
+import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
+import { useLocation, useNavigate } from "react-router-dom";
+import fakerData from "../../utils/faker";
+import Tippy from "../../base-components/Tippy";
+import logo from "../../assets/images/student.jpeg";
+
+interface TableRow {
+  no: number;
+  strandName: string;
+}
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
-  const [grades, setGrades] = useState([]);
-  const [learnerReport, setLearnerReport] = useState([]);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
 
+  const [grades, setGrades] = useState([]);
+  const [levels, setLevels] = useState([]);
+  const [learningAreas, setLearningAreas] = useState([]);
+  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
+  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [selectedStream, setSelectedStream] = useState("");
+  const [userPermissions, setUserPermissions] = useState([]);
+  const [hasTheme, setHasTheme] = useState(false);
+  const [strands, setStrands] = useState([]);
+  const [streams, setStreams] = useState([]);
+  const [substrands, setSubstrands] = useState([]);
+  const [stream, setStream] = useState("");
+  const [learner, setLearner] = useState("");
+  const [substrand, setSubstrand] = useState<any>({});
+  const [indicator, setIndicator] = useState("");
+  const [selectedTerm, setSelectedTerm] = useState("");
+  const [strand, setStrand] = useState("");
+  const [selectedSubStrand, setSelectedSubStrand] = useState("");
+  const [enrollments, setEnrollments] = useState([]);
+  const [learnerReport, setLearnerReport] = useState([]);
+
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -42,11 +77,54 @@ function Main() {
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const learningArea = location?.state?.data;
+  const initialState = {
+    grade: learningArea?.grade_id?._id || "na",
+    learning_area: learningArea?._id || "na",
+    term: learningArea?._id ? 1 : "na",
+  };
+  const [academic_terms, setTerms] = useState([]);
+
+  // const [selectedStrand, setSelectedStrand] = useState(
+  //   state_strand?._id || "na"
+  // );
+
+  // const [strandFilter, setStrandFilter] = useState({
+  //   grade: "na",
+  //   learning_area: "na",
+  //   term: "na",
+  // });
+  // useState(() => {
+  //   console.log(selectedSubStrand);
+  // }, []);
+  const [strandFilter, updateStrandFilter] = useState(() => {
+    const savedState = localStorage.getItem("strandFilter");
+    return initialState;
+  });
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
+  const getTerms = async () => {
+    const response = await ApiService.getTerm({});
+    setTerms(response.data);
+  };
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Stream is required"),
+      score: yup
+        .array()
+        .of(
+          yup
+            .number()
+            .required("Score is required")
+            .min(1, "Minimum value is 1")
+            .max(4, "Maximum value is 4")
+        ),
     })
     .required();
 
@@ -55,28 +133,158 @@ function Main() {
     trigger,
     getValues,
     reset,
+
     formState: { errors },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
 
+  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const result = await trigger();
+    if (result && !loading) {
+      isLoading(true);
+      try {
+        const data = await getValues();
+        await ApiService.createStrand(data);
+        await getStrands();
+        await reset();
+        isLoading(false);
+        setDialog(false);
+        setSuccess(true);
+        setMessage("Strand created successfully.");
+        notify.current?.showToast();
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(
+          error.message || "An error occurred while creating the role."
+        );
+        notify.current?.showToast();
+      }
+    }
+  };
+  const getEnrollments = async () => {
+    const enrollments = await ApiService.getEnrolmentsByStream(
+      { stream: stream },
+      {}
+    );
+    setEnrollments(enrollments?.data);
+    console.log(enrollments);
+  };
+  useEffect(() => {
+    getEnrollments();
+  }, [stream]);
 
   useEffect(() => {
-    getLearnerReport();
+    getGrades();
+    getTerms();
+    // getLevels();
+    getLearningAreas();
   }, []);
-
-  const getLearnerReport = async () => {
-    const response = await ApiService.getLearnerReport({ });
-    console.log(response)
-    setLearnerReport(response);
+  const getStreams = async (selectedValue: any) => {
+    setStreams([]);
+    const response = await ApiService.getStream({
+      page: 1,
+      grade: selectedValue,
+    });
+    setStreams(response.data);
   };
- 
+  const getStrands = async () => {
+    const response = await ApiService.getStrands(
+      {
+        page: page,
+        search: search,
+        limit: limit,
+      },
+      strandFilter
+    );
+    setStrands(response.data);
+  };
+
+  const getGrades = async () => {
+    const response = await ApiService.getGrades({ page: 1 });
+
+    setGrades(response.data);
+  };
+  const getLearningAreas = async () => {
+    const response = await ApiService.getLearningAreas({ limit: 100000 });
+    setLearningAreas(response.data);
+  };
+
+  const openSubStrand = (strand: any) => {
+    navigate("/substrand", {
+      replace: true,
+      state: { data: strand, learningArea: learningArea },
+    });
+  };
+
+  const openLearningArea = (strand: any) => {
+    navigate("/learning_areas", {
+      replace: true,
+      state: { data: strand },
+    });
+  };
+
+  const setStrandFilter = (newFilter: any) => {
+    updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
+  };
+
+  const handleSubStrandChange = (data: any, key: any) => {
+    setSelectedSubStrand(key);
+    setSubstrand(data);
+    // console.log(selectedSubStrand);
+    // console.log(substrand);
+
+    // ///call substrands for this strand
+    // let res = await ApiService.getSubstrandByStrand(selectedValue);
+    // setSubstrands([]);
+    // setSubstrands(res.data);
+  };
+
+  const handleStrandChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    // await setSelectedStrand(selectedValue);
+    setSubstrands([]);
+    setStrand(selectedValue);
+    // ///call substrands for this strand
+    let res = await ApiService.getSubstrandByStrand(
+      { limit: 10000 },
+      selectedValue
+    );
+    console.log(res.data);
+
+    setSubstrands(res.data);
+    // You might want to fetch filtered data here
+  };
+
+  const deleteRecord = async () => {
+    isLoading(true);
+    try {
+      let res = await ApiService.deleteStrand(recordId);
+      getStrands();
+      isLoading(false);
+      setConfirmDelete(false);
+      setSuccess(true);
+      setMessage(res.message);
+      notify.current?.showToast();
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
 
   const editRecord = (record: any) => {
-    setIsEditMode(true);
     setGroup(record.groups);
-    reset({ ...record, grade: record.grade._id });
+    reset(record);
+    reset({ ...record, learning_area: record.learning_area._id });
+
+    console.log(record);
     setDialog(true);
   };
 
@@ -84,259 +292,253 @@ function Main() {
     setGroup([""]);
     setPermission([""]);
     reset(record);
-
     setDialog(false);
   };
+  useEffect(() => {
+    getStrands();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [strandFilter, search, page, limit]);
+
+  const handleGradeChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStream("");
+    setStrands([]);
+    await setStrandFilter({
+      learning_area: "na",
+      term: "na",
+      grade: selectedValue,
+    });
+    getStreams(selectedValue);
+    // You might want to fetch filtered data here
+  };
+  const handleLearningAreaChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStrands([]);
+    await setStrandFilter({
+      ...strandFilter,
+      learning_area: selectedValue,
+    });
+    // You might want to fetch filtered data here
+  };
+
+  const handleTermChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStrands([]);
+    await setStrandFilter({
+      ...strandFilter,
+      term: selectedValue,
+    });
+    // You might want to fetch filtered data here
+  };
+  const handleHasThemeChange = async (event: any) => {
+    const isChecked = event.target.checked;
+    setStrands([]);
+    setHasTheme(isChecked);
+    // You might want to fetch filtered data here
+  };
+  const [rows, setRows] = useState<TableRow[]>([
+    { no: 1, strandName: "Example Strand" },
+  ]);
+  const generateAssessment = async () => {
+    const data = {
+      learning_area: strandFilter.learning_area,
+      term: selectedTerm,
+      learner,
+    };
+    console.log(data);
+    isLoading(true);
+    try {
+      let res = await ApiService.getLearnerReport (data);
+      setLearnerReport(res);
+      // setEnrollments(res);
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination.current_page,
+      //   total: pagination.total,
+      //   total_pages: pagination.total_pages,
+      //   per_page: pagination.per_page,
+      // });
+      setDialog(true);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      console.log(error);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+  const handleInputChange = async (data: any) => {
+    if (data.score < 1 || data.score > 4) {
+      return false;
+    }
+    const assessment = {
+      substrand: substrand?._id,
+      indicator,
+      term: selectedTerm,
+      learning_area: strandFilter.learning_area,
+      score: Number(data.score),
+      strand: strand,
+      enrollment: data?.enrollment?.enrollmentId,
+    };
+    let res = await ApiService.createAssessment(assessment);
+    console.log(assessment);
+    console.log(res);
+    generateAssessment();
+  };
+
+  const getDescriptionColor = (score: any) => {
+    switch (score) {
+      case 4:
+        return "text-green-700"; // Exceeding Expectation
+      case 3:
+        return "text-success"; // Meeting Expectation
+      case 2:
+        return "text-purple-600"; // Approaching Expectation
+      case 1:
+        return "text-orange-700"; // Below Expectation
+      default:
+        return "text-gray-600";
+    }
+  };
+
+  const addRow = () => {
+    const newRow: TableRow = {
+      no: rows.length + 1,
+      strandName: "New Strand",
+    };
+
+    setRows([...rows, newRow]);
+  };
+  const [formData, setFormData] = useState({ score: 1 });
 
   return (
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
-            <a
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                reset({ name: "" });
-                setDialog(false);
-              }}
-              href="#"
-            >
-              <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-            </a>
-            <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Stream" : "New Stream"}
-            </h2>
-          </div>
-          <br />
+          {/* path: 'strand',
+        populate: {
+            path: 'learning_area',
+            populate: {
+                path: 'grade_id'
+            }
+        } */}
           <form
-            className="mt-5 p-5 intro-y box validate-form"
-           
+            className="mt-5 p-5 intro-y validate-form  "
+            onSubmit={onSubmit}
           >
-            <div>
-              <a
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(false);
-                }}
-                className="absolute  top-0 right-0 mt-3 mr-3"
-                href="#"
-              ></a>
-            </div>{" "}
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect
-                  {...register("grade")}
-                  name="grade"
+            <div className="assessment-header">
+              <h2 className="text-xl flex items-center font-semibold mb-5">
+                <a
+                  onClick={(event: React.MouseEvent) => {
+                    event.preventDefault();
+                    reset({ name: "" });
+                    setDialog(false);
+                  }}
+                  href="#"
+                >
+                  <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+                </a>{" "}
+                Assessment Score Entry Form
+              </h2>
+              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Learning Area:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {substrand?.strand?.learning_area?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Strand:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {substrand?.strand?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Substrand:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {substrand?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Indicator:
+                  </label>
+                </div>
+                <div className="meta-row flex items-center col-span-2 mt-0.5">
+                  <Loader className="text-success animate-spin mr-2" />
 
-                  // defaultValue={selectedLevel}
-                >
-                  {grades.map((grade: any, key: any) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel className="mt-2">Name<span className = "text-danger ml-0.5">*</span></FormLabel>
-                <FormInput
-                  {...register("name")}
-                  type="text"
-                  name="name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Stream"
-                />
-                {errors.name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.name.message === "string" &&
-                      errors.name.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div>
-              <div className="col-span-12 sm:col-span-12 mt-3">
-                <Button
-                  type="button"
-                  variant="outline-secondary"
-                  onClick={() => cancel({ name: "" })}
-                  className="w-20 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit" className="w-20">
-                  Save
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </form>
-        </>
-      ) : (
-        <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Learner Report</h2>
-          <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-             
-              <div className="hidden mx-auto md:block text-slate-500">
-                Showing{" "}
-                {pagination.current_page +
-                  " to " +
-                  pagination.total_pages +
-                  " of " +
-                  pagination.total}{" "}
-                entries
-              </div>
-              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                <div className="relative w-56 text-slate-500">
-                  <FormInput
-                    type="text"
-                    className="w-56 pr-10 !box"
-                    placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <Lucide
-                    icon="Search"
-                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                  />
+                  <span className="text-sm text-success font-medium">
+                    (Auto-saving)
+                  </span>
                 </div>
               </div>
             </div>
-            {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <Table className="border-spacing-y-[3px] border-separate -mt-2">
+              <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
+                <div className="hidden mx-auto md:block text-slate-500 mt-5">
+                  Showing{" "}
+                  {pagination.current_page +
+                    " to " +
+                    pagination.total_pages +
+                    " of " +
+                    pagination.total}{" "}
+                  entries
+                </div>
+                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
+                  <div className="relative w-56 text-slate-500">
+                    <FormInput
+                      type="text"
+                      className="w-56 pr-10 !box"
+                      placeholder="Search..."
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <Lucide
+                      icon="Search"
+                      className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                    />
+                  </div>
+                </div>
+              </div>
+              <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Term
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Learning Area
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Strand
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Substrand
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                      Indicator
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                      Score
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                      Description
-                    </Table.Th>
+                   
+                    <Table.Th>Strand</Table.Th>
+                    <Table.Th>Substrand</Table.Th>
+                    <Table.Th>Learning Area</Table.Th>
+                    <Table.Th>Indicator Description</Table.Th>
+                    <Table.Th>Score</Table.Th>
+                    <Table.Th>Description</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learnerReport.map((learnerReport: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learnerReport.term.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learnerReport?.learning_area?.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learnerReport?.strand?.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learnerReport?.substrand?.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learnerReport?.indicator_description}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learnerReport?.score}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learnerReport?.description}
-                        </span>
-                      </Table.Td>
-                     
-                    
-
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item onClick={() => editRecord(stream)}>
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(stream._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td> */}
+                  {learnerReport?.assessment?.map((enrollment, index) => (
+                    <Table.Tr key={index}>
+                      <Table.Td>{enrollment.strand.name}</Table.Td>
+                      <Table.Td>{enrollment.substrand.name}</Table.Td>
+                      <Table.Td>{enrollment.learning_area.name}</Table.Td>
+                      <Table.Td>{enrollment.indicator_description}</Table.Td>
+                      <Table.Td>{enrollment.score}</Table.Td>
+                      <Table.Td>{enrollment.description}</Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
               </Table>
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
@@ -385,8 +587,109 @@ function Main() {
                 </div>
               </div>
             </div>
-            {/* END: Data List */}
+          </form>
+        </>
+      ) : (
+        <>
+          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+            {learningArea?.name}
+          </h2>
+          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+            <h2 className="mr-auto text-base font-medium border-b p-2">
+              Learner Report
+            </h2>
+            <div className="grid grid-cols-12 gap-6 mt-10">
+            
+              
+            
+            <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+                <FormSelect
+                  {...register("term")}
+                  value={strandFilter.term}
+                  name="term"
+                  onChange={(event: any) => handleTermChange(event)}
+                >
+                  <option>Select Term</option>
+                  {terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.term && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.term.message === "string" &&
+                      errors.term.message}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+                <FormSelect
+                  {...register("learning_area")}
+                  value={strandFilter.learning_area}
+                  name="learning_area"
+                  onChange={(event) => handleLearningAreaChange(event)}
+                >
+                  <option>Select Learning Area</option>
+                  {learningAreas
+                    .filter(
+                      (area: any) => area?.grade_id?._id === strandFilter?.grade
+                    )
+                    .map((filteredArea: any, key) => (
+                      <option key={key} value={filteredArea?._id}>
+                        {filteredArea.name}
+                      </option>
+                    ))}
+                </FormSelect>
+                {errors.learning_area && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.learning_area.message === "string" &&
+                      errors.learning_area.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
+                <FormSelect
+                  {...register("strand")}
+                  name="strand"
+                  value={strand}
+                  onChange={(event: any) => handleStrandChange(event)}
+                >
+                  <option>Select Strand</option>
+                  {strands.map((strand: any, key) => (
+                    <option key={key} value={strand._id}>
+                      {strand.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.theme && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.theme.message === "string" &&
+                      errors.theme.message}
+                  </div>
+                )}
+              </div>
+
+              {/* {substrands.map((substrand: any, key: any) => (
+                <span>{substrand.name}</span>
+              ))} */}
+            </div>
+            <div className="px-5  text-right">
+              <Button
+                onClick={() => generateAssessment()}
+                variant="primary"
+                type="button"
+                className="w-50 text-white"
+              >
+                Generate Report
+              </Button>
+            </div>
           </div>
+
           <Dialog
             staticBackdrop
             size="lg"
@@ -429,7 +732,7 @@ function Main() {
                   Cancel
                 </Button>
                 <Button
-                  
+                  onClick={() => deleteRecord()}
                   variant="danger"
                   type="button"
                   className="w-24"
@@ -455,11 +758,7 @@ function Main() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">
-            {success
-              ? " Success"
-              : "Failed"}
-          </div>
+          <div className="font-medium">{success ? "Success" : "Failed"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>
@@ -468,4 +767,3 @@ function Main() {
 }
 
 export default Main;
-
