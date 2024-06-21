@@ -37,33 +37,24 @@ interface TableRow {
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
-  const [lastSaved, setLastSaved] = useState(null);
-
-  const [grades, setGrades] = useState([]);
-  const [levels, setLevels] = useState([]);
   const [learningAreas, setLearningAreas] = useState([]);
-  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
-  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
-  const [selectGroup, setGroup] = useState([""]);
-  const [selectPermission, setPermission] = useState([""]);
-  const [recordId, setRecordId] = useState(null);
+  const [academicYear, setAcademicYears] = useState([]);
+  const [terms, setTerms] = useState([]);
+
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
-  const [hasTheme, setHasTheme] = useState(false);
+
   const [strands, setStrands] = useState([]);
-  const [streams, setStreams] = useState([]);
-  const [substrands, setSubstrands] = useState([]);
-  const [stream, setStream] = useState("");
   const [learner, setLearner] = useState("");
   const [substrand, setSubstrand] = useState<any>({});
   const [indicator, setIndicator] = useState("");
   const [selectedTerm, setSelectedTerm] = useState("");
+  const [selectedLeaningArea, setSelectedLearningArea] = useState("");
+  const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
+
   const [strand, setStrand] = useState("");
-  const [selectedSubStrand, setSelectedSubStrand] = useState("");
-  const [enrollments, setEnrollments] = useState([]);
   const [learnerReport, setLearnerReport] = useState([]);
 
   const [pagination, setPagination] = useState({
@@ -85,8 +76,25 @@ function Main() {
     learning_area: learningArea?._id || "na",
     term: learningArea?._id ? 1 : "na",
   };
-  const [academic_terms, setTerms] = useState([]);
+  const schema = yup
+    .object({
+      first_name: yup.string().required("Firstname is required"),
+      last_name: yup.string().required("Lastname is required"),
+      surname: yup.string().required("Surname is required"),
+      // adm_no: yup.string().required("Adm.No is required"),
+    })
+    .required();
 
+  const {
+    register,
+    trigger,
+    getValues,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schema),
+  });
   // const [selectedStrand, setSelectedStrand] = useState(
   //   state_strand?._id || "na"
   // );
@@ -99,262 +107,44 @@ function Main() {
   // useState(() => {
   //   console.log(selectedSubStrand);
   // }, []);
-  const [strandFilter, updateStrandFilter] = useState(() => {
-    const savedState = localStorage.getItem("strandFilter");
-    return initialState;
-  });
-  const terms = [
-    { _id: 1, name: "Term 1" },
-    { _id: 2, name: "Term 2" },
-    { _id: 3, name: "Term 3" },
-  ];
-  const getTerms = async () => {
-    const response = await ApiService.getTerm({});
-    setTerms(response.data);
-  };
-  // Success notification
-  const notify = useRef<NotificationElement>();
-  const schema = yup
-    .object({
-      score: yup
-        .array()
-        .of(
-          yup
-            .number()
-            .required("Score is required")
-            .min(1, "Minimum value is 1")
-            .max(4, "Maximum value is 4")
-        ),
-    })
-    .required();
 
-  const {
-    register,
-    trigger,
-    getValues,
-    reset,
-
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
-
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
-      isLoading(true);
-      try {
-        const data = await getValues();
-        await ApiService.createStrand(data);
-        await getStrands();
-        await reset();
-        isLoading(false);
-        setDialog(false);
-        setSuccess(true);
-        setMessage("Strand created successfully.");
-        notify.current?.showToast();
-      } catch (error: any) {
-        isLoading(false);
-        setSuccess(false);
-        setMessage(
-          error.message || "An error occurred while creating the role."
-        );
-        notify.current?.showToast();
-      }
-    }
-  };
-  const getEnrollments = async () => {
-    const enrollments = await ApiService.getEnrolmentsByStream(
-      { stream: stream },
-      {}
-    );
-    setEnrollments(enrollments?.data);
-    console.log(enrollments);
-  };
-  useEffect(() => {
-    getEnrollments();
-  }, [stream]);
-
-  useEffect(() => {
-    getGrades();
-    getTerms();
-    // getLevels();
-    getLearningAreas();
-  }, []);
-  const getStreams = async (selectedValue: any) => {
-    setStreams([]);
-    const response = await ApiService.getStream({
-      page: 1,
-      grade: selectedValue,
-    });
-    setStreams(response.data);
-  };
-  const getStrands = async () => {
-    const response = await ApiService.getStrands(
-      {
-        page: page,
-        search: search,
-        limit: limit,
-      },
-      strandFilter
-    );
-    setStrands(response.data);
-  };
-
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-
-    setGrades(response.data);
-  };
   const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({ limit: 100000 });
+    const response = await ApiService.getLeanerLeaningArea({
+      term: selectedTerm,
+    });
     setLearningAreas(response.data);
   };
+  const getLearningAcademicYear = async () => {
+    const response = await ApiService.getLeanerAcademicYear({});
+    setAcademicYears(response.data);
+  };
 
-  const openSubStrand = (strand: any) => {
-    navigate("/substrand", {
-      replace: true,
-      state: { data: strand, learningArea: learningArea },
+  const getLearningTerm = async () => {
+    const response = await ApiService.getLeanerTerm({
+      academic_year: selectedAcademicYear,
     });
-  };
-
-  const openLearningArea = (strand: any) => {
-    navigate("/learning_areas", {
-      replace: true,
-      state: { data: strand },
-    });
-  };
-
-  const setStrandFilter = (newFilter: any) => {
-    updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
-  };
-
-  const handleSubStrandChange = (data: any, key: any) => {
-    setSelectedSubStrand(key);
-    setSubstrand(data);
-    // console.log(selectedSubStrand);
-    // console.log(substrand);
-
-    // ///call substrands for this strand
-    // let res = await ApiService.getSubstrandByStrand(selectedValue);
-    // setSubstrands([]);
-    // setSubstrands(res.data);
-  };
-
-  const handleStrandChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    // await setSelectedStrand(selectedValue);
-    setSubstrands([]);
-    setStrand(selectedValue);
-    // ///call substrands for this strand
-    let res = await ApiService.getSubstrandByStrand(
-      { limit: 10000 },
-      selectedValue
-    );
-    console.log(res.data);
-
-    setSubstrands(res.data);
-    // You might want to fetch filtered data here
-  };
-
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteStrand(recordId);
-      getStrands();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
-
-  const editRecord = (record: any) => {
-    setGroup(record.groups);
-    reset(record);
-    reset({ ...record, learning_area: record.learning_area._id });
-
-    console.log(record);
-    setDialog(true);
-  };
-
-  const cancel = (record: any) => {
-    setGroup([""]);
-    setPermission([""]);
-    reset(record);
-    setDialog(false);
+    setTerms(response.data);
   };
   useEffect(() => {
-    getStrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [strandFilter, search, page, limit]);
-
-  const handleGradeChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStream("");
-    setStrands([]);
-    await setStrandFilter({
-      learning_area: "na",
-      term: "na",
-      grade: selectedValue,
-    });
-    getStreams(selectedValue);
-    // You might want to fetch filtered data here
-  };
-  const handleLearningAreaChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStrands([]);
-    await setStrandFilter({
-      ...strandFilter,
-      learning_area: selectedValue,
-    });
-    // You might want to fetch filtered data here
-  };
-
-  const handleTermChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStrands([]);
-    await setStrandFilter({
-      ...strandFilter,
-      term: selectedValue,
-    });
-    // You might want to fetch filtered data here
-  };
-  const handleHasThemeChange = async (event: any) => {
-    const isChecked = event.target.checked;
-    setStrands([]);
-    setHasTheme(isChecked);
-    // You might want to fetch filtered data here
-  };
-  const [rows, setRows] = useState<TableRow[]>([
-    { no: 1, strandName: "Example Strand" },
-  ]);
+    getLearningAcademicYear();
+  }, []);
+  useEffect(() => {
+    console.log(selectedAcademicYear);
+    getLearningTerm();
+  }, [selectedAcademicYear]);
+  useEffect(() => {
+    getLearningAreas();
+  }, [selectedTerm]);
+  const notify = useRef<NotificationElement>();
   const generateAssessment = async () => {
     const data = {
-      learning_area: strandFilter.learning_area,
       term: selectedTerm,
-      learner,
+      learning_area: selectedLeaningArea,
     };
     console.log(data);
     isLoading(true);
     try {
-      let res = await ApiService.getLearnerReport (data);
+      let res = await ApiService.getLeanerAssessmentReport(data);
       setLearnerReport(res);
       // setEnrollments(res);
       // const pagination = res.pagination;
@@ -374,24 +164,6 @@ function Main() {
       notify.current?.showToast();
     }
   };
-  const handleInputChange = async (data: any) => {
-    if (data.score < 1 || data.score > 4) {
-      return false;
-    }
-    const assessment = {
-      substrand: substrand?._id,
-      indicator,
-      term: selectedTerm,
-      learning_area: strandFilter.learning_area,
-      score: Number(data.score),
-      strand: strand,
-      enrollment: data?.enrollment?.enrollmentId,
-    };
-    let res = await ApiService.createAssessment(assessment);
-    console.log(assessment);
-    console.log(res);
-    generateAssessment();
-  };
 
   const getDescriptionColor = (score: any) => {
     switch (score) {
@@ -408,14 +180,6 @@ function Main() {
     }
   };
 
-  const addRow = () => {
-    const newRow: TableRow = {
-      no: rows.length + 1,
-      strandName: "New Strand",
-    };
-
-    setRows([...rows, newRow]);
-  };
   const [formData, setFormData] = useState({ score: 1 });
 
   return (
@@ -429,16 +193,13 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form
-            className="mt-5 p-5 intro-y validate-form  "
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5 intro-y validate-form  ">
             <div className="assessment-header">
               <h2 className="text-xl flex items-center font-semibold mb-5">
                 <a
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
-                    reset({ name: "" });
+
                     setDialog(false);
                   }}
                   href="#"
@@ -515,7 +276,6 @@ function Main() {
               <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
-                   
                     <Table.Th>Strand</Table.Th>
                     <Table.Th>Substrand</Table.Th>
                     <Table.Th>Learning Area</Table.Th>
@@ -599,16 +359,35 @@ function Main() {
               Learner Report
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
-            
-              
-            
-            <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-                <FormSelect
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Class</FormLabel>
+                <TomSelect
                   {...register("term")}
-                  value={strandFilter.term}
+                  value={selectedAcademicYear}
                   name="term"
-                  onChange={(event: any) => handleTermChange(event)}
+                  onChange={(event: any) => setSelectedAcademicYear(event)}
+                >
+                  <option>Select Term</option>
+                  {academicYear.map((year: any, key) => (
+                    <option key={key} value={year.academicYear._id}>
+                      {year.stream.grade.name}
+                    </option>
+                  ))}
+                </TomSelect>
+                {errors.term && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.term.message === "string" &&
+                      errors.term.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+                <TomSelect
+                  {...register("term")}
+                  value={selectedTerm}
+                  name="term"
+                  onChange={(event: any) => setSelectedTerm(event)}
                 >
                   <option>Select Term</option>
                   {terms.map((term: any, key) => (
@@ -616,7 +395,7 @@ function Main() {
                       {term.name}
                     </option>
                   ))}
-                </FormSelect>
+                </TomSelect>
                 {errors.term && (
                   <div className="mt-2 text-danger">
                     {typeof errors.term.message === "string" &&
@@ -627,49 +406,23 @@ function Main() {
 
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormSelect
+                <TomSelect
                   {...register("learning_area")}
-                  value={strandFilter.learning_area}
+                  value={selectedLeaningArea}
                   name="learning_area"
-                  onChange={(event) => handleLearningAreaChange(event)}
+                  onChange={(event: any) => setSelectedLearningArea(event)}
                 >
                   <option>Select Learning Area</option>
-                  {learningAreas
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter?.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea?._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
-                </FormSelect>
+                  {learningAreas?.map((filteredArea: any, key) => (
+                    <option key={key} value={filteredArea?._id}>
+                      {filteredArea.name}
+                    </option>
+                  ))}
+                </TomSelect>
                 {errors.learning_area && (
                   <div className="mt-2 text-danger">
                     {typeof errors.learning_area.message === "string" &&
                       errors.learning_area.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-                <FormSelect
-                  {...register("strand")}
-                  name="strand"
-                  value={strand}
-                  onChange={(event: any) => handleStrandChange(event)}
-                >
-                  <option>Select Strand</option>
-                  {strands.map((strand: any, key) => (
-                    <option key={key} value={strand._id}>
-                      {strand.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.theme && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
                   </div>
                 )}
               </div>

@@ -243,7 +243,7 @@ export const getEnrolments = async (data: any, filter: any) => {
 };
 export const getEnrolmentsByStream = async (data: any, filter: any) => {
   try {
-    let res = await axios.get(c.ENROLLMENT+"/"+data.stream, {
+    let res = await axios.get(c.ENROLLMENT + "/" + data.stream, {
       params: data,
     });
     return res.data;
@@ -729,7 +729,44 @@ export async function verifyEmailOTPParent(data: FieldValues) {
     throw handler(e);
   }
 }
-
+export async function getLeanerAcademicYear(data: FieldValues) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/academic-years", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getLeanerTerm(data: FieldValues) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/terms", { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getLeanerLeaningArea(data: FieldValues) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/learning-areas", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getLeanerAssessmentReport(data: FieldValues) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/assessment/report", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 export function handler(err: any) {
   let error = err;
   console.log(err);
