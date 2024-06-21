@@ -1,4 +1,3 @@
-import { getUsers } from "./services/auth";
 
 export interface userData {
   id:number;

@@ -29,6 +29,10 @@ interface TableRow {
   no: number;
   strandName: string;
 }
+interface Learner {
+  first_name: string;
+  // Add other properties if needed
+}
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -36,11 +40,10 @@ function Main() {
   const [grades, setGrades] = useState([]);
   const [grade, setGrade] = useState("");
   const auth = useAuth();
-  const learner = auth?.authData?.user;
+  const learner = auth?.authData?.user as Learner;
   useEffect(() => {
     reset({ ...learner });
   }, [auth]);
-  console.log(learner.first_name);
   const [schools, setSchools] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);

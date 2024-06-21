@@ -25,7 +25,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [selectedForm, setSelectedForm] = useState("form1");
 
-  const handleFormChange = (event) => {
+  const handleFormChange = (event:any) => {
     setSelectedForm(event.target.value);
   };
 

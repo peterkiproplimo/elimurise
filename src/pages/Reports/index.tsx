@@ -65,7 +65,7 @@ function Main() {
   const [strand, setStrand] = useState("");
   const [selectedSubStrand, setSelectedSubStrand] = useState("");
   const [enrollments, setEnrollments] = useState([]);
-  const [assessmentsData, setAssesmentsData] = useState([]);
+  const [assessmentsData, setAssesmentsData] = useState<any>([]);
 
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -514,7 +514,7 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {assessmentsData?.assessment?.map((enrollment, index) => (
+                  {assessmentsData?.assessment?.map((enrollment:any, index:any) => (
                     <Table.Tr key={index}>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         {enrollment.learning_area.name}

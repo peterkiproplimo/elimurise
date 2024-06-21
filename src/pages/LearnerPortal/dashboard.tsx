@@ -5,6 +5,10 @@ import studentUrl from "../../assets/images/image.jpeg";
 import { useAuth } from "../../contexts/Auth";
 
 function Dashboard() {
+  interface Learner {
+    first_name: string;
+    // Add other properties if needed
+  }
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -12,7 +16,7 @@ function Dashboard() {
     per_page: 10,
   });
   const auth = useAuth();
-  const learner = auth?.authData?.user;
+  const learner = auth?.authData?.user as Learner;
   const [page, setPage] = useState(1);
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -30,7 +34,7 @@ function Dashboard() {
           <div>
             <div className="text-xl text-gray-500">{currentDate}</div>
             <div className="mt-2 text-3xl font-bold text-gray-800">
-              Welcome back, {learner.first_name}!
+              Welcome back, {learner.first_name}
             </div>
             <div className="text-gray-500">
               Always stay updated in your learner's portal

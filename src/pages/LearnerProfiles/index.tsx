@@ -55,7 +55,7 @@ function Main() {
   const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
 
   const [strand, setStrand] = useState("");
-  const [learnerReport, setLearnerReport] = useState([]);
+  const [learnerReport, setLearnerReport] = useState<any>([]);
 
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -285,7 +285,7 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learnerReport?.assessment?.map((enrollment, index) => (
+                  {learnerReport?.assessment?.map((enrollment:any, index:any) => (
                     <Table.Tr key={index}>
                       <Table.Td>{enrollment.strand.name}</Table.Td>
                       <Table.Td>{enrollment.substrand.name}</Table.Td>
@@ -443,59 +443,9 @@ function Main() {
             </div>
           </div>
 
-          <Dialog
-            staticBackdrop
-            size="lg"
-            open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
-          >
-            <Dialog.Panel></Dialog.Panel>
-          </Dialog>
+         
           {/* BEGIN: Delete Confirmation Modal */}
-          <Dialog
-            open={confirmDelete}
-            onClose={() => {
-              setConfirmDelete(false);
-            }}
-            initialFocus={deleteButtonRef}
-          >
-            <Dialog.Panel>
-              <div className="p-5 text-center">
-                <Lucide
-                  icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
-                />
-                <div className="mt-5 text-3xl">Are you sure?</div>
-                <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
-                  This process cannot be undone.
-                </div>
-              </div>
-              <div className="px-5 pb-8 text-center">
-                <Button
-                  variant="outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    setConfirmDelete(false);
-                  }}
-                  className="w-24 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => deleteRecord()}
-                  variant="danger"
-                  type="button"
-                  className="w-24"
-                  ref={deleteButtonRef}
-                >
-                  Delete
-                </Button>
-              </div>
-            </Dialog.Panel>
-          </Dialog>
+        
           {/* END: Delete Confirmation Modal */}
         </>
       )}

@@ -21,8 +21,6 @@ import CreateNewPassword from "../pages/Auth/create-newPassword";
 import ErrorPage from "../pages/ErrorPage";
 import AuthGuard from "../utils/route-guard/AuthGuard";
 import GuestGuard from "../utils/route-guard/GuestGuard";
-import SecurityFeature from "../pages/security";
-import Term from "../pages/Term";
 import Academic from "../pages/Academic";
 import Substrand from "../pages/Substrand";
 import AccountDetails from "../pages/accountDetails";
@@ -63,10 +61,7 @@ function Router() {
           element: <Parents />,
         },
 
-        {
-          path: "securityFeature",
-          element: <SecurityFeature />,
-        },
+        
         {
           path: "assessLearner",
           element: <AssessLearner />,
@@ -84,10 +79,7 @@ function Router() {
           path: "substrand",
           element: <Substrand />,
         },
-        {
-          path: "term",
-          element: <Term />,
-        },
+      
         {
           path: "enrollments",
           element: <Enrollment />,

@@ -92,20 +92,20 @@ function Users(props:any) {
   // };
 
   const getUsers = async () => {
-    let res = await ApiService.getUsers({
-      page: page,
-      search: search,
-      limit: limit,
-    });
+    // let res = await ApiService.getUsers({
+    //   page: page,
+    //   search: search,
+    //   limit: limit,
+    // });
 
-    const pagination = res.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    setUsers(res.data);
+    // const pagination = res.pagination;
+    // setPagination({
+    //   current_page: pagination.current_page,
+    //   total: pagination.total,
+    //   total_pages: pagination.total_pages,
+    //   per_page: pagination.per_page,
+    // });
+    // setUsers(res.data);
   };
   const getProfile = async () => {
     let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
