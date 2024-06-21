@@ -76,7 +76,7 @@ const initialState: SideMenuState = {
       subMenu: [
         {
           icon: "Activity",
-          pathname: "/assessment",
+          pathname: "/indicatorReport",
           title: "By Indicators",
         },
         {

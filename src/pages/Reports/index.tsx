@@ -28,6 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
+import logo2 from "../../assets/images/edu.jpeg";
 
 interface TableRow {
   no: number;
@@ -173,6 +174,20 @@ function Main() {
     setEnrollments(enrollments?.data);
     console.log(enrollments);
   };
+  const getTextColor = (score:any) => {
+  switch (score) {
+    case 4:
+      return 'text-green-500'; // green text for score 4
+    case 3:
+      return 'text-red-500';   // red text for score 3
+    case 2:
+      return 'text-yellow-500'; // yellow text for score 2
+    case 1:
+      return 'text-blue-500';  // blue text for score 1
+    default:
+      return 'text-gray-500';  // gray text for other scores
+  }
+};
   useEffect(() => {
     getEnrollments();
   }, [stream]);
@@ -434,7 +449,11 @@ function Main() {
             onSubmit={onSubmit}
           >
             <div className="assessment-header">
-              <h2 className="text-xl flex items-center font-semibold mb-5">
+             
+            </div>
+            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="meta-info flex  h-20 bg-white rounded-xl  shadow-md">
+               <h2 className="text-xl flex items-center font-semibold ml-5">
                 <a
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
@@ -445,56 +464,19 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-                Assessment Score Entry Form
+              
               </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Grade:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.grade_id?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Learning Area:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Strand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Substrand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Indicator:
-                  </label>
-                </div>
-                <div className="meta-row flex items-center col-span-2 mt-0.5">
-                  <Loader className="text-success animate-spin mr-2" />
-
-                  <span className="text-sm text-success font-medium">
-                    (Auto-saving)
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+              <div className = "flex justify-center items-center ">
+                      <img
+                         src={logo}
+                         alt="Learner"
+                         className="w-12 h-12 ml-5  "
+                         />
+                    
+                   <p className="ml-5 text-2xl gray-800 font-medium">Learner</p>
+                   
+               </div>
+               </div>
               <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
                 <div className="hidden mx-auto md:block text-slate-500 mt-5">
                   Showing{" "}
@@ -521,25 +503,37 @@ function Main() {
                 </div>
               </div>
               <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead>
+                <Table.Thead >
                   <Table.Tr>
-                    <Table.Th>Learning Area</Table.Th>
-                    <Table.Th>Strand</Table.Th>
-                    <Table.Th>Substrand</Table.Th>
-                    <Table.Th>Indicator Description</Table.Th>
-                    <Table.Th>Score</Table.Th>
-                    <Table.Th>Description</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Learning Area</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Strand</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Substrand</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Indicator Description</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Score</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Description</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {assessmentsData?.assessment?.map((enrollment, index) => (
                     <Table.Tr key={index}>
-                      <Table.Td>{enrollment.learning_area.name}</Table.Td>
-                      <Table.Td>{enrollment.strand.name}</Table.Td>
-                      <Table.Td>{enrollment.substrand.name}</Table.Td>
-                      <Table.Td>{enrollment.indicator_description}</Table.Td>
-                      <Table.Td>{enrollment.score}</Table.Td>
-                      <Table.Td>{enrollment.description}</Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.learning_area.name}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.strand.name}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.substrand.name}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.indicator_description}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.score}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.description}
+                        </Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>

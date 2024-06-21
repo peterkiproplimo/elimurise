@@ -37,6 +37,7 @@ import ForgotPasswordOTPParent from "../pages/Auth/forgot-passOTP-parent";
 import LearnerProfile from "../pages/LearnerPortal/profile";
 import LearnerDashboard from "../pages/LearnerPortal/dashboard";
 import LearnerProfiles from "../pages/LearnerProfiles";
+import IndicatorReports from "../pages/IndicatorReports"
 
 //nn
 function Router() {
@@ -73,6 +74,10 @@ function Router() {
         {
           path: "/enrollment",
           element: <LearnerEnrollment />,
+        },
+        {
+          path: "/IndicatorReport",
+          element: <IndicatorReports />,
         },
 
         {

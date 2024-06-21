@@ -28,6 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
+import logo2 from "../../assets/images/edu.jpeg";
 
 interface TableRow {
   no: number;
@@ -236,6 +237,8 @@ function Main() {
     // setSubstrands(res.data);
   };
 
+  
+
   const handleStrandChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -422,7 +425,9 @@ function Main() {
             onSubmit={onSubmit}
           >
             <div className="assessment-header">
-              <h2 className="text-xl flex items-center font-semibold mb-5">
+             
+               <div className="meta-info flex  h-20 bg-white rounded-xl  shadow-md">
+               <h2 className="text-xl flex items-center font-semibold ml-5">
                 <a
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
@@ -433,37 +438,19 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-                Assessment Score Entry Form
+              
               </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Grade:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.learning_area?.grade_id?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Learning Area:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.learning_area?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Strand:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Substrand:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Indicator:</label>
-    <span className="text-md text-gray-800 ml-2">
-      {substrand?.indicators.flat().find((ind: any) => ind._id === indicator).description}
-    </span>
-  </div>
-  <div className="meta-row flex items-center col-span-2 mt-0.5">
-  <Loader className="text-success animate-spin mr-2" />
-  
-    <span className="text-sm text-success font-medium">(Auto-saving)</span>
-  </div>
-</div>
+              <div className = "flex justify-center items-center ">
+                      <img
+                         src={logo2}
+                         alt="Learner"
+                         className="w-12 h-12 ml-5  "
+                         />
+                    
+                   <p className="ml-5 text-2xl gray-800 font-medium">All Learners</p>
+                   
+               </div>
+               </div>
 
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
@@ -550,31 +537,8 @@ function Main() {
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <FormInput
-                          {...register("score[" + key + "]")}
-                          type="number"
-                          className={`form-control ${
-                            getValues("score") ? "is-invalid" : ""
-                          }`}
-                          defaultValue={enrollment?.assessmentDetails?.score}
-                          max={4}
-                          min={1}
-                          onChange={(e) => {
-                            const enteredValue = parseInt(e.target.value);
-                            if (enteredValue > 4) {
-                              e.target.value = "4"; // Set the value to the maximum allowed
-                            } else if (enteredValue < 1) {
-                              alert(
-                                "value should be within the range of 1, 2, 3, 4"
-                              );
-                              e.target.value = "1";
-                            }
-                            handleInputChange({
-                              score: e.target.value,
-                              enrollment,
-                            });
-                          }}
-                        />
+                      {enrollment?.assessmentDetails?.score}
+                       
                       </Table.Td>
                     <Table.Td className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  ${getDescriptionColor(enrollment?.assessmentDetails?.score)}`}>
          
@@ -660,7 +624,7 @@ function Main() {
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <h2 className="mr-auto text-base font-medium border-b p-2">
-              Assessment Details
+              All Students Report
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2">
@@ -880,9 +844,9 @@ function Main() {
                 onClick={() => generateAssessment()}
                 variant="primary"
                 type="button"
-                className="w-24 text-white"
+                className="w-50 text-white"
               >
-                Assess
+                Generate Report
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"
