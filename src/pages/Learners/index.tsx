@@ -127,6 +127,7 @@ function Main() {
   }, [search, page, limit]);
 
   const getStudents = async () => {
+    isLoading(true);
     const response = await ApiService.getLearners(
       {
         page: page,
@@ -142,6 +143,7 @@ function Main() {
       per_page: pagination.per_page,
     });
     setLearners(response.data);
+    isLoading(false);
   };
 
   const getStreams = async () => {
@@ -670,12 +672,6 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Guardian Phone
                     </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                      Created At
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Updated At
-                    </Table.Th> */}
                     <Table.Th className="border-b-0 whitespace-nowrap text-center">
                       Actions
                     </Table.Th>
@@ -744,36 +740,6 @@ function Main() {
                           {learner?.guardian_phone}
                         </span>
                       </Table.Td>
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(learner?.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(learner?.updatedAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td> */}
                       <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           <a
@@ -803,6 +769,11 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
+              {loading && (
+            <div className="flex flex-col items-center mt-5">
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+            </div>
+          )}
             </div>
 
             {/* END: Data List */}

@@ -100,6 +100,7 @@ function Main() {
     getGrades();
   }, []);
   const getLearningAreas = async () => {
+    isLoading(true);
     const response = await ApiService.getLearningAreas({
       page: 1,
       limit:1000
@@ -112,6 +113,7 @@ function Main() {
       total_pages: pagination.total_pages,
       per_page: pagination.per_page,
     });
+    isLoading(false);
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
@@ -307,11 +309,6 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
-                {/* <FormSelect className="w-56 ml-2 xl:w-auto !box">
-                  <option>Status</option>
-                  <option>Active</option>
-                  <option>Inactive</option> 
-                </FormSelect> */}
               </div>
 
               {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
@@ -334,125 +331,15 @@ function Main() {
                    {learningArea?.grade_id?.name}
                   </h1>
                 </div>
-                </div>
-                {/* <Button
-              variant="primary"
-              className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
-              onClick={()=>(learningArea)}
-            >
-             
-                Buy Now
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-             
-            </Button> */}
-                
+                </div>         
               </div>
             ))}
+            {loading && (
+               <div className="fixed inset-0 flex items-center justify-center">
+                <LoadingIcon icon="spinning-circles" className="w-12 h-12" />
+               </div>
+             )}
           </div>
-              {/* <Table className="border-spacing-y-[3px] border-separate mt-2 p-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Learning Area
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Grade
-                    </Table.Th>
-                  
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Created At
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Actions
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {learningAreas.map((learningArea: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learningArea.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learningArea?.grade_id?.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(learningArea.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", 
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td>
-
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item
-                                  onClick={() => editRecord(learningArea)}
-                                >
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(learningArea._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table> */}
             </div>
             <div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">

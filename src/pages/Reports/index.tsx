@@ -361,6 +361,7 @@ function Main() {
     { no: 1, strandName: "Example Strand" },
   ]);
   const generateAssessment = async () => {
+    isLoading(true);
     const data = {
       learning_area: strandFilter.learning_area,
       term: selectedTerm,
@@ -538,6 +539,11 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
+              {loading && (
+            <div className="flex flex-col items-center mt-5">
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+            </div>
+          )}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
@@ -733,6 +739,13 @@ function Main() {
                 className="w-50 text-white"
               >
                 Generate Report
+                {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
+                  )}
               </Button>
             </div>
           </div>

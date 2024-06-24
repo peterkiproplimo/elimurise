@@ -65,12 +65,14 @@ function Main() {
     });
   }
   const getDashboard = async () => {
+    isLoading(true)
     try {
       let res = await ApiService.getPackages({});
       setPackages(res.data);
     } catch (error) {
       console.log(error);
     }
+    isLoading(false)
     // setFeeds(res.feeds);
     // setEvents(res.events);
     // setQuestions(res.questions);
@@ -158,8 +160,14 @@ function Main() {
           )}
         </Button>
       </div>
+   
     </div>
   ))}
+     {/* {loading && (
+            <div className="flex flex-col items-center mt-5">
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+            </div>
+          )} */}
 </div>
 
         ) : (

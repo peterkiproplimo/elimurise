@@ -297,6 +297,11 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
+              {loading && (
+            <div className="flex flex-col items-center mt-5">
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+            </div>
+          )}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">

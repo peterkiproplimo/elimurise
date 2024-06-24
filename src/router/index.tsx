@@ -34,8 +34,10 @@ import LearnerEnrollment from "../pages/LearnerEnrollment";
 import ForgotPasswordOTPParent from "../pages/Auth/forgot-passOTP-parent";
 import LearnerProfile from "../pages/LearnerPortal/profile";
 import LearnerDashboard from "../pages/LearnerPortal/dashboard";
+import Dashboard from "../pages/dashboard";
 import LearnerProfiles from "../pages/LearnerProfiles";
 import IndicatorReports from "../pages/IndicatorReports"
+
 
 //nn
 function Router() {
@@ -48,6 +50,10 @@ function Router() {
         </AuthGuard>
       ),
       children: [
+        {
+          path: "/",
+          element: <Dashboard />,
+        },
         {
           path: "/billing",
           element: <Billing />,

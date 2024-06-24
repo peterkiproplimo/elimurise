@@ -99,6 +99,7 @@ function Main() {
     // getAcademicYear();
   }, []);
   const getTeachers = async () => {
+    isLoading(true);
     const response = await ApiService.getTeachers({
       page: 1 
     });
@@ -110,6 +111,7 @@ function Main() {
       total_pages: pagination.total_pages,
       per_page: pagination.per_page,
     });
+    isLoading(false);
   };
   // const getAcademicYear = async () => {
   //   const response = await ApiService.getAcademic({ page: 1 });
@@ -198,22 +200,6 @@ function Main() {
                   </div>
                 )}
               </div>
-              {/* <div className="col-span-6 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Academic Year</FormLabel>
-                <FormSelect {...register("academicYear")} name="academicYear">
-                  {academic.map((academicYear: any, key) => (
-                    <option key={key} value={academicYear._id}>
-                      {academicYear.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div> */}
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>Last Name<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
@@ -283,22 +269,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              {/* <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Role</FormLabel>
-                <FormInput
-                  {...register("role")}
-                  type="text"
-                  name="role"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="role"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div> */}
+           
               <div className="col-span-12 sm:col-span-12 mt-3">
                 <Button
                   type="button"
@@ -381,14 +352,9 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
-                {/* <FormSelect className="w-56 ml-2 xl:w-auto !box">
-                  <option>Status</option>
-                  <option>Active</option>
-                  <option>Inactive</option>
-                </FormSelect> */}
               </div>
 
-              {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
+            
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
@@ -413,9 +379,6 @@ function Main() {
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Email
                     </Table.Th>
-                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Role
-                    </Table.Th> */}
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
                       Actions
                     </Table.Th>
@@ -454,30 +417,6 @@ function Main() {
                           {teacher.email}
                         </span>
                       </Table.Td>
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {teacher.role}
-                        </span>
-                      </Table.Td> */}
-                    
-                      
-                    
-                   
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(term.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                     <div className="flex items-center justify-center">
                       <a className="flex items-center mr-3 text-success" href="#" onClick={() => editRecord(teacher)}>
@@ -496,50 +435,15 @@ function Main() {
                       </a>
                     </div>
                   </Table.Td>
-
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item
-                                  onClick={() => editRecord(teacher)}
-                                >
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(teacher._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td> */}
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
               </Table>
+              {loading && (
+            <div className="flex flex-col items-center mt-5">
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+            </div>
+          )}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
