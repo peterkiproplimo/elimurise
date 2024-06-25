@@ -15,6 +15,7 @@ import ReportDonutChart from "../../components/ReportDonutChart";
 import "./dashboard.css";
 import logoUrl from "../../assets/images/paypal.svg";
 import LoadingIcon from "../../base-components/LoadingIcon";
+import { Search } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 
 function Main() {
@@ -82,57 +83,24 @@ function Main() {
 
   useEffect(() => {
     getDashboard();
+     setTimeout(() => {
+      getDashboard();
+      isLoading(false);
+    }, 2000);
   }, []);
 
   return (
     <>
       <div className="price mt-5 ">
-        <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left">
+        <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5">
           Please select a pricing plan that works for you
         </h2>
-        {packages.length > 0 ? (
-          // <div className="mt-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-20 relative m-4">
-          //   {packages.map((Package: any, key: any) => (
-          //     <div
-          //       key={key}
-          //       className="p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md flex flex-col  min-h-[500px] min-h-[400px] text-white"
-          //       style={{ backgroundColor: Package.color }}
-          //     >
-          //       <div>
-          //         <h1 className="text-4xl pl-5 pt-8 font-bold mb-2">{Package.name}</h1>
-          //         <div className=" mt-2 ">
-          //            </div>
-          //         <div
-          //           className="text-xl  p-5 text-white"
-          //           dangerouslySetInnerHTML={{ __html: Package.description }}
-          //         />
-          //       </div>
-          //       <div className=" items-center">
-          //         <h1 className="text-3xl  pl-5 pt-5 font-bold mt-2">
-          //           Ksh. {Package.pricePerLearner}
-          //         </h1>
-          //         <p className="text-m  pl-5 text-white">(Per Learner Annually)</p>
-          //       </div>
-          //       <Button
-          //     variant="primary"
-          //     className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3 m-5"
-          //     onClick={()=>subscribe(Package)}
-          //   >
-             
-          //       Buy Now
-          //       {loading && (
-          //         <LoadingIcon
-          //           icon="spinning-circles"
-          //           color="white"
-          //           className="w-4 h-4 ml-2"
-          //         />
-          //       )}
-             
-          //   </Button>
-                
-          //     </div>
-          //   ))}
-          // </div>
+        {loading ? (
+        <div className="flex flex-col items-center mt-5">
+          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+        </div>
+      ) : packages.length > 0 ? (
+          
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 m-4">
   {packages.map((Package: any, key: any) => (
     <div style={{ backgroundColor: Package.color }} key={key} className=" rounded-xl shadow-md flex flex-col text-white">
@@ -163,16 +131,13 @@ function Main() {
    
     </div>
   ))}
-     {/* {loading && (
-            <div className="flex flex-col items-center mt-5">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-            </div>
-          )} */}
+     
 </div>
 
         ) : (
-          <div className="p-4 mt-5 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-            <p className="text-lg text-gray-700 dark:text-gray-300">
+          <div className="p-4 mt-5 bg-white dark:bg-gray-800 rounded-xl shadow-md"> 
+          <Search size={88} className="animate-bounce flex flex-col items-center mt-10" />
+           <p className="text-lg text-gray-700 dark:text-gray-300 ">
               No packages available
             </p>
           </div>

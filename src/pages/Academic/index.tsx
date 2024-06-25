@@ -21,6 +21,7 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
+import { Search } from 'lucide-react';
 
 function Level() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -96,6 +97,10 @@ function Level() {
 
   useEffect(() => {
     getAcademics();
+    setTimeout(() => {
+      getAcademics();
+      isLoading(false);
+    }, 2000); 
   }, [search, page, limit]);
 
   const getAcademics = async () => {
@@ -312,6 +317,16 @@ function Level() {
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            {loading ? (
+        <div className="flex flex-col items-center mt-5">
+          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+        </div>
+      ) : academic.length === 0 ? (
+        <div className="flex flex-col items-center mt-10">
+          <Search size={88} className="animate-bounce" />
+          <p className="text-xl">No data found</p>
+        </div>
+      ) : (
               <Table className="border-spacing-y-[5px]  border-separate -mt-2">
                 <Table.Thead>
                   <Table.Tr>
@@ -446,10 +461,6 @@ function Level() {
                   ))}
                 </Table.Tbody>
               </Table>
-              {loading && (
-            <div className="flex flex-col items-center mt-5">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-            </div>
           )}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">

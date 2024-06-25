@@ -19,6 +19,7 @@ import { formatDate } from "../../utils/helper";
 import logoUrl from "../../assets/images/edit.png";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/Books.jpeg"
+import { Search } from 'lucide-react';
 
 
 function Main() {
@@ -95,6 +96,10 @@ function Main() {
 
   useEffect(() => {
     getLearningAreas();
+    setTimeout(() => {
+      getLearningAreas();
+      isLoading(false);
+    }, 2000); 
   }, [search, page, limit]);
   useEffect(() => {
     getGrades();
@@ -315,6 +320,16 @@ function Main() {
             </div>
           
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible flex flex-wrap ">
+            {loading ? (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+        </div>
+      ) : learningAreas.length === 0 ? (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <Search size={88} className="animate-bounce" />
+          <p className="text-xl">No data found</p>
+        </div>
+      ) : (<>
             {learningAreas.map((learningArea: any, key) => (
               <div
                 key={key}
@@ -334,10 +349,7 @@ function Main() {
                 </div>         
               </div>
             ))}
-            {loading && (
-               <div className="fixed inset-0 flex items-center justify-center">
-                <LoadingIcon icon="spinning-circles" className="w-12 h-12" />
-               </div>
+          </>
              )}
           </div>
             </div>

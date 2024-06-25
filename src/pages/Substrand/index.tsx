@@ -27,6 +27,7 @@ import "./substrand.css";
 import Pagination from "../../base-components/Pagination";
 import { useLocation , useNavigate} from "react-router-dom";
 import logo from "../../assets/images/subs.jpeg"
+import { Search } from 'lucide-react';
 
 interface TableRow {
   no: number;
@@ -217,6 +218,10 @@ console.log(record)
   }, [strandFilter]);
   useEffect(() => {
     getSubstrand();
+    setTimeout(() => {
+      getSubstrand();
+      isLoading(false);
+    }, 2000);
   }, [search, limit, page, selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
@@ -621,7 +626,16 @@ console.log(record)
 
           <div className="grid grid-cols-12 gap-6 mt-5">
             {/* BEGIN: Data List */}
-          
+            {loading ? (
+            <div className="flex flex-col items-center mt-5">
+          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+        </div>
+      ) : substrands.length === 0 ? (
+        <div className="fixed inset-0 flex flex-col items-center justify-center">
+          <Search size={88} className="animate-bounce" />
+          <p className="text-xl">No data found</p>
+        </div>
+      ) : (<>
               
                   {substrands.map((substrand: any, key) => (
                        <div className="col-span-12 intro-y md:col-span-6">
@@ -650,7 +664,7 @@ console.log(record)
                   
                   </div>
                   ))}
-        
+         </>)}
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">

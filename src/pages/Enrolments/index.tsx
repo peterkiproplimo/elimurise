@@ -19,6 +19,7 @@ import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
+import { Search } from 'lucide-react';
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
@@ -114,9 +115,17 @@ function Main() {
   useEffect(() => {
     getStreams();
   }, []);
+
+
   useEffect(() => {
     getStudents();
+    setTimeout(() => {
+      getStudents()
+      isLoading(false);
+    }, 2000); 
   }, [search, page, limit]);
+
+ 
 
   const getStudents = async () => {
     isLoading(true);
@@ -180,6 +189,7 @@ function Main() {
     reset({ name: "" });
     setDialog(false);
   };
+
 
   // const handleGradeChange = async (
   //   event: React.ChangeEvent<HTMLSelectElement>
@@ -560,6 +570,16 @@ function Main() {
             </div> */}
 
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            {loading ? (
+        <div className="flex flex-col items-center mt-5">
+          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+        </div>
+      ) : learners.length === 0 ? (
+        <div className="flex flex-col items-center mt-10">
+          <Search size={88} className="animate-bounce" />
+          <p className="text-xl">No data found</p>
+        </div>
+      ) : (
               <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
@@ -693,11 +713,7 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
-              {loading && (
-            <div className="flex flex-col items-center mt-5">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-            </div>
-          )}
+            )}
             </div>
             {/* END: Data List */}
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">

@@ -15,7 +15,9 @@ import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import Pagination from "../../base-components/Pagination";
+import { Search } from 'lucide-react';
 import { formatDate } from "../../utils/helper";
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -96,6 +98,10 @@ function Main() {
 
   useEffect(() => {
     getParents();
+    setTimeout(() => {
+      getParents();
+      isLoading(false);
+    }, 2000); 
   }, [search, page, limit]);
   useEffect(() => {
     getAcademicYear();
@@ -389,6 +395,16 @@ function Main() {
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
+            {loading ? (
+        <div className="flex flex-col items-center mt-5">
+          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+        </div>
+      ) : parents.length === 0 ? (
+        <div className="flex flex-col items-center mt-10">
+          <Search size={88} className="animate-bounce" />
+          <p className="text-xl">No data found</p>
+        </div>
+      ) : (
               <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
@@ -544,6 +560,7 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
+      )}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">

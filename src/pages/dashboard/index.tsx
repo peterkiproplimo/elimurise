@@ -26,10 +26,10 @@ function Main() {
 
   return (
     <>
-      <div className="grid grid-cols-12 gap-6">
+      {/* <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 2xl:col-span-9">
           <div className="grid  gap-6">
-            {/* BEGIN: General Report */}
+          
             <div className="col-span-12 mt-8 xl:col-span-12">
               <div className="flex items-center h-10 intro-y">
                 <h2 className="mr-5 text-lg font-medium truncate">
@@ -309,107 +309,13 @@ function Main() {
          </div>
              
             </div>
-            {/* END: Weekly Top Products */}
+          
           </div>
         </div>
         <div className="col-span-12 2xl:col-span-3 box">
           <div className="pb-10 -mb-10 2xl:border-l">
             <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
-              {/* BEGIN: Important Notes */}
-              {/* <div className="col-span-12 mt-3 md:col-span-6 xl:col-span-12 2xl:mt-8">
-             
-                <div className=" intro-x">
-                  <div className="box zoom-in">
-                    <TinySlider
-                      getRef={(el) => {
-                        importantNotesRef.current = el;
-                      }}
-                    >
-                      <div className="p-5">
-                        <div className="text-base font-medium truncate">
-                          Lorem Ipsum is simply dummy text
-                        </div>
-                        <div className="mt-1 text-slate-400">20 Hours ago</div>
-                        <div className="mt-1 text-justify text-slate-500">
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry. Lorem Ipsum has been the
-                          industry's standard dummy text ever since the 1500s.
-                        </div>
-                        <div className="flex mt-5 font-medium">
-                          <Button
-                            variant="secondary"
-                            type="button"
-                            className="px-2 py-1"
-                          >
-                            View Notes
-                          </Button>
-                          <Button
-                            variant="outline-secondary"
-                            type="button"
-                            className="px-2 py-1 ml-auto "
-                          >
-                            Dismiss
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="p-5">
-                        <div className="text-base font-medium truncate">
-                          Lorem Ipsum is simply dummy text
-                        </div>
-                        <div className="mt-1 text-slate-400">20 Hours ago</div>
-                        <div className="mt-1 text-justify text-slate-500">
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry. Lorem Ipsum has been the
-                          industry's standard dummy text ever since the 1500s.
-                        </div>
-                        <div className="flex mt-5 font-medium">
-                          <Button
-                            variant="secondary"
-                            type="button"
-                            className="px-2 py-1"
-                          >
-                            View Notes
-                          </Button>
-                          <Button
-                            variant="outline-secondary"
-                            type="button"
-                            className="px-2 py-1 ml-auto"
-                          >
-                            Dismiss
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="p-5">
-                        <div className="text-base font-medium truncate">
-                          Lorem Ipsum is simply dummy text
-                        </div>
-                        <div className="mt-1 text-slate-400">20 Hours ago</div>
-                        <div className="mt-1 text-justify text-slate-500">
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry. Lorem Ipsum has been the
-                          industry's standard dummy text ever since the 1500s.
-                        </div>
-                        <div className="flex mt-5 font-medium">
-                          <Button
-                            variant="secondary"
-                            type="button"
-                            className="px-2 py-1"
-                          >
-                            View Notes
-                          </Button>
-                          <Button
-                            variant="outline-secondary"
-                            type="button"
-                            className="px-2 py-1 ml-auto"
-                          >
-                            Dismiss
-                          </Button>
-                        </div>
-                      </div>
-                    </TinySlider>
-                  </div>
-                </div>
-              </div> */}
+          
               <div className="col-span-12 mt-3 mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
                 <div className="flex items-center h-10 intro-x">
                   <h2 className=" text-lg font-medium truncate">
@@ -531,7 +437,7 @@ function Main() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

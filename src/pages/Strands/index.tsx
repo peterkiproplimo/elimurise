@@ -25,6 +25,7 @@ import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/collection.jpeg"
+import { Search } from 'lucide-react';
 
 
 interface TableRow {
@@ -138,6 +139,7 @@ function Main() {
     getLearningAreas();
   }, []);
   const getStrands = async () => {
+    isLoading(true);
     const response = await ApiService.getStrands(
       {
         page: page,
@@ -154,6 +156,7 @@ function Main() {
       per_page: pagination.per_page,
     });
     setStrands(response.data);
+    isLoading(false);
   };
 
   const getGrades = async () => {
@@ -219,6 +222,10 @@ function Main() {
   };
   useEffect(() => {
     getStrands();
+    setTimeout(() => {
+      getStrands();
+      isLoading(false);
+    }, 2000); 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter, search, page, limit]);
 
@@ -582,6 +589,16 @@ function Main() {
               </div>
             </div>
             {/* BEGIN: Data List */}
+            {loading ? (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+        </div>
+      ) : strands.length === 0 ? (
+        <div className="fixed inset-0 flex flex-col items-center justify-center">
+          <Search size={88} className="animate-bounce" />
+          <p className="text-xl">No data found</p>
+        </div>
+      ) : (<>
             {strands.map((strand: any, key) => (
             <div className="col-span-12 intro-y md:col-span-6">
             
@@ -605,6 +622,7 @@ function Main() {
           
           </div>
             ))}
+            </>)}
           
          
 
