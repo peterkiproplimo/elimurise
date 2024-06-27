@@ -36,9 +36,9 @@ import LearnerProfile from "../pages/LearnerPortal/profile";
 import LearnerDashboard from "../pages/LearnerPortal/dashboard";
 import Dashboard from "../pages/dashboard";
 import LearnerProfiles from "../pages/LearnerProfiles";
-import IndicatorReports from "../pages/IndicatorReports"
-
-
+import IndicatorReports from "../pages/IndicatorReports";
+import User from "../pages/User";
+import Role from "../pages/roles";
 //nn
 function Router() {
   const routes = [
@@ -67,7 +67,6 @@ function Router() {
           element: <Parents />,
         },
 
-        
         {
           path: "assessLearner",
           element: <AssessLearner />,
@@ -85,7 +84,7 @@ function Router() {
           path: "substrand",
           element: <Substrand />,
         },
-      
+
         {
           path: "enrollments",
           element: <Enrollment />,
@@ -109,6 +108,16 @@ function Router() {
         {
           path: "assessment",
           element: <AssessLearner />,
+        },
+
+        {
+          path: "users",
+          element: <User />,
+        },
+
+        {
+          path: "roles",
+          element: <Role />,
         },
 
         //securitye
@@ -146,7 +155,7 @@ function Router() {
         },
         {
           path: "/v1/report",
-          element: <LearnerProfiles/>,
+          element: <LearnerProfiles />,
         },
       ],
     },

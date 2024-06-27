@@ -419,6 +419,14 @@ export async function createStrand(data: FieldValues) {
     throw handler(e);
   }
 }
+export async function leanersPromotion(data: FieldValues) {
+  try {
+    let res = await axios.put(c.ENROLLMENT + "/enroll", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 export async function deleteStrand(gradeId: any) {
   try {
@@ -767,6 +775,14 @@ export async function getLeanerAssessmentReport(data: FieldValues) {
     throw handler(e);
   }
 }
+export const getUsers = async (data: any) => {
+  try {
+    let res = await axios.get(c.USERS, { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export function handler(err: any) {
   let error = err;
   console.log(err);
