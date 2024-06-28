@@ -45,13 +45,12 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      first_name: yup.string().required("First Name is required"),
-      last_name: yup.string().required("Last Name is required"),
+      firstname: yup.string().required("First Name is required"),
+      lastname: yup.string().required("Last Name is required"),
       email: yup.string().required(" Email is required"),
       surname: yup.string().required("Surname is required"),
       phone: yup.string().required("Phone  Number is required"),
-              // .min(11, "Phone number must be at least 11 characters long")
-
+      // .min(11, "Phone number must be at least 11 characters long")
     })
     .required();
 
@@ -101,7 +100,7 @@ function Main() {
   const getTeachers = async () => {
     isLoading(true);
     const response = await ApiService.getTeachers({
-      page: 1 
+      page: 1,
     });
     setTeachers(response.data);
     const pagination = response.pagination;
@@ -185,34 +184,38 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  First Name<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
-                  {...register("first_name")}
+                  {...register("firstname")}
                   type="text"
-                  name="first_name"
+                  name="firstname"
                   className={errors.name ? "border-danger" : ""}
                   placeholder="first name"
                 />
-                {errors.first_name && (
+                {errors.firstname && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.first_name.message === "string" &&
-                      errors.first_name.message}
+                    {typeof errors.firstname.message === "string" &&
+                      errors.firstname.message}
                   </div>
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Last Name<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Last Name<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
-                  {...register("last_name")}
+                  {...register("lastname")}
                   type="text"
-                  name="last_name"
-                  className={errors.last_name ? "border-danger" : ""}
+                  name="lastname"
+                  className={errors.lastname ? "border-danger" : ""}
                   placeholder="last name"
                 />
-                {errors.last_name && (
+                {errors.lastname && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.last_name.message === "string" &&
-                      errors.last_name.message}
+                    {typeof errors.lastname.message === "string" &&
+                      errors.lastname.message}
                   </div>
                 )}
               </div>
@@ -233,14 +236,17 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Phone Number<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Phone Number<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
-                      {...register("phone", {
-                           pattern: {
-                           value: /^.{11,}$/,
-                           message: "Phone number must be at least 11 characters long"
-                       }
-                     })}
+                  {...register("phone", {
+                    pattern: {
+                      value: /^.{11,}$/,
+                      message:
+                        "Phone number must be at least 11 characters long",
+                    },
+                  })}
                   type="text"
                   name="phone"
                   className={errors.phone ? "border-danger" : ""}
@@ -254,7 +260,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Email <span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Email <span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("email")}
                   type="email"
@@ -269,7 +277,7 @@ function Main() {
                   </div>
                 )}
               </div>
-           
+
               <div className="col-span-12 sm:col-span-12 mt-3">
                 <Button
                   type="button"
@@ -290,8 +298,6 @@ function Main() {
                   )}
                 </Button>
               </div>
-          
-             
             </div>
           </form>
         </>
@@ -353,8 +359,6 @@ function Main() {
                   />
                 </div>
               </div>
-
-            
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
@@ -365,13 +369,13 @@ function Main() {
                       No.
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     First Name
+                      First Name
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     Last Name
+                      Last Name
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                    Surname
+                      Surname
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Phone Number
@@ -394,12 +398,12 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {teacher.first_name}
+                          {teacher.firstname}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {teacher.last_name}
+                          {teacher.lastname}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -417,83 +421,104 @@ function Main() {
                           {teacher.email}
                         </span>
                       </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
-                      <a className="flex items-center mr-3 text-success" href="#" onClick={() => editRecord(teacher)}>
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => {
-                          setRecordId(teacher._id),
-                            setConfirmDelete(true);
-                        }}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                        <div className="flex items-center justify-center">
+                          <a
+                            className="flex items-center mr-3 text-success"
+                            href="#"
+                            onClick={() => editRecord(teacher)}
+                          >
+                            <Lucide
+                              icon="CheckSquare"
+                              className="w-4 h-4 mr-1"
+                            />{" "}
+                            Edit
+                          </a>
+                          <a
+                            className="flex items-center text-danger"
+                            href="#"
+                            onClick={() => {
+                              setRecordId(teacher._id), setConfirmDelete(true);
+                            }}
+                          >
+                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                            Delete
+                          </a>
+                        </div>
+                      </Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
               </Table>
-              {loading && (
-            <div className="flex flex-col items-center mt-5">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-            </div>
-          )}
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
+              {loading ? (
+                <div className="flex flex-col items-center mt-5">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </div>
+              ) : (
+                <>
+                  {teachers.length === 0 && (
+                    <div className="flex flex-col items-center mt-10 bg-white p-8">
+                      {/* <Search size={28} className="" /> */}
+                      <p className="text-xl text-slate-500 ">
+                        No records found
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+              {loading === false && teachers.length > 0 && (
+                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
+                        onClick={() => setPage(previous_page)}
                         className="py-2 px-4 rounded-md"
                       >
-                        {page + 1}
+                        <Lucide icon="ChevronLeft" className="w-4 h-4" />
                       </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
+                      {_.times(pagination.total_pages).map((page, key) =>
+                        page + 1 == pagination.current_page ? (
+                          <button
+                            onClick={() => setPage(page + 1)}
+                            key={key}
+                            className="py-2 px-4 bg-white rounded-md"
+                          >
+                            {page + 1}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setPage(page + 1)}
+                            key={key}
+                            className="py-2 px-4 rounded-md"
+                          >
+                            {page + 1}
+                          </button>
+                        )
+                      )}
+                      <button
+                        onClick={() => setPage(next_page)}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        <Lucide icon="ChevronRight" className="w-4 h-4" />
+                      </button>
+                    </Pagination>
+                    <div className="text-slate-500">
+                      <span className="mr-3">Total {pagination.total}</span>
+                      <FormSelect
+                        className="w-30 mt-3 !box sm:mt-0"
+                        onChange={(e) => setLimit(parseInt(e.target.value))}
+                      >
+                        <option value={10}>10/page</option>
+                        <option value={25}>25/page</option>
+                        <option value={50}>50/page</option>
+                        <option value={100}>100/page</option>
+                      </FormSelect>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
+
             {/* END: Pagination */}
           </div>
           <Dialog

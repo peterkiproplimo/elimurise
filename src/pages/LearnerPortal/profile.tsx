@@ -451,6 +451,116 @@ function Main() {
             </div>
           </div>
         </fieldset>
+        <fieldset className="mt-5 p-5 intro-y box validate-form">
+          <legend className="text-lg font-semibold">Guardian 2 Details</legend>
+          <div className="grid grid-cols-12 gap-4 gap-y-3">
+            <div className="col-span-4 sm:col-span-4">
+              <FormLabel>
+                Guardian First Name
+                <span className="text-danger ml-0.5">*</span>
+              </FormLabel>
+              <FormInput
+                {...register("guardian2_first_name")}
+                type="text"
+                name="guardian2_first_name"
+                className={errors.guardian2_first_name ? "border-danger" : ""}
+                placeholder="Second guardian first name"
+              />
+              {errors.guardian2_first_name && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.guardian2_first_name.message === "string" &&
+                    errors.guardian2_first_name.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-4 sm:col-span-4">
+              <FormLabel>Guardian Surname</FormLabel>
+              <FormInput
+                {...register("guardian2_surname")}
+                type="text"
+                name="guardian2_surname"
+                className={errors.guardian2_surname ? "border-danger" : ""}
+                placeholder="Second guardian surname"
+              />
+              {errors.guardian2_surname && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.guardian2_surname.message === "string" &&
+                    errors.guardian2_surname.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-4 sm:col-span-4">
+              <FormLabel>
+                Guardian Last Name
+                <span className="text-danger ml-0.5">*</span>
+              </FormLabel>
+              <FormInput
+                {...register("guardian2_last_name")}
+                type="text"
+                name="guardian2_last_name"
+                className={errors.guardian2_last_name ? "border-danger" : ""}
+                placeholder="Second guardian last name"
+              />
+              {errors.guardian2_last_name && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.guardian2_last_name.message === "string" &&
+                    errors.guardian2_last_name.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-4 sm:col-span-4">
+              <FormLabel>
+                Guardian ID Number
+                <span className="text-danger ml-0.5">*</span>
+              </FormLabel>
+              <FormInput
+                {...register("guardian2_id_no")}
+                type="text"
+                name="guardian2_id_no"
+                className={errors.guardian2_id_no ? "border-danger" : ""}
+                placeholder="Second guardian ID number"
+              />
+              {errors.guardian2_id_no && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.guardian2_id_no.message === "string" &&
+                    errors.guardian2_id_no.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-4 sm:col-span-4">
+              <FormLabel>Guardian Email</FormLabel>
+              <FormInput
+                {...register("guardian2_email")}
+                type="email"
+                name="guardian2_email"
+                className={errors.guardian2_email ? "border-danger" : ""}
+                placeholder="Second guardian email"
+              />
+              {errors.guardian2_email && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.guardian2_email.message === "string" &&
+                    errors.guardian2_email.message}
+                </div>
+              )}
+            </div>
+            <div className="col-span-4 sm:col-span-4">
+              <FormLabel>Guardian Phone</FormLabel>
+              <FormInput
+                {...register("guardian2_phone")}
+                type="text"
+                name="guardian2_phone"
+                className={errors.guardian2_phone ? "border-danger" : ""}
+                placeholder="Second guardian phone"
+              />
+              {errors.guardian2_phone && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.guardian2_phone.message === "string" &&
+                    errors.guardian2_phone.message}
+                </div>
+              )}
+            </div>
+          </div>
+        </fieldset>
       </form>
     </>
   );

@@ -41,6 +41,10 @@ import UserProfile from "../pages/UserProfile";
 
 
 
+import User from "../pages/User";
+import Role from "../pages/roles";
+import Term from "../pages/Term";
+import Settings from "../pages/Settings";
 //nn
 function Router() {
   const routes = [
@@ -73,7 +77,6 @@ function Router() {
           element: <UserProfile />,
         },
 
-        
         {
           path: "assessLearner",
           element: <AssessLearner />,
@@ -91,7 +94,7 @@ function Router() {
           path: "substrand",
           element: <Substrand />,
         },
-      
+
         {
           path: "enrollments",
           element: <Enrollment />,
@@ -106,6 +109,10 @@ function Router() {
           path: "stream",
           element: <Stream />,
         },
+        {
+          path: "term",
+          element: <Term />,
+        },
 
         {
           path: "accountDetails",
@@ -115,6 +122,20 @@ function Router() {
         {
           path: "assessment",
           element: <AssessLearner />,
+        },
+        {
+          path: "settings",
+          element: <Settings />,
+        },
+
+        {
+          path: "users",
+          element: <User />,
+        },
+
+        {
+          path: "roles",
+          element: <Role />,
         },
 
         //securitye
@@ -154,7 +175,7 @@ function Router() {
         },
         {
           path: "/v1/report",
-          element: <LearnerProfiles/>,
+          element: <LearnerProfiles />,
         },
       ],
     },

@@ -14,59 +14,72 @@ import ReportDonutChart from "../../components/ReportDonutChart";
 import LeafletMap from "../../components/LeafletMap";
 import { Tab } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
+import { useState } from "react";
+import studentUrl from "../../assets/images/image.jpeg";
+import { useAuth } from "../../contexts/Auth";
 
 function Main() {
-  const importantNotesRef = useRef<TinySliderElement>();
-  const prevImportantNotes = () => {
-    importantNotesRef.current?.tns.goTo("prev");
-  };
-  const nextImportantNotes = () => {
-    importantNotesRef.current?.tns.goTo("next");
-  };
-
+  interface Learner {
+    firstname: string;
+    // Add other properties if needed
+  }
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 0,
+    total_pages: 1,
+    per_page: 10,
+  });
+  const auth = useAuth();
+  const user = auth?.authData?.user as Learner;
+  const [page, setPage] = useState(1);
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
   return (
     <>
-      {/* <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 2xl:col-span-9">
           <div className="grid  gap-6">
-          
             <div className="col-span-12 mt-8 xl:col-span-12">
               <div className="flex items-center h-10 intro-y">
-                <h2 className="mr-5 text-lg font-medium truncate">
-                  General Report
-                </h2>
+                <h2 className="mr-5 text-lg font-medium truncate">Dashboard</h2>
               </div>
               <div className="mt-5 intro-y">
                 <div className="box w-">
-                
                   <div className="col-span-12 p-8 border-t border-dashed lg:col-span-8 lg:border-t-0 lg:border-l border-slate-200 dark:border-darkmode-300">
-                  <div className="bg-blue-100 p-6 rounded-lg flex items-center justify-between ">
-          <div>
-            <div className="text-xl text-gray-500"></div>
-            <div className="mt-2 text-4xl font-bold text-gray-800">
-              Welcome back, 
-            </div>
-            <div className="text-gray-500 text-xl font-bold">
-              Always stay updated with the current status
-            </div>
-          </div>
-          <div className="flex items-center">
-            <img src="" alt="Welcome Image" className="w-24 h-24" />
-          </div>
-        </div>
+                    <div className="bg-blue-100 p-6 rounded-lg flex items-center justify-between ">
+                      <div>
+                        <div className="text-xl text-gray-500"></div>
+                        <div className="mt-2 text-4xl font-bold text-gray-800">
+                          Welcome back,{user?.firstname}
+                        </div>
+                        <div className="text-gray-500 text-xl font-bold">
+                          Always stay updated with the current status
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <img
+                          src={studentUrl}
+                          alt="Welcome Image"
+                          className="w-24 h-24"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-         
-           
-            <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
+
+            {/* <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
               <div className="p-5 mt-12 intro-y box sm:mt-5">
                 <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
                   <div>Parameters</div>
                   <div className="ml-auto">Report Values</div>
                 </div>
-              
+
                 <div className="flex items-center mb-5">
                   <div className="flex items-center">
                     <div>% New Visits</div>
@@ -123,7 +136,6 @@ function Main() {
               </div>
             </div>
             <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
-           
               <div className="p-5 mt-12 intro-y box sm:mt-5">
                 <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
                   <div>Keywords</div>
@@ -148,7 +160,7 @@ function Main() {
                 </Button>
               </div>
             </div>
-          
+
             <div className="col-span-12 mt-6 flex gap-5">
               <div className="mt-8  box overflow-auto intro-y lg:overflow-visible sm:mt-0">
                 <Table className="border-spacing-y-[10px] border-separate sm:mt-2">
@@ -255,67 +267,60 @@ function Main() {
                 </Table>
               </div>
               <div className="flex-grow">
-              <div className="col-span-12 ">
-           
-           <div className="p-5  intro-y box ">
-             <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
-               <div>Keywords</div>
-               <div className="ml-auto">Searched</div>
-             </div>
-             <div className="flex items-center mb-5">
-               <div>Vue 3 Release Date</div>
-               <div className="ml-auto">201</div>
-             </div>
-             <div className="flex items-center mb-5">
-               <div>Install Vite Vue</div>
-               <div className="ml-auto">42</div>
-             </div>
-             <Button
-               variant="outline-secondary"
-               className="relative justify-start w-full mb-2 bg-pink-500 text-white border-slate-300 dark:border-darkmode-300"
-             >
-               <span className="mr-5 truncate">View More...</span>
-               <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
-                 <Lucide icon="ArrowRight" className="w-4 h-4" />
-               </span>
-             </Button>
-           </div>
+                <div className="col-span-12 ">
+                  <div className="p-5  intro-y box ">
+                    <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
+                      <div>Keywords</div>
+                      <div className="ml-auto">Searched</div>
+                    </div>
+                    <div className="flex items-center mb-5">
+                      <div>Vue 3 Release Date</div>
+                      <div className="ml-auto">201</div>
+                    </div>
+                    <div className="flex items-center mb-5">
+                      <div>Install Vite Vue</div>
+                      <div className="ml-auto">42</div>
+                    </div>
+                    <Button
+                      variant="outline-secondary"
+                      className="relative justify-start w-full mb-2 bg-pink-500 text-white border-slate-300 dark:border-darkmode-300"
+                    >
+                      <span className="mr-5 truncate">View More...</span>
+                      <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                        <Lucide icon="ArrowRight" className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </div>
+                </div>
+                <div className="col-span-12 ">
+                  <div className="p-5 mt-12 intro-y box sm:mt-5">
+                    <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
+                      <div>Keywords</div>
+                      <div className="ml-auto">Searched</div>
+                    </div>
 
-         </div>
-         <div className="col-span-12 ">
-           
-           <div className="p-5 mt-12 intro-y box sm:mt-5">
-             <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
-               <div>Keywords</div>
-               <div className="ml-auto">Searched</div>
-             </div>
-          
-             <div className="flex items-center mb-5">
-               <div>Install Vite Vue</div>
-               <div className="ml-auto">42</div>
-             </div>
-             <Button
-               variant="outline-secondary"
-               className="relative justify-start w-full mb-2 bg-purple-500 text-white border-slate-300 dark:border-darkmode-300"
-             >
-               <span className="mr-5 truncate">View More...</span>
-               <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
-                 <Lucide icon="ArrowRight" className="w-4 h-4" />
-               </span>
-             </Button>
-           </div>
-
-         </div>
-         </div>
-             
-            </div>
-          
+                    <div className="flex items-center mb-5">
+                      <div>Install Vite Vue</div>
+                      <div className="ml-auto">42</div>
+                    </div>
+                    <Button
+                      variant="outline-secondary"
+                      className="relative justify-start w-full mb-2 bg-purple-500 text-white border-slate-300 dark:border-darkmode-300"
+                    >
+                      <span className="mr-5 truncate">View More...</span>
+                      <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                        <Lucide icon="ArrowRight" className="w-4 h-4" />
+                      </span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>*/}
           </div>
         </div>
-        <div className="col-span-12 2xl:col-span-3 box">
+        {/* <div className="col-span-12 2xl:col-span-3 box">
           <div className="pb-10 -mb-10 2xl:border-l">
             <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
-          
               <div className="col-span-12 mt-3 mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
                 <div className="flex items-center h-10 intro-x">
                   <h2 className=" text-lg font-medium truncate">
@@ -359,7 +364,7 @@ function Main() {
                   </a>
                 </div>
               </div>
-             
+
               <div className="col-span-12 mt-3  mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
                 <div className="flex items-center h-10 intro-x">
                   <h2 className="mr-5 text-lg font-medium truncate">
@@ -404,40 +409,40 @@ function Main() {
                 </div>
               </div>
               <div className="col-span-12 mr-5">
-              <div className="mt-5 before:hidden xl:before:block intro-y">
-                <div className="p-5 box">
-                  <div className="mt-3">
-                    <ReportDonutChart height={196} />
-                  </div>
-                  <div className="mx-auto mt-8 w-52 sm:w-auto">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 mr-3 rounded-full bg-primary"></div>
-                      <span className="truncate">Ongoing</span>
-                      <span className="ml-auto font-medium">60%</span>
+                <div className="mt-5 before:hidden xl:before:block intro-y">
+                  <div className="p-5 box">
+                    <div className="mt-3">
+                      <ReportDonutChart height={196} />
                     </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 mr-3 rounded-full bg-warning"></div>
-                      <span className="truncate">Upcoming</span>
-                      <span className="ml-auto font-medium">15%</span>
-                    </div>
-                    <div className="flex items-center mt-4">
-                      <div className="w-2 h-2 mr-3 rounded-full bg-pending"></div>
-                      <span className="truncate">Completed</span>
-                      <span className="ml-auto font-medium">15%</span>
-                    </div>
-                    <div className="flex items-center mt-4">
-                      <div className="w-2 h-2 mr-3 rounded-full bg-danger"></div>
-                      <span className="truncate">Out of time</span>
-                      <span className="ml-auto font-medium">10%</span>
+                    <div className="mx-auto mt-8 w-52 sm:w-auto">
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 mr-3 rounded-full bg-primary"></div>
+                        <span className="truncate">Ongoing</span>
+                        <span className="ml-auto font-medium">60%</span>
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 mr-3 rounded-full bg-warning"></div>
+                        <span className="truncate">Upcoming</span>
+                        <span className="ml-auto font-medium">15%</span>
+                      </div>
+                      <div className="flex items-center mt-4">
+                        <div className="w-2 h-2 mr-3 rounded-full bg-pending"></div>
+                        <span className="truncate">Completed</span>
+                        <span className="ml-auto font-medium">15%</span>
+                      </div>
+                      <div className="flex items-center mt-4">
+                        <div className="w-2 h-2 mr-3 rounded-full bg-danger"></div>
+                        <span className="truncate">Out of time</span>
+                        <span className="ml-auto font-medium">10%</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            </div>
           </div>
-        </div>
-      </div> */}
+        </div> */}
+      </div>
     </>
   );
 }

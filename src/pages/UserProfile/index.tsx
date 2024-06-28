@@ -83,6 +83,7 @@ function Main() {
 
   useEffect(() => {
     setUser(auth.authData && auth.authData?.user);
+    reset({...auth.authData?.user})
   }, [user]);
 //   useEffect(() => {
 //     getUsers();

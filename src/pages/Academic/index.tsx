@@ -21,7 +21,7 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
-import { Search } from 'lucide-react';
+import { Search } from "lucide-react";
 
 function Level() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -100,7 +100,7 @@ function Level() {
     setTimeout(() => {
       getAcademics();
       isLoading(false);
-    }, 2000); 
+    }, 2000);
   }, [search, page, limit]);
 
   const getAcademics = async () => {
@@ -189,7 +189,9 @@ function Level() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Name<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Name<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("name")}
                   type="text"
@@ -220,7 +222,9 @@ function Level() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Start Date <span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Start Date <span className="text-danger ml-0.5">*</span>
+                </FormLabel>
 
                 <FormInput
                   {...register("startDate")}
@@ -237,7 +241,9 @@ function Level() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>End Date<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  End Date<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("endDate")}
                   type="date"
@@ -317,110 +323,118 @@ function Level() {
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            {loading ? (
-        <div className="flex flex-col items-center mt-5">
-          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-        </div>
-      ) : academic.length === 0 ? (
-        <div className="flex flex-col items-center mt-10">
-          <Search size={88} className="animate-bounce" />
-          <p className="text-xl">No data found</p>
-        </div>
-      ) : (
-              <Table className="border-spacing-y-[5px]  border-separate -mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Academic Name
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Start Date
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      End Date
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Is Current
-                    </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
+              {loading ? (
+                <div className="flex flex-col items-center mt-5">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </div>
+              ) : academic.length === 0 ? (
+                <div className="flex flex-col items-center mt-10 bg-white p-8">
+                  {/* <Search size={28} className="" /> */}
+                  <p className="text-xl text-slate-500 ">No records found</p>
+                </div>
+              ) : (
+                <>
+                  <Table className="border-spacing-y-[5px]  border-separate -mt-2">
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          No.
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Academic Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Start Date
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          End Date
+                        </Table.Th>
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap">
+                          Is Current
+                        </Table.Th> */}
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th> */}
-                    <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                      Actions
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {academic.map((academic: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {academic.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(academic.startDate).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi",
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(academic.endDate).toLocaleString("en-US", {
-                            timeZone: "Africa/Nairobi",
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          })}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {academic.isCurrent ? "yes" : "no"}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
-                          <a
-                            className="flex items-center mr-3 text-success"
-                            href="#"
-                            onClick={() => editRecord(academic)}
-                          >
-                            <Lucide
-                              icon="CheckSquare"
-                              className="w-4 h-4 mr-1 "
-                            />{" "}
-                            Edit
-                          </a>
-                          <a
-                            className="flex items-center text-danger"
-                            href="#"
-                            onClick={() => {
-                              setRecordId(academic._id), setConfirmDelete(true);
-                            }}
-                          >
-                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
-                            Delete
-                          </a>
-                        </div>
-                      </Table.Td>
+                        <Table.Th className="border-b-0 whitespace-nowrap text-center">
+                          Actions
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {academic.map((academic: any, key) => (
+                        <Table.Tr key={key} className="intro-x">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {key + 1}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {academic.name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {new Date(academic.startDate).toLocaleString(
+                                "en-US",
+                                {
+                                  timeZone: "Africa/Nairobi",
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                }
+                              )}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {new Date(academic.endDate).toLocaleString(
+                                "en-US",
+                                {
+                                  timeZone: "Africa/Nairobi",
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                }
+                              )}
+                            </span>
+                          </Table.Td>
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {academic.isCurrent ? "Active" : "Not Active"}
+                            </span>
+                          </Table.Td> */}
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                            <div className="flex items-center justify-center">
+                              <a
+                                className="flex items-center mr-3 text-success"
+                                href="#"
+                                onClick={() => editRecord(academic)}
+                              >
+                                <Lucide
+                                  icon="CheckSquare"
+                                  className="w-4 h-4 mr-1 "
+                                />{" "}
+                                Edit
+                              </a>
+                              {/* <a
+                                className="flex items-center text-danger"
+                                href="#"
+                                onClick={() => {
+                                  setRecordId(academic._id),
+                                    setConfirmDelete(true);
+                                }}
+                              >
+                                <Lucide
+                                  icon="Trash2"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Delete
+                              </a> */}
+                            </div>
+                          </Table.Td>
 
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           {true && (
                             <Menu>
@@ -457,61 +471,63 @@ function Level() {
                           )}
                         </div>
                       </Table.Td> */}
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-          )}
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                        <button
+                          onClick={() => setPage(previous_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                        </button>
+                        {_.times(pagination.total_pages).map((page, key) =>
+                          page + 1 == pagination.current_page ? (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 bg-white rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          )
+                        )}
+                        <button
+                          onClick={() => setPage(next_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                        </button>
+                      </Pagination>
+                      <div className="text-slate-500">
+                        <span className="mr-3">Total {pagination.total}</span>
+                        <FormSelect
+                          className="w-30 mt-3 !box sm:mt-0"
+                          onChange={(e) => setLimit(parseInt(e.target.value))}
+                        >
+                          <option value={10}>10/page</option>
+                          <option value={25}>25/page</option>
+                          <option value={50}>50/page</option>
+                          <option value={100}>100/page</option>
+                        </FormSelect>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
+
             {/* END: Data List */}
           </div>
           <Dialog

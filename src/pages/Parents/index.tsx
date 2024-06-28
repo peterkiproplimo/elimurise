@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import Pagination from "../../base-components/Pagination";
-import { Search } from 'lucide-react';
+import { Search } from "lucide-react";
 import { formatDate } from "../../utils/helper";
 
 function Main() {
@@ -55,7 +55,6 @@ function Main() {
       surname: yup.string().required("Surname is required"),
       phone: yup.string().required("Phone  Number is required"),
       id_no: yup.string().required("ID Number is required"),
-      
     })
     .required();
 
@@ -101,14 +100,14 @@ function Main() {
     setTimeout(() => {
       getParents();
       isLoading(false);
-    }, 2000); 
+    }, 2000);
   }, [search, page, limit]);
   useEffect(() => {
     getAcademicYear();
   }, []);
   const getParents = async () => {
     const response = await ApiService.getParents({
-      page: 1 
+      page: 1,
     });
     setParents(response.data);
     const pagination = response.pagination;
@@ -191,7 +190,9 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>First Name<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  First Name<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("first_name")}
                   type="text"
@@ -223,7 +224,9 @@ function Main() {
                 )}
               </div> */}
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Last Name <span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Last Name <span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("last_name")}
                   type="text"
@@ -255,7 +258,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>ID Number<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  ID Number<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("id_no")}
                   type="text"
@@ -271,7 +276,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Email<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Email<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("email")}
                   type="text"
@@ -287,7 +294,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Phone<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Phone<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("phone")}
                   type="text"
@@ -322,8 +331,6 @@ function Main() {
                   )}
                 </Button>
               </div>
-          
-             
             </div>
           </form>
         </>
@@ -395,95 +402,96 @@ function Main() {
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-            {loading ? (
-        <div className="flex flex-col items-center mt-5">
-          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-        </div>
-      ) : parents.length === 0 ? (
-        <div className="flex flex-col items-center mt-10">
-          <Search size={88} className="animate-bounce" />
-          <p className="text-xl">No data found</p>
-        </div>
-      ) : (
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     First Name
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     Last Name
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                    Surname
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                    ID Number
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                    Email
-                    </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                    Phone Number
-                    </Table.Th>
-                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+              {loading ? (
+                <div className="flex flex-col items-center mt-5">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </div>
+              ) : parents.length === 0 ? (
+                <div className="flex flex-col items-center mt-10 bg-white p-8">
+                  {/* <Search size={28} className="" /> */}
+                  <p className="text-xl text-slate-500 ">No records found</p>
+                </div>
+              ) : (
+                <>
+                  {" "}
+                  <Table className="border-spacing-y-[3px] border-separate mt-2">
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          No.
+                        </Table.Th>
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          First Name
+                        </Table.Th>
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          Last Name
+                        </Table.Th>
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          Surname
+                        </Table.Th>
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          ID Number
+                        </Table.Th>
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          Email
+                        </Table.Th>
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          Phone Number
+                        </Table.Th>
+                        {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th> */}
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
-                      Actions
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {parents.map((parent: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {parent.first_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {parent.last_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {parent.surname}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {parent.id_no}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {parent.email}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {parent.phone}
-                        </span>
-                      </Table.Td>
-                    
-                      
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
+                          Actions
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {parents.map((parent: any, key) => (
+                        <Table.Tr key={key} className="intro-x">
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {key + 1}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {parent.first_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {parent.last_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {parent.surname}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {parent.id_no}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {parent.email}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {parent.phone}
+                            </span>
+                          </Table.Td>
+
+                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {term?.academicYear?.name}
                         </span>
                       </Table.Td> */}
-                   
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+
+                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {new Date(term.createdAt).toLocaleString(
                             "en-US",
@@ -499,25 +507,36 @@ function Main() {
                         </span>
                       </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
-                      <a className="flex items-center mr-3 text-success" href="#" onClick={() => editRecord(parent)}>
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => {
-                          setRecordId(parent._id),
-                            setConfirmDelete(true);
-                        }}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </Table.Td>
+                            <div className="flex items-center justify-center">
+                              <a
+                                className="flex items-center mr-3 text-success"
+                                href="#"
+                                onClick={() => editRecord(parent)}
+                              >
+                                <Lucide
+                                  icon="CheckSquare"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Edit
+                              </a>
+                              <a
+                                className="flex items-center text-danger"
+                                href="#"
+                                onClick={() => {
+                                  setRecordId(parent._id),
+                                    setConfirmDelete(true);
+                                }}
+                              >
+                                <Lucide
+                                  icon="Trash2"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Delete
+                              </a>
+                            </div>
+                          </Table.Td>
 
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
+                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
                         <div className="flex items-center justify-center">
                           {true && (
                             <Menu>
@@ -556,61 +575,63 @@ function Main() {
                           )}
                         </div>
                       </Table.Td> */}
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-      )}
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                        <button
+                          onClick={() => setPage(previous_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                        </button>
+                        {_.times(pagination.total_pages).map((page, key) =>
+                          page + 1 == pagination.current_page ? (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 bg-white rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          )
+                        )}
+                        <button
+                          onClick={() => setPage(next_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                        </button>
+                      </Pagination>
+                      <div className="text-slate-500">
+                        <span className="mr-3">Total {pagination.total}</span>
+                        <FormSelect
+                          className="w-30 mt-3 !box sm:mt-0"
+                          onChange={(e) => setLimit(parseInt(e.target.value))}
+                        >
+                          <option value={10}>10/page</option>
+                          <option value={25}>25/page</option>
+                          <option value={50}>50/page</option>
+                          <option value={100}>100/page</option>
+                        </FormSelect>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
+
             {/* END: Pagination */}
           </div>
           <Dialog
@@ -681,7 +702,11 @@ function Main() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Parent deleted Successfully" : "Failed to delete record"}</div>
+          <div className="font-medium">
+            {success
+              ? "Parent deleted Successfully"
+              : "Failed to delete record"}
+          </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>

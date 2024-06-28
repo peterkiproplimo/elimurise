@@ -91,6 +91,26 @@ export const getAcademic = async (data: any) => {
     throw handler(e);
   }
 };
+export const getSchoolDetails = async (data: any) => {
+  try {
+    let res = await axios.get(`${c.SCHOOL}/current`, {
+      params: data,
+    });
+    console.log(data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const setCurrentSettings = async (data: any) => {
+  try {
+    let res = await axios.put(`${c.SCHOOL}/update`, data);
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
 export async function createAcademic(data: any) {
   try {
@@ -415,6 +435,14 @@ export async function createStrand(data: FieldValues) {
       let res = await axios.post(c.STRANDS, data);
       return res.data;
     }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function leanersPromotion(data: FieldValues) {
+  try {
+    let res = await axios.put(c.ENROLLMENT + "/enroll", data);
+    return res.data;
   } catch (e) {
     throw handler(e);
   }
@@ -775,6 +803,14 @@ export async function getLeanerAssessmentReport(data: FieldValues) {
     throw handler(e);
   }
 }
+// export const getUsers = async (data: any) => {
+//   try {
+//     let res = await axios.get(c.USERS, { params: data });
+//     return res.data;
+//   } catch (e) {
+//     throw handler(e);
+//   }
+// };
 export function handler(err: any) {
   let error = err;
   console.log(err);
