@@ -309,6 +309,7 @@ function Main() {
           <p className="text-xl">No data found</p>
         </div>
       ) : (
+        <>
               <Table className="border-spacing-y-[3px] border-separate -mt-2">
                 <Table.Thead>
                   <Table.Tr>
@@ -388,9 +389,7 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
-          )}
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
@@ -439,6 +438,10 @@ function Main() {
                 </div>
               </div>
             </div>
+            </>
+          )}
+            </div>
+           
             {/* END: Data List */}
           </div>
           <Dialog

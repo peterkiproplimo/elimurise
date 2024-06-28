@@ -36,7 +36,9 @@ import LearnerProfile from "../pages/LearnerPortal/profile";
 import LearnerDashboard from "../pages/LearnerPortal/dashboard";
 import Dashboard from "../pages/dashboard";
 import LearnerProfiles from "../pages/LearnerProfiles";
-import IndicatorReports from "../pages/IndicatorReports"
+import IndicatorReports from "../pages/IndicatorReports";
+import UserProfile from "../pages/UserProfile";
+
 
 
 //nn
@@ -66,6 +68,10 @@ function Router() {
           path: "parents",
           element: <Parents />,
         },
+        {
+          path: "profile",
+          element: <UserProfile />,
+        },
 
         
         {
@@ -80,7 +86,7 @@ function Router() {
           path: "/IndicatorReport",
           element: <IndicatorReports />,
         },
-
+       
         {
           path: "substrand",
           element: <Substrand />,
@@ -128,10 +134,12 @@ function Router() {
           path: "learning_areas",
           element: <LearningAreas />,
         },
+    
         {
           path: "strands",
           element: <Strands />,
         },
+      
         {
           path: "/v1/profile",
           element: <LearnerProfile />,

@@ -373,13 +373,13 @@ function Main() {
       let res = await ApiService.getReportByLearners(data);
       setAssesmentsData(res);
       // setEnrollments(res);
-      // const pagination = res.pagination;
-      // setPagination({
-      //   current_page: pagination.current_page,
-      //   total: pagination.total,
-      //   total_pages: pagination.total_pages,
-      //   per_page: pagination.per_page,
-      // });
+      const pagination = res.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
       setDialog(true);
       isLoading(false);
     } catch (error: any) {

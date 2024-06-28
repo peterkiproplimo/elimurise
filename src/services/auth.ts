@@ -535,6 +535,14 @@ export const getRole = async (data: any) => {
     throw handler(e);
   }
 };
+export const getUsers = async (data: any) => {
+  try {
+    let res = await axios.get(c.USERS, { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
 export async function createRole(data: FieldValues) {
   try {
