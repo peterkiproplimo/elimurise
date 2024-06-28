@@ -24,9 +24,8 @@ import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/images/collection.jpeg"
-import { Search } from 'lucide-react';
-
+import logo from "../../assets/images/collection.jpeg";
+import { Search } from "lucide-react";
 
 interface TableRow {
   no: number;
@@ -66,7 +65,7 @@ function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const learningArea = location?.state?.data;
-  console.log(learningArea)
+  console.log(learningArea);
   const initialState = {
     grade: learningArea?.grade_id?._id || "na",
     learning_area: learningArea?._id || "na",
@@ -105,7 +104,6 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -172,7 +170,7 @@ function Main() {
   const openSubStrand = (strand: any) => {
     navigate("/substrand", {
       replace: true,
-      state: { data: strand,learningArea:learningArea },
+      state: { data: strand, learningArea: learningArea },
     });
   };
 
@@ -185,7 +183,7 @@ function Main() {
 
   const setStrandFilter = (newFilter: any) => {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
-  }; 
+  };
 
   const deleteRecord = async () => {
     isLoading(true);
@@ -225,7 +223,7 @@ function Main() {
     setTimeout(() => {
       getStrands();
       isLoading(false);
-    }, 2000); 
+    }, 2000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter, search, page, limit]);
 
@@ -467,15 +465,15 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-xl font-medium intro-y flex flex-wrap"> 
-          <a
-                onClick={(e: any) => openLearningArea(strands)}
-                className=" mr-5 "
-                href="#"
-              >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 " />
-              </a>
-          {learningArea?.name}
+          <h2 className="mt-10 text-xl font-medium intro-y flex flex-wrap">
+            <a
+              onClick={(e: any) => openLearningArea(strands)}
+              className=" mr-5 "
+              href="#"
+            >
+              <Lucide icon="ArrowLeft" className="text-slate-400 " />
+            </a>
+            {learningArea?.name}
           </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
@@ -590,46 +588,101 @@ function Main() {
             </div>
             {/* BEGIN: Data List */}
             {loading ? (
-        <div className="fixed inset-0 flex items-center justify-center">
-          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-        </div>
-      ) : strands.length === 0 ? (
-        <div className="fixed inset-0 flex flex-col items-center justify-center">
-          <Search size={88} className="animate-bounce" />
-          <p className="text-xl">No data found</p>
-        </div>
-      ) : (<>
-            {strands.map((strand: any, key) => (
-            <div className="col-span-12 intro-y md:col-span-6">
-            
-               <div className="box" onClick={(e: any) => openSubStrand(strand)}>
-                   <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
-                     <div className="lg:flex lg:h-12 image-fit lg:justify-start">
-                     <div> 
-                      <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-20 h-20" src={logo}/>
+              <div className="fixed inset-0 flex items-center justify-center">
+                <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+              </div>
+            ) : strands.length === 0 ? (
+              <div className="col-span-12 text-center items-center mt-10 bg-white p-8">
+                {/* <Search size={28} className="" /> */}
+                <p className="text-xl text-slate-500 ">No Strands found</p>
+              </div>
+            ) : (
+              <>
+                {strands.map((strand: any, key) => (
+                  <div className="col-span-12 intro-y md:col-span-6">
+                    <div
+                      className="box"
+                      onClick={(e: any) => openSubStrand(strand)}
+                    >
+                      <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
+                        <div className="lg:flex lg:h-12 image-fit lg:justify-start">
+                          <div>
+                            <img
+                              alt="Midone Tailwind HTML Admin Template"
+                              className="rounded-full w-20 h-20"
+                              src={logo}
+                            />
+                          </div>
+                          <div className="mt-3 ml-4 lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
+                            <h2 className="font-bold text-xl">
+                              {strand?.name}
+                            </h2>
+                            <div className="text  mt-0.5">
+                              Theme: {strand?.theme}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                          <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">
+                            View Substrands
+                          </button>
+                          {/* <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-2 py-1">Profile</button> */}
+                        </div>
                       </div>
-                    <div className="mt-3 ml-4 lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
-                        <h2 className="font-bold text-xl">{strand?.name}</h2>
-                    <div className="text  mt-0.5">Theme: {strand?.theme}</div>
-               </div>
-             </div>
-             <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
-                 <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">View Substrands</button>
-                 {/* <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-2 py-1">Profile</button> */}
-             </div>
-             </div>
-           </div>
-          
-          </div>
-            ))}
-            </>)}
-          
-         
-
-
-
-
-
+                    </div>
+                  </div>
+                ))}
+                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <Pagination className="w-full sm:w-auto sm:mr-auto">
+                      <button
+                        onClick={() => setPage(previous_page)}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                      </button>
+                      {_.times(pagination.total_pages).map((page, key) =>
+                        page + 1 == pagination.current_page ? (
+                          <button
+                            onClick={() => setPage(page + 1)}
+                            key={key}
+                            className="py-2 px-4 bg-white rounded-md"
+                          >
+                            {page + 1}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setPage(page + 1)}
+                            key={key}
+                            className="py-2 px-4 rounded-md"
+                          >
+                            {page + 1}
+                          </button>
+                        )
+                      )}
+                      <button
+                        onClick={() => setPage(next_page)}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        <Lucide icon="ChevronRight" className="w-4 h-4" />
+                      </button>
+                    </Pagination>
+                    <div className="text-slate-500">
+                      <span className="mr-3">Total {pagination.total}</span>
+                      <FormSelect
+                        className="w-30 mt-3 !box sm:mt-0"
+                        onChange={(e) => setLimit(parseInt(e.target.value))}
+                      >
+                        <option value={10}>10/page</option>
+                        <option value={25}>25/page</option>
+                        <option value={50}>50/page</option>
+                        <option value={100}>100/page</option>
+                      </FormSelect>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <Table className="border-spacing-y-[10px] border-separate -mt-2">
@@ -684,55 +737,6 @@ function Main() {
               </Table>
             </div> */}
             {/* END: Data List */}
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
           </div>
           <Dialog
             staticBackdrop

@@ -106,10 +106,10 @@ function Users() {
   const activateUser = async (data: any) => {
     isLoading(true);
     let res = await ApiService.activateorDeactivateUsers(data);
-   
+
     getUsers();
     setConfirmDelete(false);
-  
+
     isLoading(false);
   };
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
@@ -119,13 +119,13 @@ function Users() {
       isLoading(true);
       try {
         const data = await getValues();
-        let res = await ApiService.createUsers(data);
+        // let res = await ApiService.createUsers(data);
         getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage(res.message);
+        // setMessage(res.message);
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -146,12 +146,12 @@ function Users() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteUsers(userId);
+      // let res = await ApiService.deleteUsers(userId);
       getUsers();
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
-      setMessage(res.message);
+      // setMessage(res.message);
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -271,11 +271,11 @@ function Users() {
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {user.phone}
                   </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md  bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {user.email}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user?.role_id?.name}
+                    {user?.teacher ? "Teacher" : "School Admin"}
                     {/* {authData?.user?.email} */}
                   </Table.Td>
 
@@ -334,39 +334,39 @@ function Users() {
         {/* END: Data List */}
         <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
           <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-          <Pagination className="w-full sm:w-auto sm:mr-auto">
+            <Pagination className="w-full sm:w-auto sm:mr-auto">
+              <button
+                onClick={() => setPage(previous_page)}
+                className="py-2 px-4 rounded-md"
+              >
+                <Lucide icon="ChevronLeft" className="w-4 h-4" />
+              </button>
+              {_.times(pagination.total_pages).map((page, key) =>
+                page + 1 == pagination.current_page ? (
                   <button
-                    onClick={() => setPage(previous_page)}
+                    onClick={() => setPage(page + 1)}
+                    key={key}
+                    className="py-2 px-4 bg-white rounded-md"
+                  >
+                    {page + 1}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setPage(page + 1)}
+                    key={key}
                     className="py-2 px-4 rounded-md"
                   >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                    {page + 1}
                   </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
+                )
+              )}
+              <button
+                onClick={() => setPage(next_page)}
+                className="py-2 px-4 rounded-md"
+              >
+                <Lucide icon="ChevronRight" className="w-4 h-4" />
+              </button>
+            </Pagination>
             <div className="text-slate-500">
               <span className="mr-3">Total {pagination.total}</span>
               <FormSelect

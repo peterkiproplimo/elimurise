@@ -27,15 +27,15 @@ const initialState: SideMenuState = {
       icon: "Users",
       title: "Learners",
       subMenu: [
-        {
-          icon: "User",
-          pathname: "/learners",
-          title: "Learners Details",
-        },
+        // {
+        //   icon: "User",
+        //   pathname: "/learners",
+        //   title: "Learners Details",
+        // },
         {
           icon: "Users",
-          pathname: "/enrollments",
-          title: "Enrollments",
+          pathname: "/learners",
+          title: "Learners Details",
         },
         {
           icon: "Users",
@@ -110,6 +110,11 @@ const initialState: SideMenuState = {
           pathname: "/stream",
           title: "Stream",
         },
+        {
+          icon: "Activity",
+          pathname: "/settings",
+          title: "System Settings",
+        },
         // {
         //   icon: "User",
         //   pathname: "/enrollment",
@@ -133,30 +138,14 @@ const teacherState: SideMenuState = {
   menu: [
     {
       icon: "Home",
-      title: "Parent",
+      title: "Dashboard",
       pathname: "/",
     },
 
     {
       icon: "Users",
+      pathname: "/learners",
       title: "Learners",
-      subMenu: [
-        {
-          icon: "User",
-          pathname: "/learners",
-          title: "Learners Details",
-        },
-        {
-          icon: "Users",
-          pathname: "/enrollments",
-          title: "Enrollments",
-        },
-        // {
-        //   icon: "User",
-        //   pathname: "/enrollment",
-        //   title: "Learner Enrollment",
-        // },
-      ],
     },
 
     // {
@@ -164,11 +153,7 @@ const teacherState: SideMenuState = {
     //   title: "Parents",
     //   pathname: "/parents",
     // },
-    {
-      icon: "Users",
-      title: "Teachers",
-      pathname: "/teachers",
-    },
+
     {
       icon: "FileCheck",
       pathname: "/learning_areas",
@@ -179,35 +164,21 @@ const teacherState: SideMenuState = {
       pathname: "/assessment",
       title: " Assessment",
     },
-    {
-      icon: "FileText",
-      pathname: "/billing",
-      title: "Billing",
-    },
+
     {
       icon: "Users",
-      title: "Settings",
+      title: "Reports",
       subMenu: [
         {
-          icon: "FileText",
-          pathname: "/academic",
-          title: "Year",
-        },
-        {
-          icon: "BarChart",
-          pathname: "/term",
-          title: "Term",
-        },
-        {
           icon: "Activity",
-          pathname: "/stream",
-          title: "Stream",
+          pathname: "/indicatorReport",
+          title: "By Indicators",
         },
-        // {
-        //   icon: "User",
-        //   pathname: "/enrollment",
-        //   title: "Learner Enrollment",
-        // },
+        {
+          icon: "User",
+          pathname: "/reports",
+          title: "By Learner",
+        },
       ],
     },
   ],

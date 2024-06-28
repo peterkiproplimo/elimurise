@@ -20,7 +20,7 @@ import Notification, {
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import { Search } from 'lucide-react';
+import { Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
@@ -126,17 +126,16 @@ function Main() {
   useEffect(() => {
     getStudents();
     setTimeout(() => {
-      getStudents()
+      getStudents();
       isLoading(false);
-    }, 2000); 
+    }, 2000);
   }, [search, page, limit]);
 
   const getStudents = async () => {
     isLoading(true);
-    const response = await ApiService.getLearners(
+    const response = await ApiService.getEnrolments(
       {
-        page: page,
-        limit: limit,
+        page: 1,
       },
       strandFilter
     );
@@ -184,7 +183,12 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset({ ...record, stream: record?.stream?._id });
+    reset({
+      ...record.learner,
+      stream: record?.stream?._id,
+      grade: record?.stream?.grade?._id,
+    });
+    console.log(record);
     setDialog(true);
   };
 
@@ -381,6 +385,7 @@ function Main() {
                     name="grade"
                     value={grade}
                     onChange={(event) => setGrade(event.target.value)}
+                    disabled={isEditMode}
                   >
                     <option>Select Grade</option>
                     {grades.map((grade: any, key) => (
@@ -400,7 +405,11 @@ function Main() {
                   <FormLabel htmlFor="modal-form-6">
                     Select Stream<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-                  <FormSelect {...register("stream")} name="stream">
+                  <FormSelect
+                    {...register("stream")}
+                    name="stream"
+                    disabled={isEditMode}
+                  >
                     {streams.map((stream: any, key) => (
                       <option key={key} value={stream._id}>
                         {stream.name}
@@ -524,7 +533,122 @@ function Main() {
                 </div>
               </div>
             </fieldset>
-
+            <fieldset className="mt-5 p-5 intro-y box validate-form">
+              <legend className="text-lg font-semibold">
+                Guardian 2 Details
+              </legend>
+              <div className="grid grid-cols-12 gap-4 gap-y-3">
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Guardian First Name
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian2_first_name")}
+                    type="text"
+                    name="guardian2_first_name"
+                    className={
+                      errors.guardian2_first_name ? "border-danger" : ""
+                    }
+                    placeholder="Second guardian first name"
+                  />
+                  {errors.guardian2_first_name && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_first_name.message ===
+                        "string" && errors.guardian2_first_name.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Guardian Surname</FormLabel>
+                  <FormInput
+                    {...register("guardian2_surname")}
+                    type="text"
+                    name="guardian2_surname"
+                    className={errors.guardian2_surname ? "border-danger" : ""}
+                    placeholder="Second guardian surname"
+                  />
+                  {errors.guardian2_surname && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_surname.message === "string" &&
+                        errors.guardian2_surname.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Guardian Last Name
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian2_last_name")}
+                    type="text"
+                    name="guardian2_last_name"
+                    className={
+                      errors.guardian2_last_name ? "border-danger" : ""
+                    }
+                    placeholder="Second guardian last name"
+                  />
+                  {errors.guardian2_last_name && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_last_name.message === "string" &&
+                        errors.guardian2_last_name.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Guardian ID Number
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian2_id_no")}
+                    type="text"
+                    name="guardian2_id_no"
+                    className={errors.guardian2_id_no ? "border-danger" : ""}
+                    placeholder="Second guardian ID number"
+                  />
+                  {errors.guardian2_id_no && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_id_no.message === "string" &&
+                        errors.guardian2_id_no.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Guardian Email</FormLabel>
+                  <FormInput
+                    {...register("guardian2_email")}
+                    type="email"
+                    name="guardian2_email"
+                    className={errors.guardian2_email ? "border-danger" : ""}
+                    placeholder="Second guardian email"
+                  />
+                  {errors.guardian2_email && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_email.message === "string" &&
+                        errors.guardian2_email.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>Guardian Phone</FormLabel>
+                  <FormInput
+                    {...register("guardian2_phone")}
+                    type="text"
+                    name="guardian2_phone"
+                    className={errors.guardian2_phone ? "border-danger" : ""}
+                    placeholder="Second guardian phone"
+                  />
+                  {errors.guardian2_phone && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_phone.message === "string" &&
+                        errors.guardian2_phone.message}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </fieldset>
             <div className="col-span-12 sm:col-span-12 mt-3">
               <Button
                 type="button"
@@ -638,208 +762,214 @@ function Main() {
             </div> */}
 
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            {loading ? (
-        <div className="flex flex-col items-center mt-5">
-          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-        </div>
-      ) : learners.length === 0 ? (
-        <div className="flex flex-col items-center mt-10">
-          <Search size={88} className="animate-bounce" />
-          <p className="text-xl">No data found</p>
-        </div>
-      ) : (
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      First Name
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Last Name
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Surname
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Adm No
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Nemis No
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Guardian First Name
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Guardian Last Name
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Guardian Surname
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Guardian ID No
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Guardian Email
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Guardian Phone
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                      Actions
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {learners.map((learner: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.first_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.last_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.surname}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.adm_no}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.nemis_no}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.guardian_first_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.guardian_last_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.guardian_surname}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.guardian_id_no}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.guardian_email}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learner?.guardian_phone}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
-                          <a
-                            className="flex items-center mr-3 text-success"
-                            href="#"
-                            onClick={() => editRecord(learner)}
-                          >
-                            <Lucide
-                              icon="CheckSquare"
-                              className="w-4 h-4 mr-1"
-                            />{" "}
-                            Edit
-                          </a>
-                          <a
-                            className="flex items-center text-danger"
-                            href="#"
-                            onClick={() => {
-                              setRecordId(learner._id), setConfirmDelete(true);
-                            }}
-                          >
-                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
-                            Delete
-                          </a>
-                        </div>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-             
-          )}
+              {loading ? (
+                <div className="flex flex-col items-center mt-5">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </div>
+              ) : learners.length === 0 ? (
+                <div className="flex flex-col items-center mt-10 bg-white p-8">
+                  {/* <Search size={28} className="" /> */}
+                  <p className="text-xl text-slate-500 ">No records found</p>
+                </div>
+              ) : (
+                <>
+                  <Table className="border-spacing-y-[3px] border-separate mt-2">
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-10">
+                          No.
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                          First Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                          Last Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                          Surname
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Adm No
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Grade
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Guardian First Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Guardian Last Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Guardian Surname
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Guardian ID No
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Guardian Email
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Guardian Phone
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
+                          Actions
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {learners.map((learner: any, key) => (
+                        <Table.Tr key={key} className="intro-x">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
+                            <span className="font-medium whitespace-nowrap">
+                              {key + 1}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.first_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.last_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.surname}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.adm_no}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.stream?.grade?.name}{" "}
+                              {learner?.stream?.name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.guardian_first_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.guardian_last_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.guardian_surname}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.guardian_id_no}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.guardian_email}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.guardian_phone}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                            <div className="flex items-center justify-center">
+                              <a
+                                className="flex items-center mr-3 text-success"
+                                href="#"
+                                onClick={() => editRecord(learner)}
+                              >
+                                <Lucide
+                                  icon="CheckSquare"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Edit
+                              </a>
+                              {/* Uncomment the following block if you want to enable the delete action */}
+                              {/* <a
+              className="flex items-center text-danger"
+              href="#"
+              onClick={() => {
+                setRecordId(learner.learner._id),
+                setConfirmDelete(true);
+              }}
+            >
+              <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
+            </a> */}
+                            </div>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                        <button
+                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                        </button>
+                        {_.times(pagination.total_pages).map((page, key) =>
+                          page + 1 == pagination.current_page ? (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 bg-white rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          )
+                        )}
+                        <button
+                          onClick={() =>
+                            setPage(
+                              page < pagination.total_pages ? page - 1 : 1
+                            )
+                          }
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                        </button>
+                      </Pagination>
+                      <div className="text-slate-500">
+                        <span className="mr-3">Total {pagination.total}</span>
+                        <FormSelect
+                          className="w-30 mt-3 !box sm:mt-0"
+                          onChange={(e) => setLimit(parseInt(e.target.value))}
+                        >
+                          <option value={10}>10/page</option>
+                          <option value={25}>25/page</option>
+                          <option value={50}>50/page</option>
+                          <option value={100}>100/page</option>
+                        </FormSelect>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* END: Data List */}
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() =>
-                      setPage(page < pagination.total_pages ? page - 1 : 1)
-                    }
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
           </div>
           <Dialog
             staticBackdrop

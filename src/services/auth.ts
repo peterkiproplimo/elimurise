@@ -91,6 +91,26 @@ export const getAcademic = async (data: any) => {
     throw handler(e);
   }
 };
+export const getSchoolDetails = async (data: any) => {
+  try {
+    let res = await axios.get(`${c.SCHOOL}/current`, {
+      params: data,
+    });
+    console.log(data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const setCurrentSettings = async (data: any) => {
+  try {
+    let res = await axios.put(`${c.SCHOOL}/update`, data);
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
 export async function createAcademic(data: any) {
   try {

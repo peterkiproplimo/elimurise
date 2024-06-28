@@ -19,7 +19,7 @@ import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
-import { Search } from 'lucide-react';
+import { Search } from "lucide-react";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
@@ -116,16 +116,13 @@ function Main() {
     getStreams();
   }, []);
 
-
   useEffect(() => {
     getStudents();
     setTimeout(() => {
-      getStudents()
+      getStudents();
       isLoading(false);
-    }, 2000); 
+    }, 2000);
   }, [search, page, limit]);
-
- 
 
   const getStudents = async () => {
     isLoading(true);
@@ -189,7 +186,6 @@ function Main() {
     reset({ name: "" });
     setDialog(false);
   };
-
 
   // const handleGradeChange = async (
   //   event: React.ChangeEvent<HTMLSelectElement>
@@ -570,201 +566,206 @@ function Main() {
             </div> */}
 
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            {loading ? (
-        <div className="flex flex-col items-center mt-5">
-          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-        </div>
-      ) : learners.length === 0 ? (
-        <div className="flex flex-col items-center mt-10">
-          <Search size={88} className="animate-bounce" />
-          <p className="text-xl">No data found</p>
-        </div>
-      ) : (
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      No.
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Academic Year
-                    </Table.Th>
-                    {/* <Table.Th className="border-b-0 whitespace-nowrap">
+              {loading ? (
+                <div className="flex flex-col items-center mt-5">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </div>
+              ) : learners.length === 0 ? (
+                <div className="flex flex-col items-center mt-10 bg-white p-8">
+                  {/* <Search size={28} className="" /> */}
+                  <p className="text-xl text-slate-500 ">No records found</p>
+                </div>
+              ) : (
+                <>
+                  <Table className="border-spacing-y-[3px] border-separate mt-2">
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          No.
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Academic Year
+                        </Table.Th>
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap">
                       Grade
                     </Table.Th> */}
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Grade
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      First Name
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Last Name
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Surname
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Adm No
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Created At
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Actions
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {learners.map((enrollment: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
-                      </Table.Td>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Grade
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          First Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Last Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Surname
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Adm No
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Created At
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Actions
+                        </Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {learners.map((enrollment: any, key) => (
+                        <Table.Tr key={key} className="intro-x">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {key + 1}
+                            </span>
+                          </Table.Td>
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {enrollment?.academicYear?.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {enrollment?.stream?.grade?.name} -{" "}
-                          {enrollment?.stream?.name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {enrollment?.learner?.first_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {enrollment?.learner?.last_name}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {enrollment?.learner?.surname}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {enrollment?.learner?.admn_no}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(
-                            enrollment?.learner?.createdAt
-                          ).toLocaleString("en-US", {
-                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                            // hour: "2-digit",
-                            // minute: "2-digit",
-                          })}
-                        </span>
-                      </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {enrollment?.academicYear?.name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {enrollment?.stream?.grade?.name} -{" "}
+                              {enrollment?.stream?.name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {enrollment?.learner?.first_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {enrollment?.learner?.last_name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {enrollment?.learner?.surname}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {enrollment?.learner?.admn_no}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {new Date(
+                                enrollment?.learner?.createdAt
+                              ).toLocaleString("en-US", {
+                                timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                                // hour: "2-digit",
+                                // minute: "2-digit",
+                              })}
+                            </span>
+                          </Table.Td>
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item
-                                  onClick={() => editRecord(enrollment)}
-                                >
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(enrollment),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-            )}
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                            <div className="flex items-center justify-center">
+                              {true && (
+                                <Menu>
+                                  <Menu.Button
+                                    as={Button}
+                                    className="px-2 !box"
+                                  >
+                                    <span className="flex items-center justify-center w-5 h-5">
+                                      <Lucide
+                                        icon="MoreVertical"
+                                        className="w-4 h-4"
+                                      />
+                                    </span>
+                                  </Menu.Button>
+                                  <Menu.Items>
+                                    <Menu.Item
+                                      onClick={() => editRecord(enrollment)}
+                                    >
+                                      <Lucide
+                                        icon="Edit"
+                                        className="w-4 h-4 mr-2"
+                                      />{" "}
+                                      Edit
+                                    </Menu.Item>
+                                    <Menu.Item
+                                      onClick={() => {
+                                        setRecordId(enrollment),
+                                          setConfirmDelete(true);
+                                      }}
+                                    >
+                                      <Lucide
+                                        icon="Trash"
+                                        className="w-4 h-4 mr-2"
+                                      />{" "}
+                                      Delete
+                                    </Menu.Item>
+                                  </Menu.Items>
+                                </Menu>
+                              )}
+                            </div>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                        <button
+                          onClick={() => setPage(previous_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                        </button>
+                        {_.times(pagination.total_pages).map((page, key) =>
+                          page + 1 == pagination.current_page ? (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 bg-white rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          )
+                        )}
+                        <button
+                          onClick={() => setPage(next_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                        </button>
+                      </Pagination>
+                      <div className="text-slate-500">
+                        <span className="mr-3">Total {pagination.total}</span>
+                        <FormSelect
+                          className="w-30 mt-3 !box sm:mt-0"
+                          onChange={(e) => setLimit(parseInt(e.target.value))}
+                        >
+                          <option value={10}>10/page</option>
+                          <option value={25}>25/page</option>
+                          <option value={50}>50/page</option>
+                          <option value={100}>100/page</option>
+                        </FormSelect>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             {/* END: Data List */}
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
           </div>
           <Dialog
             staticBackdrop

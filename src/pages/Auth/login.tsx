@@ -25,7 +25,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [selectedForm, setSelectedForm] = useState("form1");
 
-  const handleFormChange = (event:any) => {
+  const handleFormChange = (event: any) => {
     setSelectedForm(event.target.value);
   };
 
@@ -62,7 +62,13 @@ const Login = () => {
           isLoading(false);
           console.log(res.user);
           let token = res.token;
-          localStorage.setItem("type", "school");
+
+          if (res.user.teacher) {
+            localStorage.setItem("type", "teacher");
+          } else {
+            localStorage.setItem("type", "school");
+          }
+
           await auth.signIn({ ...res.user, token });
         } else {
           let res = await ApiService.login_parent(data);

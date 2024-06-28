@@ -180,7 +180,6 @@ function Main() {
       setMessage(error.message);
       notify.current?.showToast();
     }
-    console.log(data);
   };
 
   return (

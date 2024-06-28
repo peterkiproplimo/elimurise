@@ -39,6 +39,8 @@ import LearnerProfiles from "../pages/LearnerProfiles";
 import IndicatorReports from "../pages/IndicatorReports";
 import User from "../pages/User";
 import Role from "../pages/roles";
+import Term from "../pages/Term";
+import Settings from "../pages/Settings";
 //nn
 function Router() {
   const routes = [
@@ -99,6 +101,10 @@ function Router() {
           path: "stream",
           element: <Stream />,
         },
+        {
+          path: "term",
+          element: <Term />,
+        },
 
         {
           path: "accountDetails",
@@ -108,6 +114,10 @@ function Router() {
         {
           path: "assessment",
           element: <AssessLearner />,
+        },
+        {
+          path: "settings",
+          element: <Settings />,
         },
 
         {

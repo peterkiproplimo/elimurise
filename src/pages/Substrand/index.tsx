@@ -25,9 +25,9 @@ import React from "react";
 import { setValue } from "../../base-components/TomSelect/tom-select";
 import "./substrand.css";
 import Pagination from "../../base-components/Pagination";
-import { useLocation , useNavigate} from "react-router-dom";
-import logo from "../../assets/images/subs.jpeg"
-import { Search } from 'lucide-react';
+import { useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/images/subs.jpeg";
+import { Search } from "lucide-react";
 
 interface TableRow {
   no: number;
@@ -53,7 +53,7 @@ function Main() {
   const [dataInput, setDataInput] = useState("");
   const [rows, setRows] = useState<string[]>([]);
   const [is_child, setIs_child] = useState(false);
-  const [activeTab, setActiveTab] = useState('outcome');
+  const [activeTab, setActiveTab] = useState("outcome");
   const [selected, setSelected] = useState({
     indicator: [],
   });
@@ -72,7 +72,7 @@ function Main() {
   const navigate = useNavigate();
   const state_strand = location?.state?.data;
   const learning_area = location?.state?.learningArea;
-console.log(learning_area);
+  console.log(learning_area);
   const [selectedStrand, setSelectedStrand] = useState(
     state_strand?._id || "na"
   );
@@ -138,13 +138,10 @@ console.log(learning_area);
   useEffect(() => {
     getGrades();
     getSubstrand();
-  
+
     getStrands();
   }, []);
-  const getStrands = async () => {
- 
-  
-  };
+  const getStrands = async () => {};
   const getSubstrand = async () => {
     let res = await ApiService.getSubstrandByStrand(
       {
@@ -188,18 +185,18 @@ console.log(learning_area);
   };
 
   const editRecord = (record: any) => {
-    console.log(strandFilter)
+    console.log(strandFilter);
 
     setNumberOfFields(0);
-    setSubstrand(record)
-console.log(record)
+    setSubstrand(record);
+    console.log(record);
     setGroup(record.groups);
-    console.log(strandFilter)
+    console.log(strandFilter);
     reset(record);
     setDialog(true);
     console.log(record);
     setSelected({ indicator: record?.indicators });
-    setSubstrand(record)
+    setSubstrand(record);
   };
 
   const cancel = (record: any) => {
@@ -225,18 +222,16 @@ console.log(record)
   }, [search, limit, page, selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
-  
     // You might want to fetch filtered data here
   };
 
   const openStrand = (strand: any) => {
-    console.log(learning_area)
+    console.log(learning_area);
     navigate("/Strands", {
       replace: true,
       state: { data: learning_area },
     });
   };
-
 
   const addRow = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -258,41 +253,51 @@ console.log(record)
 
   const renderExtraFields = (selected: any) => {
     const fields = [];
-    fields.push(<>
-   
-    <div className="mb-4 border-b border-gray-200">
-      <ul className="flex cursor-pointer w-full ">
-        <li
-          className={`mr-4 pb-2 font-bold  text-lg ${activeTab === 'outcome' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('outcome')}
-        >
-          Specific Learning Outcomes
-        </li>
-        <li
-          className={`mr-4 ml-8 pb-2 font-bold  text-lg ${activeTab === 'indicators' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
-          onClick={() => setActiveTab('indicators')}
-        >
-          Indicators
-        </li>
-      </ul>
-    </div>
+    fields.push(
+      <>
+        <div className="mb-4 border-b border-gray-200">
+          <ul className="flex cursor-pointer w-full ">
+            <li
+              className={`mr-4 pb-2 font-bold  text-lg ${
+                activeTab === "outcome"
+                  ? "border-b-2 border-blue-500 text-blue-500"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setActiveTab("outcome")}
+            >
+              Specific Learning Outcomes
+            </li>
+            <li
+              className={`mr-4 ml-8 pb-2 font-bold  text-lg ${
+                activeTab === "indicators"
+                  ? "border-b-2 border-blue-500 text-blue-500"
+                  : "text-gray-500"
+              }`}
+              onClick={() => setActiveTab("indicators")}
+            >
+              Indicators
+            </li>
+          </ul>
+        </div>
 
-    {activeTab === 'outcome' && (
-      <div className="mt-3">
-          <div className="font-medium inline-block richtext"
+        {activeTab === "outcome" && (
+          <div className="mt-3">
+            <div
+              className="font-medium inline-block richtext"
               style={{ listStyle: "auto" }}
               dangerouslySetInnerHTML={{
-              __html: substrand.learning_outcome}}
+                __html: substrand.learning_outcome,
+              }}
             ></div>
-       
-      </div>
-    )}
-    </>)
-      
+          </div>
+        )}
+      </>
+    );
+
     selected.indicator.map((indicator: any, i: any) => {
       fields.push(
         <div className="p-5 bg-white">
-      {/* <div className="mb-4 border-b border-gray-200">
+          {/* <div className="mb-4 border-b border-gray-200">
         <ul className="flex cursor-pointer w-full ">
           <li
             className={`mr-4 pb-2 font-bold  text-lg ${activeTab === 'outcome' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500'}`}
@@ -309,7 +314,7 @@ console.log(record)
         </ul>
       </div> */}
 
-      {/* {activeTab === 'outcome' && (
+          {/* {activeTab === 'outcome' && (
         <div className="mt-3">
           {i+1}.  <div className="font-medium inline-block richtext"
                 style={{ listStyle: "auto" }}
@@ -320,62 +325,61 @@ console.log(record)
         </div>
       )} */}
 
-      {activeTab === 'indicators' && (
-        <div className="mt-3">
-        
-          <p className="text-gray-700 mt-2">
-           {i+1}. {indicator[0].description} 
-          </p>
-          <table className="w-full table-auto border-collapse border border-gray-300 mt-2">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
-                  Key
-                </th>
-                <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
-                  Value
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  (a). Exceeding Expectation (4)
-                </td>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  {indicator[0].EE} {/* Adjust these properties based on your actual data structure */}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  (b). Meeting Expectation (3)
-                </td>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  {indicator[0].ME}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  (c). Approaching Expectation (2)
-                </td>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  {indicator[0].AE}
-                </td>
-              </tr>
-              <tr>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  (d). Below Expectation (1)
-                </td>
-                <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
-                  {indicator[0].BE}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          {activeTab === "indicators" && (
+            <div className="mt-3">
+              <p className="text-gray-700 mt-2">
+                {i + 1}. {indicator[0].description}
+              </p>
+              <table className="w-full table-auto border-collapse border border-gray-300 mt-2">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
+                      Key
+                    </th>
+                    <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
+                      Value
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      (a). Exceeding Expectation (4)
+                    </td>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      {indicator[0].EE}{" "}
+                      {/* Adjust these properties based on your actual data structure */}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      (b). Meeting Expectation (3)
+                    </td>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      {indicator[0].ME}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      (c). Approaching Expectation (2)
+                    </td>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      {indicator[0].AE}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      (d). Below Expectation (1)
+                    </td>
+                    <td className="py-1 px-4 border-b border-gray-200 text-gray-700">
+                      {indicator[0].BE}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-      
       );
     });
 
@@ -464,9 +468,7 @@ console.log(record)
                 </div>
               )}
             </div>
-            <div>
-            
-            </div>
+            <div></div>
           </div>
         </div>
       );
@@ -490,12 +492,10 @@ console.log(record)
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
             <h2 className=" text-lg font-medium intro-y">
-         
-             <span className="font-medium whitespace-nowrap">
-             Substrand - {substrand.name}
-           </span>
-          </h2>
-
+              <span className="font-medium whitespace-nowrap">
+                Substrand - {substrand.name}
+              </span>
+            </h2>
           </div>
           <br />
           <form className=" intro-y  validate-form" onSubmit={onSubmit}>
@@ -536,7 +536,11 @@ console.log(record)
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <FormInput type="text" value={learning_area?.name} disabled></FormInput>
+                <FormInput
+                  type="text"
+                  value={learning_area?.name}
+                  disabled
+                ></FormInput>
                 {/* <FormSelect
                   {...register("learning_area")}
                   name="learning_area"
@@ -583,137 +587,149 @@ console.log(record)
 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
-                
-                <FormInput type="text" value={state_strand?.name} disabled></FormInput>
 
-               
-               
+                <FormInput
+                  type="text"
+                  value={state_strand?.name}
+                  disabled
+                ></FormInput>
               </div>
             </div>
 
-           
-
             <div className="">
-            <div className="p-5 bg-white shadow rounded-lg mt-5">
-              {showExtraFields && renderExtraFields(selected)}
+              <div className="p-5 bg-white shadow rounded-lg mt-5">
+                {showExtraFields && renderExtraFields(selected)}
 
-              {showExtraFields && (
-                <div className="col-span-12 sm:col-span-3">
-                  
-                </div>
-              )}
+                {showExtraFields && (
+                  <div className="col-span-12 sm:col-span-3"></div>
+                )}
+              </div>
             </div>
-</div>
-        
           </form>
         </>
       ) : (
         <>
-         
           <h2 className="mt-10 text-lg font-medium intro-y flex flex-wrap">
-          <a
-           onClick={(event: React.MouseEvent) => {
-            event.preventDefault();
-            openStrand(strands)}
-          }
-                className=" mr-5 "
-                href="#"
-              >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 " />
-              </a>
-             Substrands
+            <a
+              onClick={(event: React.MouseEvent) => {
+                event.preventDefault();
+                openStrand(strands);
+              }}
+              className=" mr-5 "
+              href="#"
+            >
+              <Lucide icon="ArrowLeft" className="text-slate-400 " />
+            </a>
+            Substrands
           </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
             {/* BEGIN: Data List */}
             {loading ? (
-            <div className="flex flex-col items-center mt-5">
-          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-        </div>
-      ) : substrands.length === 0 ? (
-        <div className="fixed inset-0 flex flex-col items-center justify-center">
-          <Search size={88} className="animate-bounce" />
-          <p className="text-xl">No data found</p>
-        </div>
-      ) : (<>
-              
-                  {substrands.map((substrand: any, key) => (
-                       <div className="col-span-12 intro-y md:col-span-6">
-            
-                       <div className="box p-2 min-h-[100px]"  onClick={() => editRecord(substrand)}>
-                           <div className=" gap-4 p-5  ">
-                             <div className="lg:flex lg:h-12 image-fit lg:justify-start">
-                             <div> 
-                              <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-14 h-14" src={logo}/>
-                              </div>
-                            <div className="mt-3 ml-4 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
-                                <h2 className="font-bold text-xl"> {substrand.name}</h2>
-                                <div className="font-bold text  mt-0.5">Strand:   {state_strand?.name}</div>  
-                                <div className="font-bold text  mt-0.5"> {learning_area?.grade_id.name}</div>
-                            <div className="font-bold text  mt-0.5">Term:  {state_strand?.term}</div>
-                         
-                            
-                       </div>
-                     </div>
-                     <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
-                         <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">View Substrand</button>
-                         {/* <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-2 py-1">Profile</button> */}
-                     </div>
-                     </div>
-                   </div>
-                  
+              <div className="flex flex-col items-center mt-5">
+                <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+              </div>
+            ) : substrands.length === 0 ? (
+              <div className="col-span-12 text-center items-center mt-10 bg-white p-8">
+                {/* <Search size={28} className="" /> */}
+                <p className="text-xl text-slate-500 ">No Strands found</p>
+              </div>
+            ) : (
+              <>
+                {substrands.map((substrand: any, key) => (
+                  <div className="col-span-12 intro-y md:col-span-6">
+                    <div
+                      className="box p-2 min-h-[100px]"
+                      onClick={() => editRecord(substrand)}
+                    >
+                      <div className=" gap-4 p-5  ">
+                        <div className="lg:flex lg:h-12 image-fit lg:justify-start">
+                          <div>
+                            <img
+                              alt="Midone Tailwind HTML Admin Template"
+                              className="rounded-full w-14 h-14"
+                              src={logo}
+                            />
+                          </div>
+                          <div className="mt-3 ml-4 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
+                            <h2 className="font-bold text-xl">
+                              {" "}
+                              {substrand.name}
+                            </h2>
+                            <div className="font-bold text  mt-0.5">
+                              Strand: {state_strand?.name}
+                            </div>
+                            <div className="font-bold text  mt-0.5">
+                              {" "}
+                              {learning_area?.grade_id.name}
+                            </div>
+                            <div className="font-bold text  mt-0.5">
+                              Term: {state_strand?.term}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                          <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">
+                            View Substrand
+                          </button>
+                          {/* <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-2 py-1">Profile</button> */}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  ))}
-         </>)}
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
+                ))}
+                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
+                        onClick={() => setPage(previous_page)}
                         className="py-2 px-4 rounded-md"
                       >
-                        {page + 1}
+                        <Lucide icon="ChevronLeft" className="w-4 h-4" />
                       </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
+                      {_.times(pagination.total_pages).map((page, key) =>
+                        page + 1 == pagination.current_page ? (
+                          <button
+                            onClick={() => setPage(page + 1)}
+                            key={key}
+                            className="py-2 px-4 bg-white rounded-md"
+                          >
+                            {page + 1}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setPage(page + 1)}
+                            key={key}
+                            className="py-2 px-4 rounded-md"
+                          >
+                            {page + 1}
+                          </button>
+                        )
+                      )}
+                      <button
+                        onClick={() => setPage(next_page)}
+                        className="py-2 px-4 rounded-md"
+                      >
+                        <Lucide icon="ChevronRight" className="w-4 h-4" />
+                      </button>
+                    </Pagination>
+                    <div className="text-slate-500">
+                      <span className="mr-3">Total {pagination.total}</span>
+                      <FormSelect
+                        className="w-30 mt-3 !box sm:mt-0"
+                        onChange={(e) => setLimit(parseInt(e.target.value))}
+                      >
+                        <option value={10}>10/page</option>
+                        <option value={25}>25/page</option>
+                        <option value={50}>50/page</option>
+                        <option value={100}>100/page</option>
+                      </FormSelect>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
+
             {/* END: Data List */}
           </div>
           <Dialog

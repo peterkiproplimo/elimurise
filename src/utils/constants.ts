@@ -22,6 +22,7 @@ export const TEACHERS = `${BASE_URL}portal/teachers`;
 export const GRADES = `${BASE_URL}portal/grades`;
 export const STRANDS = `${BASE_URL}portal/strand`;
 export const LEARNING_AREA = `${BASE_URL}portal/learning-areas`;
+export const SCHOOL = `${BASE_URL}portal/school`;
 
 export const USERS = `${BASE_URL}portal/users`;
 export const PROFILE = `${BASE_URL}portal/profile`;

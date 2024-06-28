@@ -18,9 +18,8 @@ import Pagination from "../../base-components/Pagination";
 import { formatDate } from "../../utils/helper";
 import logoUrl from "../../assets/images/edit.png";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/Books.jpeg"
-import { Search } from 'lucide-react';
-
+import logo from "../../assets/images/Books.jpeg";
+import { Search } from "lucide-react";
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -45,7 +44,7 @@ function Main() {
     per_page: 0,
   });
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(12);
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
@@ -96,10 +95,6 @@ function Main() {
 
   useEffect(() => {
     getLearningAreas();
-    setTimeout(() => {
-      getLearningAreas();
-      isLoading(false);
-    }, 2000); 
   }, [search, page, limit]);
   useEffect(() => {
     getGrades();
@@ -107,8 +102,8 @@ function Main() {
   const getLearningAreas = async () => {
     isLoading(true);
     const response = await ApiService.getLearningAreas({
-      page: 1,
-      limit:1000
+      page: page,
+      limit: limit,
     });
     setLearningAreas(response.data);
     const pagination = response.pagination;
@@ -318,93 +313,101 @@ function Main() {
 
               {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
             </div>
-          
-            <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible flex flex-wrap ">
-            {loading ? (
-        <div className="fixed inset-0 flex items-center justify-center">
-          <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-        </div>
-      ) : learningAreas.length === 0 ? (
-        <div className="fixed inset-0 flex items-center justify-center">
-          <Search size={88} className="animate-bounce" />
-          <p className="text-xl">No data found</p>
-        </div>
-      ) : (<>
-            {learningAreas.map((learningArea: any, key) => (
-              <div
-                key={key}
-                className="box cursor-pointer  p-5 bg-white dark:bg-gray-800 rounded-xl shadow-lg  m-5   w-[400px] "
-                onClick={(e: any) => openStrand(learningArea)}
-              >
-                <div className="flex  gap-5">
-                <div className=" ">
-                <img alt="ACS" className="w-20 h-full" src={logo} />
+
+            <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible flex flex-wrap justify-between ">
+              {loading ? (
+                <div className="fixed inset-0 flex items-center justify-center">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
                 </div>
-                <div className=" items-center ">
-                <h1 className="text-2xl font-bold mb-2">{learningArea.name}</h1>
-                  <h1 className="text-xl font-bold">
-                   {learningArea?.grade_id?.name}
-                  </h1>
+              ) : learningAreas.length === 0 ? (
+                <div className="flex flex-col items-center mt-10 bg-white p-8">
+                  {/* <Search size={28} className="" /> */}
+                  <p className="text-xl text-slate-500 ">No records found</p>
                 </div>
-                </div>         
-              </div>
-            ))}
-          </>
-             )}
-          </div>
+              ) : (
+                <>
+                  {learningAreas.map((learningArea: any, key) => (
+                    <div
+                      key={key}
+                      className="box cursor-pointer  p-5 bg-white dark:bg-gray-800 rounded-xl shadow-lg  m-5   w-[350px] "
+                      onClick={(e: any) => openStrand(learningArea)}
+                    >
+                      <div className="flex  gap-5">
+                        <div className=" ">
+                          <img alt="ACS" className="w-20 h-30" src={logo} />
+                        </div>
+                        <div className=" items-center ">
+                          <h1 className="text-2xl font-bold mb-2">
+                            {learningArea.name}
+                          </h1>
+                          <h1 className="text-xl font-bold">
+                            {learningArea?.grade_id?.name}
+                          </h1>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
-            <div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
+            {!loading && learningAreas.length > 0 && (
+              <div className="flex flex-wrap w-100 items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                  <Pagination className="w-full sm:w-auto sm:mr-auto">
+                    <button
+                      onClick={() => setPage(previous_page)}
+                      className="py-2 px-4 rounded-md"
+                    >
+                      <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                    </button>
+                    {_.times(pagination.total_pages).map((page, key) =>
+                      page + 1 == pagination.current_page ? (
+                        <button
+                          onClick={() => setPage(page + 1)}
+                          key={key}
+                          className="py-2 px-4 bg-white rounded-md"
+                        >
+                          {page + 1}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setPage(page + 1)}
+                          key={key}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          {page + 1}
+                        </button>
+                      )
+                    )}
+                    <button
+                      onClick={() => setPage(next_page)}
+                      className="py-2 px-4 rounded-md"
+                    >
+                      <Lucide icon="ChevronRight" className="w-4 h-4" />
+                    </button>
+                  </Pagination>
+                  <div className="text-slate-500">
+                    <span className="mr-3">Total {pagination.total}</span>
+                    <FormSelect
+                      className="w-30 mt-3 !box sm:mt-0"
+                      value={limit}
+                      onChange={(e) => {
+                        setLimit(parseInt(e.target.value));
+                        setPage(1);
+                      }}
+                    >
+                      <option value={12}>12/page</option>
+                      <option value={24}>24/page</option>
+                      <option value={44}>44/page</option>
+                      <option value={88}>88/page</option>
+                    </FormSelect>
+                  </div>
                 </div>
               </div>
-            </div>
-            {/* END: Pagination */}
+            )}
           </div>
+
+          <div>{/* END: Pagination */}</div>
           <Dialog
             staticBackdrop
             size="lg"
