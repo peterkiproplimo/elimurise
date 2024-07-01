@@ -73,7 +73,7 @@ function Main() {
               </div>
             </div>
 
-            {/* <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
+            <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
               <div className="p-5 mt-12 intro-y box sm:mt-5">
                 <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
                   <div>Parameters</div>
@@ -315,10 +315,10 @@ function Main() {
                   </div>
                 </div>
               </div>
-            </div>*/}
+            </div>
           </div>
         </div>
-        {/* <div className="col-span-12 2xl:col-span-3 box">
+         <div className="col-span-12 2xl:col-span-3 box">
           <div className="pb-10 -mb-10 2xl:border-l">
             <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
               <div className="col-span-12 mt-3 mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
@@ -441,7 +441,7 @@ function Main() {
               </div>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
     </>
   );

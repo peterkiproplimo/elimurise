@@ -102,18 +102,18 @@ function Settings() {
   return (
     <>
       <h2 className="mt-10 text-lg font-medium intro-y">Settings</h2>
-      <div className="grid grid-cols-12 gap-6 mt-5">
+      <div className="grid grid-cols-12 gap-6 mt-2">
         <div className="col-span-12">
-          <div className="intro-y box p-5">
+          <div className="intro-y box p-3">
             <form
               className="mt-5 p-5 intro-y box validate-form"
               onSubmit={onSubmit}
             >
               <fieldset className="mb-4">
-                <legend className="font-medium text-gray-700">
-                  Schhol Details
+                <legend className="font-medium text-xl text-gray-700">
+                  School Details
                 </legend>
-                <div className="grid grid-cols-12 gap-4 gap-y-3">
+                <div className="grid grid-cols-12 gap-4 gap-y-3 mt-3">
                   <div className="col-span-12 md:col-span-6">
                     <FormLabel>Name</FormLabel>
                     <FormInput

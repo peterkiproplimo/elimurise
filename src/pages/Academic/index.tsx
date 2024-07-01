@@ -206,21 +206,7 @@ function Level() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel className="mt-2">Is Current</FormLabel>
-                <FormInput
-                  {...register("isCurrent")}
-                  type="checkbox"
-                  name="isCurrent"
-                  className={" w-38 h-38 ml-2 "}
-                />
-                {errors.name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.name.message === "string" &&
-                      errors.name.message}
-                  </div>
-                )}
-              </div>
+            
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Start Date <span className="text-danger ml-0.5">*</span>
@@ -599,9 +585,7 @@ function Level() {
         />
         <div className="ml-4 mr-4">
           <div className="font-medium">
-            {success
-              ? "Academic year deleted successfully"
-              : "Failed to delete Record"}
+            {success ? "Success" : "Error"}
           </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
