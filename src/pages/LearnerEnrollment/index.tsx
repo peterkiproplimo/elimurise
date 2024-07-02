@@ -89,11 +89,12 @@ function Main() {
 
   // Success notification
   const notify = useRef<NotificationElement>();
-  const schema = yup
-    .object({
-      name: yup.string().required("Level is required"),
-    })
-    .required();
+  const schema = yup.object().shape({
+    year: yup.string().required("Current Academic Year is required"),
+    nextYear: yup.string().required("Next Academic Year is required"),
+    currentStream: yup.string().required("Current Stream is required"),
+    nextStream: yup.string().required("Next Stream is required"),
+  });
 
   const {
     register,
@@ -228,10 +229,10 @@ function Main() {
                     </option>
                   ))}
                 </TomSelect>
-                {errors.grade && (
+                {errors.year && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.year.message === "string" &&
+                      errors.year.message}
                   </div>
                 )}
               </div>
@@ -251,10 +252,10 @@ function Main() {
                     </option>
                   ))}
                 </TomSelect>
-                {errors.grade && (
+                {errors.nextYear && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.nextYear.message === "string" &&
+                      errors.nextYear.message}
                   </div>
                 )}
               </div>
@@ -274,10 +275,10 @@ function Main() {
                     </option>
                   ))}
                 </TomSelect>
-                {errors.grade && (
+                {errors.currentStream && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.currentStream.message === "string" &&
+                      errors.currentStream.message}
                   </div>
                 )}
               </div>
@@ -297,10 +298,10 @@ function Main() {
                     </option>
                   ))}
                 </TomSelect>
-                {errors.learning_area && (
+                {errors.nextStream && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
+                    {typeof errors.nextStream.message === "string" &&
+                      errors.nextStream.message}
                   </div>
                 )}
               </div>
@@ -311,6 +312,12 @@ function Main() {
                 type="submit"
                 className="w-20"
                 onClick={(e: any) => handleTransition()}
+                // onClick={async () => {
+                //   const result = await trigger();
+                //   if (result) {
+                //     handleTransition();
+                //   }
+                // }}
               >
                 Save
                 {loading && (

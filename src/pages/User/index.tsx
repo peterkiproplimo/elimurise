@@ -61,6 +61,8 @@ function Users() {
         .string()
         .required("Email is required")
         .email("Email must be a valid"),
+      phone: yup.string().required("Phone Number is required"),
+      password: yup.string().required("Password is required"),
     })
     .required();
 
@@ -417,13 +419,13 @@ function Users() {
                   {...register("firstname")}
                   type="text"
                   name="firstname"
-                  className={errors.firstName ? "border-danger" : ""}
+                  className={errors.firstname ? "border-danger" : ""}
                   placeholder="John"
                 />
-                {errors.firstName && (
+                {errors.firstname && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.firstName.message === "string" &&
-                      errors.firstName.message}
+                    {typeof errors.firstname.message === "string" &&
+                      errors.firstname.message}
                   </div>
                 )}
               </div>
@@ -433,13 +435,13 @@ function Users() {
                   {...register("lastname")}
                   type="text"
                   name="lastname"
-                  className={errors.lastName ? "border-danger" : ""}
+                  className={errors.lastname ? "border-danger" : ""}
                   placeholder="Doe"
                 />
-                {errors.lastName && (
+                {errors.lastname && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.lastName.message === "string" &&
-                      errors.lastName.message}
+                    {typeof errors.lastname.message === "string" &&
+                      errors.lastname.message}
                   </div>
                 )}
               </div>
@@ -480,8 +482,15 @@ function Users() {
                   {...register("phone")}
                   type="number"
                   name="phone"
+                  className={errors.phone ? "border-danger" : ""}
                   placeholder="+254 712 345 6789"
                 />
+                    {errors.phone && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.phone.message === "string" &&
+                      errors.phone.message}
+                  </div>
+                )}
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-1">Email</FormLabel>
@@ -506,8 +515,15 @@ function Users() {
                     {...register("password")}
                     type="password"
                     name="password"
+                    className={errors.password ? "border-danger" : ""}
                     placeholder="password"
                   />
+                   {errors.password && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.password.message === "string" &&
+                      errors.password.message}
+                  </div>
+                )}
                 </div>
               )}
             </Dialog.Description>

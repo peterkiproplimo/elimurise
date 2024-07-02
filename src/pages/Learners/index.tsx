@@ -72,7 +72,14 @@ function Main() {
       first_name: yup.string().required("Firstname is required"),
       last_name: yup.string().required("Lastname is required"),
       surname: yup.string().required("Surname is required"),
-      // adm_no: yup.string().required("Adm.No is required"),
+      adm_no: yup.string().required("Adm.No is required"),
+      grade: yup.string().required("Grade is required"),
+      stream: yup.string().required("Stream is required"),
+      guardian_first_name: yup.string().required("Firstname is required"),
+      guardian_last_name: yup.string().required("Lastname is required"),
+      guardian_id_no: yup.string().required("ID Number is required"),
+      guardian_email: yup.string().required("Email is required"),
+      guardian_phone: yup.string().required("Phone Number is required"),
     })
     .required();
 

@@ -191,7 +191,7 @@ function Main() {
                   {...register("firstname")}
                   type="text"
                   name="firstname"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.firstname ? "border-danger" : ""}
                   placeholder="first name"
                 />
                 {errors.firstname && (
