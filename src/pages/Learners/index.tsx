@@ -64,6 +64,9 @@ function Main() {
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [parents, setParents] = useState(false);
+  const [guardianIdNo, setGuardianIdNo] = useState("");
+  const [guardianIdNo2, setGuardianIdNo2] = useState("");
 
   // Success notification
   const notify = useRef<NotificationElement>();
@@ -126,6 +129,7 @@ function Main() {
   };
   useEffect(() => {
     getGrades();
+    getParents();
   }, []);
   useEffect(() => {
     getStreams();
@@ -134,6 +138,7 @@ function Main() {
     getStudents();
     setTimeout(() => {
       getStudents();
+
       isLoading(false);
     }, 2000);
   }, [search, page, limit]);
@@ -156,12 +161,18 @@ function Main() {
     setLearners(response.data);
     isLoading(false);
   };
-
+  const getParents = async () => {
+    const response = await ApiService.getParents({
+      page: 1,
+    });
+    setParents(response.data);
+  };
   const getStreams = async () => {
     const response = await ApiService.getStream({ grade: grade });
     setStreams(response.data);
     console.log(response);
   };
+
   const getAcademics = async () => {
     const response = await ApiService.getAcademic({
       page: 1,
@@ -194,11 +205,73 @@ function Main() {
       ...record.learner,
       stream: record?.stream?._id,
       grade: record?.stream?.grade?._id,
+      guardian_id_no: record?.learner?.guardian?.id_no,
+      guardian: record?.learner?.guardian?._id,
+      guardian_first_name: record?.learner?.guardian?.first_name,
+      guardian_email: record?.learner?.guardian?.email,
+      guardian_last_name: record?.learner?.guardian?.last_name,
+      guardian_surname: record?.learner?.guardian?.surname,
+      guardian_phone: record?.learner?.guardian?.phone,
+      guardian2_id_no: record?.learner?.guardian2?.id_no,
+      guardian2: record?.learner?.guardian2?._id,
+      guardian2_first_name: record?.learner?.guardian2?.first_name,
+      guardian2_email: record?.learner?.guardian2?.email,
+      guardian2_last_name: record?.learner?.guardian2?.last_name,
+      guardian2_surname: record?.learner?.guardian2?.surname,
+      guardian2_phone: record?.learner?.guardian2?.phone,
     });
     console.log(record);
     setDialog(true);
   };
-
+  const handleGuardianIdNoBlur = async () => {
+    reset({
+      ...getValues(),
+      guardian_id_no: guardianIdNo,
+      guardian: "",
+      guardian_first_name: "",
+      guardian_email: "",
+      guardian_last_name: "",
+      guardian_surname: "",
+      guardian_phone: "",
+    });
+    const res = await ApiService.getOneParents({ search: guardianIdNo });
+    const response = res.data;
+    console.log(response._id);
+    reset({
+      ...getValues(),
+      guardian_id_no: guardianIdNo,
+      guardian: response._id,
+      guardian_first_name: response.first_name,
+      guardian_email: response.email,
+      guardian_last_name: response.last_name,
+      guardian_surname: response.surname,
+      guardian_phone: response.phone,
+    });
+  };
+  const handleGuardianIdNoBlur2 = async () => {
+    reset({
+      ...getValues(),
+      guardian2_id_no: guardianIdNo2,
+      guardian2: "",
+      guardian2_first_name: "",
+      guardian2_email: "",
+      guardian2_last_name: "",
+      guardian2_surname: "",
+      guardian2_phone: "",
+    });
+    const res = await ApiService.getOneParents({ search: guardianIdNo2 });
+    const response = res.data;
+    reset({
+      ...getValues(),
+      guardian2_id_no: guardianIdNo2,
+      guardian2: response._id,
+      guardian2_first_name: response.first_name,
+      guardian2_email: response.email,
+      guardian2_last_name: response.last_name,
+      guardian2_surname: response.surname,
+      guardian2_phone: response.phone,
+    });
+  };
   const cancel = (record: any) => {
     setGroup([""]);
     setPermission([""]);
@@ -206,47 +279,6 @@ function Main() {
     setDialog(false);
   };
 
-  // const handleGradeChange = async (
-  //   event: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedValue = event.target.value;
-  //   console.log(schools);
-  //   setLearners([]);
-  //   await setStrandFilter({
-  //     school: "na",
-  //     stream: "na",
-  //     grade: selectedValue,
-  //   });
-  // };
-  // const handleSchoolChange = async (
-  //   event: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedValue = event.target.value;
-  //   setLearners([]);
-  //   await setStrandFilter({
-  //     ...strandFilter,
-  //     school: selectedValue,
-  //   });
-
-  // };
-
-  // const handleTermChange = async (
-  //   event: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedValue = event.target.value;
-  //   setLearners([]);
-  //   await setStrandFilter({
-  //     ...strandFilter,
-  //     stream: selectedValue,
-  //   });
-  //   // You might want to fetch filtered data here
-  // };
-  // const handleHasThemeChange = async (event: any) => {
-  //   const isChecked = event.target.checked;
-  //   setLearners([]);
-  //   setHasTheme(isChecked);
-  //   // You might want to fetch filtered data here
-  // };
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
@@ -433,6 +465,34 @@ function Main() {
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
+                    Guardian ID Number or Email
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian_id_no")}
+                    type="text"
+                    name="guardian_id_no"
+                    onChange={(event) => setGuardianIdNo(event.target.value)}
+                    onBlur={handleGuardianIdNoBlur}
+                    className={errors.guardian_id_no ? "border-danger" : ""}
+                    placeholder="guardian ID number"
+                  />
+                  <FormInput
+                    {...register("guardian")}
+                    type="hidden"
+                    name="guardian"
+                    className={errors.guardian_id_no ? "border-danger" : ""}
+                    placeholder="guardian ID number"
+                  />
+                  {errors.guardian_id_no && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_id_no.message === "string" &&
+                        errors.guardian_id_no.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
                     Guardian First Name
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
@@ -444,6 +504,7 @@ function Main() {
                       errors.guardian_first_name ? "border-danger" : ""
                     }
                     placeholder="guardian first name"
+                    disabled
                   />
                   {errors.guardian_first_name && (
                     <div className="mt-2 text-danger">
@@ -460,6 +521,7 @@ function Main() {
                     name="guardian_surname"
                     className={errors.guardian_surname ? "border-danger" : ""}
                     placeholder="guardian surname"
+                    disabled
                   />
                   {errors.guardian_surname && (
                     <div className="mt-2 text-danger">
@@ -479,6 +541,7 @@ function Main() {
                     name="guardian_last_name"
                     className={errors.guardian_last_name ? "border-danger" : ""}
                     placeholder="guardian last name"
+                    disabled
                   />
                   {errors.guardian_last_name && (
                     <div className="mt-2 text-danger">
@@ -487,25 +550,7 @@ function Main() {
                     </div>
                   )}
                 </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian ID Number
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian_id_no")}
-                    type="text"
-                    name="guardian_id_no"
-                    className={errors.guardian_id_no ? "border-danger" : ""}
-                    placeholder="guardian ID number"
-                  />
-                  {errors.guardian_id_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_id_no.message === "string" &&
-                        errors.guardian_id_no.message}
-                    </div>
-                  )}
-                </div>
+
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>Guardian Email</FormLabel>
                   <FormInput
@@ -514,6 +559,7 @@ function Main() {
                     name="guardian_email"
                     className={errors.guardian_email ? "border-danger" : ""}
                     placeholder="guardian email"
+                    disabled
                   />
                   {errors.guardian_email && (
                     <div className="mt-2 text-danger">
@@ -530,6 +576,7 @@ function Main() {
                     name="guardian_phone"
                     className={errors.guardian_phone ? "border-danger" : ""}
                     placeholder="guardian phone"
+                    disabled
                   />
                   {errors.guardian_phone && (
                     <div className="mt-2 text-danger">
@@ -547,6 +594,34 @@ function Main() {
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
+                    Guardian ID Number or Email
+                    <span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("guardian2_id_no")}
+                    type="text"
+                    name="guardian2_id_no"
+                    className={errors.guardian2_id_no ? "border-danger" : ""}
+                    placeholder="Second guardian ID number"
+                    onChange={(event) => setGuardianIdNo2(event.target.value)}
+                    onBlur={handleGuardianIdNoBlur2}
+                  />
+                  <FormInput
+                    {...register("guardian2")}
+                    type="hidden"
+                    name="guardian2"
+                    className={errors.guardian2_id_no ? "border-danger" : ""}
+                    placeholder="Second guardian ID number"
+                  />
+                  {errors.guardian2_id_no && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_id_no.message === "string" &&
+                        errors.guardian2_id_no.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
                     Guardian First Name
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
@@ -558,6 +633,7 @@ function Main() {
                       errors.guardian2_first_name ? "border-danger" : ""
                     }
                     placeholder="Second guardian first name"
+                    disabled
                   />
                   {errors.guardian2_first_name && (
                     <div className="mt-2 text-danger">
@@ -574,6 +650,7 @@ function Main() {
                     name="guardian2_surname"
                     className={errors.guardian2_surname ? "border-danger" : ""}
                     placeholder="Second guardian surname"
+                    disabled
                   />
                   {errors.guardian2_surname && (
                     <div className="mt-2 text-danger">
@@ -591,6 +668,7 @@ function Main() {
                     {...register("guardian2_last_name")}
                     type="text"
                     name="guardian2_last_name"
+                    disabled
                     className={
                       errors.guardian2_last_name ? "border-danger" : ""
                     }
@@ -603,25 +681,7 @@ function Main() {
                     </div>
                   )}
                 </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian ID Number
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian2_id_no")}
-                    type="text"
-                    name="guardian2_id_no"
-                    className={errors.guardian2_id_no ? "border-danger" : ""}
-                    placeholder="Second guardian ID number"
-                  />
-                  {errors.guardian2_id_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_id_no.message === "string" &&
-                        errors.guardian2_id_no.message}
-                    </div>
-                  )}
-                </div>
+
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>Guardian Email</FormLabel>
                   <FormInput
@@ -630,6 +690,7 @@ function Main() {
                     name="guardian2_email"
                     className={errors.guardian2_email ? "border-danger" : ""}
                     placeholder="Second guardian email"
+                    disabled
                   />
                   {errors.guardian2_email && (
                     <div className="mt-2 text-danger">
@@ -646,6 +707,7 @@ function Main() {
                     name="guardian2_phone"
                     className={errors.guardian2_phone ? "border-danger" : ""}
                     placeholder="Second guardian phone"
+                    disabled
                   />
                   {errors.guardian2_phone && (
                     <div className="mt-2 text-danger">
@@ -860,32 +922,32 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_first_name}
+                              {learner?.learner?.guardian?.first_name}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_last_name}
+                              {learner?.learner?.guardian?.last_name}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_surname}
+                              {learner?.learner?.guardian?.surname}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_id_no}
+                              {learner?.learner?.guardian?.id_no}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_email}
+                              {learner?.learner?.guardian?.email}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_phone}
+                              {learner?.learner?.guardian?.phone}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">

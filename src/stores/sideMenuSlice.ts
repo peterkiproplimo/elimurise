@@ -78,6 +78,12 @@ const initialState: SideMenuState = {
   
     {
       icon: "Users",
+      title: "Parents",
+      pathname: "/parents",
+    },
+
+    {
+      icon: "Users",
       title: "Reports",
       subMenu: [
         {
@@ -154,11 +160,11 @@ const teacherState: SideMenuState = {
       title: "Learners",
     },
 
-    // {
-    //   icon: "Users",
-    //   title: "Parents",
-    //   pathname: "/parents",
-    // },
+    {
+      icon: "Users",
+      title: "Parents",
+      pathname: "/parents",
+    },
 
     {
       icon: "FileCheck",
