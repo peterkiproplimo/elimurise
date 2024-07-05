@@ -38,6 +38,8 @@ import Dashboard from "../pages/dashboard";
 import LearnerProfiles from "../pages/LearnerProfiles";
 import IndicatorReports from "../pages/IndicatorReports";
 import UserProfile from "../pages/UserProfile";
+import LearnerDetails from "../pages/Learners/learnerDetails";
+
 
 import User from "../pages/User";
 import Role from "../pages/roles";
@@ -164,6 +166,12 @@ function Router() {
           element: <Strands />,
         },
 
+        {
+          path: "/learner/:id" ,
+          element: <LearnerDetails/>,
+        }
+        ,
+      
         {
           path: "/v1/profile",
           element: <LearnerProfile />,
