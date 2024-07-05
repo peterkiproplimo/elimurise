@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/Auth';
+import PropTypes from "prop-types";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/Auth";
 
 // ==============================|| GUEST GUARD ||============================== //
 
@@ -11,21 +11,25 @@ import { useAuth } from '../../contexts/Auth';
  */
 
 const GuestGuard = ({ children }: any) => {
-    const { authData } = useAuth();
-    const navigate = useNavigate();
+  const { authData } = useAuth();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (authData) {
-            console.log(authData)
-            navigate("/", { replace: true });
-        }
-    }, [authData, navigate]);
+  useEffect(() => {
+    if (authData) {
+      console.log(authData);
+      if (localStorage.getItem("type") == "parent") {
+        navigate("/v1/", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [authData, navigate]);
 
-    return children;
+  return children;
 };
 
 GuestGuard.propTypes = {
-    children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export default GuestGuard;

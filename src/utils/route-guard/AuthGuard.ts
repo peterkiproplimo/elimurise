@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/Auth';
+import PropTypes from "prop-types";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/Auth";
 
 // ==============================|| AUTH GUARD ||============================== //
 
@@ -10,24 +10,20 @@ import { useAuth } from '../../contexts/Auth';
  * @param {PropTypes.node} children children element/node
  */
 const AuthGuard = ({ children }: any) => {
-    
-    const { authData } = useAuth();
-    const navigate = useNavigate();
-  
-    useEffect(() => {
-        
-       
-        if (!authData) {
-          
-           navigate('login', { replace: true });
-        }
-    }, [authData, navigate]);
+  const { authData } = useAuth();
+  const navigate = useNavigate();
 
-    return children;
+  useEffect(() => {
+    if (!authData) {
+      navigate("/login", { replace: true });
+    }
+  }, [authData, navigate]);
+
+  return children;
 };
 
 AuthGuard.propTypes = {
-    children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export default AuthGuard;

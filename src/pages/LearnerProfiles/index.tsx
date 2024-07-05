@@ -47,13 +47,15 @@ function Main() {
   const [message, setMessage] = useState("");
 
   const [strands, setStrands] = useState([]);
-  const [learner, setLearner] = useState("");
+  // const [learner, setLearner] = useState("");
   const [substrand, setSubstrand] = useState<any>({});
   const [indicator, setIndicator] = useState("");
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedLeaningArea, setSelectedLearningArea] = useState("");
   const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
+  const [selectedLearner, setSelectedLearner] = useState("");
 
+  const [learners, setLearners] = useState<any>([]);
   const [strand, setStrand] = useState("");
   const [learnerReport, setLearnerReport] = useState<any>([]);
 
@@ -111,12 +113,23 @@ function Main() {
   const getLearningAreas = async () => {
     const response = await ApiService.getLeanerLeaningArea({
       term: selectedTerm,
+      learner: selectedLearner,
     });
     setLearningAreas(response.data);
   };
   const getLearningAcademicYear = async () => {
-    const response = await ApiService.getLeanerAcademicYear({});
+    const response = await ApiService.getLeanerAcademicYear({
+      learner: selectedLearner,
+    });
     setAcademicYears(response.data);
+  };
+  useEffect(() => {
+    getLeaners();
+  }, []);
+  const getLeaners = async () => {
+    const response = await ApiService.parentDashboard();
+
+    setLearners(response.learners);
   };
 
   const getLearningTerm = async () => {
@@ -127,7 +140,7 @@ function Main() {
   };
   useEffect(() => {
     getLearningAcademicYear();
-  }, []);
+  }, [selectedLearner]);
   useEffect(() => {
     console.log(selectedAcademicYear);
     getLearningTerm();
@@ -140,6 +153,7 @@ function Main() {
     const data = {
       term: selectedTerm,
       learning_area: selectedLeaningArea,
+      learner: selectedLearner,
     };
     console.log(data);
     isLoading(true);
@@ -285,23 +299,25 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {learnerReport?.assessment?.map((enrollment:any, index:any) => (
-                    <Table.Tr key={index}>
-                      <Table.Td>{enrollment.strand.name}</Table.Td>
-                      <Table.Td>{enrollment.substrand.name}</Table.Td>
-                      <Table.Td>{enrollment.learning_area.name}</Table.Td>
-                      <Table.Td>{enrollment.indicator_description}</Table.Td>
-                      <Table.Td>{enrollment.score}</Table.Td>
-                      <Table.Td>{enrollment.description}</Table.Td>
-                    </Table.Tr>
-                  ))}
+                  {learnerReport?.assessment?.map(
+                    (enrollment: any, index: any) => (
+                      <Table.Tr key={index}>
+                        <Table.Td>{enrollment.strand.name}</Table.Td>
+                        <Table.Td>{enrollment.substrand.name}</Table.Td>
+                        <Table.Td>{enrollment.learning_area.name}</Table.Td>
+                        <Table.Td>{enrollment.indicator_description}</Table.Td>
+                        <Table.Td>{enrollment.score}</Table.Td>
+                        <Table.Td>{enrollment.description}</Table.Td>
+                      </Table.Tr>
+                    )
+                  )}
                 </Table.Tbody>
               </Table>
               {loading && (
-            <div className="flex flex-col items-center mt-5">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-            </div>
-          )}
+                <div className="flex flex-col items-center mt-5">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </div>
+              )}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
@@ -364,6 +380,29 @@ function Main() {
               Learner Report
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Learner</FormLabel>
+                <TomSelect
+                  {...register("learner")}
+                  value={selectedLearner}
+                  name="term"
+                  onChange={(event: any) => setSelectedLearner(event)}
+                >
+                  <option>Select Learner</option>
+                  {learners.map((learner: any) => (
+                    <option value={learner.learner._id}>
+                      {learner.stream.grade.name}
+                      {learner.learner.surname}
+                    </option>
+                  ))}
+                </TomSelect>
+                {errors.term && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.term.message === "string" &&
+                      errors.term.message}
+                  </div>
+                )}
+              </div>
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Class</FormLabel>
                 <TomSelect
@@ -448,9 +487,8 @@ function Main() {
             </div>
           </div>
 
-         
           {/* BEGIN: Delete Confirmation Modal */}
-        
+
           {/* END: Delete Confirmation Modal */}
         </>
       )}

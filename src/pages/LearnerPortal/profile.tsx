@@ -127,6 +127,26 @@ function Main() {
   };
   useEffect(() => {
     getGrades();
+    const learner = JSON.parse(localStorage.getItem("learner") || "");
+    reset({
+      ...learner.learner,
+      stream: learner?.stream?._id,
+      grade: learner?.stream?.grade?._id,
+      guardian_id_no: learner?.learner?.guardian?.id_no,
+      guardian: learner?.learner?.guardian?._id,
+      guardian_first_name: learner?.learner?.guardian?.first_name,
+      guardian_email: learner?.learner?.guardian?.email,
+      guardian_last_name: learner?.learner?.guardian?.last_name,
+      guardian_surname: learner?.learner?.guardian?.surname,
+      guardian_phone: learner?.learner?.guardian?.phone,
+      guardian2_id_no: learner?.learner?.guardian2?.id_no,
+      guardian2: learner?.learner?.guardian2?._id,
+      guardian2_first_name: learner?.learner?.guardian2?.first_name,
+      guardian2_email: learner?.learner?.guardian2?.email,
+      guardian2_last_name: learner?.learner?.guardian2?.last_name,
+      guardian2_surname: learner?.learner?.guardian2?.surname,
+      guardian2_phone: learner?.learner?.guardian2?.phone,
+    });
   }, []);
   useEffect(() => {
     getStreams();
@@ -465,6 +485,7 @@ function Main() {
                 name="guardian2_first_name"
                 className={errors.guardian2_first_name ? "border-danger" : ""}
                 placeholder="Second guardian first name"
+                disabled
               />
               {errors.guardian2_first_name && (
                 <div className="mt-2 text-danger">
@@ -481,6 +502,7 @@ function Main() {
                 name="guardian2_surname"
                 className={errors.guardian2_surname ? "border-danger" : ""}
                 placeholder="Second guardian surname"
+                disabled
               />
               {errors.guardian2_surname && (
                 <div className="mt-2 text-danger">
@@ -500,6 +522,7 @@ function Main() {
                 name="guardian2_last_name"
                 className={errors.guardian2_last_name ? "border-danger" : ""}
                 placeholder="Second guardian last name"
+                disabled
               />
               {errors.guardian2_last_name && (
                 <div className="mt-2 text-danger">
@@ -519,6 +542,7 @@ function Main() {
                 name="guardian2_id_no"
                 className={errors.guardian2_id_no ? "border-danger" : ""}
                 placeholder="Second guardian ID number"
+                disabled
               />
               {errors.guardian2_id_no && (
                 <div className="mt-2 text-danger">
@@ -535,6 +559,7 @@ function Main() {
                 name="guardian2_email"
                 className={errors.guardian2_email ? "border-danger" : ""}
                 placeholder="Second guardian email"
+                disabled
               />
               {errors.guardian2_email && (
                 <div className="mt-2 text-danger">
@@ -551,6 +576,7 @@ function Main() {
                 name="guardian2_phone"
                 className={errors.guardian2_phone ? "border-danger" : ""}
                 placeholder="Second guardian phone"
+                disabled
               />
               {errors.guardian2_phone && (
                 <div className="mt-2 text-danger">

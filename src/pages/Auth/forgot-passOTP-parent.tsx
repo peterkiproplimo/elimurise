@@ -18,7 +18,7 @@ import { useLocation } from "react-router-dom";
 const ForgotPasswordOTP = () => {
   const location = useLocation();
   const email = location.state?.email;
-  const adm_no = location.state?.adm_no;
+  const code = location.state?.code;
 
   const channel = location.state?.channel;
   const navigate = useNavigate();
@@ -109,11 +109,11 @@ const ForgotPasswordOTP = () => {
             </div>
             <div className="input-form">
               <FormInput
-                {...register("adm_no")}
+                {...register("code")}
                 id="validation-form-2"
                 type="hidden"
-                name="adm_no"
-                value={adm_no}
+                name="code"
+                value={code}
                 className={
                   errors.email
                     ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"

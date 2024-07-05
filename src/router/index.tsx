@@ -39,12 +39,11 @@ import LearnerProfiles from "../pages/LearnerProfiles";
 import IndicatorReports from "../pages/IndicatorReports";
 import UserProfile from "../pages/UserProfile";
 
-
-
 import User from "../pages/User";
 import Role from "../pages/roles";
 import Term from "../pages/Term";
 import Settings from "../pages/Settings";
+import GradeUserAssignment from "../pages/GradeUserAssignment";
 //nn
 function Router() {
   const routes = [
@@ -57,7 +56,7 @@ function Router() {
       ),
       children: [
         {
-          path: "/",
+          path: "/dashboard",
           element: <Dashboard />,
         },
         {
@@ -89,7 +88,7 @@ function Router() {
           path: "/IndicatorReport",
           element: <IndicatorReports />,
         },
-       
+
         {
           path: "substrand",
           element: <Substrand />,
@@ -144,6 +143,10 @@ function Router() {
           element: <Teachers />,
         },
         {
+          path: "teacher/:id",
+          element: <GradeUserAssignment />,
+        },
+        {
           path: "subscription",
           element: <Subscription />,
         },
@@ -155,12 +158,12 @@ function Router() {
           path: "learning_areas",
           element: <LearningAreas />,
         },
-    
+
         {
           path: "strands",
           element: <Strands />,
         },
-      
+
         {
           path: "/v1/profile",
           element: <LearnerProfile />,
@@ -170,7 +173,7 @@ function Router() {
           element: <Strands />,
         },
         {
-          path: "/v1/",
+          path: "/v1",
           element: <LearnerDashboard />,
         },
         {

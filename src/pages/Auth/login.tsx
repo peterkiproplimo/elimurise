@@ -252,18 +252,18 @@ const Login = () => {
                 )}
               </div>
               <div className="input-form">
-                <label>ADM NO</label>
+                <label>School Code</label>
                 <FormInput
-                  {...register("adm_no")}
+                  {...register("code")}
                   id="validation-form-2"
                   type="text"
-                  name="adm_no"
+                  name="code"
                   className={
                     errors.email
                       ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
                       : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                   }
-                  placeholder="ADM No"
+                  placeholder="School Code"
                 />
                 {errors.email && (
                   <div className="mt-2 text-danger">

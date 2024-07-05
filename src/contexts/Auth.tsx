@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { AuthData, authService } from "../services/authService";
 import * as ApiService from "../services/auth";
+import { useNavigate } from "react-router-dom";
 
 type AuthContextData = {
   authData?: AuthData;
@@ -67,8 +68,12 @@ const AuthProvider = (props: ContainerProps) => {
 
     //Remove the data from Async Storage
     //to NOT be recoverede in next session.
-
+    await localStorage.removeItem("type");
     await localStorage.removeItem("@AuthData");
+    await localStorage.removeItem("user");
+    await localStorage.removeItem("active");
+    await localStorage.removeItem("leaner");
+    // window.location.href = "/login";
   };
   if (loading) {
     // You may want to render a loading spinner or some indicator here

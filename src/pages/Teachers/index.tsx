@@ -16,6 +16,8 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import Pagination from "../../base-components/Pagination";
 import { formatDate } from "../../utils/helper";
+import { useNavigate } from "react-router-dom";
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -30,6 +32,31 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
+  const [learningAreas, setLearningAreas] = useState([]);
+  const [filteredLearningAreas, setFilteredLearningAreas] = useState([]);
+  const [grades, setGrades] = useState([]);
+  const initialState = {
+    grade: "",
+    learning_area: "",
+    term: "",
+  };
+  const [strandFilter, updateStrandFilter] = useState(initialState);
+  const setStrandFilter = (newFilter: any) => {
+    updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
+  };
+  useEffect(() => {
+    setFilteredLearningAreas([]);
+    const lerning_areas = learningAreas.filter(
+      (area: any) => area?.grade_id?._id === strandFilter.grade
+    );
+    const data = getValues();
+
+    reset();
+    reset({ user: data.user, grade: strandFilter.grade });
+    setFilteredLearningAreas(lerning_areas);
+  }, [strandFilter.grade]);
+  const navigate = useNavigate();
+
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -64,6 +91,19 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+  const handleGradeChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+
+    await setStrandFilter({
+      learning_area: "na",
+      term: "na",
+      grade: selectedValue,
+    });
+
+    // You might want to fetch filtered data here
+  };
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -72,7 +112,10 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createTeachers(data);
+        const response = await ApiService.createTeachers(data);
+        if (!data._id) {
+          navigate("/teacher/" + response._id);
+        }
         await getTeachers();
         await reset();
         isLoading(false);
@@ -111,6 +154,23 @@ function Main() {
       per_page: pagination.per_page,
     });
     isLoading(false);
+  };
+  useEffect(() => {
+    getLearningAreas();
+    getGrades();
+  }, []);
+
+  const getGrades = async () => {
+    const response = await ApiService.getGrades({ page: 1 });
+
+    setGrades(response.data);
+  };
+  const getLearningAreas = async () => {
+    const response = await ApiService.getLearningAreas({
+      page: 1,
+      limit: 100000,
+    });
+    setLearningAreas(response.data);
   };
   // const getAcademicYear = async () => {
   //   const response = await ApiService.getAcademic({ page: 1 });
@@ -277,7 +337,104 @@ function Main() {
                   </div>
                 )}
               </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
+                <FormSelect
+                  {...register("grade")}
+                  name="grade"
+                  value={strandFilter.grade}
+                  onChange={(event) => handleGradeChange(event)}
+                >
+                  <option value={""}>Select Grade</option>
+                  {grades.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
 
+              {/*   <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">
+                  Select Learning Area
+                </FormLabel>
+              <FormSelect
+                  {...register("learning_area")}
+                  name="learning_area"
+                  value={strandFilter.learning_area}
+                  onChange={(event) => handleLearningAreaChange(event)}
+                >
+                  <option value={""}>Select Learning Area</option>
+                  {learningAreas
+                    .filter(
+                      (area: any) => area?.grade_id?._id === strandFilter.grade
+                    )
+                    .map((filteredArea: any, key) => (
+                      <option key={key} value={filteredArea._id}>
+                        {filteredArea.name}
+                      </option>
+                    ))}
+                    
+                </FormSelect>
+                {errors.learning_area && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.learning_area.message === "string" &&
+                      errors.learning_area.message}
+                  </div>
+                )}
+              </div> */}
+              <Table className="w-100 ">
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      <FormInput
+                        type="checkbox"
+                        className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                        // checked={selectAll}
+                        // onChange={handleSelectAll}
+                      />
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Learning Area
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {filteredLearningAreas.map((filteredArea: any, key) => (
+                    <Table.Tr key={key} className="">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
+                        <span className="font-medium whitespace-nowrap">
+                          <FormInput
+                            type="checkbox"
+                            {...register(`lerningArea[${key}].selected`)}
+                            name={`lerningArea[${key}].selected`}
+                            className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                          <FormInput
+                            type="hidden"
+                            {...register(`lerningArea[${key}].id`)}
+                            name={`lerningArea[${key}].id`}
+                            defaultValue={filteredArea?._id} // Use defaultValue instead of value
+                            className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                        </span>
+                      </Table.Td>
+
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
+                        <span className="font-medium whitespace-nowrap">
+                          {filteredArea.name}
+                        </span>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
               <div className="col-span-12 sm:col-span-12 mt-3">
                 <Button
                   type="button"
@@ -396,7 +553,10 @@ function Main() {
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td
+                        onClick={() => navigate("/teacher/" + teacher?._id)}
+                        className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                      >
                         <span className="font-medium whitespace-nowrap">
                           {teacher.firstname}
                         </span>

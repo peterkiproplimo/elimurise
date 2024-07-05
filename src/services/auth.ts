@@ -13,6 +13,7 @@ export async function login(data: FieldValues) {
 export async function login_parent(data: FieldValues) {
   try {
     let res = await axios.post(c.PARENT + "/auth/login", data);
+    getData();
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -322,6 +323,15 @@ export async function createParents(data: FieldValues) {
       let res = await axios.post(c.PARENTS, data);
       return res.data;
     }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function parentDashboard() {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/dashboard");
+    return res.data;
   } catch (e) {
     throw handler(e);
   }
@@ -806,6 +816,40 @@ export async function getLeanerAssessmentReport(data: FieldValues) {
     let res = await axios.get(c.PARENT + "/v1/assessment/report", {
       params: data,
     });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export const getLearningAreasAssignments = async (data: any) => {
+  try {
+    let res = await axios.get(c.LEARNING_AREA_ASSIGNMENT, { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export async function createLearningAreaAssignment(data: FieldValues) {
+  try {
+    if (data._id) {
+      let res = await axios.put(
+        c.LEARNING_AREA_ASSIGNMENT + "/" + data._id,
+        data
+      );
+      return res.data;
+    } else {
+      let res = await axios.post(c.LEARNING_AREA_ASSIGNMENT, data);
+      return res.data;
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function deleteLearningAreaAssignment(userId: any) {
+  try {
+    let res = await axios.delete(c.LEARNING_AREA_ASSIGNMENT + "/" + userId);
+    console.log(res);
     return res.data;
   } catch (e) {
     throw handler(e);
