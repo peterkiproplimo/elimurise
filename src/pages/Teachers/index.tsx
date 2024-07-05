@@ -84,7 +84,7 @@ function Main() {
         isLoading(false);
         setSuccess(false);
         setMessage(
-          error.message || "An error occurred while creating the term."
+          error.message || "An error occurred while creating the teacher."
         );
         notify.current?.showToast();
       }

@@ -20,6 +20,7 @@ import Notification, {
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
+import { useNavigate } from 'react-router-dom';
 import { Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
@@ -31,7 +32,8 @@ interface TableRow {
 }
 
 function Main() {
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  // const [confirmDelete, setConfirmDelete] = useState(false);
+   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
   const [grade, setGrade] = useState("");
@@ -64,7 +66,14 @@ function Main() {
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
+  const navigate = useNavigate();
 
+  const handleNavigate = (learnerId:any) => {
+    navigate(`/learner/${learnerId}`, {
+      replace: true,
+      state: { data: learnerId },
+    });
+  };
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -175,7 +184,7 @@ function Main() {
       let res = await ApiService.deleteLearner(recordId);
       getStudents();
       isLoading(false);
-      setConfirmDelete(false);
+      // setConfirmDelete(false);
       setSuccess(true);
       setMessage("Learner record deleted successfully");
       notify.current?.showToast();
@@ -901,6 +910,13 @@ function Main() {
                                 />{" "}
                                 Edit
                               </a>
+                              <a
+                            className="flex items-center text-primary"
+                            onClick={(e: any) => handleNavigate(learner)}
+                        >
+                            <Lucide icon="Eye" className="w-4 h-4 mr-1" /> View More
+                        </a>
+
                               {/* Uncomment the following block if you want to enable the delete action */}
                               {/* <a
               className="flex items-center text-danger"
@@ -990,9 +1006,9 @@ function Main() {
           </Dialog>
           {/* BEGIN: Delete Confirmation Modal */}
           <Dialog
-            open={confirmDelete}
+            open={viewMore}
             onClose={() => {
-              setConfirmDelete(false);
+              setViewMore(false);
             }}
             initialFocus={deleteButtonRef}
           >
@@ -1013,7 +1029,7 @@ function Main() {
                   variant="outline-secondary"
                   type="button"
                   onClick={() => {
-                    setConfirmDelete(false);
+                    setViewMore(false);
                   }}
                   className="w-24 mr-1"
                 >
