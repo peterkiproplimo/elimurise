@@ -28,7 +28,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
-import logo2 from "../../assets/images/edu.jpeg";
+import logo2 from "../../assets/images/Untitled-1.png";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 
 interface TableRow {
   no: number;
@@ -172,7 +175,7 @@ function Main() {
       {}
     );
     setEnrollments(enrollments?.data);
-    console.log(enrollments);
+   ;
   };
   const getTextColor = (score:any) => {
   switch (score) {
@@ -367,7 +370,7 @@ function Main() {
       term: selectedTerm,
       learner,
     };
-    console.log(data);
+   
     isLoading(true);
     try {
       let res = await ApiService.getReportByLearners(data);
@@ -375,10 +378,10 @@ function Main() {
       // setEnrollments(res);
       const pagination = res.pagination;
       setPagination({
-        current_page: pagination.current_page,
-        total: pagination.total,
-        total_pages: pagination.total_pages,
-        per_page: pagination.per_page,
+        current_page: pagination?.current_page,
+        total: pagination?.total,
+        total_pages: pagination?.total_pages,
+        per_page: pagination?.per_page,
       });
       setDialog(true);
       isLoading(false);
@@ -389,6 +392,46 @@ function Main() {
       setMessage(error.message);
       notify.current?.showToast();
     }
+  };
+
+  type Enrollment = {
+    learning_area: {
+      name: string;
+    };
+    strand: {
+      name: string;
+    };
+    substrand: {
+      name: string;
+    };
+    indicator_description: string;
+    score: number;
+    description: string;
+  };
+
+  const generatePDF = () => {
+    isLoading(true);
+    const doc = new jsPDF();
+  
+    // Ensure that assessmentsData has a defined structure
+    const data: Enrollment[] = assessmentsData?.assessment || [];
+  
+    const tableData = data.map((enrollment: Enrollment) => [
+      enrollment.learning_area.name,
+      enrollment.strand.name,
+      enrollment.substrand.name,
+      enrollment.indicator_description,
+      enrollment.score,
+      enrollment.description,
+    ]);
+  
+    (doc as any).autoTable({
+      head: [['Learning Area', 'Strand', 'Substrand', 'Indicator Description', 'Score', 'Description']],
+      body: tableData,
+    });
+  
+    doc.save('report.pdf');
+    isLoading(false);
   };
   const handleInputChange = async (data: any) => {
     if (data.score < 1 || data.score > 4) {
@@ -453,8 +496,8 @@ function Main() {
              
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            <div className="meta-info flex  h-20 bg-white rounded-xl  shadow-md">
-               <h2 className="text-xl flex items-center font-semibold ml-5">
+            <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
+        <h2 className="mr-auto text-xl font-semibold  ml-5 flex">
                 <a
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
@@ -465,45 +508,134 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-              
+                <div className = "flex justify-center items-center ">
+                     
+                    
+                     <p className="ml-5 text-2xl gray-800 font-medium">Formative Report</p>
+                     
+                 </div>
               </h2>
-              <div className = "flex justify-center items-center ">
-                      <img
+            
+              
+        <div className="flex w-full mt-4 sm:w-auto sm:mt-0">
+          <Button
+            variant="primary"
+            className="mr-2 shadow-md "
+             onClick={generatePDF}
+            >
+            Download PDF
+          </Button>
+          
+        </div>
+       
+      </div>
+            
+             
+      <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
+        <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
+          <div className=" overflow-hidden intro-y box">
+          <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
+              <div className="text-base text-slate-500lg:ml-auto lg:text-left flex">
+              <div>
+            <img
                          src={logo}
                          alt="Learner"
-                         className="w-12 h-12 ml-5  "
+                         className="w-32 h-32 mb-2"
                          />
-                    
-                   <p className="ml-5 text-2xl gray-800 font-medium">Learner</p>
-                   
-               </div>
-               </div>
-              <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
-                <div className="hidden mx-auto md:block text-slate-500 mt-5">
-                  Showing{" "}
-                  {pagination.current_page +
-                    " to " +
-                    pagination.total_pages +
-                    " of " +
-                    pagination.total}{" "}
-                  entries
-                </div>
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
-                  <div className="relative w-56 text-slate-500">
-                    <FormInput
-                      type="text"
-                      className="w-56 pr-10 !box"
-                      placeholder="Search..."
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                    <Lucide
-                      icon="Search"
-                      className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                    />
-                  </div>
+           </div>
+           
+                <div className="text-lg font-semibold text-primary ml-5">
+                  Name: 
+                  <br/>
+                  Adm No: 
+                  <br/>
+                  Year:
+                  <br/>
+                  Term:
+                  <br/>
+                  Grade:
+                  <br/>
+                  Stream:
+              
                 </div>
               </div>
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
+              <div className="mt-2 topic">
+              <div>
+            <img
+                         src={logo2}
+                         alt="Learner"
+                         className="w-64 h-24 mb-2"
+                         />
+           </div>
+              </div>
+            </div>
+          
+           
+
+            <div className="px- py-2 sm:px-16 sm:py-20 mt-5">
+            <div className="text-center font-bold text-2xl mb-5">
+              Formative Performance Report
+            </div>
+              <div className="overflow-x-auto">
+                <Table className="border">
+                  <Table.Thead className="bg-secondary h-20 text-lg">
+                  <Table.Tr>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Learning Area</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Strand</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Substrand</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Indicator Description</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Score</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Description</Table.Th>
+                  </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 text-lg">
+                    {assessmentsData?.assessment?.map((enrollment:any, index:any) => (
+                      <Table.Tr className="bg-secondary">
+                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.learning_area.name}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.strand.name}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.substrand.name}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.indicator_description}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.score}
+                        </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {enrollment.description}
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
+                  
+                  </Table.Tbody>
+                </Table>
+              </div>
+            </div>
+            {/* <div className="flex flex-col-reverse px-5 sm:px-20 sm:pb-20 sm:flex-row">
+              <div className="mt-10 text-center sm:text-left sm:mt-0">
+                <div className="text-base text-slate-500">Bank Transfer</div>
+                <div className="mt-1 text-lg font-medium text-primary">KCB</div>
+                <div className="mt-1">Bank Account : 098347234832</div>
+                <div className="mt-1">Code : LFT133243</div>
+              </div>
+              <div className="text-center sm:text-right sm:ml-auto bottom-txt">
+                <div className="text-base text-slate-500">Total Amount</div>
+                <div className="mt-2 text-xl font-medium text-primary">
+                 
+                </div>
+               
+              </div>
+            </div> */}
+            {/* <div className="line"></div> */}
+          </div>
+        </main>
+      </div>
+              {/* <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead >
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">Learning Area</Table.Th>
@@ -543,7 +675,7 @@ function Main() {
             <div className="flex flex-col items-center mt-5">
               <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
             </div>
-          )}
+          )} */}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
@@ -677,6 +809,7 @@ function Main() {
                   </div>
                 )}
               </div>
+              
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <TomSelect
@@ -734,6 +867,7 @@ function Main() {
             <div className="px-5  text-right">
               <Button
                 onClick={() => generateAssessment()}
+               
                 variant="primary"
                 type="button"
                 className="w-50 text-white"
