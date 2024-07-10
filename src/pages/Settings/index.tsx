@@ -125,6 +125,17 @@ function Settings() {
                     />
                   </div>
                   <div className="col-span-12 md:col-span-6">
+                    <FormLabel>School Code</FormLabel>
+                    <FormInput
+                      {...register("schoolCode")}
+                      type="text"
+                      name="schoolCode"
+                      disabled
+                      className={errors.name ? "border-danger" : ""}
+                      placeholder="School Name"
+                    />
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
                     <FormLabel>Current Academic Year</FormLabel>
                     <FormSelect
                       // value={currentAcademicYear}

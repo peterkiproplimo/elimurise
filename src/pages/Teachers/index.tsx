@@ -92,9 +92,7 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-  const handleGradeChange = async (
-    value: any
-  ) => {
+  const handleGradeChange = async (value: any) => {
     // const selectedValue = event.target.value;
 
     await setStrandFilter({
@@ -338,7 +336,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-6">
+              {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <TomSelect
                   {...register("grade")}
@@ -359,7 +357,7 @@ function Main() {
                       errors.grade.message}
                   </div>
                 )}
-              </div>
+              </div> */}
 
               {/*   <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">
@@ -390,7 +388,53 @@ function Main() {
                   </div>
                 )}
               </div> */}
-            
+
+              {/* <Table className="w-100 ">
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      <FormInput
+                        type="checkbox"
+                        className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                        // checked={selectAll}
+                        // onChange={handleSelectAll}
+                      />
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Learning Area
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {filteredLearningAreas.map((filteredArea: any, key) => (
+                    <Table.Tr key={key} className="">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
+                        <span className="font-medium whitespace-nowrap">
+                          <FormInput
+                            type="checkbox"
+                            {...register(`lerningArea[${key}].selected`)}
+                            name={`lerningArea[${key}].selected`}
+                            className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                          <FormInput
+                            type="hidden"
+                            {...register(`lerningArea[${key}].id`)}
+                            name={`lerningArea[${key}].id`}
+                            defaultValue={filteredArea?._id} // Use defaultValue instead of value
+                            className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                        </span>
+                      </Table.Td>
+
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
+                        <span className="font-medium whitespace-nowrap">
+                          {filteredArea.name}
+                        </span>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table> */}
               <div className="col-span-12 sm:col-span-12 mt-3">
                 <Button
                   type="button"
@@ -417,19 +461,25 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-10 text-lg font-medium intro-y">Teachers</h2>
-          {message&&success&&(
-            <Alert variant="soft-success" className="flex items-center mb-2" dismissTimeout={3000} role="alert">
-             <svg
-              className="flex-shrink-0 inline w-4 h-4 me-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+          {message && success && (
+            <Alert
+              variant="soft-success"
+              className="flex items-center mb-2"
+              dismissTimeout={3000}
+              role="alert"
             >
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            {message}
-        </Alert>)}
+              <svg
+                className="flex-shrink-0 inline w-4 h-4 me-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+              </svg>
+              {message}
+            </Alert>
+          )}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button

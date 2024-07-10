@@ -224,9 +224,12 @@ function Main() {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
   };
 
-  const handleSubStrandChange = (data: any, key: any) => {
-    setSelectedSubStrand(key);
-    setSubstrand(data);
+  const handleSubStrandChange = async (data: any) => {
+    console.log(data);
+    setSelectedSubStrand(data);
+    // setSubstrand(data);
+    const response = await ApiService.getSingleSubstrand(data);
+    setSubstrand(response.data);
     // console.log(selectedSubStrand);
     // console.log(substrand);
 
@@ -788,26 +791,24 @@ function Main() {
               </div>
               <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
-                <FormSelect
+                <TomSelect
                   {...register("substrand")}
+                  value={selectedSubStrand}
                   // Assuming selectedSubStrand is the selected object
                   name="substrand"
                   onChange={(selectedOption: any) => {
                     // console.log(substrands);
                     // console.log("jee");
-                    handleSubStrandChange(
-                      substrands.at(selectedOption),
-                      selectedOption
-                    );
+                    handleSubStrandChange(selectedOption);
                   }}
                 >
                   <option>Select Substrand</option>
                   {substrands.map((substrand: any, key: any) => (
-                    <option key={key} value={key}>
+                    <option key={key} value={substrand._id}>
                       {substrand.name}
                     </option>
                   ))}
-                </FormSelect>
+                </TomSelect>
                 {errors.theme && (
                   <div className="mt-2 text-danger">
                     {typeof errors.theme.message === "string" &&

@@ -39,7 +39,7 @@ function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const state_strand = location?.state?.data;
-  const [activeTab, setActiveTab] = useState('outcome');
+  const [activeTab, setActiveTab] = useState("outcome");
   const [grades, setGrades] = useState([]);
   const [strands, setStrands] = useState([]);
   const [substrands, setSubstrands] = useState([]);
@@ -61,12 +61,8 @@ function Main() {
   const [selectedStrand, setSelectedStrand] = useState(
     state_strand?._id || "na"
   );
-  const [selectedSubStrand, setSelectedSubStrand] = useState(""
-  );
-  const [selectedSubStrandOne, setSelectedSubStrandOne] = useState<any>({
-
-  }
-  );
+  const [selectedSubStrand, setSelectedSubStrand] = useState("");
+  const [selectedSubStrandOne, setSelectedSubStrandOne] = useState<any>({});
   const [selected, setSelected] = useState({
     indicator: [],
   });
@@ -212,7 +208,6 @@ function Main() {
     setDialog(false);
   };
   useEffect(() => {
-    
     setStrands([]);
     getStrands();
     // getSubstrand();
@@ -220,7 +215,7 @@ function Main() {
   }, [strandFilter]);
   useEffect(() => {
     getSubstrand();
-  }, [ selectedStrand]);
+  }, [selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
     const selectedValue = event.target.value;
@@ -234,7 +229,7 @@ function Main() {
     // You might want to fetch filtered data here
   };
 
-  const openLearner = (event:any) => {
+  const openLearner = (event: any) => {
     navigate("/assessLearner", {
       replace: true,
       // state: { data: strand,learningArea:learningArea },
@@ -249,7 +244,7 @@ function Main() {
       ...strandFilter,
       learning_area: selectedValue,
     });
-    console.log(substrands)
+    console.log(substrands);
     // You might want to fetch filtered data here
   };
 
@@ -261,7 +256,7 @@ function Main() {
       ...strandFilter,
       term: selectedValue,
     });
-    console.log(substrands)
+    console.log(substrands);
     // You might want to fetch filtered data here
   };
 
@@ -270,27 +265,24 @@ function Main() {
   ) => {
     const selectedValue = event.target.value;
     await setSelectedStrand(selectedValue);
-    console.log(substrands)
+    console.log(substrands);
     // ///call substrands for this strand
     // let res = await ApiService.getSubstrandByStrand(selectedValue);
     // setSubstrands([]);
     // setSubstrands(res.data);
-    
   };
 
-  const handleSubStrandChange = async (
-    data:any
-  ) => {
+  const handleSubStrandChange = async (data: any) => {
     const selectedValue = data;
-
-    await setSelectedSubStrandOne(substrands?.at(selectedValue));
-    console.log(substrands.at(selectedValue))
-
+    console.log("hello");
+    // await setSelectedSubStrandOne(substrands?.at(selectedValue));
+    // console.log(substrands.at(selectedValue));
+    const response = await ApiService.getSingleSubstrand(selectedValue);
+    setSelectedSubStrandOne(response.data);
     // ///call substrands for this strand
     // let res = await ApiService.getSubstrandByStrand(selectedValue);
     // setSubstrands([]);
     // setSubstrands(res.data);
-    
   };
 
   const addRow = (event: React.MouseEvent) => {
@@ -778,7 +770,9 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Assessment Guide</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y">
+            Assessment Guide
+          </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-10">
             <div className="col-span-12 sm:col-span-2">
@@ -877,7 +871,7 @@ function Main() {
               )}
             </div>
             <div className="col-span-12 sm:col-span-4">
-              <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
+              <FormLabel htmlFor="modal-form-6">Substrands</FormLabel>
               <TomSelect
                 {...register("substrand")}
                 value={selectedSubStrand}
@@ -898,80 +892,83 @@ function Main() {
                 </div>
               )}
             </div>
-          
-     
+
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            <div className="p-5 rounded-lg mt-5">
-           
-           <div className="mb-4 border-b border-gray-200">
-             <ul className="flex cursor-pointer w-full justify-center  ">
-               <li
-                 className={`mr-4 pb-2 font-bold  text-xl ${activeTab === 'outcome' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black'}`}
-                 onClick={() => setActiveTab('outcome')}
-               >
-                 Specific Learning Outcomes
-               </li>
-               <li
-                 className={`mr-4 ml-8 pb-2 font-bold  text-xl ${activeTab === 'indicators' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-black'}`}
-                 onClick={() => setActiveTab('indicators')}
-               >
-                 Indicators
-               </li>
-             </ul>
-           </div>
-     
-           {activeTab === 'outcome' && (
-             <div className="mt-3">
-               <div className="font-medium inline-block richtext"
-                     style={{ listStyle: "auto" }}
-                     dangerouslySetInnerHTML={{
-                     __html: selectedSubStrandOne?.learning_outcome}} 
-                   ></div>
-              
-             </div>
-           )}
-     
-           {activeTab === 'indicators' && (
-              <div className="col-span-6 overflow-auto intro-y 2xl:overflow-visible">
-              <Table className="border-spacing-y-[10px]  border-separate mt-2 ">
-               
-                <Table.Tbody>
-                
-                    <Table.Tr  className="intro-x shadow-lg ">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                        
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
-                          <button className="border items-center justify-center shadow-sm rounded-md font-bold text-lg cursor-pointer  bg-primary t border-primary text-white dark:border-primary px-20 py-1 mr-2"
-                          onClick={(e: any) => openLearner(event)}>Assess</button>
-                       </div>
-                      </Table.Td>
-   
-                    </Table.Tr >
-                    <Table.Tr  className="intro-x shadow-lg rounded-lg">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                        
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
-                          <button className="border items-center justify-center shadow-sm rounded-md text-lg  font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-20 py-1 mr-2">Assess</button>
-                       </div>
-                      </Table.Td>
-   
-                    </Table.Tr>
-               
-                </Table.Tbody>
-              </Table>
-            </div>
-           )}
-         </div>
-             
+              <div className="p-5 rounded-lg mt-5">
+                <div className="mb-4 border-b border-gray-200">
+                  <ul className="flex cursor-pointer w-full justify-center  ">
+                    <li
+                      className={`mr-4 pb-2 font-bold  text-xl ${
+                        activeTab === "outcome"
+                          ? "border-b-2 border-blue-500 text-blue-500"
+                          : "text-black"
+                      }`}
+                      onClick={() => setActiveTab("outcome")}
+                    >
+                      Specific Learning Outcomes
+                    </li>
+                    <li
+                      className={`mr-4 ml-8 pb-2 font-bold  text-xl ${
+                        activeTab === "indicators"
+                          ? "border-b-2 border-blue-500 text-blue-500"
+                          : "text-black"
+                      }`}
+                      onClick={() => setActiveTab("indicators")}
+                    >
+                      Indicators
+                    </li>
+                  </ul>
+                </div>
+
+                {activeTab === "outcome" && (
+                  <div className="mt-3">
+                    <div
+                      className="font-medium inline-block richtext"
+                      style={{ listStyle: "auto" }}
+                      dangerouslySetInnerHTML={{
+                        __html: selectedSubStrandOne?.learning_outcome,
+                      }}
+                    ></div>
+                  </div>
+                )}
+
+                {activeTab === "indicators" && (
+                  <div className="col-span-6 overflow-auto intro-y 2xl:overflow-visible">
+                    <Table className="border-spacing-y-[10px]  border-separate mt-2 ">
+                      <Table.Tbody>
+                        <Table.Tr className="intro-x shadow-lg ">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap"></span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                              <button
+                                className="border items-center justify-center shadow-sm rounded-md font-bold text-lg cursor-pointer  bg-primary t border-primary text-white dark:border-primary px-20 py-1 mr-2"
+                                onClick={(e: any) => openLearner(event)}
+                              >
+                                Assess
+                              </button>
+                            </div>
+                          </Table.Td>
+                        </Table.Tr>
+                        <Table.Tr className="intro-x shadow-lg rounded-lg">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap"></span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
+                              <button className="border items-center justify-center shadow-sm rounded-md text-lg  font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-20 py-1 mr-2">
+                                Assess
+                              </button>
+                            </div>
+                          </Table.Td>
+                        </Table.Tr>
+                      </Table.Tbody>
+                    </Table>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">

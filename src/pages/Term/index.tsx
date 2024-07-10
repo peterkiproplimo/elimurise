@@ -99,7 +99,7 @@ function Main() {
   }, []);
   const getTerms = async () => {
     const response = await ApiService.getTerm({
-      page: 1 
+      page: 1,
     });
     setTerms(response.data);
     const pagination = response.pagination;
@@ -130,7 +130,7 @@ function Main() {
       setMessage(error.message);
       notify.current?.showToast();
     }
-  }; 
+  };
 
   const editRecord = (record: any) => {
     setIsEditMode(true);
@@ -183,7 +183,9 @@ function Main() {
             </div>
             <div className="grid grid-cols-12 gap-4 gap-y-3">
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Term<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Term<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("name")}
                   type="text"
@@ -198,7 +200,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
+              {/* <div className="col-span-6 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Academic Year<span className = "text-danger ml-0.5">*</span></FormLabel>
                 <FormSelect {...register("academicYear")} name="academicYear">
                   {academic.map((academicYear: any, key) => (
@@ -213,9 +215,11 @@ function Main() {
                       errors.role.message}
                   </div>
                 )}
-              </div>
+              </div> */}
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Start Date<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  Start Date<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("startDate")}
                   type="date"
@@ -231,7 +235,9 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>End Date<span className = "text-danger ml-0.5">*</span></FormLabel>
+                <FormLabel>
+                  End Date<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
                 <FormInput
                   {...register("endDate")}
                   type="date"
@@ -266,8 +272,6 @@ function Main() {
                   )}
                 </Button>
               </div>
-          
-             
             </div>
           </form>
         </>
@@ -359,16 +363,16 @@ function Main() {
                       No.
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     Term
+                      Term
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     Start Date
+                      Start Date
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                     End Date
+                      End Date
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                    Year
+                      Year
                     </Table.Th>
                     {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Created At
@@ -393,31 +397,22 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                        {new Date(term.startDate).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                            
-                            }
-                          )}
+                          {new Date(term.startDate).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          })}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                       
-                          {new Date(term.endDate).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                             
-                            }
-                          )}
+                          {new Date(term.endDate).toLocaleString("en-US", {
+                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          })}
                         </span>
                       </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -446,24 +441,31 @@ function Main() {
                         </span>
                       </Table.Td> */}
 
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
-                      <a className="flex items-center mr-3 text-success" href="#" onClick={() => editRecord(term)}>
-                        <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                        Edit
-                      </a>
-                      <a
-                        className="flex items-center text-danger"
-                        href="#"
-                        onClick={() => {
-                          setRecordId(term._id),
-                            setConfirmDelete(true);
-                        }}
-                      >
-                        <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-                      </a>
-                    </div>
-                  </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                        <div className="flex items-center justify-center">
+                          <a
+                            className="flex items-center mr-3 text-success"
+                            href="#"
+                            onClick={() => editRecord(term)}
+                          >
+                            <Lucide
+                              icon="CheckSquare"
+                              className="w-4 h-4 mr-1"
+                            />{" "}
+                            Edit
+                          </a>
+                          <a
+                            className="flex items-center text-danger"
+                            href="#"
+                            onClick={() => {
+                              setRecordId(term._id), setConfirmDelete(true);
+                            }}
+                          >
+                            <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                            Delete
+                          </a>
+                        </div>
+                      </Table.Td>
 
                       {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
                         <div className="flex items-center justify-center">
@@ -628,7 +630,9 @@ function Main() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Term deleted Successfully" : "Failed to delete term"}</div>
+          <div className="font-medium">
+            {success ? "Term deleted Successfully" : "Failed to delete term"}
+          </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>

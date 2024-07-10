@@ -572,6 +572,15 @@ export async function getSubstrandByStrand(data: any, strandId: any) {
     throw handler(e);
   }
 }
+export async function getSingleSubstrand(substrand: any) {
+  try {
+    let res = await axios.get(c.SUBSTRAND + "/" + substrand);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 export const getRole = async (data: any) => {
   try {

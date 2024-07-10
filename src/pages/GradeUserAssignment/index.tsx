@@ -539,7 +539,7 @@ function Users() {
                   </div>
                 )}
               </div>
-
+              <div className="col-span-12 sm:col-span-6"></div>
               {/*   <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">
                   Select Learning Area
