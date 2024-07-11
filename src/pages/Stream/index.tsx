@@ -17,6 +17,8 @@ import { Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
+import Alert from "../../base-components/Alert";
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -62,7 +64,7 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: any) => {
     event.preventDefault();
     const result = await trigger();
     if (result && !loading) {
@@ -263,6 +265,19 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-10 text-lg font-medium intro-y">Streams</h2>
+          {message&&success&&(
+            <Alert variant="soft-success" className="flex items-center mb-2" dismissTimeout={3000} role="alert">
+             <svg
+              className="flex-shrink-0 inline w-4 h-4 me-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            {message}
+        </Alert>)}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
@@ -369,13 +384,13 @@ function Main() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
                               <a
-                                className="flex items-center mr-3"
+                                className="flex items-center mr-3 text-success"
                                 href="#"
                                 onClick={() => editRecord(stream)}
                               >
                                 <Lucide
                                   icon="CheckSquare"
-                                  className="w-4 h-4 mr-1 text-success"
+                                  className="w-4 h-4 mr-1 "
                                 />{" "}
                                 Edit
                               </a>

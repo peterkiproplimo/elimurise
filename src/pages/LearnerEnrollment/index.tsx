@@ -125,6 +125,19 @@ function Main() {
     setGrades(response.data);
   };
 
+  const handleReset = () => {
+    setYear('');
+    setNextYear('');
+    setCurrentStream('');
+    setNextStream('');
+    reset({
+      year: '',
+      stream: '',
+      grade: '',
+      learning_area: ''
+    });
+  };
+
   const deleteRecord = async () => {
     isLoading(true);
     try {
@@ -267,7 +280,7 @@ function Main() {
                   value={currentStream}
                   onChange={(event: any) => setCurrentStream(event)}
                 >
-                  <option>Current Stream</option>
+                  <option>Current Grade</option>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade?.grade?.name}
@@ -290,7 +303,7 @@ function Main() {
                   name="learning_area"
                   onChange={(event) => setNextStream(event)}
                 >
-                  <option>Next Stream</option>
+                  <option>Next Grade</option>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade?.grade?.name}
@@ -331,9 +344,9 @@ function Main() {
               <Button
                 type="button"
                 variant="outline-secondary"
-                onClick={() => {
-                  cancel({ name: "" });
-                }}
+                onClick= 
+                  {handleReset}
+                
                 className="w-20 ml-4"
               >
                 Reset

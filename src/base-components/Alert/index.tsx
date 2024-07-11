@@ -1,4 +1,4 @@
-import { forwardRef, useState, Fragment } from "react";
+import { forwardRef, useState,useEffect, Fragment } from "react";
 import { twMerge } from "tailwind-merge";
 import { Transition } from "@headlessui/react";
 
@@ -37,6 +37,8 @@ type AlertProps<C extends React.ElementType> = PolymorphicComponentPropWithRef<
     onShown?: () => {};
     onHide?: () => {};
     onHidden?: () => {};
+    dismissTimeout?: number; // New prop for dismiss timeout in milliseconds
+
   }
 >;
 
@@ -46,11 +48,19 @@ type AlertComponent = <C extends React.ElementType = "div">(
 
 const Alert: AlertComponent = forwardRef(
   <C extends React.ElementType>(
-    { as, dismissible, variant, ...props }: AlertProps<C>,
+    { as, dismissible, variant, dismissTimeout = 2000, ...props }: AlertProps<C>,
     ref?: PolymorphicRef<C>
   ) => {
     const [show, setShow] = useState<boolean>(true);
     const Component = as || "div";
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setShow(false);
+      }, dismissTimeout);
+
+      return () => clearTimeout(timer);
+    }, [dismissTimeout]);
 
     // Main Colors
     const primary = [

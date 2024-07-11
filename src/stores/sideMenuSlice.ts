@@ -94,7 +94,7 @@ const initialState: SideMenuState = {
         {
           icon: "User",
           pathname: "/reports",
-          title: "By Learner",
+          title: "Formative Report",
         },
       ],
     },

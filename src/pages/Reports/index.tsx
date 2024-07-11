@@ -545,17 +545,17 @@ function Main() {
            </div>
            
                 <div className="text-lg font-semibold text-primary ml-5">
-                  Name: 
+                  Name: {assessmentsData?.learner?.learner?.first_name}{assessmentsData?.learner?.learner?.last_name}
                   <br/>
-                  Adm No: 
+                  Adm No:  {assessmentsData?.learner?.learner?.adm_no}
                   <br/>
-                  Year:
+                  Year:  {assessmentsData?.learner?.academicYear?.name}
                   <br/>
-                  Term:
+                  Term:  {assessmentsData?.term?.name}
                   <br/>
-                  Grade:
+                  Grade: {assessmentsData?.learner?.stream?.grade?.name}
                   <br/>
-                  Stream:
+                  Stream: {assessmentsData?.learner?.stream?.name}
               
                 </div>
               </div>

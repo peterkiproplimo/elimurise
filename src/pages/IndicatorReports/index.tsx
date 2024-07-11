@@ -762,7 +762,7 @@ function Main() {
                   name="indicator"
                   onChange={(event: any) => setIndicator(event)}
                 >
-                  <option>Select Substrand</option>
+                  <option>Select Indicator</option>
                   {substrand?.indicators?.map((indicator: any, key: any) => (
                     <option key={key} value={indicator[0]?._id}>
                       {indicator[0]?.description}

@@ -20,11 +20,12 @@ import Notification, {
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
+import Alert from "../../base-components/Alert";
 
 interface TableRow {
   no: number;
@@ -33,7 +34,7 @@ interface TableRow {
 
 function Main() {
   // const [confirmDelete, setConfirmDelete] = useState(false);
-   const [viewMore, setViewMore] = useState(false);
+  const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
   const [grade, setGrade] = useState("");
@@ -71,7 +72,7 @@ function Main() {
   const [guardianIdNo2, setGuardianIdNo2] = useState("");
   const navigate = useNavigate();
 
-  const handleNavigate = (learnerId:any) => {
+  const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
       replace: true,
       state: { data: learnerId },
@@ -106,7 +107,7 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: any) => {
     event.preventDefault();
     const result = await trigger();
     if (result && !loading) {
@@ -324,6 +325,31 @@ function Main() {
             className="mt-5 p-5 intro-y box validate-form"
             onSubmit={onSubmit}
           >
+               {message&&!success&&(
+            <Alert variant="soft-danger" className="flex items-center mb-2" dismissTimeout={9000}>
+            <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" />{" "}
+            {message}
+        </Alert>
+        
+          //   <div
+          //   className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
+          //   role="alert"
+          // >
+          //   <svg
+          //     className="flex-shrink-0 inline w-4 h-4 me-3"
+          //     aria-hidden="true"
+          //     xmlns="http://www.w3.org/2000/svg"
+          //     fill="currentColor"
+          //     viewBox="0 0 20 20"
+          //   >
+          //     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+          //   </svg>
+          //   <span className="sr-only">Info</span>
+          //   <div>
+          //     <span className="font-medium">Success alert!</span> {message}
+          //   </div>
+          // </div>
+          )}
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -426,13 +452,16 @@ function Main() {
                 </div>
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">
-                    Grade<span className="text-danger ml-0.5">*</span>
+                    Grade<span className="text-danger ml-0.5">*f</span>
                   </FormLabel>
-                  <FormSelect
-                    {...register("grade")}
+                  <TomSelect
+                    
                     name="grade"
                     value={grade}
-                    onChange={(event) => setGrade(event.target.value)}
+                    onChange={(event: any) =>{
+                      reset({ ...getValues(), "grade": event });
+                      console.log("test")
+                      setGrade(event)}}
                     disabled={isEditMode}
                   >
                     <option>Select Grade</option>
@@ -441,7 +470,7 @@ function Main() {
                         {grade.name}
                       </option>
                     ))}
-                  </FormSelect>
+                  </TomSelect>
                   {errors.grade && (
                     <div className="mt-2 text-danger">
                       {typeof errors.grade.message === "string" &&
@@ -752,6 +781,32 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-10 text-lg font-medium intro-y">Learners</h2>
+          {message&&success&&(
+            <Alert variant="soft-success" className="flex items-center mb-2" dismissTimeout={3000} role="alert">
+             <svg
+              className="flex-shrink-0 inline w-4 h-4 me-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            {message}
+        </Alert>
+        
+          //   <div
+          //   className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
+          //   role="alert"
+          // >
+          
+          //   <span className="sr-only">Info</span>
+          //   <div>
+          //     <span className="font-medium">Success alert!</span> {message}
+          //   </div>
+          // </div>
+          )}
+
           <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
             <Button
               variant="primary"
@@ -858,14 +913,14 @@ function Main() {
                           No.
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          First Name
+                          Name
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-24">
                           Last Name
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-24">
                           Surname
-                        </Table.Th>
+                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Adm No
                         </Table.Th>
@@ -873,14 +928,14 @@ function Main() {
                           Grade
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian First Name
+                          Guardian Name
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Last Name
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Surname
-                        </Table.Th>
+                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian ID No
                         </Table.Th>
@@ -905,10 +960,12 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.first_name}
+                              {learner?.learner?.first_name}{" "}
+                              {learner?.learner?.last_name}{" "}
+                              {learner?.learner?.surname}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.last_name}
                             </span>
@@ -917,7 +974,7 @@ function Main() {
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.surname}
                             </span>
-                          </Table.Td>
+                          </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.adm_no}
@@ -931,10 +988,12 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.first_name}
+                              {learner?.learner?.guardian?.first_name}{" "}
+                              {learner?.learner?.guardian?.last_name}{" "}
+                              {learner?.learner?.guardian?.surname}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.last_name}
                             </span>
@@ -943,7 +1002,7 @@ function Main() {
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.surname}
                             </span>
-                          </Table.Td>
+                          </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.id_no}
@@ -972,12 +1031,12 @@ function Main() {
                                 />{" "}
                                 Edit
                               </a>
-                              <a
+                              {/* <a
                             className="flex items-center text-primary"
                             onClick={(e: any) => handleNavigate(learner)}
                         >
                             <Lucide icon="Eye" className="w-4 h-4 mr-1" /> View More
-                        </a>
+                        </a> */}
 
                               {/* Uncomment the following block if you want to enable the delete action */}
                               {/* <a

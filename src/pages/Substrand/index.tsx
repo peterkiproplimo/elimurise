@@ -626,13 +626,13 @@ function Main() {
           <div className="grid grid-cols-12 gap-6 mt-5">
             {/* BEGIN: Data List */}
             {loading ? (
-              <div className="flex flex-col items-center mt-5">
+              <div className="fixed inset-0 flex items-center justify-center">
                 <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
               </div>
             ) : substrands.length === 0 ? (
               <div className="col-span-12 text-center items-center mt-10 bg-white p-8">
                 {/* <Search size={28} className="" /> */}
-                <p className="text-xl text-slate-500 ">No Strands found</p>
+                <p className="text-xl text-slate-500 ">No Substrands found</p>
               </div>
             ) : (
               <>

@@ -9,7 +9,7 @@ import {
   FormSwitch,
   FormTextarea,
 } from "../../base-components/Form";
-import { Loader } from 'lucide-react';
+import { Loader } from "lucide-react";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -339,7 +339,7 @@ function Main() {
     { no: 1, strandName: "Example Strand" },
   ]);
   const generateAssessment = async () => {
-    const data = { indicator, term: selectedTerm, stream  };
+    const data = { indicator, term: selectedTerm, stream };
     console.log(substrand);
     isLoading(true);
     try {
@@ -381,18 +381,18 @@ function Main() {
     generateAssessment();
   };
 
-  const getDescriptionColor = (score:any) => {
+  const getDescriptionColor = (score: any) => {
     switch (score) {
       case 4:
-        return 'text-green-700'; // Exceeding Expectation
+        return "text-green-700"; // Exceeding Expectation
       case 3:
-        return 'text-success'; // Meeting Expectation
+        return "text-success"; // Meeting Expectation
       case 2:
-        return 'text-purple-600'; // Approaching Expectation
+        return "text-purple-600"; // Approaching Expectation
       case 1:
-        return 'text-orange-700'; // Below Expectation
+        return "text-orange-700"; // Below Expectation
       default:
-        return 'text-gray-600';
+        return "text-gray-600";
     }
   };
 
@@ -436,63 +436,85 @@ function Main() {
                 Assessment Score Entry Form
               </h2>
               <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Grade:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.learning_area?.grade_id?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Learning Area:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.learning_area?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Strand:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.strand?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Substrand:</label>
-    <span className="text-md text-gray-800 ml-2">{substrand?.name}</span>
-  </div>
-  <div className="meta-row flex items-center mb-2">
-    <label className="font-semibold text-md text-gray-700">Indicator:</label>
-    <span className="text-md text-gray-800 ml-2">
-      {substrand?.indicators.flat().find((ind: any) => ind._id === indicator).description}
-    </span>
-  </div>
-  <div className="meta-row flex items-center col-span-2 mt-0.5">
-  <Loader className="text-success animate-spin mr-2" />
-  
-    <span className="text-sm text-success font-medium">(Auto-saving)</span>
-  </div>
-</div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Grade:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {substrand?.strand?.learning_area?.grade_id?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Learning Area:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {substrand?.strand?.learning_area?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Strand:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {substrand?.strand?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Substrand:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {substrand?.name}
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Indicator:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    {
+                      substrand?.indicators
+                        .flat()
+                        .find((ind: any) => ind._id === indicator).description
+                    }
+                  </span>
+                </div>
+                <div className="meta-row flex items-center col-span-2 mt-0.5">
+                  <Loader className="text-success animate-spin mr-2" />
 
-            </div>
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
-            
-              <div className="hidden mx-auto md:block text-slate-500 mt-5">
-                Showing{" "}
-                {pagination.current_page +
-                  " to " +
-                  pagination.total_pages +
-                  " of " +
-                  pagination.total}{" "}
-                entries
-              </div>
-              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
-                <div className="relative w-56 text-slate-500">
-                  <FormInput
-                    type="text"
-                    className="w-56 pr-10 !box"
-                    placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <Lucide
-                    icon="Search"
-                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                  />
+                  <span className="text-sm text-success font-medium">
+                    (Auto-saving)
+                  </span>
                 </div>
               </div>
             </div>
+            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+              <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
+                <div className="hidden mx-auto md:block text-slate-500 mt-5">
+                  Showing{" "}
+                  {pagination.current_page +
+                    " to " +
+                    pagination.total_pages +
+                    " of " +
+                    pagination.total}{" "}
+                  entries
+                </div>
+                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
+                  <div className="relative w-56 text-slate-500">
+                    <FormInput
+                      type="text"
+                      className="w-56 pr-10 !box"
+                      placeholder="Search..."
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <Lucide
+                      icon="Search"
+                      className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                    />
+                  </div>
+                </div>
+              </div>
               <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
@@ -524,14 +546,15 @@ function Main() {
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <div className="flex">
-                        <img
-                         src={logo}
-                         alt="Learner"
-                         className="w-12 h-12   "
-                         />
+                          <img
+                            src={logo}
+                            alt="Learner"
+                            className="w-12 h-12   "
+                          />
                           <div className="ml-4">
                             <a href="#" className="font-semibold">
-                              {enrollment?.learner?.first_name} {enrollment?.learner?.last_name}
+                              {enrollment?.learner?.first_name}{" "}
+                              {enrollment?.learner?.last_name}
                             </a>
                             <div className="text-gray-600 text-sm ">
                               {enrollment?.learner?.surname}
@@ -576,8 +599,11 @@ function Main() {
                           }}
                         />
                       </Table.Td>
-                    <Table.Td className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  ${getDescriptionColor(enrollment?.assessmentDetails?.score)}`}>
-         
+                      <Table.Td
+                        className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  ${getDescriptionColor(
+                          enrollment?.assessmentDetails?.score
+                        )}`}
+                      >
                         <span>
                           <b>
                             {enrollment?.assessmentDetails?.score == 4
@@ -593,7 +619,7 @@ function Main() {
                               ? "Below Expectation: "
                               : ""}
                           </b>
-                          <br/>
+                          <br />
                           {enrollment?.assessmentDetails?.description}
                         </span>
                       </Table.Td>
@@ -798,7 +824,7 @@ function Main() {
                   name="indicator"
                   onChange={(event: any) => setIndicator(event)}
                 >
-                  <option>Select Substrand</option>
+                  <option>Select Indicator</option>
                   {substrand?.indicators?.map((indicator: any, key: any) => (
                     <option key={key} value={indicator[0]?._id}>
                       {indicator[0]?.description}
