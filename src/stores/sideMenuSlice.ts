@@ -75,7 +75,7 @@ const initialState: SideMenuState = {
       pathname: "/billing",
       title: "Billing",
     },
-  
+
     {
       icon: "Users",
       title: "Parents",
@@ -134,7 +134,7 @@ const initialState: SideMenuState = {
       pathname: "/profile",
       title: "Profile",
     },
-     {
+    {
       icon: "User",
       pathname: "/users",
       title: "Users",
@@ -160,11 +160,11 @@ const teacherState: SideMenuState = {
       title: "Learners",
     },
 
-    {
-      icon: "Users",
-      title: "Parents",
-      pathname: "/parents",
-    },
+    // {
+    //   icon: "Users",
+    //   title: "Parents",
+    //   pathname: "/parents",
+    // },
 
     {
       icon: "FileCheck",
@@ -192,7 +192,6 @@ const teacherState: SideMenuState = {
         },
       ],
     },
-    
   ],
 };
 const parentState: SideMenuState = {
