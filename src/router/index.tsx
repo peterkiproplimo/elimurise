@@ -39,7 +39,8 @@ import LearnerProfiles from "../pages/LearnerProfiles";
 import IndicatorReports from "../pages/IndicatorReports";
 import UserProfile from "../pages/UserProfile";
 import LearnerDetails from "../pages/Learners/learnerDetails";
-
+import SummativeTests from "../pages/SummativeTests";
+import SummativeAssess from "../pages/SummativeAssess";
 
 import User from "../pages/User";
 import Role from "../pages/roles";
@@ -89,6 +90,14 @@ function Router() {
         {
           path: "/IndicatorReport",
           element: <IndicatorReports />,
+        },
+        {
+          path: "/tests",
+          element: <SummativeTests />,
+        },
+        {
+          path: "/assess",
+          element: <SummativeAssess />,
         },
 
         {

@@ -100,6 +100,22 @@ const initialState: SideMenuState = {
     },
     {
       icon: "Users",
+      title: "Summative",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/tests",
+          title: "Summative Tests ",
+        },
+        {
+          icon: "User",
+          pathname: "/assess",
+          title: "Summative Assess",
+        },
+      ],
+    },
+    {
+      icon: "Users",
       title: "Settings",
       subMenu: [
         {

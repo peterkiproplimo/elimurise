@@ -545,7 +545,7 @@ function Main() {
            </div>
            
                 <div className="text-lg font-semibold text-primary ml-5">
-                  Name: {assessmentsData?.learner?.learner?.first_name}{assessmentsData?.learner?.learner?.last_name}
+                  Name: {assessmentsData?.learner?.learner?.first_name} {assessmentsData?.learner?.learner?.last_name}
                   <br/>
                   Adm No:  {assessmentsData?.learner?.learner?.adm_no}
                   <br/>

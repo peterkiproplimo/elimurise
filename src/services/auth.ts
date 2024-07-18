@@ -175,6 +175,31 @@ export async function deleteTerm(gradeId: any) {
     throw handler(e);
   }
 }
+//summative tests
+export const getTests = async (data: any) => {
+  try {
+    let res = await axios.get(c.TESTS, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export async function createTests(data: FieldValues) {
+  try {
+    if (data._id) {
+      let res = await axios.put(c.TESTS + "/" + data._id, data);
+      return res.data;
+    } else {
+      let res = await axios.post(c.TESTS, data);
+      return res.data;
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 //streams
 export const getStream = async (data: any) => {
@@ -501,6 +526,17 @@ export const getSubstrand = async (data: any) => {
 export const getAssessmentLerners = async (data: any) => {
   try {
     let res = await axios.get(c.ASSESSMENT + "/assessment-learners", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getSummativeAssessment = async (data: any) => {
+  try {
+    let res = await axios.get(c.SUMMATIVE , {
       params: data,
     });
     return res.data;
