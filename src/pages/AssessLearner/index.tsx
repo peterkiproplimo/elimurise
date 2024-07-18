@@ -693,14 +693,27 @@ function Main() {
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
+                <FormLabel
+                  htmlFor="modal-form-6"
+                  onClick={(e) => {
+                    alert("hello");
+                  }}
+                >
+                  Grade
+                </FormLabel>
                 <FormSelect
                   {...register("grade")}
                   name="grade"
                   value={strandFilter.grade}
                   onChange={(event) => handleGradeChange(event)}
                 >
-                  <option>Select Grade</option>
+                  <option
+                    onClick={(e) => {
+                      alert("hello");
+                    }}
+                  >
+                    Select Grade
+                  </option>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -825,7 +838,7 @@ function Main() {
                   name="indicator"
                   onChange={(event: any) => setIndicator(event)}
                 >
-                  <option>Select Indicator</option>
+                  <option>Select Substrand</option>
                   {substrand?.indicators?.map((indicator: any, key: any) => (
                     <option key={key} value={indicator[0]?._id}>
                       {indicator[0]?.description}

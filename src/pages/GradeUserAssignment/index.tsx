@@ -52,6 +52,8 @@ function Users() {
     total_pages: 1,
     per_page: 0,
   });
+  const [streams, setStreams] = useState([]);
+  const [stream, setStream] = useState("");
   const [assignments, setAssignments] = useState([]);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
@@ -76,6 +78,7 @@ function Users() {
       // tenant: yup.string().required("Conference is required"),
       // user: yup.string().required("user is required"),
       grade: yup.string().required("grade is required"),
+      stream: yup.string().required("stream is required"),
       // learning_area: yup.string().required("learning area is required"),
     })
     .required();
@@ -96,6 +99,7 @@ function Users() {
     getUsers();
     getLearningAreas();
     getGrades();
+    // getStreams();
   }, []);
   useEffect(() => {
     getLearningAreasAssignments();
@@ -145,7 +149,14 @@ function Users() {
     // });
     // setUsers(res.data);
   };
-
+  const getStreams = async (selectedValue: any) => {
+    setStreams([]);
+    const response = await ApiService.getStream({
+      page: 1,
+      grade: selectedValue,
+    });
+    setStreams(response.data);
+  };
   const getRole = async () => {
     let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
     setRoles(res.data?.roles);
@@ -237,6 +248,7 @@ function Users() {
       term: "na",
       grade: selectedValue,
     });
+    getStreams(selectedValue);
 
     // You might want to fetch filtered data here
   };
@@ -354,16 +366,7 @@ function Users() {
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     NO
                   </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    First Name
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Last Name
-                  </Table.Th>
 
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Email
-                  </Table.Th>
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     Grade
                   </Table.Th>
@@ -381,18 +384,10 @@ function Users() {
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {key + 1}
                     </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {assignment?.user?.firstname}
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {assignment?.user?.lastname}
-                    </Table.Td>
 
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {assignment.user.email}
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {assignment.grade.name}
+                      {assignment?.stream?.grade?.name}{" "}
+                      {assignment?.stream?.name}
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {assignment.learning_area.name}
@@ -539,7 +534,29 @@ function Users() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-6"></div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
+                <FormSelect
+                  {...register("stream")}
+                  name="stream"
+                  value={stream}
+                  onChange={(event: any) => setStream(event.target.value)}
+                >
+                  <option value={""}>Select Stream</option>
+                  {streams.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.stream && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.stream.message === "string" &&
+                      errors.stream.message}
+                  </div>
+                )}
+              </div>
+              {/* <div className="col-span-12 sm:col-span-6"></div> */}
               {/*   <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">
                   Select Learning Area
@@ -573,46 +590,47 @@ function Users() {
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      <FormInput
+                      {/* <FormInput
                         type="checkbox"
                         className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
                         checked={selectAll}
                         onChange={handleSelectAll}
-                      />
+                      /> */}
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      Learning Area
+                      <u> Learning Area</u>
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {filteredLearningAreas.map((filteredArea: any, key) => (
-                    <Table.Tr key={key} className="">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
-                        <span className="font-medium whitespace-nowrap">
-                          <FormInput
-                            type="checkbox"
-                            {...register(`lerningArea[${key}].selected`)}
-                            name={`lerningArea[${key}].selected`}
-                            className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                          />
-                          <FormInput
-                            type="hidden"
-                            {...register(`lerningArea[${key}].id`)}
-                            name={`lerningArea[${key}].id`}
-                            defaultValue={filteredArea?._id} // Use defaultValue instead of value
-                            className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                          />
-                        </span>
-                      </Table.Td>
+                  {stream &&
+                    filteredLearningAreas.map((filteredArea: any, key) => (
+                      <Table.Tr key={key} className="">
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
+                          <span className="font-medium whitespace-nowrap">
+                            <FormInput
+                              type="checkbox"
+                              {...register(`lerningArea[${key}].selected`)}
+                              name={`lerningArea[${key}].selected`}
+                              className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                            />
+                            <FormInput
+                              type="hidden"
+                              {...register(`lerningArea[${key}].id`)}
+                              name={`lerningArea[${key}].id`}
+                              defaultValue={filteredArea?._id} // Use defaultValue instead of value
+                              className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                            />
+                          </span>
+                        </Table.Td>
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
-                        <span className="font-medium whitespace-nowrap">
-                          {filteredArea.name}
-                        </span>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
+                          <span className="font-medium whitespace-nowrap">
+                            {filteredArea.name}
+                          </span>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
                 </Table.Tbody>
               </Table>
             </Dialog.Description>

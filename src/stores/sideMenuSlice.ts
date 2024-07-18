@@ -192,6 +192,11 @@ const teacherState: SideMenuState = {
         },
       ],
     },
+    {
+      icon: "FileText",
+      pathname: "/profile",
+      title: "Profile",
+    },
   ],
 };
 const parentState: SideMenuState = {
