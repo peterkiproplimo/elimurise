@@ -58,7 +58,7 @@ function Router() {
       ),
       children: [
         {
-          path: "/dashboard",
+          path: "/",
           element: <Dashboard />,
         },
         {

@@ -452,7 +452,7 @@ function Main() {
                 </div>
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">
-                    Grade<span className="text-danger ml-0.5">*f</span>
+                    Grade<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <TomSelect
                     
