@@ -161,7 +161,7 @@ function Main() {
               </div>
             </div>
 
-            <div className="col-span-12 mt-6 flex gap-5">
+            <div className="col-span-12 mt-2 ">
               <div className="mt-8  box overflow-auto intro-y lg:overflow-visible sm:mt-0">
                 <Table className="border-spacing-y-[10px] border-separate sm:mt-2">
                   <Table.Thead>
@@ -170,7 +170,7 @@ function Main() {
                         IMAGES
                       </Table.Th>
                       <Table.Th className="border-b-0 whitespace-nowrap">
-                        PRODUCT NAME
+                        STUDENT NAME
                       </Table.Th>
                       <Table.Th className="text-center border-b-0 whitespace-nowrap">
                         STOCK
@@ -266,65 +266,17 @@ function Main() {
                   </Table.Tbody>
                 </Table>
               </div>
-              <div className="flex-grow">
-                <div className="col-span-12 ">
-                  <div className="p-5  intro-y box ">
-                    <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
-                      <div>Keywords</div>
-                      <div className="ml-auto">Searched</div>
-                    </div>
-                    <div className="flex items-center mb-5">
-                      <div>Vue 3 Release Date</div>
-                      <div className="ml-auto">201</div>
-                    </div>
-                    <div className="flex items-center mb-5">
-                      <div>Install Vite Vue</div>
-                      <div className="ml-auto">42</div>
-                    </div>
-                    <Button
-                      variant="outline-secondary"
-                      className="relative justify-start w-full mb-2 bg-pink-500 text-white border-slate-300 dark:border-darkmode-300"
-                    >
-                      <span className="mr-5 truncate">View More...</span>
-                      <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
-                        <Lucide icon="ArrowRight" className="w-4 h-4" />
-                      </span>
-                    </Button>
-                  </div>
-                </div>
-                <div className="col-span-12 ">
-                  <div className="p-5 mt-12 intro-y box sm:mt-5">
-                    <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
-                      <div>Keywords</div>
-                      <div className="ml-auto">Searched</div>
-                    </div>
-
-                    <div className="flex items-center mb-5">
-                      <div>Install Vite Vue</div>
-                      <div className="ml-auto">42</div>
-                    </div>
-                    <Button
-                      variant="outline-secondary"
-                      className="relative justify-start w-full mb-2 bg-purple-500 text-white border-slate-300 dark:border-darkmode-300"
-                    >
-                      <span className="mr-5 truncate">View More...</span>
-                      <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
-                        <Lucide icon="ArrowRight" className="w-4 h-4" />
-                      </span>
-                    </Button>
-                  </div>
-                </div>
-              </div>
+           
             </div>
           </div>
         </div>
          <div className="col-span-12 2xl:col-span-3 box">
-          <div className="pb-10 -mb-10 2xl:border-l">
+          <div className=" 2xl:border-l">
             <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
               <div className="col-span-12 mt-3 mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
                 <div className="flex items-center h-10 intro-x">
                   <h2 className=" text-lg font-medium truncate">
-                    Transactions
+                    Teachers
                   </h2>
                 </div>
                 <div className="mt-2">
@@ -365,10 +317,10 @@ function Main() {
                 </div>
               </div>
 
-              <div className="col-span-12 mt-3  mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
+              <div className="col-span-12 mt-2  mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
                 <div className="flex items-center h-10 intro-x">
                   <h2 className="mr-5 text-lg font-medium truncate">
-                    Transactions
+                    Parents
                   </h2>
                 </div>
                 <div className="mt-5">
