@@ -385,19 +385,18 @@ function Main() {
     }
   };
   const handleInputChange = async (data: any) => {
-    if (data.score < 1 || data.score > 4) {
-      return false;
-    }
+    // if (data.score < 1 || data.score > 4) {
+    //   return false;
+    // }
     const assessment = {
-      substrand: substrand?._id,
-      indicator,
+      stream: stream,
       term: selectedTerm,
       learning_area: strandFilter.learning_area,
+      test:test,
       score: Number(data.score),
-      strand: strand,
       enrollment: data?.enrollment?.enrollmentId,
     };
-    let res = await ApiService.createAssessment(assessment);
+    let res = await ApiService.createSummativeTests(assessment);
     console.log(assessment);
     console.log(res);
     generateAssessment();
@@ -455,7 +454,7 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-                Assessment Score Entry Form
+                Summative Assessment
               </h2>
               <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
                 <div className="meta-row flex items-center mb-2">
@@ -579,9 +578,9 @@ function Main() {
                           min={1}
                           onChange={(e) => {
                             const enteredValue = parseInt(e.target.value);
-                            if (enteredValue > 4) {
+                            if (enteredValue > 100) {
                               e.target.value = "4"; // Set the value to the maximum allowed
-                            } else if (enteredValue < 1) {
+                            } else if (enteredValue < 0) {
                               alert(
                                 "value should be within the range of 1, 2, 3, 4"
                               );

@@ -187,6 +187,15 @@ export const getTests = async (data: any) => {
   }
 };
 
+export const createSummativeTests = async (data: any) => {
+  try {
+    let res = await axios.post(c.SUMMATIVE, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
 export async function createTests(data: FieldValues) {
   try {
     if (data._id) {
