@@ -283,9 +283,8 @@ function Main() {
                   <br/>
                   Term:  
                   <br/>
-                  Grade: 
-                  <br/>
-                  Stream:
+                
+               
               
                 </div>
               </div>
@@ -295,12 +294,12 @@ function Main() {
               </div>
             </div>
             <div className="px- py-2 sm:px-16 sm:py-20 mt-5">
-            <div className="text-center font-bold text-2xl mb-5">
-              Formative Performance Report
+            <div className="text-center font-bold text-xl mb-5">
+              Performance Report
             </div>
               <Table className="border">
                 <Table.Thead>
-                  <Table.Tr className="bg-secondary h-20 text-lg">
+                  <Table.Tr className="bg-secondary ">
                     <Table.Th className="border-b-0 whitespace-nowrap">Strand</Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap text-left">Substrand</Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap text-left">Learning Area</Table.Th>
@@ -309,7 +308,7 @@ function Main() {
                     <Table.Th className="border-b-0 whitespace-nowrap text-center">Description</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
-                <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 text-lg">
+                <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 ">
                   {learnerReport?.assessment?.map(
                     (enrollment: any, index: any) => (
                       <Table.Tr key={index} className="bg-secondary">
