@@ -456,13 +456,13 @@ function Main() {
                 </a>{" "}
                 Summative Assessment
               </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
+              {/* <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
                 <div className="meta-row flex items-center mb-2">
                   <label className="font-semibold text-md text-gray-700">
                     Grade:
                   </label>
                   <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.grade_id?.name}
+                    {learningArea?.grade_id?._id }
                   </span>
                 </div>
                 <div className="meta-row flex items-center mb-2">
@@ -470,7 +470,7 @@ function Main() {
                     Learning Area:
                   </label>
                   <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.name}
+                    {learningArea?._id}
                   </span>
                 </div>
               
@@ -481,7 +481,7 @@ function Main() {
                     (Auto-saving)
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
@@ -905,7 +905,7 @@ function Main() {
           {/* END: Delete Confirmation Modal */}
         </>
       )}
-      <Notification
+      {/* <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {
           notify.current = el;
@@ -920,7 +920,7 @@ function Main() {
           <div className="font-medium">{success ? "Success" : "Failed"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
-      </Notification>
+      </Notification> */}
     </>
   );
 }

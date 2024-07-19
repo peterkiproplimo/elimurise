@@ -220,9 +220,9 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-                Assessment Score Entry Form
+                Learner Report 
               </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
+              {/* <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
                 <div className="meta-row flex items-center mb-2">
                   <label className="font-semibold text-md text-gray-700">
                     Learning Area:
@@ -259,7 +259,7 @@ function Main() {
                     (Auto-saving)
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
@@ -290,24 +290,42 @@ function Main() {
               <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th>Strand</Table.Th>
-                    <Table.Th>Substrand</Table.Th>
-                    <Table.Th>Learning Area</Table.Th>
-                    <Table.Th>Indicator Description</Table.Th>
-                    <Table.Th>Score</Table.Th>
-                    <Table.Th>Description</Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                      <FormCheck.Input type="checkbox" />
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">Strand</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap text-left">Substrand</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap text-left">Learning Area</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap text-center">Indicator Description</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap text-left">Score</Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap text-center">Description</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {learnerReport?.assessment?.map(
                     (enrollment: any, index: any) => (
-                      <Table.Tr key={index}>
-                        <Table.Td>{enrollment.strand.name}</Table.Td>
-                        <Table.Td>{enrollment.substrand.name}</Table.Td>
-                        <Table.Td>{enrollment.learning_area.name}</Table.Td>
-                        <Table.Td>{enrollment.indicator_description}</Table.Td>
-                        <Table.Td>{enrollment.score}</Table.Td>
-                        <Table.Td>{enrollment.description}</Table.Td>
+                      <Table.Tr key={index} className="intro-x">
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <FormCheck.Input type="checkbox" />
+                      </Table.Td>
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          {enrollment.strand.name}
+                          </Table.Td>
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          {enrollment.substrand.name}
+                          </Table.Td>
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          {enrollment.learning_area.name}
+                          </Table.Td>
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          {enrollment.indicator_description}
+                          </Table.Td>
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          {enrollment.score}
+                          </Table.Td>
+                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          {enrollment.description}
+                          </Table.Td>
                       </Table.Tr>
                     )
                   )}

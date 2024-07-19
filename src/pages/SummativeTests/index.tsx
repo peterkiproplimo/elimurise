@@ -571,7 +571,7 @@ function Main() {
           {/* END: Delete Confirmation Modal */}
         </>
       )}
-      <Notification
+      {/* <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {
           notify.current = el;
@@ -586,7 +586,7 @@ function Main() {
           <div className="font-medium">{success ? " Success" : "Failed"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
-      </Notification>
+      </Notification> */}
     </>
   );
 }
