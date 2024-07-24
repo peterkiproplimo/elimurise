@@ -17,7 +17,8 @@ export const LEARNERS = `${BASE_URL}portal/learners`;
 export const ENROLLMENT = `${BASE_URL}portal/enrollment`;
 export const ASSESSMENT = `${BASE_URL}portal/assessment`;
 export const TESTS = `${BASE_URL}portal/tests`;
-export const SUMMATIVE = `${BASE_URL}/portal/summative`;
+export const SUMMATIVE = `${BASE_URL}portal/summative`;
+export const GRADING = `${BASE_URL}portal/grading-system`;
 
 export const PARENTS = `${BASE_URL}portal/parents`;
 export const TEACHERS = `${BASE_URL}portal/teachers`;

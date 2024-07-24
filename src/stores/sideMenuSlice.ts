@@ -104,6 +104,11 @@ const initialState: SideMenuState = {
       subMenu: [
         {
           icon: "Activity",
+          pathname: "/grading",
+          title: "Grading",
+        },
+        {
+          icon: "Activity",
           pathname: "/tests",
           title: "Summative Tests ",
         },
