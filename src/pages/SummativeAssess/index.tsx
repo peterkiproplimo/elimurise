@@ -525,7 +525,7 @@ function Main() {
                       NEMIS NO.
                     </Table.Th>
                     <Table.Th className="text-left border-b-0 whitespace-nowrap">
-                      SCORE
+                      GRADE
                     </Table.Th>
                     <Table.Th className="text-left border-b-0 whitespace-wrap w-[500px] overflow-hidden">
                       DESCRIPTION
