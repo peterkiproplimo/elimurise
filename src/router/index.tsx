@@ -47,6 +47,9 @@ import Role from "../pages/roles";
 import Term from "../pages/Term";
 import Settings from "../pages/Settings";
 import GradeUserAssignment from "../pages/GradeUserAssignment";
+import Grading from "../pages/Grading";
+import GradingLeaningAreas from "../pages/GradingLeaningAreas";
+
 //nn
 function Router() {
   const routes = [
@@ -134,6 +137,14 @@ function Router() {
           element: <AssessLearner />,
         },
         {
+          path: "grading",
+          element: <Grading />,
+        },
+        {
+          path: "grading-config/:id",
+          element: <GradingLeaningAreas />,
+        },
+        {
           path: "settings",
           element: <Settings />,
         },
@@ -176,11 +187,9 @@ function Router() {
         },
 
         {
-          path: "/learner/:id" ,
-          element: <LearnerDetails/>,
-        }
-        ,
-      
+          path: "/learner/:id",
+          element: <LearnerDetails />,
+        },
         {
           path: "/v1/profile",
           element: <LearnerProfile />,

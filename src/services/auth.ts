@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as c from "../utils/constants";
 import { FieldValues } from "react-hook-form";
+const config = { headers: { "Content-Type": "multipart/form-data" } };
 
 export async function login(data: FieldValues) {
   try {
@@ -310,10 +311,10 @@ export const getEnrolmentsByStream = async (data: any, filter: any) => {
 export async function createLearner(data: FieldValues) {
   try {
     if (data._id) {
-      let res = await axios.put(c.LEARNERS + "/" + data._id, data);
+      let res = await axios.put(c.LEARNERS + "/" + data._id, data, config);
       return res.data;
     } else {
-      let res = await axios.post(c.LEARNERS, data);
+      let res = await axios.post(c.LEARNERS, data, config);
       return res.data;
     }
   } catch (e) {
@@ -545,7 +546,7 @@ export const getAssessmentLerners = async (data: any) => {
 
 export const getSummativeAssessment = async (data: any) => {
   try {
-    let res = await axios.get(c.SUMMATIVE , {
+    let res = await axios.get(c.SUMMATIVE, {
       params: data,
     });
     return res.data;
@@ -903,6 +904,42 @@ export async function createLearningAreaAssignment(data: FieldValues) {
 export async function deleteLearningAreaAssignment(userId: any) {
   try {
     let res = await axios.delete(c.LEARNING_AREA_ASSIGNMENT + "/" + userId);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getListOfGradings(userId: any) {
+  try {
+    let res = await axios.get(c.GRADING);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getGradingLearningAreas(id: any, data: any) {
+  try {
+    let res = await axios.get(c.GRADING + "/" + id, data);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function createGrading(data: any) {
+  try {
+    let res = await axios.post(c.GRADING, data);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function createGradingLearningArea(id: any, data: any) {
+  try {
+    let res = await axios.post(c.GRADING + "/" + id, data);
     console.log(res);
     return res.data;
   } catch (e) {

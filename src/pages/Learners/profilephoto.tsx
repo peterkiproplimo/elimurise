@@ -1,0 +1,55 @@
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+
+const PassportUpload = ({ name, register, errors, initialImageUrl }) => {
+  const [previewImage, setPreviewImage] = useState(initialImageUrl);
+
+  useEffect(() => {
+    setPreviewImage(initialImageUrl);
+  }, [initialImageUrl]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    // Validate file type here if needed
+
+    // Display preview image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+      register(name, { value: file, required: "Passport photo is required" }); // Register file with React Hook Form
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage(null);
+    }
+  };
+
+  return (
+    <div className="col-span-12 sm:col-span-4">
+      <input
+        onChange={handleImageChange}
+        type="file"
+        name={name}
+        accept=".jpg, .jpeg, .png"
+        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+      />
+      {previewImage && (
+        <div className="mt-4">
+          <img
+            src={previewImage}
+            alt="Preview"
+            className="max-w-full max-h-48 rounded-md shadow-md"
+          />
+        </div>
+      )}
+      {/* Display error messages */}
+      {errors && errors[name] && (
+        <p className="text-red-500 text-sm mt-2">{errors[name].message}</p>
+      )}
+    </div>
+  );
+};
+
+export default PassportUpload;
