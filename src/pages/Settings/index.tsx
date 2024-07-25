@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import PassportUpload from "../Learners/profilephoto";
+import { IMG_URL } from "../../utils/constants";
 
 function Settings() {
   const [academicYears, setAcademicYears] = useState([]);
@@ -186,9 +187,7 @@ function Settings() {
                     name={"logo"}
                     register={register}
                     errors={errors}
-                    initialImageUrl={
-                      "http://localhost:3000/portal" + schoolDetails.logo
-                    }
+                    initialImageUrl={IMG_URL + schoolDetails.logo}
                   />
                 </div>
               </div>
