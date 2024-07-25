@@ -54,7 +54,8 @@ const PassportUpload: React.FC<PassportUploadProps> = ({
           <img
             src={previewImage as string}
             alt="Preview"
-            className="max-w-full max-h-48 rounded-md shadow-md"
+            width={120}
+            className=" rounded-md shadow-md"
           />
         </div>
       )}

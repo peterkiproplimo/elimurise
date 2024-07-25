@@ -428,7 +428,7 @@ function Users() {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {grading?.learningAreas.map((learningArea: any, key: any) => (
+                {grading?.learningAreas?.map((learningArea: any, key: any) => (
                   <Table.Tr key={key} className="intro-x">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {key + 1}
