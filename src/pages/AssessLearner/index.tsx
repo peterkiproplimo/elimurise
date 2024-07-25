@@ -436,7 +436,7 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-                Assessment Score Ent ry Form
+                Assessment Score Entry Form
               </h2>
               <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
                 <div className="meta-row flex items-center mb-2">
