@@ -3,6 +3,7 @@
 
 // export const BASE_URL= "https://hero-staging.techsavanna.technology/api/"
 export const BASE_URL = import.meta.env.VITE_API_ENDPOINT;
+export const IMG_URL = `${BASE_URL}/portal`;
 //API Endpoints
 //devops has do it again
 export const LOGIN = `${BASE_URL}portal/auth/login`;
