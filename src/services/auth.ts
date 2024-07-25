@@ -211,6 +211,8 @@ export async function createTests(data: FieldValues) {
   }
 }
 
+
+
 //streams
 export const getStream = async (data: any) => {
   try {
@@ -371,6 +373,7 @@ export async function parentDashboard() {
     throw handler(e);
   }
 }
+
 
 export async function deleteParents(userId: any) {
   try {
@@ -738,14 +741,14 @@ export async function changePassword(data: any) {
   }
 }
 
-// export async function getDashboard() {
-//     try {
-//         let res = await axios.get(c.DASHBOARD);
-//         return res.data;
-//     } catch (e) {
-//         throw handler(e);
-//     }
-// }
+export async function schoolDashboard() {
+    try {
+        let res = await axios.get(c.SCHOOLDASHBOARD);
+        return res.data;
+    } catch (e) {
+        throw handler(e);
+    }
+}
 
 export async function getConferences() {
   try {

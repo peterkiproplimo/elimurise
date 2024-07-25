@@ -23,6 +23,7 @@ function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
+  const [gradeId, setGradeId] = useState("");
   const [tests, setTests] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState("");
@@ -35,6 +36,7 @@ function Main() {
   const [message, setMessage] = useState("");
   const [academic_terms, setTerms] = useState([]);
   const [selectedStream, setSelectedStream] = useState("");
+  const [gradings, setGradings] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -100,6 +102,9 @@ function Main() {
     }, 2000);
   }, []);
   useEffect(() => {
+    fetchGrading();
+  }, [search, limit, page, gradeId]);
+  useEffect(() => {
     getGrades();
     getTerms();
   }, [search, page, limit]);
@@ -117,6 +122,28 @@ function Main() {
     isLoading(true);
     const response = await ApiService.getTests({ page: 1 });
     setTests(response.data);
+    isLoading(false);
+  };
+
+  const fetchGrading = async () => {
+    isLoading(true);
+    let res = await ApiService.getListOfGradings({
+      page: page,
+      search: search,
+      limit: 10000,
+      gradeId: gradeId,
+    });
+    isLoading(false);
+
+    const pagination = res.pagination;
+    setPagination({
+      current_page: pagination?.current_page,
+      total: pagination?.total,
+      total_pages: pagination?.total_pages,
+      per_page: pagination?.per_page,
+    });
+    setGradings(res.data);
+    console.log(gradings)
     isLoading(false);
   };
   // const getGrades = async () => {
@@ -249,7 +276,8 @@ function Main() {
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
+            <div className="grid grid-cols-12 gap-6 ">
+            <div className="col-span-6 sm:col-span-6">
               <div className="col-span-4 sm:col-span-12">
                 <FormLabel className="mt-2">
                   Name<span className="text-danger ml-0.5">*</span>
@@ -268,6 +296,31 @@ function Main() {
                   </div>
                 )}
               </div>
+            </div>
+            <div className="col-span-6 sm:col-span-6">
+              <div className="col-span-4 sm:col-span-12">
+                <FormLabel className="mt-2">
+                  Grading<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
+                <TomSelect
+                onChange={(data: any) => {setGradeId(data); reset({...getValues(), grading:data })}}
+                value={gradeId}
+              >
+                <option>Select Grading</option>
+                {gradings.map((grading: any, key) => (
+                  <option key={key} value={grading._id}>
+                    {grading.name}
+                  </option>
+                ))}
+              </TomSelect>
+                {errors.name && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
+                  </div>
+                )}
+              </div>
+            </div>
             </div>
             <div>
               <div className="col-span-12 sm:col-span-12 mt-3">

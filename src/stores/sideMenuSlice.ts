@@ -117,6 +117,11 @@ const initialState: SideMenuState = {
           pathname: "/assess",
           title: "Summative Assess",
         },
+        {
+          icon: "User",
+          pathname: "/summativereports",
+          title: "Summative Report",
+        },
       ],
     },
     {

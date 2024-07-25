@@ -41,6 +41,7 @@ import UserProfile from "../pages/UserProfile";
 import LearnerDetails from "../pages/Learners/learnerDetails";
 import SummativeTests from "../pages/SummativeTests";
 import SummativeAssess from "../pages/SummativeAssess";
+import SummativeReport from "../pages/SummativeReport";
 
 import User from "../pages/User";
 import Role from "../pages/roles";
@@ -101,6 +102,10 @@ function Router() {
         {
           path: "/assess",
           element: <SummativeAssess />,
+        },
+        {
+          path: "/summativereports",
+          element: <SummativeReport />,
         },
 
         {
