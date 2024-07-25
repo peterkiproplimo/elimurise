@@ -68,6 +68,7 @@ function Main() {
   const [selectedSubStrand, setSelectedSubStrand] = useState("");
   const [enrollments, setEnrollments] = useState([]);
   const [assessmentsData, setAssesmentsData] = useState<any>([]);
+  const [pdfUrl, setPdfUrl] = useState("");
 
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -229,20 +230,6 @@ function Main() {
     setLearningAreas(response.data);
   };
 
-  const openSubStrand = (strand: any) => {
-    navigate("/substrand", {
-      replace: true,
-      state: { data: strand, learningArea: learningArea },
-    });
-  };
-
-  const openLearningArea = (strand: any) => {
-    navigate("/learning_areas", {
-      replace: true,
-      state: { data: strand },
-    });
-  };
-
   const setStrandFilter = (newFilter: any) => {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
   };
@@ -372,16 +359,24 @@ function Main() {
     isLoading(true);
     try {
       let res = await ApiService.getReportByLearners(data);
-      setAssesmentsData(res);
+      const blob = new Blob([res], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const popup = window.open(
+        url,
+        "_blank",
+        `width=${window.innerWidth},height=${window.innerHeight},scrollbars=yes`
+      );
+
+      setPdfUrl(url);
       // setEnrollments(res);
-      const pagination = res.pagination;
-      setPagination({
-        current_page: pagination?.current_page,
-        total: pagination?.total,
-        total_pages: pagination?.total_pages,
-        per_page: pagination?.per_page,
-      });
-      setDialog(true);
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination?.current_page,
+      //   total: pagination?.total,
+      //   total_pages: pagination?.total_pages,
+      //   per_page: pagination?.per_page,
+      // });
+      // setDialog(true);
       isLoading(false);
     } catch (error: any) {
       isLoading(false);
@@ -530,8 +525,13 @@ function Main() {
                   </Button>
                 </div>
               </div>
-
-              <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
+              <iframe
+                src={pdfUrl}
+                width="100%"
+                height="900px"
+                title="PDF Viewer"
+              />
+              {/* <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
                 <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
                   <div className=" overflow-hidden intro-y box">
                     <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
@@ -630,25 +630,10 @@ function Main() {
                         </Table>
                       </div>
                     </div>
-                    {/* <div className="flex flex-col-reverse px-5 sm:px-20 sm:pb-20 sm:flex-row">
-              <div className="mt-10 text-center sm:text-left sm:mt-0">
-                <div className="text-base text-slate-500">Bank Transfer</div>
-                <div className="mt-1 text-lg font-medium text-primary">KCB</div>
-                <div className="mt-1">Bank Account : 098347234832</div>
-                <div className="mt-1">Code : LFT133243</div>
-              </div>
-              <div className="text-center sm:text-right sm:ml-auto bottom-txt">
-                <div className="text-base text-slate-500">Total Amount</div>
-                <div className="mt-2 text-xl font-medium text-primary">
-                 
-                </div>
-               
-              </div>
-            </div> */}
-                    {/* <div className="line"></div> */}
+                
                   </div>
                 </main>
-              </div>
+              </div> */}
               {/* <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead >
                   <Table.Tr>

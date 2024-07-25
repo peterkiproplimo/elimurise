@@ -54,7 +54,7 @@ function Users() {
   });
   const [streams, setStreams] = useState([]);
   const [stream, setStream] = useState("");
-  const [grading, setGrading] = useState([]);
+  const [grading, setGrading] = useState<any>({});
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
@@ -137,7 +137,7 @@ function Users() {
       per_page: pagination?.per_page,
     });
     setGrading(res.data);
-    console.log(grading.grade);
+    console.log(grading?.grade);
     isLoading(false);
   };
   const getUsers = async () => {
@@ -285,7 +285,7 @@ function Users() {
   });
 
   // Handle input change for the form
-  const handleInputChange = (e, index = null, gradingIndex = null) => {
+  const handleInputChange = (e: any, index: any) => {
     const { name, value } = e.target;
     if (name === "learning_area") {
       setForm({ ...form, learning_area: value });
@@ -313,7 +313,7 @@ function Users() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     isLoading(true);
     const result = await ApiService.createGradingLearningArea(data?.id, form);
@@ -428,7 +428,7 @@ function Users() {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {grading?.learningAreas.map((learningArea: any, key) => (
+                {grading?.learningAreas?.map((learningArea: any, key: any) => (
                   <Table.Tr key={key} className="intro-x">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {key + 1}
@@ -584,10 +584,11 @@ function Users() {
               <div className="mb-4">
                 <label className="block text-gray-700">Learning Area</label>
                 <FormSelect
-                  type="text"
                   name="learning_area"
                   value={form.learning_area}
-                  onChange={handleInputChange}
+                  onChange={(e: any) =>
+                    setForm({ ...form, learning_area: e.target.value })
+                  }
                   // value={form.grade}
                   // onChange={handleInputChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
@@ -601,7 +602,7 @@ function Users() {
                 </FormSelect>
               </div>
 
-              {form.gradings.map((grading, index) => (
+              {form.gradings.map((grading: any, index: any) => (
                 <div
                   key={index}
                   className="border p-4 rounded-lg mb-4 bg-gray-50"
@@ -612,7 +613,7 @@ function Users() {
                       <input
                         type="number"
                         name="minScore"
-                        value={grading.minScore}
+                        value={grading.minScore || ""}
                         onChange={(e) => handleInputChange(e, index)}
                         className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                       />
@@ -622,7 +623,7 @@ function Users() {
                       <input
                         type="number"
                         name="maxScore"
-                        value={grading.maxScore}
+                        value={grading.maxScore || ""}
                         onChange={(e) => handleInputChange(e, index)}
                         className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                       />
@@ -632,7 +633,7 @@ function Users() {
                       <input
                         type="text"
                         name="description"
-                        value={grading.description}
+                        value={grading.description || ""}
                         onChange={(e) => handleInputChange(e, index)}
                         className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                       />

@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FieldValues, UseFormRegister, FieldErrors } from "react-hook-form";
 
-const PassportUpload = ({ name, register, errors, initialImageUrl }) => {
-  const [previewImage, setPreviewImage] = useState(initialImageUrl);
+interface PassportUploadProps {
+  name: string;
+  register: UseFormRegister<FieldValues>;
+  errors: FieldErrors<FieldValues>;
+  initialImageUrl?: string; // optional, since it might not be provided
+}
+
+const PassportUpload: React.FC<PassportUploadProps> = ({
+  name,
+  register,
+  errors,
+  initialImageUrl,
+}) => {
+  const [previewImage, setPreviewImage] = useState<string | ArrayBuffer | null>(
+    initialImageUrl ?? null
+  );
 
   useEffect(() => {
-    setPreviewImage(initialImageUrl);
+    setPreviewImage(initialImageUrl ?? null);
   }, [initialImageUrl]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
 
     // Validate file type here if needed
 
@@ -38,16 +52,14 @@ const PassportUpload = ({ name, register, errors, initialImageUrl }) => {
       {previewImage && (
         <div className="mt-4">
           <img
-            src={previewImage}
+            src={previewImage as string}
             alt="Preview"
-            className="max-w-full max-h-48 rounded-md shadow-md"
+            width={120}
+            className=" rounded-md shadow-md"
           />
         </div>
       )}
       {/* Display error messages */}
-      {errors && errors[name] && (
-        <p className="text-red-500 text-sm mt-2">{errors[name].message}</p>
-      )}
     </div>
   );
 };

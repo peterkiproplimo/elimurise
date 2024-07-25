@@ -106,7 +106,7 @@ export const getSchoolDetails = async (data: any) => {
 };
 export const setCurrentSettings = async (data: any) => {
   try {
-    let res = await axios.put(`${c.SCHOOL}/update`, data);
+    let res = await axios.put(`${c.SCHOOL}/update`, data, config);
 
     return res.data;
   } catch (e) {
@@ -559,6 +559,7 @@ export const getReportByLearners = async (data: any) => {
   try {
     let res = await axios.get(c.ASSESSMENT + "/assessments", {
       params: data,
+      responseType: "arraybuffer",
     });
     return res.data;
   } catch (e) {

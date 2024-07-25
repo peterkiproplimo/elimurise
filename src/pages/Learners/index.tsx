@@ -29,6 +29,7 @@ import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
 import Dropzone from "dropzone";
 import Tippy from "../../base-components/Tippy";
+import * as c from "../../utils/constants";
 
 interface TableRow {
   no: number;
@@ -511,7 +512,7 @@ function Main() {
                     name={"image"}
                     register={register}
                     errors={errors}
-                    initialImageUrl={"http://localhost:3000/portal" + photo}
+                    initialImageUrl={c.IMG_URL + photo}
                   />
                 </div>
               </div>
@@ -995,10 +996,7 @@ function Main() {
                                   as="img"
                                   alt=""
                                   className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                  src={
-                                    "http://localhost:3000/portal" +
-                                    learner?.learner?.photo
-                                  }
+                                  src={c.IMG_URL + learner?.learner?.photo}
                                   content={
                                     learner?.learner?.first_name +
                                     " " +

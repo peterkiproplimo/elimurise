@@ -290,52 +290,8 @@ function Users() {
     ],
   });
 
-  const handleInputChange = (e, index, gradingIndex) => {
-    const { name, value } = e.target;
-    console.log({ name, value });
-    const newForm = { ...form };
-
-    if (index !== undefined && gradingIndex !== undefined) {
-      newForm.learningAreas[index].gradings[gradingIndex][name] = value;
-    } else if (index !== undefined) {
-      newForm.learningAreas[index][name] = value;
-    } else {
-      newForm[name] = value;
-    }
-
-    setForm(newForm);
-  };
-
-  const addLearningArea = () => {
-    const newForm = { ...form };
-    newForm.learningAreas.push({
-      learning_area: "",
-      gradings: [
-        {
-          minScore: "",
-          maxScore: "",
-          description: "",
-        },
-      ],
-    });
-    setForm(newForm);
-  };
-
-  const addGrading = (index) => {
-    const newForm = { ...form };
-    newForm.learningAreas[index].gradings.push({
-      minScore: "",
-      maxScore: "",
-      description: "",
-    });
-    setForm(newForm);
-  };
   const openConfig = (data: any) => {
     navigate("/grading-config/" + data?._id);
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(form);
   };
 
   return (
@@ -595,7 +551,6 @@ function Users() {
                   <label className="block text-gray-700">Grade</label>
                   <FormSelect
                     {...register("grade")}
-                    type="text"
                     name="grade"
                     // value={form.grade}
                     // onChange={handleInputChange}
