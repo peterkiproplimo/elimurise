@@ -11,6 +11,7 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
+import PassportUpload from "../Learners/profilephoto";
 
 function Settings() {
   const [academicYears, setAcademicYears] = useState([]);
@@ -169,10 +170,27 @@ function Settings() {
                     ))}
                   </FormSelect>
                 </div>
-                {/* <div className="col-span-12 md:col-span-6">
-                    <FormLabel>Another Field</FormLabel>
-                    <FormSelect></FormSelect>
-                  </div> */}
+                <div className="col-span-12 md:col-span-6">
+                  <FormLabel>Address</FormLabel>
+                  <FormInput
+                    {...register("address")}
+                    type="text"
+                    name="address"
+                    className={errors.name ? "border-danger" : ""}
+                    placeholder="Address"
+                  />
+                </div>
+                <div className="col-span-12 md:col-span-6">
+                  <FormLabel>Logo</FormLabel>
+                  <PassportUpload
+                    name={"logo"}
+                    register={register}
+                    errors={errors}
+                    initialImageUrl={
+                      "http://localhost:3000/portal" + schoolDetails.logo
+                    }
+                  />
+                </div>
               </div>
 
               {/* Additional fieldsets can be added here in a similar manner */}
