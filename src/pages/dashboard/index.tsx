@@ -78,8 +78,7 @@ function Main() {
               </div>
               <div className="mt-5 intro-y">
               
-                  <div className="col-span-12 p-8 border-t border-dashed lg:col-span-8 lg:border-t-0 lg:border-l border-slate-200 dark:border-darkmode-300">
-                    <div className="bg-white p-6 shadow-md rounded-lg flex items-center justify-between ">
+                   <div className="bg-white p-6 shadow-md rounded-lg flex items-center justify-between ">
                       <div>
                         <div className="text-xl text-gray-500"></div>
                         <div className="mt-2 text-4xl  text-gray-800">
@@ -96,7 +95,7 @@ function Main() {
                           className="w-64  "
                         />
                       </div>
-                    </div>
+                    
                  
                 </div>
               </div>
