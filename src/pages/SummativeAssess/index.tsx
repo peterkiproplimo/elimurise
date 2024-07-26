@@ -226,20 +226,7 @@ function Main() {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
   };
 
-  const handleSubStrandChange = async (data: any) => {
-    console.log(data);
-    setSelectedSubStrand(data);
-    // setSubstrand(data);
-    const response = await ApiService.getSingleSubstrand(data);
-    setSubstrand(response.data);
-    // console.log(selectedSubStrand);
-    // console.log(substrand);
 
-    // ///call substrands for this strand
-    // let res = await ApiService.getSubstrandByStrand(selectedValue);
-    // setSubstrands([]);
-    // setSubstrands(res.data);
-  };
 
   const handleStrandChange = async (
     event: React.ChangeEvent<HTMLSelectElement>

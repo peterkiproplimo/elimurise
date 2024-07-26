@@ -28,6 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
+import ProgressBar from './ProgressBar';
 
 interface TableRow {
   no: number;
@@ -224,12 +225,19 @@ function Main() {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
   };
 
+  const fetchIndicator =async()=>{
+    const response = await ApiService.getSingleSubstrand(stream,selectedSubStrand);
+    setSubstrand(response.data);
+  }
+  useEffect(()=>{
+    fetchIndicator();
+  },[selectedSubStrand])
+
   const handleSubStrandChange = async (data: any) => {
     console.log(data);
     setSelectedSubStrand(data);
     // setSubstrand(data);
-    const response = await ApiService.getSingleSubstrand(data);
-    setSubstrand(response.data);
+    
     // console.log(selectedSubStrand);
     // console.log(substrand);
 
@@ -341,9 +349,14 @@ function Main() {
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
-  const generateAssessment = async () => {
+  // useEffect(() => {
+    
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [indicator]);
+
+  const generateAssessment = async (indicator:any) => {
     const data = { indicator, term: selectedTerm, stream };
-    console.log(substrand);
+    console.log(data);
     isLoading(true);
     try {
       let res = await ApiService.getAssessmentLerners(data);
@@ -381,7 +394,8 @@ function Main() {
     let res = await ApiService.createAssessment(assessment);
     console.log(assessment);
     console.log(res);
-    generateAssessment();
+    generateAssessment(indicator);
+    fetchIndicator();
   };
 
   const getDescriptionColor = (score: any) => {
@@ -689,10 +703,10 @@ function Main() {
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <h2 className="mr-auto text-base font-medium border-b p-2">
-              Assessment Details
+              Learners Details
             </h2>
-            <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="col-span-12 sm:col-span-2">
+            <div className="grid grid-cols-12 gap-6 mt-5">
+            <div className="col-span-12 sm:col-span-2">
                 <FormLabel
                   htmlFor="modal-form-6"
                   onClick={(e) => {
@@ -727,6 +741,58 @@ function Main() {
                   </div>
                 )}
               </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
+                <FormSelect
+                  {...register("stream")}
+                  name="stream"
+                  value={stream}
+                  onChange={(event) => setStream(event.target.value)}
+                >
+                  <option>Select Stream</option>
+
+                  {streams.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
+                <TomSelect
+                  name="stream"
+                  value={selectedTerm}
+                  onChange={(event: any) => setSelectedTerm(event)}
+                >
+                  <option>Select Academic Term</option>
+
+                  {academic_terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
+                </TomSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+            </div>
+           
+            <h2 className="mr-auto text-base font-medium border-b p-2 mt-3">
+              Assessment Details
+            </h2>
+            <div className="grid grid-cols-12 gap-6 mt-10">
+            
 
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
@@ -829,95 +895,50 @@ function Main() {
                   </div>
                 )}
               </div>
-
-              <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Indicators</FormLabel>
-                <TomSelect
-                  {...register("indicator")}
-                  value={indicator}
-                  name="indicator"
-                  onChange={(event: any) => setIndicator(event)}
-                >
-                  <option>Select Substrand</option>
-                  {substrand?.indicators?.map((indicator: any, key: any) => (
-                    <option key={key} value={indicator[0]?._id}>
-                      {indicator[0]?.description}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.theme && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
-                  </div>
-                )}
-              </div>
             </div>
-            {/* <div className="px-5 pb-8 text-right">
-              <Button
-                onClick={() => generateAssessment()}
-                variant="primary"
-                type="button"
-                className="w-24 text-white"
-              >
-                Assess
-              </Button>
-            </div> */}
+           
           </div>
-          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-            <h2 className="mr-auto text-base font-medium border-b p-2">
-              Learner Details
-            </h2>
-            <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
-                <FormSelect
-                  {...register("stream")}
-                  name="stream"
-                  value={stream}
-                  onChange={(event) => setStream(event.target.value)}
-                >
-                  <option>Select Stream</option>
-
-                  {streams.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
-                <TomSelect
-                  name="stream"
-                  value={selectedTerm}
-                  onChange={(event: any) => setSelectedTerm(event)}
-                >
-                  <option>Select Academic Term</option>
-
-                  {academic_terms.map((term: any, key) => (
-                    <option key={key} value={term._id}>
-                      {term.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="px-5 pb-8 text-right">
+           
+            <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+            <div className="col-span-12 sm:col-span-4">
+                <FormLabel htmlFor="modal-form-6">Indicators</FormLabel>
+                <Table className="border-spacing-y-[10px] border-separate -mt-2">
+        <Table.Thead className="bg-secondary">
+          <Table.Tr>
+            <Table.Th  className="border-b-0 whitespace-nowrap">#</Table.Th>
+            <Table.Th  className="border-b-0 whitespace-nowrap">Description</Table.Th>
+            <Table.Th  className="border-b-0 whitespace-nowrap text-left">Assesement Progress</Table.Th>
+            <Table.Th  className="border-b-0 whitespace-nowrap">Actions</Table.Th>
+            <Table.Th></Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {substrand?.indicators?.map((indicator:any, key:any) => (
+            <tr key={key} onClick={() => setIndicator(indicator[0]?._id)}>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                           
+                <input
+                  type="radio"
+                  checked={setIndicator === indicator[0]?._id}
+                  readOnly
+                />
+              </Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+              {indicator[0]?.description}</Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+  <ProgressBar 
+    total={indicator[0]?.total_learners || 0} 
+    assessed={indicator[0]?.total_learners_assessed || 0} 
+  />
+</Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
               <Button
-                onClick={() => generateAssessment()}
+
+                onClick={() => {
+                  setIndicator(indicator[0]?._id);
+                  generateAssessment(indicator[0]?._id);
+              
+                }}
                 variant="primary"
                 type="button"
                 className="w-24 text-white"
@@ -931,192 +952,32 @@ function Main() {
                   />
                 )}
               </Button>
-            </div>
-          </div>
-
-          {/* <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            <h2>Assessment Marks Entry Form</h2>
-            <div className="mb-4">
-              <span>
-                Last Saved: {lastSaved ? lastSaved : "Never"} (Auto-saving every
-                5 minutes)
-              </span>
-            </div>
-            <Table className="border-spacing-y-[10px] border-separate -mt-2">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    <FormCheck.Input type="checkbox" />
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    LEARNER NAME
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    ADMISSION NUMBER
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    GENDER
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    NEMIS NO.
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    SCORE
-                  </Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {enrollments.map((enrollment: any, key) => (
-                  <Table.Tr key={key} className="intro-x">
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <FormCheck.Input type="checkbox" />
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <div className="flex items-center">
-                        <div className="w-9 h-9 image-fit zoom-in">
-                          
-                        </div>
-                        <div className="ml-4">
-                          <a href="" className="font-medium whitespace-nowrap">
-                            {enrollment?.learner?.first_name}
-                          </a>
-                          <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                            {enrollment?.learner?.last_name}
-                          </div>
-                        </div>
-                      </div>
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <span className="flex items-center justify-center underline decoration-dotted">
-                        {enrollment?.learner?.adm_no}
-                      </span>
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {enrollment?.learner?.gender}
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {enrollment?.learner?.nemis_no}
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={enrollment.score || ""}
-                        onChange={(e) => handleInputChange(key, e)}
-                      />
-                    </Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
-          </div> */}
-          {/* <div className="grid grid-cols-12 gap-6">
-           
-
-        
-         
-            <div className="col-span-12 intro-y md:col-span-6 cursor-pointer">
-            
-               <div className="box" >
-                   <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
-                     <div className="lg:flex lg:h-12 image-fit lg:justify-start">
-                     <div> 
-                      <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-30 h-20" src={logo}/>
-                      </div>
-                    <div className="mt-3 ml-4 lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
-                        <h2 className="font-bold text-xl">Name:</h2>
-                    <div className="text  mt-0.5">Adm No: </div>
-               </div>
-             </div>
-             <div className=" mt-4 lg:mt-0 lg:justify-end justify-center">
-              <h2 className="mb-2 text-xl font-bold">Score</h2>
-
-                 <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">Assess Learner</button>
-           </div>
-             </div>
-           </div>
-          
-          </div>
-          <div className="col-span-12 intro-y md:col-span-6 cursor-pointer">
-            
-            <div className="box" >
-                <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
-                  <div className="lg:flex lg:h-12 image-fit lg:justify-start">
-                  <div> 
-                   <img alt="Midone Tailwind HTML Admin Template" className="rounded-full p-0 w-30 h-20" src={logo}/>
-                   </div>
-                 <div className="mt-3 ml-4 lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
-                     <h2 className="font-bold text-xl">Name:</h2>
-                 <div className="text  mt-0.5">Adm No: </div>
-            </div>
-          </div>
-          <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
-              <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">Assess Learner</button>
-              <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-5 py-1">Profile</button>
-          </div>
-          </div>
-        </div>
-       
-       </div>
-        
-           
-          
-         
-
-  
-
-
-
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
+              </Table.Td>
+            </tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+                {errors.theme && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.theme.message === "string" &&
+                      errors.theme.message}
+                  </div>
+                )}
               </div>
-            </div>
-          </div> */}
+            {/* <div className="px-5 pb-8 text-right">
+              <Button
+                onClick={() => generateAssessment()}
+                variant="primary"
+                type="button"
+                className="w-24 text-white"
+              >
+                Assess
+              </Button>
+            </div> */}
+          </div>
+         
+
+ 
           <Dialog
             staticBackdrop
             size="lg"

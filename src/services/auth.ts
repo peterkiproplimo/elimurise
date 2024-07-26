@@ -630,9 +630,9 @@ export async function getSubstrandByStrand(data: any, strandId: any) {
     throw handler(e);
   }
 }
-export async function getSingleSubstrand(substrand: any) {
+export async function getSingleSubstrand(stream: any,substrand: any) {
   try {
-    let res = await axios.get(c.SUBSTRAND + "/" + substrand);
+    let res = await axios.get(c.SUBSTRAND + "/"+ stream+ "/" + substrand);
     console.log(res);
     return res.data;
   } catch (e) {
