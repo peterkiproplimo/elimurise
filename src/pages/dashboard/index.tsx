@@ -18,8 +18,8 @@ import { useAuth } from "../../contexts/Auth";
 import * as ApiService from "../../services/auth";
 import { useState, useRef, useEffect } from "react";
 import * as c from "../../utils/constants";
-import logo from "../../assets/images/teacher.jpeg"
-import image from "../../assets/images/parent.jpeg"
+import logo from "../../assets/images/teacher.jpeg";
+import image from "../../assets/images/parent.jpeg";
 
 function Main() {
   interface Learner {
@@ -46,13 +46,13 @@ function Main() {
   });
 
   useEffect(() => {
-    getDashboard()
+    getDashboard();
   }, []);
 
   const getDashboard = async () => {
     isLoading(true);
-    let res = await ApiService.schoolDashboard()
-  
+    let res = await ApiService.schoolDashboard();
+
     isLoading(false);
 
     const pagination = res.pagination;
@@ -77,26 +77,23 @@ function Main() {
                 <h2 className="mr-5 text-lg font-medium truncate">Dashboard</h2>
               </div>
               <div className="mt-5 intro-y">
-              
-                   <div className="bg-white p-6 shadow-md rounded-lg flex items-center justify-between ">
-                      <div>
-                        <div className="text-xl text-gray-500"></div>
-                        <div className="mt-2 text-4xl  text-gray-800">
-                          Welcome back, {user?.firstname} 
-                        </div>
-                        <div className="text-gray-500 text-xl font-bold">
-                          Always stay updated with the current status
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <img
-                          src={studentUrl}
-                          alt="Welcome Image"
-                          className="w-64  "
-                        />
-                      </div>
-                    
-                 
+                <div className="bg-white p-6 shadow-md rounded-lg flex items-center justify-between ">
+                  <div>
+                    <div className="text-xl text-gray-500"></div>
+                    <div className="mt-2 text-4xl  text-gray-800">
+                      Welcome back, {user?.firstname}
+                    </div>
+                    <div className="text-gray-500 text-xl font-bold">
+                      Always stay updated with the current status
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <img
+                      src={studentUrl}
+                      alt="Welcome Image"
+                      className="w-64  "
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -215,7 +212,7 @@ function Main() {
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    {dashboards?.learners?.map((learner:any, key:any) => (
+                    {dashboards?.learners?.map((learner: any, key: any) => (
                       <Table.Tr key={key} className="intro-x">
                         <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                           <div className="flex">
@@ -224,15 +221,22 @@ function Main() {
                                 as="img"
                                 alt="Midone Tailwind HTML Admin Template"
                                 className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                  src={c.IMG_URL + learner?.photo}
+                                src={
+                                  learner?.photo
+                                    ? c.IMG_URL + learner?.photo
+                                    : logo
+                                }
                                 content={`Uploaded at ${learner?.dates}`}
                               />
                             </div>
                           </div>
                         </Table.Td>
                         <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <a href="" className="font-medium whitespace-nowrap">
-                            {learner?.first_name}  {learner?.last_name}
+                          <a
+                            href="/learners"
+                            className="font-medium whitespace-nowrap"
+                          >
+                            {learner?.first_name} {learner?.last_name}
                           </a>
                           {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                             {learner.adm_no}
@@ -249,7 +253,7 @@ function Main() {
                             className={clsx([
                               "flex items-center justify-center",
                               { "text-success": learner?.status },
-                              { "text-danger": !learner?.status},
+                              { "text-danger": !learner?.status },
                             ])}
                           >
                             <Lucide
@@ -261,17 +265,18 @@ function Main() {
                         </Table.Td>
                         <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                           <div className="flex items-center justify-center">
-                          <span className="font-medium whitespace-nowrap">
-                              {new Date(
-                                learner?.createdAt
-                              ).toLocaleString("en-US", {
-                                timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                                // hour: "2-digit",
-                                // minute: "2-digit",
-                              })}
+                            <span className="font-medium whitespace-nowrap">
+                              {new Date(learner?.createdAt).toLocaleString(
+                                "en-US",
+                                {
+                                  timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                                  year: "numeric",
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                  // hour: "2-digit",
+                                  // minute: "2-digit",
+                                }
+                              )}
                             </span>
                           </div>
                         </Table.Td>
@@ -280,21 +285,18 @@ function Main() {
                   </Table.Tbody>
                 </Table>
               </div>
-           
             </div>
           </div>
         </div>
-         <div className="col-span-12 2xl:col-span-3 box">
+        <div className="col-span-12 2xl:col-span-3 box">
           <div className=" 2xl:border-l">
             <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
               <div className="col-span-12 mt-3 mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
                 <div className="flex items-center h-10 intro-x">
-                  <h2 className=" text-lg font-medium truncate">
-                    Teachers
-                  </h2>
+                  <h2 className=" text-lg font-medium truncate">Teachers</h2>
                 </div>
                 <div className="mt-2">
-                  {dashboards?.teachers?.map((teacher:any, key:any) => (
+                  {dashboards?.teachers?.map((teacher: any, key: any) => (
                     <div key={key} className="intro-x">
                       <div className="flex items-center px-5 py-3 mb-3 box zoom-in">
                         <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
@@ -305,7 +307,7 @@ function Main() {
                         </div>
                         <div className="ml-4 mr-auto">
                           <div className="font-medium">
-                            {teacher?.firstname}  {teacher?.lastname}
+                            {teacher?.firstname} {teacher?.lastname}
                           </div>
                           <div className="text-slate-500 text-xs mt-0.5">
                             {teacher?.email}
@@ -333,12 +335,10 @@ function Main() {
 
               <div className="col-span-12 mt-2  mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
                 <div className="flex items-center h-10 intro-x">
-                  <h2 className="mr-5 text-lg font-medium truncate">
-                    Parents
-                  </h2>
+                  <h2 className="mr-5 text-lg font-medium truncate">Parents</h2>
                 </div>
                 <div className="mt-5">
-                  {dashboards?.parents?.map((parent:any, key:any) => (
+                  {dashboards?.parents?.map((parent: any, key: any) => (
                     <div key={key} className="intro-x">
                       <div className="flex items-center px-5 py-3 mb-3 box zoom-in">
                         <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
@@ -349,7 +349,7 @@ function Main() {
                         </div>
                         <div className="ml-4 mr-auto">
                           <div className="font-medium">
-                            {parent?.first_name}  {parent?.last_name}
+                            {parent?.first_name} {parent?.last_name}
                           </div>
                           <div className="text-slate-500 text-xs mt-0.5">
                             {parent?.email}

@@ -53,6 +53,8 @@ function Main() {
   const schema = yup
     .object({
       name: yup.string().required("Test is required"),
+      grading: yup.string().required("Test is required"),
+      term: yup.string().required("Test is required"),
     })
     .required();
 
@@ -103,7 +105,7 @@ function Main() {
   }, []);
   useEffect(() => {
     fetchGrading();
-  }, [search, limit, page, gradeId]);
+  }, [search, limit, page]);
   useEffect(() => {
     getGrades();
     getTerms();
@@ -143,9 +145,10 @@ function Main() {
       per_page: pagination?.per_page,
     });
     setGradings(res.data);
-    console.log(gradings)
+    console.log(gradings);
     isLoading(false);
   };
+
   // const getGrades = async () => {
   //   const response = await ApiService.getGrades({
   //     page: page,
@@ -183,7 +186,12 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset({ ...record, grade: record.grade._id });
+    reset({
+      ...record,
+      grade: record.grade._id,
+      academicYear: record.academicYear._id,
+      term: record?.term?._id,
+    });
     setDialog(true);
   };
 
@@ -229,10 +237,9 @@ function Main() {
                 href="#"
               ></a>
             </div>{" "}
-           
-              <div className="grid grid-cols-12 gap-6 mt-10">
+            <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-6 sm:col-span-6">
-              <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
                   name="grade"
@@ -255,7 +262,7 @@ function Main() {
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <FormSelect
-                 {...register("term")}
+                  {...register("term")}
                   name="term"
                   value={selectedTerm}
                   onChange={(event: any) => setSelectedTerm(event.target.value)}
@@ -277,50 +284,53 @@ function Main() {
               </div>
             </div>
             <div className="grid grid-cols-12 gap-6 ">
-            <div className="col-span-6 sm:col-span-6">
-              <div className="col-span-4 sm:col-span-12">
-                <FormLabel className="mt-2">
-                  Name<span className="text-danger ml-0.5">*</span>
-                </FormLabel>
-                <FormInput
-                  {...register("name")}
-                  type="text"
-                  name="name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Summative Test"
-                />
-                {errors.name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.name.message === "string" &&
-                      errors.name.message}
-                  </div>
-                )}
+              <div className="col-span-6 sm:col-span-6">
+                <div className="col-span-4 sm:col-span-12">
+                  <FormLabel className="mt-2">
+                    Name<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormInput
+                    {...register("name")}
+                    type="text"
+                    name="name"
+                    className={errors.name ? "border-danger" : ""}
+                    placeholder="Summative Test"
+                  />
+                  {errors.name && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.name.message === "string" &&
+                        errors.name.message}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="col-span-6 sm:col-span-6">
-              <div className="col-span-4 sm:col-span-12">
-                <FormLabel className="mt-2">
-                  Grading<span className="text-danger ml-0.5">*</span>
-                </FormLabel>
-                <TomSelect
-                onChange={(data: any) => {setGradeId(data); reset({...getValues(), grading:data })}}
-                value={gradeId}
-              >
-                <option>Select Grading</option>
-                {gradings.map((grading: any, key) => (
-                  <option key={key} value={grading._id}>
-                    {grading.name}
-                  </option>
-                ))}
-              </TomSelect>
-                {errors.name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.name.message === "string" &&
-                      errors.name.message}
-                  </div>
-                )}
+              <div className="col-span-6 sm:col-span-6">
+                <div className="col-span-4 sm:col-span-12">
+                  <FormLabel className="mt-2">
+                    Grading<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <TomSelect
+                    onChange={(data: any) => {
+                      setGradeId(data);
+                      reset({ ...getValues(), grading: data });
+                    }}
+                    value={gradeId}
+                  >
+                    <option>Select Grading</option>
+                    {gradings.map((grading: any, key) => (
+                      <option key={key} value={grading._id}>
+                        {grading.name}
+                      </option>
+                    ))}
+                  </TomSelect>
+                  {errors.name && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.name.message === "string" &&
+                        errors.name.message}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
             </div>
             <div>
               <div className="col-span-12 sm:col-span-12 mt-3">
@@ -349,19 +359,25 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-10 text-lg font-medium intro-y">Summative Tests</h2>
-          {message&&success&&(
-            <Alert variant="soft-success" className="flex items-center mb-2" dismissTimeout={3000} role="alert">
-             <svg
-              className="flex-shrink-0 inline w-4 h-4 me-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+          {message && success && (
+            <Alert
+              variant="soft-success"
+              className="flex items-center mb-2"
+              dismissTimeout={3000}
+              role="alert"
             >
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            {message}
-        </Alert>)}
+              <svg
+                className="flex-shrink-0 inline w-4 h-4 me-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+              </svg>
+              {message}
+            </Alert>
+          )}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
@@ -422,7 +438,7 @@ function Main() {
                           Name
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
-                         Academic Year
+                          Academic Year
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Term
@@ -498,8 +514,7 @@ function Main() {
                                 className="flex items-center text-danger"
                                 href="#"
                                 onClick={() => {
-                                  setRecordId(test._id),
-                                    setConfirmDelete(true);
+                                  setRecordId(test._id), setConfirmDelete(true);
                                 }}
                               >
                                 <Lucide

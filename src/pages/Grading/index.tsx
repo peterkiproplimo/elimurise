@@ -340,7 +340,7 @@ function Users() {
           </div>
           <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
             <div className="relative w-56 text-slate-500 box mr-2">
-              <TomSelect
+              {/* <TomSelect
                 onChange={(data: any) => setGradeId(data)}
                 value={gradeId}
               >
@@ -350,7 +350,7 @@ function Users() {
                     {grade.name}
                   </option>
                 ))}
-              </TomSelect>
+              </TomSelect> */}
             </div>
 
             <div className="relative w-56 text-slate-500">
