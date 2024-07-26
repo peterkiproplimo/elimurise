@@ -8,7 +8,7 @@ import Strands from "../pages/Strands";
 import Enrollment from "../pages/Enrolments";
 import Reports from "../pages/Reports";
 // import SimcardBooking from "../pages/SimcardBooking";
-import Assessment from "../pages/Assessment";
+
 
 //beginning of auth
 import Subscription from "../pages/Subscription";
