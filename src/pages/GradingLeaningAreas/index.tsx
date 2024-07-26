@@ -198,9 +198,7 @@ function Users() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    console.log(record);
-    reset({ ...record, role_id: record.role_id._id });
-
+    setForm({ ...record, learning_area: record.learning_area._id });
     setDialog(true);
   };
   const deleteRecord = async () => {
@@ -225,6 +223,17 @@ function Users() {
     reset({ name: "" });
     setDialog(false);
     setIsEditMode(false);
+    setForm({
+      learning_area: "",
+      grading: grading.grade,
+      gradings: [
+        {
+          minScore: "",
+          maxScore: "",
+          description: "",
+        },
+      ],
+    });
   };
   useEffect(() => {
     setFilteredLearningAreas([]);
@@ -319,6 +328,18 @@ function Users() {
     const result = await ApiService.createGradingLearningArea(data?.id, form);
     fetchGradingLearningArea();
     isLoading(false);
+    setDialog(false);
+    setForm({
+      learning_area: "",
+      grading: grading.grade,
+      gradings: [
+        {
+          minScore: "",
+          maxScore: "",
+          description: "",
+        },
+      ],
+    });
     console.log(result);
   };
 
@@ -368,7 +389,7 @@ function Users() {
           </div>
           <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
             <div className="relative w-56 text-slate-500 box mr-2">
-              <TomSelect
+              {/* <TomSelect
                 onChange={(data: any) => setGradeId(data)}
                 value={gradeId}
               >
@@ -378,7 +399,7 @@ function Users() {
                     {grade.name}
                   </option>
                 ))}
-              </TomSelect>
+              </TomSelect> */}
             </div>
 
             <div className="relative w-56 text-slate-500">
@@ -434,7 +455,10 @@ function Users() {
                       {key + 1}
                     </Table.Td>
 
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    <Table.Td
+                      onClick={() => editRecord(learningArea)}
+                      className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                    >
                       {learningArea?.learning_area.name}{" "}
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -650,12 +674,12 @@ function Users() {
                 Add Grading
               </button>
 
-              <button
+              {/* <button
                 type="submit"
                 className="w-full text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 focus:ring-opacity-50 font-medium rounded-lg text-sm px-4 py-2"
               >
                 Submit
-              </button>
+              </button> */}
             </Dialog.Description>
             <Dialog.Footer>
               <Button

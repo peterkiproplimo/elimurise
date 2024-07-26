@@ -314,11 +314,11 @@ function Main() {
 
   const handleTestChange = async () => {
     isLoading(true);
-    const response = await ApiService.getTests({ 
+    const response = await ApiService.getTests({
       page: 1,
       grade: strandFilter.grade,
-      term:selectedTerm,
-     });
+      term: selectedTerm,
+    });
     setTests(response.data);
     isLoading(false);
   };
@@ -356,13 +356,12 @@ function Main() {
     { no: 1, strandName: "Example Strand" },
   ]);
   const generateAssessment = async () => {
-    const data = {  
+    const data = {
       term: selectedTerm,
       stream: stream,
       learning_area: strandFilter.learning_area,
-      test:test
-     };
-  ;
+      test: test,
+    };
     isLoading(true);
     try {
       let res = await ApiService.getSummativeAssessment(data);
@@ -392,7 +391,7 @@ function Main() {
       stream: stream,
       term: selectedTerm,
       learning_area: strandFilter.learning_area,
-      test:test,
+      test: test,
       score: Number(data.score),
       enrollment: data?.enrollment?.enrollmentId,
     };
@@ -578,14 +577,7 @@ function Main() {
                           min={1}
                           onChange={(e) => {
                             const enteredValue = parseInt(e.target.value);
-                            if (enteredValue > 100) {
-                              e.target.value = "4"; // Set the value to the maximum allowed
-                            } else if (enteredValue < 0) {
-                              alert(
-                                "value should be within the range of 1, 2, 3, 4"
-                              );
-                              e.target.value = "1";
-                            }
+
                             handleInputChange({
                               score: e.target.value,
                               enrollment,
@@ -599,21 +591,6 @@ function Main() {
                         )}`}
                       >
                         <span>
-                          <b>
-                            {enrollment?.assessmentDetails?.score == 4
-                              ? "Exceeding Expectation: "
-                              : ""}
-                            {enrollment?.assessmentDetails?.score == 3
-                              ? "Meeting Expectation: "
-                              : ""}
-                            {enrollment?.assessmentDetails?.score == 2
-                              ? "Approaching Expectation: "
-                              : ""}
-                            {enrollment?.assessmentDetails?.score == 1
-                              ? "Below Expectation: "
-                              : ""}
-                          </b>
-                          <br />
                           {enrollment?.assessmentDetails?.description}
                         </span>
                       </Table.Td>
@@ -742,13 +719,15 @@ function Main() {
                 )}
               </div>
 
-            
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <TomSelect
                   name="stream"
                   value={selectedTerm}
-                  onChange={(event: any) => {setSelectedTerm(event) ;handleTestChange()} }
+                  onChange={(event: any) => {
+                    setSelectedTerm(event);
+                    handleTestChange();
+                  }}
                 >
                   <option>Select Academic Term</option>
 
@@ -765,7 +744,7 @@ function Main() {
                   </div>
                 )}
               </div>
-             
+
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
                 <FormSelect
@@ -793,22 +772,14 @@ function Main() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel
-                  htmlFor="modal-form-6"
-                >
-                  Tests
-                </FormLabel>
+                <FormLabel htmlFor="modal-form-6">Tests</FormLabel>
                 <FormSelect
                   {...register("test")}
                   name="test"
                   value={test}
-                  onChange={(event:any) => setTest(event.target.value)}
-                  
+                  onChange={(event: any) => setTest(event.target.value)}
                 >
-                  <option
-                  >
-                    Select Test
-                  </option>
+                  <option>Select Test</option>
                   {tests.map((test: any, key) => (
                     <option key={key} value={test._id}>
                       {test.name}
@@ -822,11 +793,6 @@ function Main() {
                   </div>
                 )}
               </div>
-            
-
-             
-             
-
             </div>
             <div className="px-5 pb-8 text-right">
               <Button
@@ -846,9 +812,7 @@ function Main() {
               </Button>
             </div>
           </div>
-         
 
-        
           <Dialog
             staticBackdrop
             size="lg"

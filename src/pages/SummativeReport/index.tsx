@@ -41,7 +41,8 @@ function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [lastSaved, setLastSaved] = useState(null);
-
+  const [tests, setTests] = useState([]);
+  const [test, setTest] = useState([]);
   const [grades, setGrades] = useState([]);
   const [levels, setLevels] = useState([]);
   const [learningAreas, setLearningAreas] = useState([]);
@@ -245,7 +246,18 @@ function Main() {
     // setSubstrands([]);
     // setSubstrands(res.data);
   };
-
+  const handleTestChange = async () => {
+    console.log(selectedTerm);
+    const response = await ApiService.getTests({
+      page: 1,
+      grade: strandFilter.grade,
+      term: selectedTerm,
+    });
+    setTests(response.data);
+  };
+  useEffect(() => {
+    handleTestChange();
+  }, [selectedTerm, strandFilter.grade]);
   const handleStrandChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -351,14 +363,14 @@ function Main() {
   const generateAssessment = async () => {
     isLoading(true);
     const data = {
-      learning_area: strandFilter.learning_area,
+      test: test,
       term: selectedTerm,
       learner,
     };
 
     isLoading(true);
     try {
-      let res = await ApiService.getReportByLearners(data);
+      let res = await ApiService.getSummativeByLearners(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const popup = window.open(
@@ -814,7 +826,10 @@ function Main() {
                 <TomSelect
                   name="stream"
                   value={selectedTerm}
-                  onChange={(event: any) => setSelectedTerm(event)}
+                  onChange={(event: any) => {
+                    setSelectedTerm(event);
+                    handleTestChange();
+                  }}
                 >
                   <option>Select Academic Term</option>
 
@@ -833,28 +848,24 @@ function Main() {
               </div>
 
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Tests</FormLabel>
                 <FormSelect
-                  {...register("learning_area")}
-                  value={strandFilter.learning_area}
-                  name="learning_area"
-                  onChange={(event) => handleLearningAreaChange(event)}
+                  {...register("test")}
+                  name="test"
+                  value={test}
+                  onChange={(event: any) => setTest(event.target.value)}
                 >
-                  <option>Select Learning Area</option>
-                  {learningAreas
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter?.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea?._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
+                  <option>Select Test</option>
+                  {tests.map((test: any, key) => (
+                    <option key={key} value={test._id}>
+                      {test.name}
+                    </option>
+                  ))}
                 </FormSelect>
-                {errors.learning_area && (
+                {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
                   </div>
                 )}
               </div>

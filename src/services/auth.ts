@@ -211,8 +211,6 @@ export async function createTests(data: FieldValues) {
   }
 }
 
-
-
 //streams
 export const getStream = async (data: any) => {
   try {
@@ -373,7 +371,6 @@ export async function parentDashboard() {
     throw handler(e);
   }
 }
-
 
 export async function deleteParents(userId: any) {
   try {
@@ -569,6 +566,17 @@ export const getReportByLearners = async (data: any) => {
     throw handler(e);
   }
 };
+export const getSummativeByLearners = async (data: any) => {
+  try {
+    let res = await axios.get(c.SUMMATIVE + "/assessments", {
+      params: data,
+      responseType: "arraybuffer",
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const getLearnerReport = async (data: any) => {
   try {
     let res = await axios.get(c.ASSESSMENT + "/report", {
@@ -742,12 +750,12 @@ export async function changePassword(data: any) {
 }
 
 export async function schoolDashboard() {
-    try {
-        let res = await axios.get(c.SCHOOLDASHBOARD);
-        return res.data;
-    } catch (e) {
-        throw handler(e);
-    }
+  try {
+    let res = await axios.get(c.SCHOOLDASHBOARD);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
 }
 
 export async function getConferences() {
@@ -943,9 +951,15 @@ export async function createGrading(data: any) {
 }
 export async function createGradingLearningArea(id: any, data: any) {
   try {
-    let res = await axios.post(c.GRADING + "/" + id, data);
-    console.log(res);
-    return res.data;
+    if (data._id) {
+      let res = await axios.put(c.GRADING + "/" + id, data);
+      console.log(res);
+      return res.data;
+    } else {
+      let res = await axios.post(c.GRADING + "/" + id, data);
+      console.log(res);
+      return res.data;
+    }
   } catch (e) {
     throw handler(e);
   }
