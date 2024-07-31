@@ -156,21 +156,21 @@ function Settings() {
               </fieldset>
 
               <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-12 md:col-span-6">
+                {/* <div className="col-span-12 md:col-span-6">
                   <FormLabel>Current Term</FormLabel>
                   <FormSelect
                     {...register("current_term")}
                     // value={currentTerm}
                     onChange={(e) => setCurrentTerm(e.target.value)}
                   >
-                    <option>Select Term</option>
+                    <option value={""}>Select Term</option>
                     {terms.map((term: any, key: any) => (
                       <option key={key} value={term._id}>
                         {term.name}
                       </option>
                     ))}
                   </FormSelect>
-                </div>
+                </div> */}
                 <div className="col-span-12 md:col-span-6">
                   <FormLabel>Address</FormLabel>
                   <FormInput
