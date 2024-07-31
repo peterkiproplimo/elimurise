@@ -50,6 +50,7 @@ import Settings from "../pages/Settings";
 import GradeUserAssignment from "../pages/GradeUserAssignment";
 import Grading from "../pages/Grading";
 import GradingLeaningAreas from "../pages/GradingLeaningAreas";
+import Transfers from "../pages/Learners/transfers";
 
 //nn
 function Router() {
@@ -148,6 +149,10 @@ function Router() {
         {
           path: "grading-config/:id",
           element: <GradingLeaningAreas />,
+        },
+        {
+          path: "transfers",
+          element: <Transfers />,
         },
         {
           path: "settings",

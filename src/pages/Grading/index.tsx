@@ -536,7 +536,7 @@ function Users() {
             <Dialog.Title>
               <h2 className="mr-auto text-base font-medium">
                 {" "}
-                {isEditMode ? "Edit User" : "New User"}
+                {isEditMode ? "Edit Grading" : "New Grading"}
               </h2>
               <a
                 onClick={(event: React.MouseEvent) => {

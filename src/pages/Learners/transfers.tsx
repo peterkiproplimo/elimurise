@@ -76,6 +76,9 @@ function Main() {
   const [parents, setParents] = useState(false);
   const [guardianIdNo, setGuardianIdNo] = useState("");
   const [guardianIdNo2, setGuardianIdNo2] = useState("");
+  const [stream, setStream] = useState("");
+  const [learner, setLearner] = useState("");
+  const [enrollments, setEnrollments] = useState([]);
   const navigate = useNavigate();
 
   const handleNavigate = (learnerId: any) => {
@@ -149,6 +152,7 @@ function Main() {
   }, []);
   useEffect(() => {
     getStreams();
+    getEnrollments();
   }, [grade]);
   useEffect(() => {
     getStudents();
@@ -207,6 +211,14 @@ function Main() {
       setMessage(error.message);
       notify.current?.showToast();
     }
+  };
+
+  const getEnrollments = async () => {
+    const enrollments = await ApiService.getEnrolmentsByStream(
+      { stream: stream },
+      {}
+    );
+    setEnrollments(enrollments?.data);
   };
 
   const editRecord = (record: any) => {
@@ -322,7 +334,7 @@ function Main() {
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
             <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Learner" : "New Learner"}
+              {isEditMode ? "Edit Transfer" : "New Transfer"} 
             </h2>
           </div>
           <br />
@@ -371,19 +383,25 @@ function Main() {
               ></a>
             </div>
             <fieldset className="mt-5 p-5 intro-y box validate-form">
-              <legend className="text-lg font-semibold">Learner Details</legend>
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    First Name<span className="text-danger ml-0.5">*</span>
+                    Learner<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-                  <FormInput
-                    {...register("first_name")}
-                    type="text"
-                    name="first_name"
-                    className={errors.first_name ? "border-danger" : ""}
-                    placeholder="first name"
-                  />
+                  <FormSelect
+                  {...register("learner")}
+                  name="learner"
+                  value={learner}
+                  onChange={(event) => setLearner(event.target.value)}
+                >
+                   <option>Select Learner</option>
+
+                      {enrollments?.map((enrollment: any, key) => (
+                       <option key={key} value={enrollment?._id}>
+    {enrollment?.learner.first_name}
+                        </option>
+                    ))}
+                 </FormSelect>
                   {errors.first_name && (
                     <div className="mt-2 text-danger">
                       {typeof errors.first_name.message === "string" &&
@@ -391,393 +409,47 @@ function Main() {
                     </div>
                   )}
                 </div>
+            \
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Last Name<span className="text-danger ml-0.5">*</span>
+                    New School<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
-                    {...register("last_name")}
+                    {...register("school")}
                     type="text"
-                    name="last_name"
+                    name="school"
                     className={errors.last_name ? "border-danger" : ""}
-                    placeholder="last name"
+                    placeholder="school"
                   />
-                  {errors.last_name && (
+                  {errors.school && (
                     <div className="mt-2 text-danger">
-                      {typeof errors.last_name.message === "string" &&
-                        errors.last_name.message}
+                      {typeof errors.school.message === "string" &&
+                        errors.school.message}
                     </div>
                   )}
                 </div>
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Surname</FormLabel>
+                  <FormLabel>Reason</FormLabel>
                   <FormInput
-                    {...register("surname")}
+                    {...register("reason")}
                     type="text"
-                    name="surname"
-                    className={errors.surname ? "border-danger" : ""}
-                    placeholder="surname"
+                    name="reason"
+                    className={errors.reason ? "border-danger" : ""}
+                    placeholder="reason"
                   />
-                  {errors.surname && (
+                  {errors.reason && (
                     <div className="mt-2 text-danger">
-                      {typeof errors.surname.message === "string" &&
-                        errors.surname.message}
+                      {typeof errors.reason.message === "string" &&
+                        errors.reason.message}
                     </div>
                   )}
                 </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Admission Number
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("adm_no")}
-                    type="text"
-                    name="adm_no"
-                    className={errors.adm_no ? "border-danger" : ""}
-                    placeholder="admission no"
-                  />
-                  {errors.adm_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.adm_no.message === "string" &&
-                        errors.adm_no.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Nemis No</FormLabel>
-                  <FormInput
-                    {...register("nemis_no")}
-                    type="text"
-                    name="nemis_no"
-                    className={errors.nemis_no ? "border-danger" : ""}
-                    placeholder="nemis no"
-                  />
-                  {errors.nemis_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.nemis_no.message === "string" &&
-                        errors.nemis_no.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Grade<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <TomSelect
-                    name="grade"
-                    value={grade}
-                    onChange={(event: any) => {
-                      reset({ ...getValues(), grade: event });
-                      console.log("test");
-                      setGrade(event);
-                    }}
-                    disabled={isEditMode}
-                  >
-                    <option>Select Grade</option>
-                    {grades.map((grade: any, key) => (
-                      <option key={key} value={grade._id}>
-                        {grade.name}
-                      </option>
-                    ))}
-                  </TomSelect>
-                  {errors.grade && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.grade.message === "string" &&
-                        errors.grade.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-12 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Select Stream<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormSelect
-                    {...register("stream")}
-                    name="stream"
-                    disabled={isEditMode}
-                  >
-                    {streams.map((stream: any, key) => (
-                      <option key={key} value={stream._id}>
-                        {stream.name}
-                      </option>
-                    ))}
-                  </FormSelect>
-                </div>
-                <div className="col-span-12 sm:col-span-4"></div>
-                <div className="col-span-12 sm:col-span-4"></div>
-                <div className="col-span-12 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">Passport Photo</FormLabel>
-                  <PassportUpload
-                    name={"image"}
-                    register={register}
-                    errors={errors}
-                    initialImageUrl={c.IMG_URL + photo}
-                  />
-                </div>
+          
               </div>
             </fieldset>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
-              <legend className="text-lg font-semibold">
-                Guardian Details
-              </legend>
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian ID Number or Email
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian_id_no")}
-                    type="text"
-                    name="guardian_id_no"
-                    onChange={(event) => setGuardianIdNo(event.target.value)}
-                    onBlur={handleGuardianIdNoBlur}
-                    className={errors.guardian_id_no ? "border-danger" : ""}
-                    placeholder="guardian ID number"
-                  />
-                  <FormInput
-                    {...register("guardian")}
-                    type="hidden"
-                    name="guardian"
-                    className={errors.guardian_id_no ? "border-danger" : ""}
-                    placeholder="guardian ID number"
-                  />
-                  {errors.guardian_id_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_id_no.message === "string" &&
-                        errors.guardian_id_no.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian First Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian_first_name")}
-                    type="text"
-                    name="guardian_first_name"
-                    className={
-                      errors.guardian_first_name ? "border-danger" : ""
-                    }
-                    placeholder="guardian first name"
-                    disabled
-                  />
-                  {errors.guardian_first_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_first_name.message === "string" &&
-                        errors.guardian_first_name.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Surname</FormLabel>
-                  <FormInput
-                    {...register("guardian_surname")}
-                    type="text"
-                    name="guardian_surname"
-                    className={errors.guardian_surname ? "border-danger" : ""}
-                    placeholder="guardian surname"
-                    disabled
-                  />
-                  {errors.guardian_surname && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_surname.message === "string" &&
-                        errors.guardian_surname.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian Last Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian_last_name")}
-                    type="text"
-                    name="guardian_last_name"
-                    className={errors.guardian_last_name ? "border-danger" : ""}
-                    placeholder="guardian last name"
-                    disabled
-                  />
-                  {errors.guardian_last_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_last_name.message === "string" &&
-                        errors.guardian_last_name.message}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Email</FormLabel>
-                  <FormInput
-                    {...register("guardian_email")}
-                    type="email"
-                    name="guardian_email"
-                    className={errors.guardian_email ? "border-danger" : ""}
-                    placeholder="guardian email"
-                    disabled
-                  />
-                  {errors.guardian_email && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_email.message === "string" &&
-                        errors.guardian_email.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Phone</FormLabel>
-                  <FormInput
-                    {...register("guardian_phone")}
-                    type="text"
-                    name="guardian_phone"
-                    className={errors.guardian_phone ? "border-danger" : ""}
-                    placeholder="guardian phone"
-                    disabled
-                  />
-                  {errors.guardian_phone && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_phone.message === "string" &&
-                        errors.guardian_phone.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </fieldset>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
-              <legend className="text-lg font-semibold">
-                Guardian 2 Details
-              </legend>
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian ID Number or Email
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian2_id_no")}
-                    type="text"
-                    name="guardian2_id_no"
-                    className={errors.guardian2_id_no ? "border-danger" : ""}
-                    placeholder="Second guardian ID number"
-                    onChange={(event) => setGuardianIdNo2(event.target.value)}
-                    onBlur={handleGuardianIdNoBlur2}
-                  />
-                  <FormInput
-                    {...register("guardian2")}
-                    type="hidden"
-                    name="guardian2"
-                    className={errors.guardian2_id_no ? "border-danger" : ""}
-                    placeholder="Second guardian ID number"
-                  />
-                  {errors.guardian2_id_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_id_no.message === "string" &&
-                        errors.guardian2_id_no.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian First Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian2_first_name")}
-                    type="text"
-                    name="guardian2_first_name"
-                    className={
-                      errors.guardian2_first_name ? "border-danger" : ""
-                    }
-                    placeholder="Second guardian first name"
-                    disabled
-                  />
-                  {errors.guardian2_first_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_first_name.message ===
-                        "string" && errors.guardian2_first_name.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Surname</FormLabel>
-                  <FormInput
-                    {...register("guardian2_surname")}
-                    type="text"
-                    name="guardian2_surname"
-                    className={errors.guardian2_surname ? "border-danger" : ""}
-                    placeholder="Second guardian surname"
-                    disabled
-                  />
-                  {errors.guardian2_surname && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_surname.message === "string" &&
-                        errors.guardian2_surname.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Guardian Last Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian2_last_name")}
-                    type="text"
-                    name="guardian2_last_name"
-                    disabled
-                    className={
-                      errors.guardian2_last_name ? "border-danger" : ""
-                    }
-                    placeholder="Second guardian last name"
-                  />
-                  {errors.guardian2_last_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_last_name.message === "string" &&
-                        errors.guardian2_last_name.message}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Email</FormLabel>
-                  <FormInput
-                    {...register("guardian2_email")}
-                    type="email"
-                    name="guardian2_email"
-                    className={errors.guardian2_email ? "border-danger" : ""}
-                    placeholder="Second guardian email"
-                    disabled
-                  />
-                  {errors.guardian2_email && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_email.message === "string" &&
-                        errors.guardian2_email.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Phone</FormLabel>
-                  <FormInput
-                    {...register("guardian2_phone")}
-                    type="text"
-                    name="guardian2_phone"
-                    className={errors.guardian2_phone ? "border-danger" : ""}
-                    placeholder="Second guardian phone"
-                    disabled
-                  />
-                  {errors.guardian2_phone && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_phone.message === "string" &&
-                        errors.guardian2_phone.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </fieldset>
-            <div className="col-span-12 sm:col-span-12 mt-3">
+           
+          
+            <div className="col-span-12 sm:col-span-12 mt-3 ml-5">
               <Button
                 type="button"
                 variant="outline-secondary"
@@ -786,11 +458,11 @@ function Main() {
                   reset({ name: "" });
                   setPhoto("");
                 }}
-                className="w-20 mr-1"
+                className="p-3 mr-1"
               >
                 Cancel
               </Button>
-              <Button variant="primary" type="submit" className="w-20">
+              <Button variant="primary" type="submit" className="p-5">
                 Save
                 {loading && (
                   <LoadingIcon
@@ -805,7 +477,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Learners</h2>
+          <h2 className="mt-10 text-lg font-medium intro-y">Transfers</h2>
           {message && success && (
             <Alert
               variant="soft-success"
@@ -846,7 +518,7 @@ function Main() {
                 setDialog(true);
               }}
             >
-              New Learner
+              New Transfer
             </Button>
 
             <div className="hidden mx-auto md:block text-slate-500">
@@ -875,54 +547,6 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            {/* <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
-              <FormSelect
-                {...register("learning_area")}
-                name="learning_area"
-                value={strandFilter.school}
-                onChange={(event) => handleSchoolChange(event)}
-              >
-                <option>Select School</option>
-                {schools
-                  .filter(
-                    (area: any) => area?.grade_id?._id === strandFilter.grade
-                  )
-                  .map((filteredArea: any, key) => (
-                    <option key={key} value={filteredArea._id}>
-                      {filteredArea.name}
-                    </option>
-                  ))}
-              </FormSelect>
-              {errors.learning_area && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.learning_area.message === "string" &&
-                    errors.learning_area.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-              <FormSelect
-                {...register("grade")}
-                name="grade"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Grade</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div> */}
 
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               {loading ? (
@@ -946,27 +570,12 @@ function Main() {
                         <Table.Th className="border-b-0 whitespace-nowrap w-24">
                           Name
                         </Table.Th>
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Last Name
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Surname
-                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Adm No
                         </Table.Th>
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Grade
-                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Name
                         </Table.Th>
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Last Name
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Surname
-                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian ID No
                         </Table.Th>
@@ -1024,34 +633,11 @@ function Main() {
                               </div>
                             </div>
                           </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.first_name}{" "}
-                              {learner?.learner?.last_name}{" "}
-                              {learner?.learner?.surname}
-                            </span>
-                          </Table.Td> */}
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.last_name}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.surname}
-                            </span>
-                          </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.adm_no}
                             </span>
                           </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.stream?.grade?.name}{" "}
-                              {learner?.stream?.name}
-                            </span>
-                          </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.first_name}{" "}
@@ -1059,16 +645,6 @@ function Main() {
                               {learner?.learner?.guardian?.surname}
                             </span>
                           </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.last_name}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.surname}
-                            </span>
-                          </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.id_no}

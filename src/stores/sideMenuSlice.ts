@@ -42,11 +42,11 @@ const initialState: SideMenuState = {
           pathname: "/enrollment",
           title: "Promotion",
         },
-        // {
-        //   icon: "User",
-        //   pathname: "/enrollment",
-        //   title: "Learner Enrollment",
-        // },
+        {
+          icon: "User",
+          pathname: "/transfers",
+          title: "Transfers",
+        },
       ],
     },
 
