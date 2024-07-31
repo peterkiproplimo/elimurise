@@ -16,7 +16,7 @@ import * as yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./login.css";
-import logo from "../../assets/images/Untitled-1.png"
+import logo from "../../assets/images/Untitled-1.png";
 
 const Register = () => {
   const auth = useAuth();
@@ -55,6 +55,14 @@ const Register = () => {
         isLoading(false);
         console.log(res.user);
         let token = res.token;
+        if (res.user.teacher && res.user.school) {
+          localStorage.setItem("type", "teacher");
+        } else if (res.user.school) {
+          localStorage.setItem("type", "school");
+        } else if (res.user.school == undefined) {
+          localStorage.setItem("type", "billing");
+        }
+
         await auth.signIn({ ...res.user, token });
 
         setSuccess(true);
@@ -80,15 +88,16 @@ const Register = () => {
   return (
     <>
       <div className="form-container mt-10">
-      <div className="icon flex justify-center items-center  ">
-             <img alt="ACS" className="xl:w-30 md:w-10 xl:w-auto" src={logo}/></div>  
+        <div className="icon flex justify-center items-center  ">
+          <img alt="ACS" className="xl:w-30 md:w-10 xl:w-auto" src={logo} />
+        </div>
         <h2 className="text-3xl font-bold  ">Register</h2>
         <div className="mt-2 text-center intro-x text-slate-900 xl text-xl">
-        Welcome, please register to continue.
+          Welcome, please register to continue.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
           <div className="mt-8 intro-x">
-          <div className="input-form">
+            <div className="input-form">
               <label>First Name</label>
               <FormInput
                 {...register("firstname")}
@@ -239,7 +248,9 @@ const Register = () => {
               )}
             </Button>
           </div>
-         <p className="mt-2">Already have an account?  <Link to="/login">Login</Link></p>
+          <p className="mt-2">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
         </form>
       </div>
       <Notification

@@ -1,6 +1,7 @@
-body{
+.homeContainer{
     background-color: #ffff;
     color:#000000;
+    
 } 
 /* .home{
     display: flex;

@@ -296,7 +296,7 @@ function Users() {
 
   return (
     <>
-      <h2 className="mt-10 text-lg font-medium intro-y">Grading Assignment</h2>
+      <h2 className="mt-10 text-lg font-medium intro-y">Gradings</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           <Button
@@ -330,13 +330,13 @@ function Users() {
             </Menu.Items>
           </Menu>
           <div className="hidden mx-auto md:block text-slate-500">
-            Showing{" "}
+            {/* Showing{" "}
             {pagination.current_page +
               " to " +
               pagination.total_pages +
               " of " +
               pagination.total}{" "}
-            entries
+            entries */}
           </div>
           <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
             <div className="relative w-56 text-slate-500 box mr-2">
@@ -384,9 +384,9 @@ function Users() {
                   {/* <Table.Th className="border-b-0 whitespace-nowrap">
                   <FormCheck.Input type="checkbox" />
                 </Table.Th> */}
-                  <Table.Th className="border-b-0 whitespace-nowrap">
+                  {/* <Table.Th className="border-b-0 whitespace-nowrap">
                     NO
-                  </Table.Th>
+                  </Table.Th> */}
 
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     Name
@@ -402,20 +402,36 @@ function Users() {
               <Table.Tbody>
                 {grading.map((grade: any, key) => (
                   <Table.Tr key={key} className="intro-x">
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {key + 1}
-                    </Table.Td>
+                    </Table.Td> */}
 
                     <Table.Td
                       onClick={(e) => openConfig(grade)}
                       className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] cursor-pointer"
                     >
-                      {grade?.name}{" "}
+                      {/* {grade?.name}{" "} */}
+                      <div className="flex items-center">
+                        {/* <div className="w-9 h-9 image-fit zoom-in"></div> */}
+                        <div className="ml-0">
+                          <a
+                            href="#"
+                            onClick={() => editRecord(grade)}
+                            className="font-medium whitespace-nowrap"
+                          >
+                            {grade?.name && grade?.name}
+                          </a>
+                          <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                            {grade?.grade?.name}
+                          </div>
+                        </div>
+                      </div>
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {grade?.grade?.name}
                     </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                      {" "}
                       <div className="flex items-center justify-center">
                         <Menu>
                           <Menu.Button as={Button} className="px-2 !box">

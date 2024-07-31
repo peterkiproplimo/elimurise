@@ -974,17 +974,15 @@ export async function createGradingLearningArea(id: any, data: any) {
 // };
 export function handler(err: any) {
   let error = err;
-  console.log(err);
-
+  if (error?.response?.status == 703) {
+    localStorage.removeItem("@AuthData");
+    window.location.reload();
+  }
   if (err.response && err.response.data.hasOwnProperty("error")) {
     error = err.response.data;
     error.message = err.response.data.error;
     console.log(error);
-  }
-  if (err.response && err.response.data.hasOwnProperty("errors")) {
-    error = err.response.data;
-    error.message = err.response.data.errors[0].msg;
-  } else if (!err.hasOwnProperty("error")) error = err?.toJSON();
+  } else if (!err.hasOwnProperty("error")) error = err.toJSON();
   console.log("error");
   console.log(error.message);
   return new Error(error.message);

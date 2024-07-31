@@ -18,6 +18,8 @@ import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
 import { Search } from "lucide-react";
 import { formatDate } from "../../utils/helper";
+import Tippy from "../../base-components/Tippy";
+import avarter from "../../assets/images/parent.jpeg";
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -443,7 +445,7 @@ function Main() {
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                           First Name
                         </Table.Th>
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                        {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                           Last Name
                         </Table.Th>
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
@@ -451,7 +453,7 @@ function Main() {
                         </Table.Th>
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                           ID Number
-                        </Table.Th>
+                        </Table.Th> */}
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                           Email
                         </Table.Th>
@@ -475,11 +477,37 @@ function Main() {
                             </span>
                           </Table.Td>
                           <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {parent.first_name}
-                            </span>
+                            <div className="flex items-center">
+                              <div className="w-9 h-9 image-fit zoom-in">
+                                <Tippy
+                                  as="img"
+                                  alt=""
+                                  className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                  src={avarter}
+                                  content={
+                                    parent.first_name + " " + parent.last_name
+                                  }
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <a
+                                  href="#"
+                                  onClick={() => editRecord(parent)}
+                                  className="font-medium whitespace-nowrap"
+                                >
+                                  {parent.first_name && parent.first_name}
+                                  {" " +
+                                    parent.surname +
+                                    " " +
+                                    parent.last_name}
+                                </a>
+                                <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                  {parent.id_no}
+                                </div>
+                              </div>
+                            </div>
                           </Table.Td>
-                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {parent.last_name}
                             </span>
@@ -493,7 +521,7 @@ function Main() {
                             <span className="font-medium whitespace-nowrap">
                               {parent.id_no}
                             </span>
-                          </Table.Td>
+                          </Table.Td> */}
                           <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {parent.email}

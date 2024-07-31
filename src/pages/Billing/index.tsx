@@ -27,7 +27,7 @@ function Main() {
   const nextImportantNotes = () => {
     importantNotesRef.current?.tns.goTo("next");
   };
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [feeds, setFeeds] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);
@@ -81,10 +81,6 @@ function Main() {
 
   useEffect(() => {
     getDashboard();
-    setTimeout(() => {
-      getDashboard();
-      isLoading(false);
-    }, 2000);
   }, []);
 
   return (

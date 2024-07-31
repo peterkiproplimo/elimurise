@@ -18,9 +18,11 @@ const GuestGuard = ({ children }: any) => {
     if (authData) {
       console.log(authData);
       if (localStorage.getItem("type") == "parent") {
-        navigate("/v1/", { replace: true });
-      } else {
-        navigate("/", { replace: true });
+        navigate("/v1/", { replace: false });
+      } else if (localStorage.getItem("type") == "school") {
+        navigate("/", { replace: false });
+      } else if (localStorage.getItem("type") == "billing") {
+        navigate("/billing", { replace: false });
       }
     }
   }, [authData, navigate]);

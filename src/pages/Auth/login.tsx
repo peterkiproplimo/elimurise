@@ -63,10 +63,12 @@ const Login = () => {
           console.log(res.user);
           let token = res.token;
 
-          if (res.user.teacher) {
+          if (res.user.teacher && res.user.school) {
             localStorage.setItem("type", "teacher");
-          } else {
+          } else if (res.user.school) {
             localStorage.setItem("type", "school");
+          } else if (res.user.school == undefined) {
+            localStorage.setItem("type", "billing");
           }
 
           await auth.signIn({ ...res.user, token });

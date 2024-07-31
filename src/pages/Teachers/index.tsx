@@ -18,7 +18,8 @@ import Pagination from "../../base-components/Pagination";
 import { formatDate } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../base-components/Alert";
-
+import Tippy from "../../base-components/Tippy";
+import avarter from "../../assets/images/teacher.jpeg";
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -544,7 +545,7 @@ function Main() {
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       First Name
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
@@ -552,7 +553,7 @@ function Main() {
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Surname
-                    </Table.Th>
+                    </Table.Th> */}
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Phone Number
                     </Table.Th>
@@ -572,7 +573,37 @@ function Main() {
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <div className="flex items-center">
+                          <div className="w-9 h-9 image-fit zoom-in">
+                            <Tippy
+                              as="img"
+                              alt=""
+                              className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                              src={avarter}
+                              content={
+                                teacher.firstname + " " + teacher.lastname
+                              }
+                            />
+                          </div>
+                          <div className="ml-4">
+                            <a
+                              href="#"
+                              onClick={() =>
+                                navigate("/teacher/" + teacher?._id)
+                              }
+                              className="font-medium whitespace-nowrap"
+                            >
+                              {teacher.firstname && teacher.firstname}
+                              {" " + teacher.surname + " " + teacher.lastname}
+                            </a>
+                            <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                              {teacher.phone}
+                            </div>
+                          </div>
+                        </div>
+                      </Table.Td>
+                      {/* <Table.Td
                         onClick={() => navigate("/teacher/" + teacher?._id)}
                         className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                       >
@@ -589,12 +620,12 @@ function Main() {
                         <span className="font-medium whitespace-nowrap">
                           {teacher.surname}
                         </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      </Table.Td> */}
+                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {teacher.phone}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {teacher.email}

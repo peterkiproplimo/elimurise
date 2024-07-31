@@ -245,6 +245,7 @@ const parentState: SideMenuState = {
     },
   ],
 };
+
 let activeSection = localStorage.getItem("type");
 
 export const sideMenuSlice = createSlice({
@@ -262,6 +263,7 @@ export const { setMenuState } = sideMenuSlice.actions;
 
 // export const selectSideMenu = (state: RootState) => state.sideMenu.menu;
 export const selectSideMenu = (state: RootState) => {
+  let activeSection = localStorage.getItem("type");
   // const activeSection = "billing";
   if (activeSection === "billing") {
     return state.sideMenu.menu.filter((item) => {

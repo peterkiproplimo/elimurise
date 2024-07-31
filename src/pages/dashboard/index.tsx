@@ -76,7 +76,116 @@ function Main() {
               <div className="flex items-center h-10 intro-y">
                 <h2 className="mr-5 text-lg font-medium truncate">Dashboard</h2>
               </div>
-              <div className="mt-5 intro-y">
+              <div className="grid grid-cols-12 gap-6 mt-5">
+                <div className="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                  <div
+                    className={clsx([
+                      "relative zoom-in",
+                      "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
+                    ])}
+                  >
+                    <div className="p-5 box">
+                      <div className="flex">
+                        <Lucide
+                          icon="Monitor"
+                          className="w-[28px] h-[28px] text-warning"
+                        />
+                        <div className="ml-auto">
+                          <Tippy
+                            as="div"
+                            className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                            content="12% Higher than last month"
+                          >
+                            12%{" "}
+                            <Lucide
+                              icon="ChevronUp"
+                              className="w-4 h-4 ml-0.5"
+                            />
+                          </Tippy>
+                        </div>
+                      </div>
+                      <div className="mt-6 text-3xl font-medium leading-8">
+                        {dashboards.totalLearners}
+                      </div>
+                      <div className="mt-1 text-base text-slate-500">
+                        Learners
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                  <div
+                    className={clsx([
+                      "relative zoom-in",
+                      "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
+                    ])}
+                  >
+                    <div className="p-5 box">
+                      <div className="flex">
+                        <Lucide
+                          icon="ShoppingCart"
+                          className="w-[28px] h-[28px] text-primary"
+                        />
+                        <div className="ml-auto">
+                          <Tippy
+                            as="div"
+                            className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                            content="Total Teachers"
+                          >
+                            <Lucide
+                              icon="ChevronUp"
+                              className="w-4 h-4 ml-0.5"
+                            />
+                          </Tippy>
+                        </div>
+                      </div>
+                      <div className="mt-6 text-3xl font-medium leading-8">
+                        {dashboards.totalTeachers}
+                      </div>
+                      <div className="mt-1 text-base text-slate-500">
+                        Teachers
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                  <div
+                    className={clsx([
+                      "relative zoom-in",
+                      "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
+                    ])}
+                  >
+                    <div className="p-5 box">
+                      <div className="flex">
+                        <Lucide
+                          icon="CreditCard"
+                          className="w-[28px] h-[28px] text-pending"
+                        />
+                        <div className="ml-auto">
+                          <Tippy
+                            as="div"
+                            className="cursor-pointer bg-danger py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                            content="2% Lower than last month"
+                          >
+                            2%
+                            <Lucide
+                              icon="ChevronDown"
+                              className="w-4 h-4 ml-0.5"
+                            />
+                          </Tippy>
+                        </div>
+                      </div>
+                      <div className="mt-6 text-3xl font-medium leading-8">
+                        {dashboards.totalParents}
+                      </div>
+                      <div className="mt-1 text-base text-slate-500">
+                        Parents
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* <div className="mt-5 intro-y">
                 <div className="bg-white p-6 shadow-md rounded-lg flex items-center justify-between ">
                   <div>
                     <div className="text-xl text-gray-500"></div>
@@ -95,200 +204,136 @@ function Main() {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
-
-            <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
-              <div className="p-5 mt-12 intro-y box sm:mt-5">
-                <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
-                  <div>Total Teachers</div>
-                  {/* <div className="ml-auto">Report Values</div> */}
-                </div>
-
-                {/* <div className="flex items-center mb-5">
-                  <div className="flex items-center">
-                    <div>% New Visits</div>
-                    <Tippy
-                      className="flex ml-2 text-xs font-medium cursor-pointer text-danger"
-                      content="49% Higher than last month"
-                    >
-                      -9%{" "}
-                      <Lucide icon="ChevronDown" className="w-4 h-4 ml-0.5" />
-                    </Tippy>
+            <div className="relative col-span-12 2xl:col-span-9">
+              <div className="grid grid-cols-12 gap-6">
+                <div className="relative col-span-12 2xl:col-span-12">
+                  <div className="items-center block h-10 intro-y sm:flex">
+                    <h2 className="mr-5 text-lg font-medium truncate">
+                      Last Added Leaners
+                    </h2>
+                    <div className="flex items-center mt-3 sm:ml-auto sm:mt-0">
+                      {/* <Button className="flex items-center !box text-slate-600 dark:text-slate-300">
+                        <Lucide
+                          icon="FileText"
+                          className="hidden w-4 h-4 mr-2 sm:block"
+                        />
+                        Export to Excel
+                      </Button>
+                      <Button className="flex items-center ml-3 !box text-slate-600 dark:text-slate-300">
+                        <Lucide
+                          icon="FileText"
+                          className="hidden w-4 h-4 mr-2 sm:block"
+                        />
+                        Export to PDF
+                      </Button> */}
+                    </div>
                   </div>
-                  <div className="ml-auto">32%</div>
-                </div> */}
-                <div className="flex items-center mb-5">
-                  <div className="flex items-center">
-                    <div>Teachers</div>
-                  </div>
-                  <div className="ml-auto mr-3">{dashboards.totalTeachers}</div>
-                </div>
-                <Button
-                  variant="outline-secondary"
-                  className="relative justify-start w-full bg-success mb-2  border-slate-300 dark:border-darkmode-300"
-                >
-                  <span className="mr-5 truncate text-white">Continue</span>
-                  <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
-                    <Lucide icon="ArrowRight" className="w-4 h-4 text-white" />
-                  </span>
-                </Button>
-              </div>
-            </div>
-            <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
-              <div className="p-5 mt-12 intro-y box sm:mt-5">
-                <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
-                  <div>Total Parents</div>
-                  {/* <div className="ml-auto">Page Views</div> */}
-                </div>
-                <div className="flex items-center mb-5 ">
-                  <div>Parents</div>
-                  <div className="ml-auto mr-3">{dashboards.totalParents}</div>
-                </div>
-                {/* <div className="flex items-center mb-5">
-                  <div>/icewall…review/1674</div>
-                  <div className="ml-auto">21</div>
-                </div> */}
-                <Button
-                  variant="outline-secondary"
-                  className="relative justify-start w-full mb-2 bg-success border-slate-300 dark:border-darkmode-300 text-white"
-                >
-                  <span className="mr-5 truncate">Continue</span>
-                  <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
-                    <Lucide icon="ArrowRight" className="w-4 h-4 " />
-                  </span>
-                </Button>
-              </div>
-            </div>
-            <div className="col-span-12 mt-2 md:col-span-6 lg:col-span-4">
-              <div className="p-5 mt-12 intro-y box sm:mt-5">
-                <div className="flex pb-3 mb-3 border-b border-dashed text-slate-500 border-slate-200 dark:border-darkmode-300">
-                  <div>Total Learners</div>
-                  {/* <div className="ml-auto">Searched</div> */}
-                </div>
-                <div className="flex items-center mb-5">
-                  <div>Learners</div>
-                  <div className="ml-auto mr-3">{dashboards.totalLearners}</div>
-                </div>
-                {/* <div className="flex items-center mb-5">
-                  <div>Install Vite Vue</div>
-                  <div className="ml-auto">42</div>
-                </div> */}
-                <Button
-                  variant="outline-secondary"
-                  className="relative justify-start w-full mb-2 text-white bg-success border-slate-300 dark:border-darkmode-300"
-                >
-                  <span className="mr-5 truncate">Continue</span>
-                  <span className="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
-                    <Lucide icon="ArrowRight" className="w-4 h-4" />
-                  </span>
-                </Button>
-              </div>
-            </div>
-
-            <div className="col-span-12 mt-2 ">
-              <div className="mt-8  box overflow-auto intro-y lg:overflow-visible sm:mt-0">
-                <Table className="border-spacing-y-[10px] border-separate sm:mt-2">
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th className="border-b-0 whitespace-nowrap">
-                        IMAGES
-                      </Table.Th>
-                      <Table.Th className="border-b-0 whitespace-nowrap">
-                        STUDENT NAME
-                      </Table.Th>
-                      <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                        ADM NO.
-                      </Table.Th>
-                      <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                        NEMIS NO.
-                      </Table.Th>
-                      <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                        STATUS
-                      </Table.Th>
-                      <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                        CREATED AT
-                      </Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {dashboards?.learners?.map((learner: any, key: any) => (
-                      <Table.Tr key={key} className="intro-x">
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <div className="flex">
-                            <div className="w-10 h-10 image-fit zoom-in">
-                              <Tippy
-                                as="img"
-                                alt="Midone Tailwind HTML Admin Template"
-                                className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                src={
-                                  learner?.photo
-                                    ? c.IMG_URL + learner?.photo
-                                    : logo
-                                }
-                                content={`Uploaded at ${learner?.dates}`}
-                              />
-                            </div>
-                          </div>
-                        </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <a
-                            href="/learners"
-                            className="font-medium whitespace-nowrap"
-                          >
-                            {learner?.first_name} {learner?.last_name}
-                          </a>
-                          {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                  <div className="mt-8 overflow-auto intro-y lg:overflow-visible sm:mt-0">
+                    <Table className="border-spacing-y-[10px] border-separate sm:mt-2">
+                      <Table.Thead>
+                        <Table.Tr>
+                          <Table.Th className="border-b-0 whitespace-nowrap">
+                            IMAGES
+                          </Table.Th>
+                          <Table.Th className="border-b-0 whitespace-nowrap">
+                            STUDENT NAME
+                          </Table.Th>
+                          <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                            ADM NO.
+                          </Table.Th>
+                          <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                            NEMIS NO.
+                          </Table.Th>
+                          <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                            STATUS
+                          </Table.Th>
+                          <Table.Th className="text-center border-b-0 whitespace-nowrap">
+                            CREATED AT
+                          </Table.Th>
+                        </Table.Tr>
+                      </Table.Thead>
+                      <Table.Tbody>
+                        {dashboards?.learners?.map((learner: any, key: any) => (
+                          <Table.Tr key={key} className="intro-x">
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <div className="flex">
+                                <div className="w-10 h-10 image-fit zoom-in">
+                                  <Tippy
+                                    as="img"
+                                    alt="Midone Tailwind HTML Admin Template"
+                                    className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                    src={
+                                      learner?.photo
+                                        ? c.IMG_URL + learner?.photo
+                                        : logo
+                                    }
+                                    content={`Uploaded at ${learner?.dates}`}
+                                  />
+                                </div>
+                              </div>
+                            </Table.Td>
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <a
+                                href="/learners"
+                                className="font-medium whitespace-nowrap"
+                              >
+                                {learner?.first_name} {learner?.last_name}
+                              </a>
+                              {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                             {learner.adm_no}
                           </div> */}
-                        </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {learner.adm_no}
-                        </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {learner.nemis_no}
-                        </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <div
-                            className={clsx([
-                              "flex items-center justify-center",
-                              { "text-success": learner?.status },
-                              { "text-danger": !learner?.status },
-                            ])}
-                          >
-                            <Lucide
-                              icon="CheckSquare"
-                              className="w-4 h-4 mr-2"
-                            />
-                            {learner?.status ? "Active" : "Inactive"}
-                          </div>
-                        </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                          <div className="flex items-center justify-center">
-                            <span className="font-medium whitespace-nowrap">
-                              {new Date(learner?.createdAt).toLocaleString(
-                                "en-US",
-                                {
-                                  timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                                  year: "numeric",
-                                  month: "2-digit",
-                                  day: "2-digit",
-                                  // hour: "2-digit",
-                                  // minute: "2-digit",
-                                }
-                              )}
-                            </span>
-                          </div>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
+                            </Table.Td>
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              {learner.adm_no}
+                            </Table.Td>
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              {learner.nemis_no}
+                            </Table.Td>
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <div
+                                className={clsx([
+                                  "flex items-center justify-center",
+                                  { "text-success": learner?.status },
+                                  { "text-danger": !learner?.status },
+                                ])}
+                              >
+                                <Lucide
+                                  icon="CheckSquare"
+                                  className="w-4 h-4 mr-2"
+                                />
+                                {learner?.status ? "Active" : "Inactive"}
+                              </div>
+                            </Table.Td>
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                              <div className="flex items-center justify-center">
+                                <span className="font-medium whitespace-nowrap">
+                                  {new Date(learner?.createdAt).toLocaleString(
+                                    "en-US",
+                                    {
+                                      timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                                      year: "numeric",
+                                      month: "2-digit",
+                                      day: "2-digit",
+                                      // hour: "2-digit",
+                                      // minute: "2-digit",
+                                    }
+                                  )}
+                                </span>
+                              </div>
+                            </Table.Td>
+                          </Table.Tr>
+                        ))}
+                      </Table.Tbody>
+                    </Table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-span-12 2xl:col-span-3 box">
+        <div className="col-span-12 2xl:col-span-3 ">
           <div className=" 2xl:border-l">
             <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
               <div className="col-span-12 mt-3 mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
@@ -374,7 +419,7 @@ function Main() {
                   </a>
                 </div>
               </div>
-              <div className="col-span-12 mr-5">
+              {/* <div className="col-span-12 mr-5">
                 <div className="mt-5 before:hidden xl:before:block intro-y">
                   <div className="p-5 box">
                     <div className="mt-3">
@@ -404,7 +449,7 @@ function Main() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
