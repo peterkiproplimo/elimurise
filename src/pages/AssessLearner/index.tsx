@@ -9,7 +9,7 @@ import {
   FormSwitch,
   FormTextarea,
 } from "../../base-components/Form";
-import { Loader } from "lucide-react";
+import { CheckSquare, Loader } from "lucide-react";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -28,7 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
-import ProgressBar from './ProgressBar';
+import ProgressBar from "./ProgressBar";
 
 interface TableRow {
   no: number;
@@ -225,19 +225,22 @@ function Main() {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
   };
 
-  const fetchIndicator =async()=>{
-    const response = await ApiService.getSingleSubstrand(stream,selectedSubStrand);
+  const fetchIndicator = async () => {
+    const response = await ApiService.getSingleSubstrand(
+      stream,
+      selectedSubStrand
+    );
     setSubstrand(response.data);
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     fetchIndicator();
-  },[selectedSubStrand])
+  }, [selectedSubStrand]);
 
   const handleSubStrandChange = async (data: any) => {
     console.log(data);
     setSelectedSubStrand(data);
     // setSubstrand(data);
-    
+
     // console.log(selectedSubStrand);
     // console.log(substrand);
 
@@ -350,11 +353,11 @@ function Main() {
     { no: 1, strandName: "Example Strand" },
   ]);
   // useEffect(() => {
-    
+
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [indicator]);
 
-  const generateAssessment = async (indicator:any) => {
+  const generateAssessment = async (indicator: any) => {
     const data = { indicator, term: selectedTerm, stream };
     console.log(data);
     isLoading(true);
@@ -397,7 +400,17 @@ function Main() {
     generateAssessment(indicator);
     fetchIndicator();
   };
-
+  const publishIndicator = async () => {
+    let res = await ApiService.toggleIdicatorStatus(indicator, {
+      term: selectedTerm,
+      stream: stream,
+    });
+    // console.log(assessment);
+    // console.log(res);
+    // generateAssessment(indicator);
+    // fetchIndicator();
+  };
+  publishIndicator;
   const getDescriptionColor = (score: any) => {
     switch (score) {
       case 4:
@@ -452,7 +465,7 @@ function Main() {
                 </a>{" "}
                 Assessment Score Entry Form
               </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
+              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg ">
                 <div className="meta-row flex items-center mb-2">
                   <label className="font-semibold text-md text-gray-700">
                     Grade:
@@ -495,6 +508,18 @@ function Main() {
                         .flat()
                         .find((ind: any) => ind._id === indicator).description
                     }
+                  </span>
+                </div>
+                <div className="meta-row flex items-center mb-2">
+                  <label className="font-semibold text-md text-gray-700">
+                    Publish:
+                  </label>
+                  <span className="text-md text-gray-800 ml-2">
+                    <FormInput
+                      type="checkbox"
+                      className="w-5 h-5"
+                      onChange={(e: any) => publishIndicator()}
+                    />
                   </span>
                 </div>
                 <div className="meta-row flex items-center col-span-2 mt-0.5">
@@ -706,7 +731,7 @@ function Main() {
               Learners Details
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-2">
                 <FormLabel
                   htmlFor="modal-form-6"
                   onClick={(e) => {
@@ -787,13 +812,11 @@ function Main() {
                 )}
               </div>
             </div>
-           
+
             <h2 className="mr-auto text-base font-medium border-b p-2 mt-3">
               Assessment Details
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
-            
-
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
                 <FormSelect
@@ -896,74 +919,82 @@ function Main() {
                 )}
               </div>
             </div>
-           
           </div>
-           
-            <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-            <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Indicators</FormLabel>
-                <Table className="border-spacing-y-[10px] border-separate -mt-2">
-        <Table.Thead className="bg-secondary">
-          <Table.Tr>
-            <Table.Th  className="border-b-0 whitespace-nowrap">#</Table.Th>
-            <Table.Th  className="border-b-0 whitespace-nowrap">Description</Table.Th>
-            <Table.Th  className="border-b-0 whitespace-nowrap text-left">Assesement Progress</Table.Th>
-            <Table.Th  className="border-b-0 whitespace-nowrap">Actions</Table.Th>
-            <Table.Th></Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {substrand?.indicators?.map((indicator:any, key:any) => (
-            <tr key={key} onClick={() => setIndicator(indicator[0]?._id)}>
-              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                           
-                <input
-                  type="radio"
-                  checked={setIndicator === indicator[0]?._id}
-                  readOnly
-                />
-              </Table.Td>
-              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-              {indicator[0]?.description}</Table.Td>
-              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-  <ProgressBar 
-    total={indicator[0]?.total_learners || 0} 
-    assessed={indicator[0]?.total_learners_assessed || 0} 
-  />
-</Table.Td>
-              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
-              <Button
 
-                onClick={() => {
-                  setIndicator(indicator[0]?._id);
-                  generateAssessment(indicator[0]?._id);
-              
-                }}
-                variant="primary"
-                type="button"
-                className="w-24 text-white"
-              >
-                Assess
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Button>
-              </Table.Td>
-            </tr>
-          ))}
-        </Table.Tbody>
-      </Table>
-                {errors.theme && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
-                  </div>
-                )}
-              </div>
+          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+            <div className="col-span-12 sm:col-span-4">
+              <FormLabel htmlFor="modal-form-6">Indicators</FormLabel>
+              <Table className="border-spacing-y-[10px] border-separate -mt-2">
+                <Table.Thead className="bg-secondary">
+                  <Table.Tr>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      #
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Description
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap text-left">
+                      Assesement Progress
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      Actions
+                    </Table.Th>
+                    <Table.Th></Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {substrand?.indicators?.map((indicator: any, key: any) => (
+                    <tr
+                      key={key}
+                      onClick={() => setIndicator(indicator[0]?._id)}
+                    >
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <input
+                          type="radio"
+                          checked={setIndicator === indicator[0]?._id}
+                          readOnly
+                        />
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        {indicator[0]?.description}
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <ProgressBar
+                          total={indicator[0]?.total_learners || 0}
+                          assessed={indicator[0]?.total_learners_assessed || 0}
+                        />
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
+                        <Button
+                          onClick={() => {
+                            setIndicator(indicator[0]?._id);
+                            generateAssessment(indicator[0]?._id);
+                          }}
+                          variant="primary"
+                          type="button"
+                          className="w-24 text-white"
+                        >
+                          Assess
+                          {loading && (
+                            <LoadingIcon
+                              icon="spinning-circles"
+                              color="white"
+                              className="w-4 h-4 ml-2"
+                            />
+                          )}
+                        </Button>
+                      </Table.Td>
+                    </tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+              {errors.theme && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.theme.message === "string" &&
+                    errors.theme.message}
+                </div>
+              )}
+            </div>
             {/* <div className="px-5 pb-8 text-right">
               <Button
                 onClick={() => generateAssessment()}
@@ -975,9 +1006,7 @@ function Main() {
               </Button>
             </div> */}
           </div>
-         
 
- 
           <Dialog
             staticBackdrop
             size="lg"

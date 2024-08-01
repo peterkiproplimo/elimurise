@@ -82,6 +82,10 @@ function Main() {
   const [stream, setStream] = useState("");
   const [learner, setLearner] = useState("");
   const [enrollments, setEnrollments] = useState([]);
+  const [approveTranfer, setApproveTranfer] = useState<any>({
+    id: "",
+    phone: "",
+  });
   const navigate = useNavigate();
 
   const handleNavigate = (learnerId: any) => {
@@ -90,6 +94,7 @@ function Main() {
       state: { data: learnerId },
     });
   };
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -111,20 +116,18 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (event: any) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
+  const approveTranferSubmit = async () => {
+    if (!loading) {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createTransfers(data);
+        await ApiService.payForTransfer(approveTranfer);
         await getTransfers();
         await reset({ name: "" });
         isLoading(false);
-        setDialog(false);
+        setApproveDialog(false);
         setSuccess(true);
-        setMessage("Transfer Initated successfully.");
+        setMessage("Transfer Approved successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -705,17 +708,33 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
-                              <a
-                                className="flex items-center mr-3 text-primary"
-                                href="#"
-                                onClick={() => setApproveDialog(true)}
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Approve
-                              </a>
+                              {tranfer?.paymentStatus === "Pending" ? (
+                                <a
+                                  className="flex items-center mr-3 text-primary"
+                                  href="#"
+                                  onClick={() => {
+                                    setApproveTranfer({
+                                      id: tranfer?._id,
+                                    });
+                                    setApproveDialog(true);
+                                  }}
+                                >
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Approve
+                                </a>
+                              ) : (
+                                <>
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Paid
+                                </>
+                              )}
+
                               {/* <a
                             className="flex items-center text-primary"
                             onClick={(e: any) => handleNavigate(learner)}
@@ -870,58 +889,30 @@ function Main() {
                   Incoming Tranfer
                 </div>
                 <div className="mt-2 text-slate-500">
-                  Do you really approve this record?
+                  Pay for the transfer to complete
                 </div>
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Grade<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <TomSelect
-                    name="grade"
-                    value={grade}
-                    onChange={(event: any) => {
-                      reset({ ...getValues(), grade: event });
-                      console.log("test");
-                      setGrade(event);
-                    }}
-                    disabled={isEditMode}
-                  >
-                    <option>Select Grade</option>
-                    {grades.map((grade: any, key) => (
-                      <option key={key} value={grade._id}>
-                        {grade.name}
-                      </option>
-                    ))}
-                  </TomSelect>
-                  {errors.grade && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.grade.message === "string" &&
-                        errors.grade.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-12 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Select Stream<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormSelect
-                    {...register("stream")}
-                    name="stream"
-                    onChange={(e) =>
-                      setStrandFilter({
-                        ...strandFilter,
-                        stream: e.target.value,
-                      })
-                    }
-                  >
-                    <option>Select Stream</option>
-
-                    {streams.map((stream: any, key) => (
-                      <option key={key} value={stream._id}>
-                        {stream.name}
-                      </option>
-                    ))}
-                  </FormSelect>
+                  <FormLabel htmlFor="modal-form-6">Phone number</FormLabel>
+                  <div className="flex">
+                    <FormInput
+                      type="text"
+                      name="name"
+                      className="w-20 border"
+                      value={"254"}
+                      onChange={(e: any) =>
+                        setApproveTranfer({
+                          ...approveTranfer,
+                          phone: e.target.value,
+                        })
+                      }
+                      disabled={true}
+                    />{" "}
+                    <FormInput
+                      type="text"
+                      name="name"
+                      placeholder="71424...."
+                    />
+                  </div>
                 </div>
               </div>
               <div className="px-5 pb-8 text-center">
@@ -936,7 +927,7 @@ function Main() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => deleteRecord()}
+                  onClick={() => approveTranferSubmit()}
                   variant="success"
                   type="button"
                   className="w-24 ml-4 text-white"

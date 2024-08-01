@@ -74,7 +74,7 @@ function Main() {
     grade: "na",
     stream: "na",
   });
-  const [approveTranfer, setApproveTranfer] = useState({
+  const [approveTranfer, setApproveTranfer] = useState<any>({
     transferCode: "na",
     stream: "na",
   });
@@ -125,7 +125,7 @@ function Main() {
         await getTransfers();
         await reset({ name: "" });
         isLoading(false);
-        setDialog(false);
+        setApproveDialog(false);
         setSuccess(true);
         setMessage("Transfer Approved successfully.");
         notify.current?.showToast();
@@ -330,10 +330,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5 intro-y box validate-form">
             {message && !success && (
               <Alert
                 variant="soft-danger"
