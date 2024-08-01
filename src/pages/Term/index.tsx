@@ -631,7 +631,7 @@ function Main() {
         />
         <div className="ml-4 mr-4">
           <div className="font-medium">
-            {success ? "Term deleted Successfully" : "Failed to delete term"}
+            {success ? "Term added Successfully" : "Failed to add term"}
           </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
