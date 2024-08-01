@@ -245,7 +245,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>Surname</FormLabel>
+                <FormLabel>Surname <span className="text-danger ml-0.5">*</span></FormLabel>
                 <FormInput
                   {...register("surname")}
                   type="text"
@@ -752,8 +752,8 @@ function Main() {
         <div className="ml-4 mr-4">
           <div className="font-medium">
             {success
-              ? "Parent deleted Successfully"
-              : "Failed to delete record"}
+              ? "Success"
+              : "Failed "}
           </div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>

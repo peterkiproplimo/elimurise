@@ -332,7 +332,7 @@ function Main() {
           <br />
           <form
             className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
+            // onSubmit={onSubmit}
           >
             {message && !success && (
               <Alert
