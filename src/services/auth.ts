@@ -297,9 +297,9 @@ export const getEnrolments = async (data: any, filter: any) => {
     throw handler(e);
   }
 };
-export const getEnrolmentsByStream = async (data: any, filter: any) => {
+export const getTransfersRequests = async (data: any, filter: any) => {
   try {
-    let res = await axios.get(c.ENROLLMENT + "/" + data.stream, {
+    let res = await axios.get(c.ACADEMIC, {
       params: data,
     });
     return res.data;
@@ -307,7 +307,58 @@ export const getEnrolmentsByStream = async (data: any, filter: any) => {
     throw handler(e);
   }
 };
-
+export const getTransfers = async (data: any) => {
+  try {
+    let res = await axios.get(c.TRANSFERS, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getTransfersIncomming = async (data: any) => {
+  try {
+    let res = await axios.get(c.TRANSFERS + "/incomming", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const createTransfers = async (data: any) => {
+  try {
+    let res = await axios.post(c.TRANSFERS, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const updateTransfers = async (data: any) => {
+  try {
+    let res = await axios.post(c.TRANSFERS + "/approve", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const payForTransfer = async (data: any) => {
+  try {
+    let res = await axios.post(c.TRANSFERS + "/pay", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const toggleIdicatorStatus = async (id: any, data: any) => {
+  try {
+    let res = await axios.put(c.ASSESSMENT + "/publish/" + id, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export async function createLearner(data: FieldValues) {
   try {
     if (data._id) {
@@ -630,9 +681,9 @@ export async function getSubstrandByStrand(data: any, strandId: any) {
     throw handler(e);
   }
 }
-export async function getSingleSubstrand(stream: any,substrand: any) {
+export async function getSingleSubstrand(stream: any, substrand: any) {
   try {
-    let res = await axios.get(c.SUBSTRAND + "/"+ stream+ "/" + substrand);
+    let res = await axios.get(c.SUBSTRAND + "/" + stream + "/" + substrand);
     console.log(res);
     return res.data;
   } catch (e) {

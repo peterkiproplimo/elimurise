@@ -9,7 +9,6 @@ import Enrollment from "../pages/Enrolments";
 import Reports from "../pages/Reports";
 // import SimcardBooking from "../pages/SimcardBooking";
 
-
 //beginning of auth
 import Subscription from "../pages/Subscription";
 import Login from "../pages/Auth/login";
@@ -51,6 +50,7 @@ import GradeUserAssignment from "../pages/GradeUserAssignment";
 import Grading from "../pages/Grading";
 import GradingLeaningAreas from "../pages/GradingLeaningAreas";
 import Transfers from "../pages/Learners/transfers";
+import IncommingTransfers from "../pages/Learners/transfers_incoming";
 
 //nn
 function Router() {
@@ -153,6 +153,10 @@ function Router() {
         {
           path: "transfers",
           element: <Transfers />,
+        },
+        {
+          path: "incoming-transfers",
+          element: <IncommingTransfers />,
         },
         {
           path: "settings",

@@ -21,6 +21,7 @@ export const TESTS = `${BASE_URL}portal/tests`;
 export const SUMMATIVE = `${BASE_URL}portal/summative`;
 export const GRADING = `${BASE_URL}portal/grading-system`;
 export const SCHOOLDASHBOARD = `${BASE_URL}portal/dashboard`;
+export const TRANSFERS = `${BASE_URL}portal/transfer-requests`;
 
 export const PARENTS = `${BASE_URL}portal/parents`;
 export const TEACHERS = `${BASE_URL}portal/teachers`;

@@ -40,6 +40,9 @@ function Main() {
   // const [confirmDelete, setConfirmDelete] = useState(false);
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
+  const approveButtonRef = useRef(null);
+  const [approveDialog, setApproveDialog] = useState(false);
+
   const [grades, setGrades] = useState([]);
   const [grade, setGrade] = useState("");
   const [learners, setLearners] = useState([]);
@@ -155,7 +158,7 @@ function Main() {
 
   const getTransfers = async () => {
     isLoading(true);
-    const response = await ApiService.getTransfers({
+    const response = await ApiService.getTransfersIncomming({
       page: page,
       limit: limit,
     });
@@ -549,17 +552,6 @@ function Main() {
           )}
 
           <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-            <Button
-              variant="primary"
-              className="mr-2 shadow-md"
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                setDialog(true);
-              }}
-            >
-              Initiate Transfer
-            </Button>
-
             <div className="hidden mx-auto md:block text-slate-500">
               Showing{" "}
               {pagination.current_page +
@@ -615,7 +607,7 @@ function Main() {
                           Transfer Code
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          New School
+                          Old School
                         </Table.Th>
 
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
@@ -689,10 +681,10 @@ function Main() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               <div className="ml-0">
-                                {tranfer?.newSchool?.name}
+                                {tranfer?.oldSchool?.name}
 
                                 <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                  {tranfer?.newSchool?.schoolCode}
+                                  {tranfer?.oldSchool?.schoolCode}
                                 </div>
                               </div>
                             </span>
@@ -715,15 +707,15 @@ function Main() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
                               <a
-                                className="flex items-center mr-3 text-success"
+                                className="flex items-center mr-3 text-primary"
                                 href="#"
-                                onClick={() => editRecord(tranfer)}
+                                onClick={() => setApproveDialog(true)}
                               >
                                 <Lucide
                                   icon="CheckSquare"
                                   className="w-4 h-4 mr-1"
                                 />{" "}
-                                Edit
+                                Approve
                               </a>
                               {/* <a
                             className="flex items-center text-primary"
@@ -858,6 +850,100 @@ function Main() {
                   ref={deleteButtonRef}
                 >
                   Delete
+                </Button>
+              </div>
+            </Dialog.Panel>
+          </Dialog>
+          <Dialog
+            open={approveDialog}
+            onClose={() => {
+              setApproveDialog(false);
+            }}
+            initialFocus={approveButtonRef}
+          >
+            <Dialog.Panel>
+              <div className="p-5 text-center">
+                {/* <Lucide
+                  icon="XCircle"
+                  className="w-16 h-16 mx-auto mt-3 text-danger"
+                /> */}
+                <div className="mt-5 text-center font-medium">
+                  Incoming Tranfer
+                </div>
+                <div className="mt-2 text-slate-500">
+                  Do you really approve this record?
+                </div>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel htmlFor="modal-form-6">
+                    Grade<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <TomSelect
+                    name="grade"
+                    value={grade}
+                    onChange={(event: any) => {
+                      reset({ ...getValues(), grade: event });
+                      console.log("test");
+                      setGrade(event);
+                    }}
+                    disabled={isEditMode}
+                  >
+                    <option>Select Grade</option>
+                    {grades.map((grade: any, key) => (
+                      <option key={key} value={grade._id}>
+                        {grade.name}
+                      </option>
+                    ))}
+                  </TomSelect>
+                  {errors.grade && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.grade.message === "string" &&
+                        errors.grade.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-12 sm:col-span-4">
+                  <FormLabel htmlFor="modal-form-6">
+                    Select Stream<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormSelect
+                    {...register("stream")}
+                    name="stream"
+                    onChange={(e) =>
+                      setStrandFilter({
+                        ...strandFilter,
+                        stream: e.target.value,
+                      })
+                    }
+                  >
+                    <option>Select Stream</option>
+
+                    {streams.map((stream: any, key) => (
+                      <option key={key} value={stream._id}>
+                        {stream.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                </div>
+              </div>
+              <div className="px-5 pb-8 text-center">
+                <Button
+                  variant="outline-secondary"
+                  type="button"
+                  onClick={() => {
+                    setApproveDialog(false);
+                  }}
+                  className="w-24 mr-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => deleteRecord()}
+                  variant="success"
+                  type="button"
+                  className="w-24 ml-4 text-white"
+                  ref={approveButtonRef}
+                >
+                  Approve
                 </Button>
               </div>
             </Dialog.Panel>

@@ -47,6 +47,11 @@ const initialState: SideMenuState = {
           pathname: "/transfers",
           title: "Transfers",
         },
+        {
+          icon: "User",
+          pathname: "/incoming-transfers",
+          title: "Incomming Transfers",
+        },
       ],
     },
 
@@ -160,16 +165,16 @@ const initialState: SideMenuState = {
       pathname: "/profile",
       title: "Profile",
     },
-    {
-      icon: "User",
-      pathname: "/users",
-      title: "Users",
-    },
-    {
-      icon: "File",
-      pathname: "/roles",
-      title: "Roles",
-    },
+    // {
+    //   icon: "User",
+    //   pathname: "/users",
+    //   title: "Users",
+    // },
+    // {
+    //   icon: "File",
+    //   pathname: "/roles",
+    //   title: "Roles",
+    // },
   ],
 };
 const teacherState: SideMenuState = {
