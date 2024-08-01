@@ -330,10 +330,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5 intro-y box validate-form">
             {message && !success && (
               <Alert
                 variant="soft-danger"

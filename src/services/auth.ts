@@ -317,6 +317,16 @@ export const getTransfers = async (data: any) => {
     throw handler(e);
   }
 };
+export const getEnrolmentsByStream = async (data: any, filter: any) => {
+  try {
+    let res = await axios.get(c.ENROLLMENT + "/" + data.stream, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const getTransfersIncomming = async (data: any) => {
   try {
     let res = await axios.get(c.TRANSFERS + "/incomming", {
