@@ -125,7 +125,7 @@ function Main() {
         await getTransfers();
         await reset({ name: "" });
         isLoading(false);
-        setDialog(false);
+        setApproveDialog(false);
         setSuccess(true);
         setMessage("Transfer Approved successfully.");
         notify.current?.showToast();
