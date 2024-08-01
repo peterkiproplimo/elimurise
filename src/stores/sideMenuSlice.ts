@@ -275,16 +275,16 @@ export const { setMenuState } = sideMenuSlice.actions;
 export const selectSideMenu = (state: RootState) => {
   let activeSection = localStorage.getItem("type");
   // const activeSection = "billing";
-  if (activeSection === "billing") {
-    return state.sideMenu.menu.filter((item) => {
-      if (typeof item === "object" && "pathname" in item) {
-        return item.pathname === "/billing";
-      }
-      return false;
-    });
-  } else {
-    return state.sideMenu.menu;
-  }
+  // if (activeSection === "billing") {
+  //   return state.sideMenu.menu.filter((item) => {
+  //     if (typeof item === "object" && "pathname" in item) {
+  //       return item.pathname === "/billing";
+  //     }
+  //     return false;
+  //   });
+  // } else {
+  return state.sideMenu.menu;
+  // }
 };
 
 export default sideMenuSlice.reducer;
