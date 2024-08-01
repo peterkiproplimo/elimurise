@@ -74,6 +74,10 @@ function Main() {
     grade: "na",
     stream: "na",
   });
+  const [approveTranfer, setApproveTranfer] = useState({
+    transferCode: "na",
+    stream: "na",
+  });
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -112,20 +116,18 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (event: any) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
+  const approveTranferSubmit = async () => {
+    if (!loading) {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.createTransfers(data);
+        await ApiService.updateTransfers(approveTranfer);
         await getTransfers();
         await reset({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Transfer Initated successfully.");
+        setMessage("Transfer Approved successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -217,7 +219,7 @@ function Main() {
     setGroup(record.groups);
     setPhoto(record.learner.photo);
 
-    console.log(record);
+    // console.log(record);
     setDialog(true);
   };
   const handleGuardianIdNoBlur = async () => {
@@ -709,7 +711,12 @@ function Main() {
                               <a
                                 className="flex items-center mr-3 text-primary"
                                 href="#"
-                                onClick={() => setApproveDialog(true)}
+                                onClick={() => {
+                                  setApproveTranfer({
+                                    transferCode: tranfer.transferCode,
+                                  });
+                                  setApproveDialog(true);
+                                }}
                               >
                                 <Lucide
                                   icon="CheckSquare"
@@ -909,8 +916,8 @@ function Main() {
                     {...register("stream")}
                     name="stream"
                     onChange={(e) =>
-                      setStrandFilter({
-                        ...strandFilter,
+                      setApproveTranfer({
+                        ...approveTranfer,
                         stream: e.target.value,
                       })
                     }
@@ -937,7 +944,7 @@ function Main() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => deleteRecord()}
+                  onClick={() => approveTranferSubmit()}
                   variant="success"
                   type="button"
                   className="w-24 ml-4 text-white"
