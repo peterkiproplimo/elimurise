@@ -51,6 +51,7 @@ import Grading from "../pages/Grading";
 import GradingLeaningAreas from "../pages/GradingLeaningAreas";
 import Transfers from "../pages/Learners/transfers";
 import IncommingTransfers from "../pages/Learners/transfers_incoming";
+import LearnersTransfers from "../pages/LearnerPortal/incoming_transfers";
 
 //nn
 function Router() {
@@ -219,6 +220,10 @@ function Router() {
         {
           path: "/v1/report",
           element: <LearnerProfiles />,
+        },
+        {
+          path: "/v1/transfers",
+          element: <LearnersTransfers />,
         },
       ],
     },
