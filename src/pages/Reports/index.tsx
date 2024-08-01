@@ -170,7 +170,7 @@ function Main() {
     }
   };
   const getEnrollments = async () => {
-    const enrollments = await ApiService.geTransfers({ stream: stream }, {});
+    const enrollments = await ApiService.getEnrolments({ stream: stream }, {});
     setEnrollments(enrollments?.data);
   };
   const getTextColor = (score: any) => {
