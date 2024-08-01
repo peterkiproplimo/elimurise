@@ -338,7 +338,6 @@ export const getTransfersIncomming = async (data: any) => {
   }
 };
 
-
 export const getLearnersTransfers = async (data: any) => {
   try {
     let res = await axios.get(c.LEARNERTRANSFERS + "/v1/tranfer-requests/", {
@@ -444,7 +443,6 @@ export async function parentDashboard() {
     throw handler(e);
   }
 }
-
 
 export async function deleteParents(userId: any) {
   try {
