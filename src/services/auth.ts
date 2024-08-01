@@ -340,7 +340,7 @@ export const getTransfersIncomming = async (data: any) => {
 
 export const getLearnersTransfers = async (data: any) => {
   try {
-    let res = await axios.get(c.LEARNERTRANSFERS + "/v1/tranfer-requests/", {
+    let res = await axios.get(c.PARENT + "/v1/tranfer-requests/", {
       params: data,
     });
     return res.data;
@@ -366,7 +366,7 @@ export const updateTransfers = async (data: any) => {
 };
 export const payForTransfer = async (data: any) => {
   try {
-    let res = await axios.post(c.TRANSFERS + "/pay", data);
+    let res = await axios.post(c.PARENT + "/v1/pay", data);
     return res.data;
   } catch (e) {
     throw handler(e);
