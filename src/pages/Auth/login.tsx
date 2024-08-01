@@ -65,10 +65,8 @@ const Login = () => {
 
           if (res.user.teacher) {
             localStorage.setItem("type", "teacher");
-          } else if (res.user.school) {
+          } else {
             localStorage.setItem("type", "school");
-          } else if (res.user.school == undefined) {
-            localStorage.setItem("type", "billing");
           }
 
           await auth.signIn({ ...res.user, token });
