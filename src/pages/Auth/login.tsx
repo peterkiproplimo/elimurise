@@ -63,7 +63,7 @@ const Login = () => {
           console.log(res.user);
           let token = res.token;
 
-          if (res.user.teacher && res.user.school) {
+          if (res.user.teacher) {
             localStorage.setItem("type", "teacher");
           } else if (res.user.school) {
             localStorage.setItem("type", "school");
