@@ -609,7 +609,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y flex flex-wrap">
+          <h2 className="mt-1 text-lg font-medium intro-y flex flex-wrap">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();

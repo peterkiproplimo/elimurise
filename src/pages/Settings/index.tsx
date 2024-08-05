@@ -103,7 +103,7 @@ function Settings() {
 
   return (
     <>
-      <h2 className="mt-10 text-lg font-medium intro-y">Settings</h2>
+      <h2 className="mt-1 text-lg font-medium intro-y">Settings</h2>
       <div className="grid grid-cols-12 gap-6 mt-2">
         <div className="col-span-12">
           <div className="intro-y box p-3">

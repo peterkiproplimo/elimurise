@@ -475,7 +475,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">
+          <h2 className="mt-1 text-lg font-medium intro-y">
             Learners Enrollment
           </h2>
           <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">

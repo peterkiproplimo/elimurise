@@ -1,6 +1,6 @@
 html {
   scroll-behavior: smooth;
-  background-color: theme("colors.primary");
+  /* background-color: theme("colors.primary"); */
   @media screen(md) {
     background-color: theme("colors.slate.200");
   }
