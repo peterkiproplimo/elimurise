@@ -114,7 +114,7 @@ function Main() {
         const data = await getValues();
         const response = await ApiService.createTeachers(data);
         if (!data._id) {
-          navigate("/teacher/" + response._id);
+          navigate("/home/teacher/" + response._id);
         }
         await getTeachers();
         await reset();
@@ -590,7 +590,7 @@ function Main() {
                             <a
                               href="#"
                               onClick={() =>
-                                navigate("/teacher/" + teacher?._id)
+                                navigate("/home/teacher/" + teacher?._id)
                               }
                               className="font-medium whitespace-nowrap"
                             >

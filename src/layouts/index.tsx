@@ -108,7 +108,7 @@ function Layout() {
                     >
                       <ul
                         className={clsx([
-                          "bg-white/[0.04] rounded-xl relative dark:bg-transparent",
+                          "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
                           "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
                           { block: menu.activeDropdown },
                           { hidden: !menu.activeDropdown },
@@ -140,7 +140,7 @@ function Layout() {
                               >
                                 <ul
                                   className={clsx([
-                                    "bg-white/[0.04] rounded-xl relative dark:bg-transparent",
+                                    "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
                                     "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
                                     { block: subMenu.activeDropdown },
                                     { hidden: !subMenu.activeDropdown },
@@ -234,7 +234,7 @@ function Menu(props: {
       className={clsx([
         "h-[50px] flex items-center pl-5 mb-1 relative rounded-xl dark:text-slate-300",
         {
-          "text-slate-600   dark:text-slate-400":
+          "text-white-600   dark:text-slate-400":
             !props.menu.active && props.level != "first",
           "bg-slate-100 dark:bg-transparent":
             props.menu.active && props.level == "first",

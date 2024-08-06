@@ -227,7 +227,7 @@ function Main() {
 
   const openStrand = (strand: any) => {
     console.log(learning_area);
-    navigate("/Strands", {
+    navigate("/home/Strands", {
       replace: true,
       state: { data: learning_area },
     });

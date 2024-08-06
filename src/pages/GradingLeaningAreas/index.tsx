@@ -345,7 +345,9 @@ function Users() {
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium intro-y">Users Assignment</h2>
+      <h2 className="mt-1 text-lg font-medium intro-y">
+        Grading Learning Areas
+      </h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           <Button
@@ -356,7 +358,7 @@ function Users() {
               setDialog(true);
             }}
           >
-            New Grading
+            New Learning Area
           </Button>
           <Menu>
             <Menu.Button as={Button} className="px-2 !box">
@@ -380,11 +382,11 @@ function Users() {
           </Menu>
           <div className="hidden mx-auto md:block text-slate-500">
             Showing{" "}
-            {pagination.current_page +
+            {/* {pagination.current_page +
               " to " +
               pagination.total_pages +
               " of " +
-              pagination.total}{" "}
+              pagination.total}{" "} */}
             entries
           </div>
           <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
@@ -438,11 +440,11 @@ function Users() {
                   </Table.Th>
 
                   <Table.Th className="border-b-0 whitespace-nowrap">
-                    Name
+                    Learning Areas
                   </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
+                  {/* <Table.Th className="border-b-0 whitespace-nowrap">
                     Grade
-                  </Table.Th>
+                  </Table.Th> */}
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     Actions
                   </Table.Th>
@@ -461,39 +463,22 @@ function Users() {
                     >
                       {learningArea?.learning_area.name}{" "}
                     </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {learningArea?.grade?.name}
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                    </Table.Td> */}
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                       <div className="flex items-center justify-center">
-                        <Menu>
-                          <Menu.Button as={Button} className="px-2 !box">
-                            <span className="flex items-center justify-center w-5 h-5">
-                              <Lucide icon="MoreVertical" className="w-4 h-4" />
-                            </span>
-                          </Menu.Button>
-                          <Menu.Items className="w-40">
-                            {/* <Menu.Item onClick={() => editRecord(assignment)}>
-                            <Lucide icon="Edit" className="w-4 h-4 mr-2" /> Edit
-                          </Menu.Item> */}
-                            <Menu.Item
-                              onClick={() => {
-                                // active(user)
-                                setUser(learningArea);
-                                setConfirmDelete(true);
-                              }}
-                              className="text-danger"
-                            >
-                              <Lucide icon="Trash" className="w-4 h-4 mr-2 " />
-                              {"Remove"}
-                            </Menu.Item>
-
-                            {/* <Menu.Item>
-                            <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
-                            Email Credentials
-                          </Menu.Item> */}
-                          </Menu.Items>
-                        </Menu>
+                        <a
+                          className="flex items-center mr-3 text-success"
+                          href="#"
+                          onClick={() => {
+                            setUser(learningArea);
+                            setConfirmDelete(true);
+                          }}
+                        >
+                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                          Remove
+                        </a>
                       </div>
                     </Table.Td>
                   </Table.Tr>

@@ -6,9 +6,9 @@ export const BASE_URL = import.meta.env.VITE_API_ENDPOINT;
 export const IMG_URL = `${BASE_URL}portal`;
 //API Endpoints
 //devops has do it again
-export const LOGIN = `${BASE_URL}portal/auth/login`;
+export const LOGIN = `${BASE_URL}portal/auth//login`;
 export const PARENT = `${BASE_URL}learner`;
-export const REGISTER = `${BASE_URL}portal/auth/register`;
+export const REGISTER = `${BASE_URL}portal/auth/auth/register`;
 export const AUTH = `${BASE_URL}portal/auth`;
 export const SUBSCRIPTION = `${BASE_URL}portal/subscription`;
 export const ACADEMIC = `${BASE_URL}portal/academic-year`;

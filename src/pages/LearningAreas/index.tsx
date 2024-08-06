@@ -124,7 +124,7 @@ function Main() {
   };
 
   const openStrand = (learningArea: any) => {
-    navigate("/Strands", {
+    navigate("/home/Strands", {
       replace: true,
       state: { data: learningArea },
     });
