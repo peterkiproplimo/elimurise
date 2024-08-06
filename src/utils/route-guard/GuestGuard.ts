@@ -56,7 +56,7 @@ interface GuestGuardProps {
  * @param {GuestGuardProps} props - Component props
  * @returns {React.ReactNode}
  */
-const GuestGuard: React.FC<GuestGuardProps> = ({ children }) => {
+const GuestGuard = ({ children }: any) => {
   const { authData } = useAuth();
   const navigate = useNavigate();
 
