@@ -263,7 +263,7 @@ function Main() {
               </div>
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
-                  Last Name<span className="text-danger ml-0.5">*</span>
+                  Middle Name<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
                 <FormInput
                   {...register("lastname")}

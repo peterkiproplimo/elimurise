@@ -22,6 +22,11 @@ const initialState: SideMenuState = {
       title: "Dashboard",
       pathname: "/",
     },
+    {
+      icon: "Users",
+      title: "Parents",
+      pathname: "/parents",
+    },
 
     {
       icon: "Users",
@@ -83,19 +88,13 @@ const initialState: SideMenuState = {
 
     {
       icon: "Users",
-      title: "Parents",
-      pathname: "/parents",
-    },
-
-    {
-      icon: "Users",
       title: "Reports",
       subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/indicatorReport",
-          title: "By Indicators",
-        },
+        // {
+        //   icon: "Activity",
+        //   pathname: "/indicatorReport",
+        //   title: "By Indicators",
+        // },
         {
           icon: "User",
           pathname: "/reports",

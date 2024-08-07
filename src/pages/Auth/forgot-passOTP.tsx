@@ -147,7 +147,7 @@ const ForgotPasswordOTP = () => {
                     ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
                     : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
                 }
-                placeholder="otp"
+                placeholder="OTP"
               />
               {errors.otp && (
                 <div className="mt-2 text-danger">

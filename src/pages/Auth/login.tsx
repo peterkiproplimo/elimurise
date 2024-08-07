@@ -261,16 +261,16 @@ const Login = () => {
                   type="text"
                   name="code"
                   className={
-                    errors.email
+                    errors.code
                       ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
                       : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                   }
                   placeholder="School Code"
                 />
-                {errors.email && (
+                {errors.code && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.email.message === "string" &&
-                      errors.email.message}
+                    {typeof errors.code.message === "string" &&
+                      errors.code.message}
                   </div>
                 )}
               </div>
