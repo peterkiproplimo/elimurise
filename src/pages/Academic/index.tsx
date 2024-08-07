@@ -207,7 +207,7 @@ function Level() {
                   </div>
                 )}
               </div>
-            
+
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Start Date <span className="text-danger ml-0.5">*</span>
@@ -271,20 +271,26 @@ function Level() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Academic</h2>
-          {message&&success&&(
-            <Alert variant="soft-success" className="flex items-center mb-2" dismissTimeout={3000} role="alert">
-             <svg
-              className="flex-shrink-0 inline w-4 h-4 me-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+          <h2 className="mt-1 text-lg font-medium intro-y">Academic</h2>
+          {message && success && (
+            <Alert
+              variant="soft-success"
+              className="flex items-center mb-2"
+              dismissTimeout={3000}
+              role="alert"
             >
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            {message}
-        </Alert>)}
+              <svg
+                className="flex-shrink-0 inline w-4 h-4 me-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+              </svg>
+              {message}
+            </Alert>
+          )}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
@@ -598,9 +604,7 @@ function Level() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">
-            {success ? "Success" : "Error"}
-          </div>
+          <div className="font-medium">{success ? "Success" : "Error"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>

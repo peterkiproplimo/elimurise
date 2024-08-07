@@ -15,7 +15,7 @@ const AuthGuard = ({ children }: any) => {
 
   useEffect(() => {
     if (!authData) {
-      navigate("/login", { replace: true });
+      navigate("/auth/login", { replace: true });
     }
   }, [authData, navigate]);
 

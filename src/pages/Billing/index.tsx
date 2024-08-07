@@ -148,7 +148,7 @@ function Main() {
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
             >
-              <Link to="/register">
+              <Link to="/auth/register">
                 Get A Quote
                 {loading && (
                   <LoadingIcon
@@ -165,7 +165,7 @@ function Main() {
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
             >
-              <Link to="/register">
+              <Link to="/auth/register">
                 View Demo
                 {loading && (
                   <LoadingIcon

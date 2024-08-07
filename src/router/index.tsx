@@ -57,7 +57,7 @@ import LearnersTransfers from "../pages/LearnerPortal/incoming_transfers";
 function Router() {
   const routes = [
     {
-      path: "/",
+      path: "/home",
       element: (
         <AuthGuard>
           <Layout />
@@ -65,11 +65,11 @@ function Router() {
       ),
       children: [
         {
-          path: "/",
+          path: "/home/",
           element: <Dashboard />,
         },
         {
-          path: "/billing",
+          path: "billing",
           element: <Billing />,
         },
         {
@@ -90,23 +90,23 @@ function Router() {
           element: <AssessLearner />,
         },
         {
-          path: "/enrollment",
+          path: "enrollment",
           element: <LearnerEnrollment />,
         },
         {
-          path: "/IndicatorReport",
+          path: "IndicatorReport",
           element: <IndicatorReports />,
         },
         {
-          path: "/tests",
+          path: "tests",
           element: <SummativeTests />,
         },
         {
-          path: "/assess",
+          path: "assess",
           element: <SummativeAssess />,
         },
         {
-          path: "/summativereports",
+          path: "summativereports",
           element: <SummativeReport />,
         },
 
@@ -202,34 +202,34 @@ function Router() {
         },
 
         {
-          path: "/learner/:id",
+          path: "learner/:id",
           element: <LearnerDetails />,
         },
         {
-          path: "/v1/profile",
+          path: "v1/profile",
           element: <LearnerProfile />,
         },
         {
-          path: "/v1/assessments",
+          path: "v1/assessments",
           element: <Strands />,
         },
         {
-          path: "/v1",
+          path: "v1",
           element: <LearnerDashboard />,
         },
         {
-          path: "/v1/report",
+          path: "v1/report",
           element: <LearnerProfiles />,
         },
         {
-          path: "/v1/transfers",
+          path: "v1/transfers",
           element: <LearnersTransfers />,
         },
       ],
     },
 
     {
-      path: "/",
+      path: "/auth",
       element: (
         <GuestGuard>
           <Auth />
@@ -237,33 +237,33 @@ function Router() {
       ),
       children: [
         {
-          path: "/login",
+          path: "login",
           element: <Login />,
         },
 
         {
-          path: "/forgot-password",
+          path: "forgot-password",
           element: <ForgotPassword />,
         },
         {
-          path: "/v1/forgot-password",
+          path: "v1/forgot-password",
           element: <ParentForgotPassword />,
         },
         {
-          path: "/register",
+          path: "register",
           element: <Register />,
         },
 
         {
-          path: "/otp",
+          path: "otp",
           element: <ForgotPasswordOTP />,
         },
         {
-          path: "/v1/otp",
+          path: "v1/otp",
           element: <ForgotPasswordOTPParent />,
         },
         {
-          path: "/CreateNewPassword",
+          path: "CreateNewPassword",
           element: <CreateNewPassword />,
         },
       ],
@@ -277,7 +277,7 @@ function Router() {
       element: <ErrorPage />,
     },
     {
-      path: "/home",
+      path: "/",
       element: <Home />,
     },
   ];

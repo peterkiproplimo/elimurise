@@ -227,7 +227,7 @@ function Main() {
 
   const openStrand = (strand: any) => {
     console.log(learning_area);
-    navigate("/Strands", {
+    navigate("/home/Strands", {
       replace: true,
       state: { data: learning_area },
     });
@@ -609,7 +609,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y flex flex-wrap">
+          <h2 className="mt-1 text-lg font-medium intro-y flex flex-wrap">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();

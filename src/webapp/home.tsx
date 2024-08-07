@@ -48,7 +48,7 @@ const Home = () => {
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
               >
                 <Link
-                  to="/register"
+                  to="/auth/register"
                   className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
                 >
                   Register
@@ -64,7 +64,7 @@ const Home = () => {
             </div>
             <div className="  mt-5 text-center xl:mt-8 xl:text-left">
               <Button className=" btn-2 w-full px-4 py-3 align-top xl:w-32 xl:mr-3 border-blue-800">
-                <Link to="/login">
+                <Link to="/auth/login">
                   Sign in
                   {loading && (
                     <LoadingIcon

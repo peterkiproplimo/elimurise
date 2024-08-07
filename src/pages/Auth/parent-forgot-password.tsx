@@ -53,7 +53,7 @@ const ForgotPassword = () => {
         setMessage(res.message);
         notify.current?.showToast();
         setTimeout(() => {
-          navigate("/v1/otp", {
+          navigate("/v1/auth/otp", {
             state: {
               email: data.email,
               code: data.code,
@@ -161,7 +161,7 @@ const ForgotPassword = () => {
                 />
               )}
             </Button>
-            <Link to="/login">
+            <Link to="/auth/login">
               <Button
                 variant="outline-primary"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"

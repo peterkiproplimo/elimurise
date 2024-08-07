@@ -20,7 +20,7 @@ const initialState: SideMenuState = {
     {
       icon: "Home",
       title: "Dashboard",
-      pathname: "/",
+      pathname: "/home/",
     },
     {
       icon: "Users",
@@ -34,27 +34,27 @@ const initialState: SideMenuState = {
       subMenu: [
         // {
         //   icon: "User",
-        //   pathname: "/learners",
+        //   pathname: "/home/learners",
         //   title: "Learners Details",
         // },
         {
           icon: "Users",
-          pathname: "/learners",
+          pathname: "/home/learners",
           title: "Learners Details",
         },
         {
           icon: "Users",
-          pathname: "/enrollment",
+          pathname: "/home/enrollment",
           title: "Promotion",
         },
         {
           icon: "User",
-          pathname: "/transfers",
+          pathname: "/home/transfers",
           title: "Transfers",
         },
         {
           icon: "User",
-          pathname: "/incoming-transfers",
+          pathname: "/home/incoming-transfers",
           title: "Incomming Transfers",
         },
       ],
@@ -63,149 +63,35 @@ const initialState: SideMenuState = {
     // {
     //   icon: "Users",
     //   title: "Parents",
-    //   pathname: "/parents",
+    //   pathname: "/home/parents",
     // },
     {
       icon: "Users",
       title: "Teachers",
-      pathname: "/teachers",
+      pathname: "/home/teachers",
     },
     {
       icon: "FileCheck",
-      pathname: "/learning_areas",
+      pathname: "/home/learning_areas",
       title: "Learning Areas",
     },
     {
       icon: "Activity",
-      pathname: "/assessment",
+      pathname: "/home/assessment",
       title: " Assessment",
     },
     {
       icon: "FileText",
-      pathname: "/billing",
+      pathname: "/home/billing",
       title: "Billing",
     },
 
     {
       icon: "Users",
-      title: "Reports",
-      subMenu: [
-        // {
-        //   icon: "Activity",
-        //   pathname: "/indicatorReport",
-        //   title: "By Indicators",
-        // },
-        {
-          icon: "User",
-          pathname: "/reports",
-          title: "Formative Report",
-        },
-      ],
-    },
-    {
-      icon: "Users",
-      title: "Summative",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/grading",
-          title: "Grading",
-        },
-        {
-          icon: "Activity",
-          pathname: "/tests",
-          title: "Summative Tests ",
-        },
-        {
-          icon: "User",
-          pathname: "/assess",
-          title: "Summative Assess",
-        },
-        {
-          icon: "User",
-          pathname: "/summativereports",
-          title: "Summative Report",
-        },
-      ],
-    },
-    {
-      icon: "Users",
-      title: "Settings",
-      subMenu: [
-        {
-          icon: "FileText",
-          pathname: "/academic",
-          title: "Year",
-        },
-        {
-          icon: "BarChart",
-          pathname: "/term",
-          title: "Term",
-        },
-        {
-          icon: "Activity",
-          pathname: "/stream",
-          title: "Stream",
-        },
-        {
-          icon: "Activity",
-          pathname: "/settings",
-          title: "System Settings",
-        },
-        // {
-        //   icon: "User",
-        //   pathname: "/enrollment",
-        //   title: "Learner Enrollment",
-        // },
-      ],
-    },
-    {
-      icon: "FileText",
-      pathname: "/profile",
-      title: "Profile",
-    },
-    // {
-    //   icon: "User",
-    //   pathname: "/users",
-    //   title: "Users",
-    // },
-    // {
-    //   icon: "File",
-    //   pathname: "/roles",
-    //   title: "Roles",
-    // },
-  ],
-};
-const teacherState: SideMenuState = {
-  menu: [
-    {
-      icon: "Home",
-      title: "Dashboard",
-      pathname: "/",
+      title: "Parents",
+      pathname: "/home/parents",
     },
 
-    {
-      icon: "Users",
-      pathname: "/learners",
-      title: "Learners",
-    },
-
-    // {
-    //   icon: "Users",
-    //   title: "Parents",
-    //   pathname: "/parents",
-    // },
-
-    {
-      icon: "FileCheck",
-      pathname: "/learning_areas",
-      title: "Learning Areas",
-    },
-    {
-      icon: "Activity",
-      pathname: "/assessment",
-      title: " Assessment",
-    },
     {
       icon: "Users",
       title: "Reports",
@@ -217,14 +103,134 @@ const teacherState: SideMenuState = {
         },
         {
           icon: "User",
-          pathname: "/reports",
+          pathname: "/home/reports",
+          title: "Formative Report",
+        },
+      ],
+    },
+    {
+      icon: "Users",
+      title: "Summative",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/home/grading",
+          title: "Grading",
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/tests",
+          title: "Summative Tests ",
+        },
+        {
+          icon: "User",
+          pathname: "/home/assess",
+          title: "Summative Assess",
+        },
+        {
+          icon: "User",
+          pathname: "/home/summativereports",
+          title: "Summative Report",
+        },
+      ],
+    },
+    {
+      icon: "Users",
+      title: "Settings",
+      subMenu: [
+        {
+          icon: "FileText",
+          pathname: "/home/academic",
+          title: "Year",
+        },
+        {
+          icon: "BarChart",
+          pathname: "/home/term",
+          title: "Term",
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/stream",
+          title: "Stream",
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/settings",
+          title: "System Settings",
+        },
+        // {
+        //   icon: "User",
+        //   pathname: "/home/enrollment",
+        //   title: "Learner Enrollment",
+        // },
+      ],
+    },
+    {
+      icon: "FileText",
+      pathname: "/home/profile",
+      title: "Profile",
+    },
+    // {
+    //   icon: "User",
+    //   pathname: "/home/users",
+    //   title: "Users",
+    // },
+    // {
+    //   icon: "File",
+    //   pathname: "/home/roles",
+    //   title: "Roles",
+    // },
+  ],
+};
+const teacherState: SideMenuState = {
+  menu: [
+    {
+      icon: "Home",
+      title: "Dashboard",
+      pathname: "/home/",
+    },
+
+    {
+      icon: "Users",
+      pathname: "/home/learners",
+      title: "Learners",
+    },
+
+    // {
+    //   icon: "Users",
+    //   title: "Parents",
+    //   pathname: "/home/parents",
+    // },
+
+    {
+      icon: "FileCheck",
+      pathname: "/home/learning_areas",
+      title: "Learning Areas",
+    },
+    {
+      icon: "Activity",
+      pathname: "/home/assessment",
+      title: " Assessment",
+    },
+    {
+      icon: "Users",
+      title: "Reports",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/home/indicatorReport",
+          title: "By Indicators",
+        },
+        {
+          icon: "User",
+          pathname: "/home/reports",
           title: "By Learner",
         },
       ],
     },
     {
       icon: "FileText",
-      pathname: "/profile",
+      pathname: "/home/profile",
       title: "Profile",
     },
   ],
@@ -234,23 +240,23 @@ const parentState: SideMenuState = {
     {
       icon: "Home",
       title: "Dashboard",
-      pathname: "/v1",
+      pathname: "/home/v1",
     },
 
     {
       icon: "FileText",
       title: "Reports",
-      pathname: "/v1/report",
+      pathname: "/home/v1/report",
     },
     {
       icon: "Users",
       title: "Profile",
-      pathname: "/v1/profile",
+      pathname: "/home/v1/profile",
     },
     {
       icon: "FileText",
       title: "Transfers",
-      pathname: "/v1/transfers",
+      pathname: "/home/v1/transfers",
     },
   ],
 };
@@ -274,16 +280,16 @@ export const { setMenuState } = sideMenuSlice.actions;
 export const selectSideMenu = (state: RootState) => {
   let activeSection = localStorage.getItem("type");
   // const activeSection = "billing";
-  if (activeSection === "billing") {
-    return state.sideMenu.menu.filter((item) => {
-      if (typeof item === "object" && "pathname" in item) {
-        return item.pathname === "/billing";
-      }
-      return false;
-    });
-  } else {
-    return state.sideMenu.menu;
-  }
+  // if (activeSection === "billing") {
+  //   return state.sideMenu.menu.filter((item) => {
+  //     if (typeof item === "object" && "pathname" in item) {
+  //       return item.pathname === "/home/billing";
+  //     }
+  //     return false;
+  //   });
+  // } else {
+  return state.sideMenu.menu;
+  // }
 };
 
 export default sideMenuSlice.reducer;

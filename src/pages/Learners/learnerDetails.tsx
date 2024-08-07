@@ -49,7 +49,6 @@ function Main() {
   console.log(learnerId);
   const initialState = {
     learner: learnerId?.learner?._id || "na",
-    
   };
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -99,7 +98,6 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
 
@@ -117,7 +115,7 @@ function Main() {
       getStudents();
       isLoading(false);
     }, 2000);
-  }, [ strandFilter,search, page, limit]);
+  }, [strandFilter, search, page, limit]);
 
   const getStudents = async () => {
     isLoading(true);
@@ -187,7 +185,6 @@ function Main() {
     setDialog(false);
   };
 
- 
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
@@ -202,93 +199,83 @@ function Main() {
   };
   return (
     <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Learners</h2>
-           
-            
-                  <Table className="border-spacing-y-[3px] border-separate mt-2">
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian First Name
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Last Name
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Surname
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian ID No
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Email
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Phone
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
-                          Actions
-                        </Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                      {learners.map((learner: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
-                          
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_first_name}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_last_name}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_surname}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_id_no}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_email}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian_phone}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            <div className="flex items-center justify-center">
-                              <a
-                                className="flex items-center mr-3 text-success"
-                                href="#"
-                                onClick={() => editRecord(learner)}
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Edit
-                              </a>
-                           
-                        
-                            </div>
-                          </Table.Td>
-                        </Table.Tr>
-                      ))}
-                    </Table.Tbody>
-                  </Table>
+      <h2 className="mt-1 text-lg font-medium intro-y">Learners</h2>
 
-                 
-                </>
+      <Table className="border-spacing-y-[3px] border-separate mt-2">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th className="border-b-0 whitespace-nowrap w-20">
+              Guardian First Name
+            </Table.Th>
+            <Table.Th className="border-b-0 whitespace-nowrap w-20">
+              Guardian Last Name
+            </Table.Th>
+            <Table.Th className="border-b-0 whitespace-nowrap w-20">
+              Guardian Surname
+            </Table.Th>
+            <Table.Th className="border-b-0 whitespace-nowrap w-20">
+              Guardian ID No
+            </Table.Th>
+            <Table.Th className="border-b-0 whitespace-nowrap w-20">
+              Guardian Email
+            </Table.Th>
+            <Table.Th className="border-b-0 whitespace-nowrap w-20">
+              Guardian Phone
+            </Table.Th>
+            <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
+              Actions
+            </Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {learners.map((learner: any, key) => (
+            <Table.Tr key={key} className="intro-x">
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                <span className="font-medium whitespace-nowrap">
+                  {learner?.learner?.guardian_first_name}
+                </span>
+              </Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                <span className="font-medium whitespace-nowrap">
+                  {learner?.learner?.guardian_last_name}
+                </span>
+              </Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                <span className="font-medium whitespace-nowrap">
+                  {learner?.learner?.guardian_surname}
+                </span>
+              </Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                <span className="font-medium whitespace-nowrap">
+                  {learner?.learner?.guardian_id_no}
+                </span>
+              </Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                <span className="font-medium whitespace-nowrap">
+                  {learner?.learner?.guardian_email}
+                </span>
+              </Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                <span className="font-medium whitespace-nowrap">
+                  {learner?.learner?.guardian_phone}
+                </span>
+              </Table.Td>
+              <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                <div className="flex items-center justify-center">
+                  <a
+                    className="flex items-center mr-3 text-success"
+                    href="#"
+                    onClick={() => editRecord(learner)}
+                  >
+                    <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" /> Edit
+                  </a>
+                </div>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </>
   );
 }
 

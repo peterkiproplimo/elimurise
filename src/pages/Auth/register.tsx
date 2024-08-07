@@ -93,7 +93,7 @@ const Register = () => {
         </div>
         <h2 className="text-3xl font-bold  ">Register</h2>
         <div className="mt-2 text-center intro-x text-slate-900 xl text-xl">
-          Welcome, please register to continue.
+          register to continue.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
           <div className="mt-8 intro-x">
@@ -196,7 +196,7 @@ const Register = () => {
                   }
                   placeholder="Enter Password"
                 />
-                <div
+                {/* <div
                   className="flex items-center cursor-pointer eye-icon"
                   onClick={togglePasswordVisibility}
                 >
@@ -204,7 +204,7 @@ const Register = () => {
                     icon={showPassword ? faEyeSlash : faEye}
                     className="text-grey-800"
                   />
-                </div>
+                </div> */}
               </div>
 
               {errors.password && (
@@ -231,7 +231,7 @@ const Register = () => {
                 Remember me
               </label>
             </div>
-            <Link to="/forgot-password">Forgot Password?</Link>
+            <Link to="/auth/forgot-password">Forgot Password?</Link>
           </div> */}
           <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
             <Button
@@ -249,7 +249,7 @@ const Register = () => {
             </Button>
           </div>
           <p className="mt-2">
-            Already have an account? <Link to="/login">Login</Link>
+            Already have an account? <Link to="/auth/login">Login</Link>
           </p>
         </form>
       </div>

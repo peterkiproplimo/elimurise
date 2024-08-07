@@ -43,9 +43,12 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   return (
     <>
       <div
+        // className="bg-primary"
         className={clsx([
-          "h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt-12 md:mt-0 -mx-3 sm:-mx-8 md:-mx-0 px-3 md:border-b-0 relative md:fixed md:inset-x-0 md:top-0 sm:px-8 md:px-10 md:pt-10 md:bg-gradient-to-b md:from-slate-100 md:to-transparent dark:md:from-darkmode-700",
+          "h-[70px] md:h-[65px] z-[51] rounded-25 box m-2 box  px-4 md:border-b-0 relative   dark:md:from-darkmode-700",
           props.layout == "top-menu" && "dark:md:from-darkmode-800",
+          // "before:content-[''] before:absolute before:h-[65px] before:inset-0 before:top-0   before:mt-2  before:hidden before:md:block before:dark:bg-darkmode-900/30",
+          // "after:content-[''] after:absolute after:inset-0 after:h-[70px] after:bg-primary  before:shadow-[0px_3px_20px_#0000000b] rounded-25 after:hidden after:md:block after:dark:bg-darkmode-600",
           "before:content-[''] before:absolute before:h-[65px] before:inset-0 before:top-0 before:mx-7 before:bg-primary/30 before:mt-2 before:rounded-xl before:hidden before:md:block before:dark:bg-darkmode-600/30",
           "after:content-[''] after:absolute after:inset-0 after:h-[70px] after:mx-3 after:bg-primary after:mt-3 after:rounded-xl  after:hidden after:md:block after:dark:bg-darkmode-600",
         ])}
@@ -55,43 +58,43 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           <Link
             to="/"
             className={clsx([
-              "-intro-x hidden md:flex",
+              "-intro-x hidden md:fle text-primary",
               props.layout == "side-menu" && "xl:w-[120px]",
               props.layout == "simple-menu" && "xl:w-auto",
               props.layout == "top-menu" && "w-auto",
             ])}
           >
-            <img
+            {/* <img
               alt="ACS"
               className="xl:w-25 md:w-10 xl:w-auto"
               src={logoUrl}
-            />
+            /> */}
           </Link>
           {/* END: Logo */}
           {/* BEGIN: Breadcrumb */}
           <Breadcrumb
             light
             className={clsx([
-              "h-[45px] md:ml-10 md:border-l border-white/[0.08] dark:border-white/[0.08] mr-auto -intro-x",
+              "text-primary h-[45px] md:ml-10 md:border-l border-white/[0.08] dark:border-white/[0.08] mr-auto -intro-x",
               props.layout != "top-menu" && "md:pl-6",
               props.layout == "top-menu" && "md:pl-10",
             ])}
           >
-            {/* <Breadcrumb.Link to="/">Application</Breadcrumb.Link>
+            {/* {/* <Breadcrumb.Link to="/">Application</Breadcrumb.Link> */}
             <Breadcrumb.Link to="/" active={true}>
               Dashboard
-            </Breadcrumb.Link> */}
+            </Breadcrumb.Link>
           </Breadcrumb>
           {/* END: Breadcrumb */}
           {/* BEGIN: Search */}
           <div className="relative mr-3 intro-x sm:mr-6">
             <div className="relative hidden sm:block">
-              {/* <TomSelect
+              <TomSelect
                 options={{
                   placeholder: "Search",
                 }}
                 className="border-transparent w-56 shadow-none rounded-full bg-slate-200 pr-8 transition-[width] duration-300 ease-in-out focus:border-transparent focus:w-72 dark:bg-darkmode-400"
-              ></TomSelect> */}
+              ></TomSelect>
             </div>
           </div>
           {/* END: Search */}
@@ -99,13 +102,13 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           <Popover className="mr-4 intro-x sm:mr-6">
             <Popover.Button
               className="
-              relative text-white/70 outline-none block
+              relative text-primary/70 outline-none block
               before:content-[''] before:w-[8px] before:h-[8px] before:rounded-full before:absolute before:top-[-2px] before:right-0 before:bg-danger
             "
             >
-              {/* <Lucide icon="Bell" className="w-5 h-5 dark:text-slate-500" /> */}
+              <Lucide icon="Bell" className="w-5 h-5 dark:text-slate-500" />
             </Popover.Button>
-            {/* <Popover.Panel className="w-[280px] sm:w-[350px] p-5 mt-2">
+            <Popover.Panel className="w-[280px] sm:w-[350px] p-5 mt-2">
               <div className="mb-5 font-medium">Notifications</div>
               {_.take(fakerData, 5).map((faker, fakerKey) => (
                 <div
@@ -138,7 +141,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
                   </div>
                 </div>
               ))}
-            </Popover.Panel> */}
+            </Popover.Panel>
           </Popover>
           {/* END: Notifications */}
           {/* BEGIN: Account Menu */}

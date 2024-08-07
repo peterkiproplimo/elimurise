@@ -73,7 +73,7 @@ const AuthProvider = (props: ContainerProps) => {
     await localStorage.removeItem("user");
     await localStorage.removeItem("active");
     await localStorage.removeItem("leaner");
-    // window.location.href = "/login";
+    // window.location.href = "/auth/login";
   };
   if (loading) {
     // You may want to render a loading spinner or some indicator here

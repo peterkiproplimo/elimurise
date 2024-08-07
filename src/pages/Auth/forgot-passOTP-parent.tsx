@@ -60,7 +60,7 @@ const ForgotPasswordOTP = () => {
         setMessage("password reset successiful");
         notify.current?.showToast();
 
-        navigate("/login", {
+        navigate("/auth/login", {
           replace: true,
           state: { email },
         });
@@ -214,7 +214,7 @@ const ForgotPasswordOTP = () => {
                 />
               )}
             </Button>
-            <Link to="/login">
+            <Link to="/auth/login">
               <Button
                 variant="outline-primary"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
@@ -227,7 +227,7 @@ const ForgotPasswordOTP = () => {
                 Verify
               </Button>
             </Link>
-            <Link to="/login">
+            <Link to="/auth/login">
               <Button variant="outline-primary" className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3">
                 Resend Code
               </Button>

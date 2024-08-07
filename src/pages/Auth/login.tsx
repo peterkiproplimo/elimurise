@@ -63,12 +63,10 @@ const Login = () => {
           console.log(res.user);
           let token = res.token;
 
-          if (res.user.teacher && res.user.school) {
+          if (res.user.teacher) {
             localStorage.setItem("type", "teacher");
-          } else if (res.user.school) {
+          } else {
             localStorage.setItem("type", "school");
-          } else if (res.user.school == undefined) {
-            localStorage.setItem("type", "billing");
           }
 
           await auth.signIn({ ...res.user, token });
@@ -105,11 +103,11 @@ const Login = () => {
     <>
       <div className="form-container">
         <div className="icon flex justify-center items-center  ">
-          <img alt="ACS" className="xl:w-30 md:w-10 xl:w-auto" src={logo} />
+          <img alt="ACS" className="xl:w-20 md:w-8 xl:w-auto" src={logo} />
         </div>
         <h2 className="text-3xl font-bold  ">Login</h2>
         <div className="mt-2 text-center intro-x text-slate-900 xl text-xl">
-          Welcome, please log in to continue.
+          Please log in to continue.
         </div>
         <div>
           <FormLabel className="mr-5">
@@ -173,7 +171,7 @@ const Login = () => {
                     }
                     placeholder="Enter Password"
                   />
-                  <div
+                  {/* <div
                     className="flex items-center cursor-pointer eye-icon"
                     onClick={togglePasswordVisibility}
                   >
@@ -181,7 +179,7 @@ const Login = () => {
                       icon={showPassword ? faEyeSlash : faEye}
                       className="text-grey-800"
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 {errors.password && (
@@ -208,7 +206,7 @@ const Login = () => {
                   Remember me
                 </label>
               </div>
-              <Link to="/forgot-password">Forgot Password?</Link>
+              <Link to="/auth/forgot-password">Forgot Password?</Link>
             </div>
             <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
               <Button
@@ -226,7 +224,7 @@ const Login = () => {
               </Button>
             </div>
             <p className="mt-2">
-              Dont have an account? <Link to="/register">Sign Up</Link>
+              Dont have an account? <Link to="/auth/register">Sign Up</Link>
             </p>
           </form>
         ) : (
@@ -324,7 +322,7 @@ const Login = () => {
                   Remember me
                 </label>
               </div>
-              <Link to="/v1/forgot-password">Forgot Password?</Link>
+              <Link to="/v1/auth/forgot-password">Forgot Password?</Link>
             </div>
             <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
               <Button

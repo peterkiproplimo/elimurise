@@ -518,7 +518,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-10 text-lg font-medium intro-y">Transfers</h2>
+          <h2 className="mt-1 text-lg font-medium intro-y">Transfers</h2>
           {message && success && (
             <Alert
               variant="soft-success"

@@ -168,14 +168,14 @@ function Main() {
   };
 
   const openSubStrand = (strand: any) => {
-    navigate("/substrand", {
+    navigate("/home/substrand", {
       replace: true,
       state: { data: strand, learningArea: learningArea },
     });
   };
 
   const openLearningArea = (strand: any) => {
-    navigate("/learning_areas", {
+    navigate("/home/learning_areas", {
       replace: true,
       state: { data: strand },
     });

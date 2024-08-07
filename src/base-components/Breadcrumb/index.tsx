@@ -78,7 +78,7 @@ Breadcrumb.Link = ({
         !breadcrumb.light &&
           active &&
           "text-slate-800 cursor-text dark:text-slate-400",
-        breadcrumb.light && active && "text-white/70",
+        breadcrumb.light && active && "text-primary/70",
       ])}
       {...attr}
     >
