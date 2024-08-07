@@ -50,7 +50,6 @@ const ForgotPasswordOTP = () => {
       isLoading(true);
       try {
         const data = await getValues();
-        console.log("Good morning great men of God");
         console.log(data);
         let res = await ApiService.verifyEmailOTP(data);
         isLoading(false);
@@ -58,7 +57,7 @@ const ForgotPasswordOTP = () => {
         setMessage("password reset successiful");
         notify.current?.showToast();
 
-        navigate("/auth/login", {
+        navigate("/login", {
           replace: true,
           state: { email },
         });
@@ -83,14 +82,21 @@ const ForgotPasswordOTP = () => {
           Enter the 4-digit OTP sent to your email.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
-          <div className="mt-8 intro-x">
+          <div className="mt-8 intro-x">  
             <div className="input-form">
               <FormInput
-                {...register("email")}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address"
+                  }
+                })}
                 id="validation-form-2"
                 type="hidden"
                 name="email"
                 value={email}
+               
                 className={
                   errors.email
                     ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
@@ -192,7 +198,7 @@ const ForgotPasswordOTP = () => {
                 />
               )}
             </Button>
-            <Link to="/auth/login">
+            <Link to="/login">
               <Button
                 variant="outline-primary"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
@@ -205,7 +211,7 @@ const ForgotPasswordOTP = () => {
                 Verify
               </Button>
             </Link>
-            <Link to="/auth/login">
+            <Link to="/login">
               <Button variant="outline-primary" className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3">
                 Resend Code
               </Button>
@@ -234,7 +240,7 @@ const ForgotPasswordOTP = () => {
           >
             {success ? "Success" : "Failed"}
           </div>
-          <div className="mt-1 text-slate-500">{message}</div>
+          {/* <div className="mt-1 text-slate-500">{message}</div> */}
         </div>
       </Notification>
     </>

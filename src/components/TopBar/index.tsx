@@ -49,8 +49,6 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           props.layout == "top-menu" && "dark:md:from-darkmode-800",
           // "before:content-[''] before:absolute before:h-[65px] before:inset-0 before:top-0   before:mt-2  before:hidden before:md:block before:dark:bg-darkmode-900/30",
           // "after:content-[''] after:absolute after:inset-0 after:h-[70px] after:bg-primary  before:shadow-[0px_3px_20px_#0000000b] rounded-25 after:hidden after:md:block after:dark:bg-darkmode-600",
-          "before:content-[''] before:absolute before:h-[65px] before:inset-0 before:top-0 before:mx-7 before:bg-primary/30 before:mt-2 before:rounded-xl before:hidden before:md:block before:dark:bg-darkmode-600/30",
-          "after:content-[''] after:absolute after:inset-0 after:h-[70px] after:mx-3 after:bg-primary after:mt-3 after:rounded-xl  after:hidden after:md:block after:dark:bg-darkmode-600",
         ])}
       >
         <div className="flex items-center h-full">

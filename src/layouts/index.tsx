@@ -65,9 +65,9 @@ function Layout() {
         {/* BEGIN: Side Menu */}
         {/* w-full fixed bg-primary/90 z-[60] border-b border-white/[0.08] -mt-5 -mx-3 sm:-mx-8 mb-6 dark:bg-darkmode-800/90 md:hidden */}
         {/* <nav className="w-[105px] bg-primary/90 xl:w-[260px] px-5 pb-16 overflow-x-hidden z-50 pt-10 -mt-4 hidden md:block"> */}
-        <nav className="w-[105px] h-full  bg-primary/90 xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md m-2 hidden md:block fixed bg-primary/90 z-[60] border-b border-white/[0.08]    mb-6 dark:bg-darkmode-800/90 ">
+        <nav className="w-[105px] h-full  bg-primary xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md m-2 hidden md:block fixed bg-primary z-[60] border-b border-white/[0.08]    mb-6 dark:bg-darkmode-800/90 ">
           <div className="mb-2">
-            <img alt="ACS" className=" w-[130px]" src={logoUrl} />
+            <img alt="ACS" className=" w-[130px] ml-5" src={logoUrl} />
           </div>
           <hr className="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent"></hr>
           <ul className="pt-10">
