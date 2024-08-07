@@ -923,38 +923,31 @@ function Main() {
 
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <div className="col-span-12 sm:col-span-4">
-              <FormLabel htmlFor="modal-form-6">Indicators</FormLabel>
+            <h2 className="mr-auto text-base font-medium border-b p-2">
+             Indicator
+            </h2>
               <Table className="border-spacing-y-[10px] border-separate -mt-2">
-                <Table.Thead className="bg-secondary">
+                <Table.Thead className="bg-dark/10">
                   <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      #
-                    </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Description
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap text-left">
-                      Assesement Progress
+                      Assessment Progress
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       Actions
                     </Table.Th>
-                    <Table.Th></Table.Th>
+                   
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {substrand?.indicators?.map((indicator: any, key: any) => (
-                    <tr
+                    <Table.Tr
                       key={key}
                       onClick={() => setIndicator(indicator[0]?._id)}
                     >
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <input
-                          type="radio"
-                          checked={setIndicator === indicator[0]?._id}
-                          readOnly
-                        />
-                      </Table.Td>
+                    
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         {indicator[0]?.description}
                       </Table.Td>
@@ -984,7 +977,7 @@ function Main() {
                           )}
                         </Button>
                       </Table.Td>
-                    </tr>
+                    </Table.Tr>
                   ))}
                 </Table.Tbody>
               </Table>

@@ -36,6 +36,7 @@ const Register = () => {
   const {
     register,
     trigger,
+    watch,
     getValues,
     formState: { errors },
   } = useForm({
@@ -66,7 +67,7 @@ const Register = () => {
         await auth.signIn({ ...res.user, token });
 
         setSuccess(true);
-        setMessage("Authenticated successfully");
+        setMessage("Registered successfully");
         notify.current?.showToast();
         // navigate("/");
       } catch (error) {
@@ -135,14 +136,20 @@ const Register = () => {
               {errors.name && (
                 <div className="mt-2 text-danger">
                   {typeof errors.name.message === "string" &&
-                    errors.name.message}
+                    errors.name.message} 
                 </div>
               )}
             </div>
             <div className="input-form">
-              <label>Email</label>
+              <label>Email</label> 
               <FormInput
-                {...register("email")}
+                {...register("email",{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address"
+                  }
+                })}
                 id="validation-form-2"
                 type="email"
                 name="email"
@@ -196,7 +203,7 @@ const Register = () => {
                   }
                   placeholder="Enter Password"
                 />
-                {/* <div
+                <div
                   className="flex items-center cursor-pointer eye-icon"
                   onClick={togglePasswordVisibility}
                 >
@@ -204,7 +211,7 @@ const Register = () => {
                     icon={showPassword ? faEyeSlash : faEye}
                     className="text-grey-800"
                   />
-                </div> */}
+                </div>
               </div>
 
               {errors.password && (
@@ -214,8 +221,40 @@ const Register = () => {
                 </div>
               )}
 
-              {/* Eye Icon */}
+             
             </div>
+            <div className="flex items-center mt-4">
+        <FormInput
+          {...register("confirmPassword", {
+            required: "Confirm Password is required",
+            validate: value =>
+              value === watch('password') || "Passwords do not match"
+          })}
+          id="validation-form-4"
+          type={showPassword ? "text" : "password"}
+          name="confirmPassword"
+          className={
+            errors.confirmPassword
+              ? "block px-4 py-3 mt-4 intro-x min-w-fu ll xl:min-w-[350px] border-danger pr-10"
+              : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px]  border pr-10 bg-blue-100 border-blue-300"
+          }
+          placeholder="Confirm Password"
+           />
+           <div
+                  className="flex items-center cursor-pointer eye-icon"
+                  onClick={togglePasswordVisibility}
+                >
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    className="text-grey-800"
+                  />
+                </div>
+      </div>
+      {errors.confirmPassword && (
+        <div className="mt-2 text-danger">
+          {typeof errors.confirmPassword.message === "string" && errors.confirmPassword.message}
+        </div>
+      )}
           </div>
           {/* <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
             <div className="flex items-center mr-auto">

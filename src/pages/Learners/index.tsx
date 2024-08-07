@@ -118,6 +118,7 @@ function Main() {
     const result = await trigger();
     if (result && !loading) {
       isLoading(true);
+      setIsEditMode(false);
       try {
         const data = await getValues();
         await ApiService.createLearner(data);
@@ -236,6 +237,7 @@ function Main() {
     });
     console.log(record);
     setDialog(true);
+    
   };
   const handleGuardianIdNoBlur = async () => {
     reset({
@@ -316,6 +318,7 @@ function Main() {
                 event.preventDefault();
                 reset({ name: "" });
                 setDialog(false);
+                setIsEditMode(false);
               }}
               href="#"
             >
@@ -330,7 +333,7 @@ function Main() {
             className="mt-5 p-5 intro-y box validate-form"
             onSubmit={onSubmit}
           >
-            {message && !success && (
+            {/* {message && !success && (
               <Alert
                 variant="soft-danger"
                 className="flex items-center mb-2"
@@ -338,26 +341,7 @@ function Main() {
               >
                 <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
               </Alert>
-
-              //   <div
-              //   className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
-              //   role="alert"
-              // >
-              //   <svg
-              //     className="flex-shrink-0 inline w-4 h-4 me-3"
-              //     aria-hidden="true"
-              //     xmlns="http://www.w3.org/2000/svg"
-              //     fill="currentColor"
-              //     viewBox="0 0 20 20"
-              //   >
-              //     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              //   </svg>
-              //   <span className="sr-only">Info</span>
-              //   <div>
-              //     <span className="font-medium">Success alert!</span> {message}
-              //   </div>
-              // </div>
-            )}
+            )} */}
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -527,15 +511,24 @@ function Main() {
                     Guardian ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-                  <FormInput
-                    {...register("guardian_id_no")}
-                    type="text"
-                    name="guardian_id_no"
-                    onChange={(event) => setGuardianIdNo(event.target.value)}
-                    onBlur={handleGuardianIdNoBlur}
-                    className={errors.guardian_id_no ? "border-danger" : ""}
-                    placeholder="guardian ID number"
-                  />
+                 
+                    <FormSelect
+                  {...register("guardian_id_no")}
+                  name="guardian_id_no"
+                  value={guardianIdNo} 
+                  onChange={(event) => setGuardianIdNo(event.target.value)}
+                  onBlur={handleGuardianIdNoBlur}
+                  className={errors.guardian_id_no ? "border-danger" : ""}
+                >
+                  <option>
+                    Select Email
+                  </option>
+                  {learners.map((learner: any, key) => (
+                    <option key={key} value={learner.learner.guardian.email}>
+                      {learner?.learner?.guardian?.email}
+                    </option>
+                  ))}
+                </FormSelect>
                   <FormInput
                     {...register("guardian")}
                     type="hidden"
@@ -806,7 +799,7 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium intro-y">Learners</h2>
-          {message && success && (
+          {/* {message && success && (
             <Alert
               variant="soft-success"
               className="flex items-center mb-2"
@@ -825,17 +818,7 @@ function Main() {
               {message}
             </Alert>
 
-            //   <div
-            //   className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
-            //   role="alert"
-            // >
-
-            //   <span className="sr-only">Info</span>
-            //   <div>
-            //     <span className="font-medium">Success alert!</span> {message}
-            //   </div>
-            // </div>
-          )}
+          )} */}
 
           <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
             <Button
@@ -875,55 +858,6 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            {/* <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select School</FormLabel>
-              <FormSelect
-                {...register("learning_area")}
-                name="learning_area"
-                value={strandFilter.school}
-                onChange={(event) => handleSchoolChange(event)}
-              >
-                <option>Select School</option>
-                {schools
-                  .filter(
-                    (area: any) => area?.grade_id?._id === strandFilter.grade
-                  )
-                  .map((filteredArea: any, key) => (
-                    <option key={key} value={filteredArea._id}>
-                      {filteredArea.name}
-                    </option>
-                  ))}
-              </FormSelect>
-              {errors.learning_area && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.learning_area.message === "string" &&
-                    errors.learning_area.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-3">
-              <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-              <FormSelect
-                {...register("grade")}
-                name="grade"
-                value={strandFilter.grade}
-                onChange={(event) => handleGradeChange(event)}
-              >
-                <option>Select Grade</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
-                </div>
-              )}
-            </div> */}
-
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">

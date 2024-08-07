@@ -109,6 +109,7 @@ function Main() {
     getAcademicYear();
   }, []);
   const getParents = async () => {
+   
     const response = await ApiService.getParents({
       page: 1,
     });
@@ -167,6 +168,7 @@ function Main() {
                 event.preventDefault();
                 reset({ name: "" });
                 setDialog(false);
+                setIsEditMode(false);
               }}
               href="#"
             >
@@ -445,26 +447,19 @@ function Main() {
                           No.
                         </Table.Th>
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          First Name
+                          Name
                         </Table.Th>
-                        {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          Last Name
-                        </Table.Th>
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          Surname
-                        </Table.Th>
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          ID Number
-                        </Table.Th> */}
+          
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                           Email
                         </Table.Th>
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                          ID Number
+                        </Table.Th> 
+                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                           Phone Number
                         </Table.Th>
-                        {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Created At
-                    </Table.Th> */}
+                      
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
                           Actions
                         </Table.Th>
@@ -503,32 +498,22 @@ function Main() {
                                     " " +
                                     parent.last_name}
                                 </a>
-                                <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                                   {parent.id_no}
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </Table.Td>
-                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {parent.last_name}
-                            </span>
-                          </Table.Td>
                           <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {parent.surname}
+                              {parent.email}
                             </span>
                           </Table.Td>
                           <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {parent.id_no}
                             </span>
-                          </Table.Td> */}
-                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {parent.email}
-                            </span>
-                          </Table.Td>
+                          </Table.Td> 
                           <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {parent.phone}

@@ -218,6 +218,7 @@ function Main() {
                 event.preventDefault();
                 reset({ name: "" });
                 setDialog(false);
+                setIsEditMode(false);
               }}
               href="#"
             >
@@ -545,15 +546,10 @@ function Main() {
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
-                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      First Name
-                    </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Last Name
+                       Name
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Surname
-                    </Table.Th> */}
+                  
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Phone Number
                     </Table.Th>
@@ -597,35 +593,18 @@ function Main() {
                               {teacher.firstname && teacher.firstname}
                               {" " + teacher.surname + " " + teacher.lastname}
                             </a>
-                            <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                            {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                               {teacher.phone}
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </Table.Td>
-                      {/* <Table.Td
-                        onClick={() => navigate("/teacher/" + teacher?._id)}
-                        className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                      >
-                        <span className="font-medium whitespace-nowrap">
-                          {teacher.firstname}
-                        </span>
-                      </Table.Td>
+                  
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {teacher.lastname}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {teacher.surname}
-                        </span>
-                      </Table.Td> */}
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {teacher.phone}
                         </span>
-                      </Table.Td> */}
+                      </Table.Td> 
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {teacher.email}

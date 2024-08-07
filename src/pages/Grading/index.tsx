@@ -309,26 +309,7 @@ function Users() {
           >
             New Grading
           </Button>
-          <Menu>
-            <Menu.Button as={Button} className="px-2 !box">
-              <span className="flex items-center justify-center w-5 h-5">
-                <Lucide icon="Plus" className="w-4 h-4" />
-              </span>
-            </Menu.Button>
-            <Menu.Items className="w-40">
-              <Menu.Item>
-                <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                Excel
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                PDF
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
+       
           <div className="hidden mx-auto md:block text-slate-500">
             {/* Showing{" "}
             {pagination.current_page +
