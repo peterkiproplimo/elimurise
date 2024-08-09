@@ -491,7 +491,7 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className=" text-lg font-medium intro-y">
+            <h2 className=" text-lg font-medium intro-y"> 
               <span className="font-medium whitespace-nowrap"  dangerouslySetInnerHTML={{ __html: substrand.name }}>
                 
                  
