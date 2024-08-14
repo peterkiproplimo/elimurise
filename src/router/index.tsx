@@ -45,6 +45,7 @@ import SummativeReport from "../pages/SummativeReport";
 import User from "../pages/User";
 import Role from "../pages/roles";
 import Term from "../pages/Term";
+import Grade from "../pages/Grades"
 import Settings from "../pages/Settings";
 import GradeUserAssignment from "../pages/GradeUserAssignment";
 import Grading from "../pages/Grading";
@@ -190,6 +191,10 @@ function Router() {
         {
           path: "learners",
           element: <Learners />,
+        },
+        {
+          path: "grade",
+          element: <Grade/>,
         },
         {
           path: "learning_areas",

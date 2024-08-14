@@ -440,8 +440,9 @@ function Main() {
               ) : (
                 <>
                   {" "}
-                  <Table className="border-spacing-y-[3px] border-separate mt-2">
-                    <Table.Thead>
+                  <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
+                  <Table className="border-spacing-y-[3px] border-separate mt-2 ">
+                    <Table.Thead > 
                       <Table.Tr>
                         <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                           No.
@@ -614,6 +615,7 @@ function Main() {
                       ))}
                     </Table.Tbody>
                   </Table>
+                
                   <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                     <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
@@ -660,6 +662,7 @@ function Main() {
                           <option value={50}>50/page</option>
                           <option value={100}>100/page</option>
                         </FormSelect>
+                      </div>
                       </div>
                     </div>
                   </div>

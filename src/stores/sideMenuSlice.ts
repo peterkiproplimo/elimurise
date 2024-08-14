@@ -71,6 +71,12 @@ const initialState: SideMenuState = {
       pathname: "/home/teachers",
     },
     {
+      icon: "FileText",
+      title: "Grade",
+      pathname: "/home/grade",
+    },
+
+    {
       icon: "FileCheck",
       pathname: "/home/learning_areas",
       title: "Learning Areas",
@@ -190,11 +196,6 @@ const teacherState: SideMenuState = {
       title: "Learners",
     },
 
-    // {
-    //   icon: "Users",
-    //   title: "Parents",
-    //   pathname: "/home/parents",
-    // },
 
     {
       icon: "FileCheck",
