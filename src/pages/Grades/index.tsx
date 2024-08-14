@@ -19,7 +19,7 @@ import { formatDate } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../base-components/Alert";
 import Tippy from "../../base-components/Tippy";
-import avarter from "../../assets/images/teacher.jpeg";
+import avarter from "../../assets/images/woman.jpeg";
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -178,6 +178,13 @@ function Main() {
     setPermission([""]);
     reset(record);
     setDialog(false);
+  };
+
+  const openStrand = (learningArea: any) => {
+    navigate("/home/Strands", {
+      replace: true,
+      state: { data: learningArea },
+    });
   };
 
   return (
