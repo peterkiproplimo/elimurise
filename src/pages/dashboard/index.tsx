@@ -391,14 +391,14 @@ function Main() {
                             {teacher?.email}
                           </div>
                         </div>
-                        <div
+                        {/* <div
                           className={clsx({
                             "text-success": teacher?.status,
                             "text-danger": !teacher?.status,
                           })}
                         >
                           {teacher?.status ? "Active" : "Inactive"}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   ))}
@@ -433,14 +433,14 @@ function Main() {
                             {parent?.email}
                           </div>
                         </div>
-                        <div
+                        {/* <div
                           className={clsx({
                             "text-success": parent?.status,
                             "text-danger": !parent?.status,
                           })}
                         >
                           {parent?.status ? "Active" : "Inactive"}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   ))}
