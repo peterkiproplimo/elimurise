@@ -649,15 +649,26 @@ function Main() {
                     Guardian ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-                  <FormInput
-                    {...register("guardian2_id_no")}
-                    type="text"
-                    name="guardian2_id_no"
-                    className={errors.guardian2_id_no ? "border-danger" : ""}
-                    placeholder="Second guardian ID number"
-                    onChange={(event) => setGuardianIdNo2(event.target.value)}
-                    onBlur={handleGuardianIdNoBlur2}
-                  />
+
+                  <FormSelect
+                  {...register("guardian2_id_no")}
+                  name="guardian2_id_no"
+                  value={guardianIdNo2} 
+                  onChange={(event) => setGuardianIdNo2(event.target.value)}
+                  onBlur={handleGuardianIdNoBlur2}
+                  className={errors.guardian2_id_no ? "border-danger" : ""}
+                >
+                  <option>
+                    Select Email
+                  </option>
+                  {learners.map((learner: any, key) => (
+                    <option key={key} value={learner.learner.guardian.email}>
+                      {learner?.learner?.guardian?.email}
+                    </option>
+                  ))}
+                </FormSelect>
+                 
+                  
                   <FormInput
                     {...register("guardian2")}
                     type="hidden"

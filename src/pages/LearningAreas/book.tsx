@@ -7,15 +7,33 @@ const generateGradientColors = (name: string) => {
     hash |= 0;
   }
 
-  // Generate colors ranging from green to blue
-  const greenValue = Math.max(0, Math.min(255, (hash & 0x00ff00) >> 8));
-  const blueValue = Math.max(0, Math.min(255, hash & 0x0000ff));
+  // Blue gradient colors
+  const blueGradient = [
+      { r: 48, g: 24, b: 71 }, 
+   
+            // Blue
+    { r: 125, g: 130, b: 185 },      // Bluebonnet
+       // Ultramarine Blue
+      // { r: 200, g: 130, b: 132 },    // Medium Slate Blue
+      // Maximum Blue Purple
+  ];
 
-  const gradientStart = `rgb(34, ${greenValue}, 50)`; // Light green
-  const gradientEnd = `rgb(30, 60, ${blueValue})`; // Dark blue
+  // Normalize hash to pick a color from the gradient
+  const gradientIndex = Math.abs(hash % blueGradient.length);
+
+  const selectedColor = blueGradient[gradientIndex];
+  
+  const gradientStart = `rgb(${selectedColor.r}, ${selectedColor.g}, ${selectedColor.b})`;
+
+  // To create a gradient effect, you could use the next color in the array or loop back to the start
+  const nextIndex = (gradientIndex + 1) % blueGradient.length;
+  const nextColor = blueGradient[nextIndex];
+
+  const gradientEnd = `rgb(${nextColor.r}, ${nextColor.g}, ${nextColor.b})`;
 
   return { gradientStart, gradientEnd };
 };
+
 
 interface BookCoverProps {
   bookName: string;

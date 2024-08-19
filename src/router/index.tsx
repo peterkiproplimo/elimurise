@@ -197,7 +197,7 @@ function Router() {
           element: <Grade/>,
         },
         {
-          path: "learning_areas",
+          path: "learning_areas/:id",
           element: <LearningAreas />,
         },
 

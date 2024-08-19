@@ -122,7 +122,7 @@ function Main() {
       isLoading(false);
       setConfirmDelete(false);
       setSuccess(true);
-      setMessage(res.message);
+      setMessage("Term deleted successfully");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
