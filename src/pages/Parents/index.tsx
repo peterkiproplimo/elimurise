@@ -56,8 +56,14 @@ function Main() {
       last_name: yup.string().required("Last Name is required"),
       email: yup.string().required(" Email is required"),
       surname: yup.string().required("Surname is required"),
-      phone: yup.string().required("Phone  Number is required"),
-      id_no: yup.string().required("ID Number is required"),
+      phone: yup
+      .string()
+      .required("Phone Number is required")
+      .min(6, "Phone Number must be at least 6 characters long"),
+      id_no: yup
+      .string()
+      .required("ID Number is required")
+      .min(6, "ID Number must be at least 6 characters long"),
     })
     .required();
 
@@ -202,7 +208,7 @@ function Main() {
                   {...register("first_name")}
                   type="text"
                   name="first_name"
-                  className={errors.name ? "border-danger" : ""}
+                  className={errors.first_name ? "border-danger" : ""}
                   placeholder="first name"
                 />
                 {errors.first_name && (
@@ -212,22 +218,6 @@ function Main() {
                   </div>
                 )}
               </div>
-              {/* <div className="col-span-6 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Academic Year</FormLabel>
-                <FormSelect {...register("academicYear")} name="academicYear">
-                  {academic.map((academicYear: any, key) => (
-                    <option key={key} value={academicYear._id}>
-                      {academicYear.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div> */}
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Last Name <span className="text-danger ml-0.5">*</span>
@@ -288,7 +278,7 @@ function Main() {
                 </FormLabel>
                 <FormInput
                   {...register("email")}
-                  type="text"
+                  type="email"
                   name="email"
                   className={errors.email ? "border-danger" : ""}
                   placeholder="email"
@@ -417,14 +407,10 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
-                {/* <FormSelect className="w-56 ml-2 xl:w-auto !box">
-                  <option>Status</option>
-                  <option>Active</option>
-                  <option>Inactive</option>
-                </FormSelect> */}
+             
               </div>
 
-              {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
+            
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
@@ -436,7 +422,7 @@ function Main() {
                 <div className="flex flex-col items-center mt-10 bg-white p-8">
                   {/* <Search size={28} className="" /> */}
                   <p className="text-xl text-slate-500 ">No records found</p>
-                </div>
+                </div> 
               ) : (
                 <>
                   {" "}
@@ -474,8 +460,8 @@ function Main() {
                               {key + 1}
                             </span>
                           </Table.Td>
-                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <div className="flex items-center">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          <div className="flex items-center">
                               <div className="w-9 h-9 image-fit zoom-in">
                                 <Tippy
                                   as="img"
@@ -499,9 +485,7 @@ function Main() {
                                     " " +
                                     parent.last_name}
                                 </a>
-                                {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                  {parent.id_no}
-                                </div> */}
+                            
                               </div>
                             </div>
                           </Table.Td>
@@ -521,27 +505,6 @@ function Main() {
                             </span>
                           </Table.Td>
 
-                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {term?.academicYear?.name}
-                        </span>
-                      </Table.Td> */}
-
-                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(term.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
                               <a
