@@ -99,14 +99,9 @@ const initialState: SideMenuState = {
     },
 
     {
-      
-       
-      
-          icon: "User",
-          pathname: "/home/reports",
-          title: "Formative Report",
-      
-      
+      icon: "User",
+      pathname: "/home/reports",
+      title: "Formative Report",
     },
     {
       icon: "Users",
@@ -196,7 +191,6 @@ const teacherState: SideMenuState = {
       title: "Learners",
     },
 
-
     {
       icon: "FileCheck",
       pathname: "/home/learning_areas",
@@ -235,23 +229,23 @@ const parentState: SideMenuState = {
     {
       icon: "Home",
       title: "Dashboard",
-      pathname: "/home/v1",
+      pathname: "/parent",
     },
 
     {
       icon: "FileText",
       title: "Reports",
-      pathname: "/home/v1/report",
+      pathname: "/parent/report",
     },
     {
       icon: "Users",
       title: "Profile",
-      pathname: "/home/v1/profile",
+      pathname: "/parent/profile",
     },
     {
       icon: "FileText",
       title: "Transfers",
-      pathname: "/home/v1/transfers",
+      pathname: "/parent/transfers",
     },
   ],
 };

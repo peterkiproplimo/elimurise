@@ -45,7 +45,7 @@ function Dashboard() {
     <main className="flex-1 overflow-y-auto bg-gray-10">
       {/* <div className="container mx-auto px-6 py-8"> */}
       <div className=" rounded-lg shadow-lg p-6">
-        <div className= "box flex items-center justify-between mb-6">
+        <div className="box flex items-center justify-between mb-6">
           <div>
             <div className="text-2xl font-semibold text-gray-800">
               {currentDate}
@@ -74,7 +74,7 @@ function Dashboard() {
               <div
                 onClick={() => {
                   localStorage.setItem("learner", JSON.stringify(learner));
-                  navigate("/v1/profile", {});
+                  navigate("/parent/profile", {});
                 }}
                 key={learner._id}
                 className="bg-white rounded-lg overflow-hidden p-5 shadow-lg cursor-pointer"

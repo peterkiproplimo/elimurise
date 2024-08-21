@@ -53,7 +53,7 @@ const ForgotPassword = () => {
         setMessage(res.message);
         notify.current?.showToast();
         setTimeout(() => {
-          navigate("/v1/auth/otp", {
+          navigate("/auth/v1/otp", {
             state: {
               email: data.email,
               code: data.code,

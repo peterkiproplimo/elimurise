@@ -64,7 +64,8 @@ const GuestGuard = ({ children }: any) => {
     if (authData) {
       const userType = localStorage.getItem("type");
       const routes: Record<string, string> = {
-        parent: "/home/v1/",
+        parent: "/parent/",
+        teacher: "/home/",
         school: "/home/",
         billing: "/home/billing",
       };
