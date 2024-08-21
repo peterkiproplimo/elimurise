@@ -73,7 +73,7 @@ function Main() {
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [parents, setParents] = useState(false);
+  const [parents, setParents] = useState([]);
   const [guardianIdNo, setGuardianIdNo] = useState("");
   const [guardianIdNo2, setGuardianIdNo2] = useState("");
   const navigate = useNavigate();
@@ -184,6 +184,7 @@ function Main() {
     setStreams(response.data);
     console.log(response);
   };
+  
 
   const getAcademics = async () => {
     const response = await ApiService.getAcademic({
@@ -523,9 +524,9 @@ function Main() {
                   <option>
                     Select Email
                   </option>
-                  {learners.map((learner: any, key) => (
-                    <option key={key} value={learner.learner.guardian.email}>
-                      {learner?.learner?.guardian?.email}
+                  {parents.map((parent: any, key) => (
+                    <option key={key} value={parent.email}>
+                      {parent?.email}
                     </option>
                   ))}
                 </FormSelect>
