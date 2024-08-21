@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/Books.jpeg";
 import { Search } from "lucide-react";
 import BookCover from "./book";
+import { useLocation } from "react-router-dom";
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -33,6 +34,7 @@ function Main() {
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
+  const [gradeId, setGradeId] = useState("");
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
@@ -47,6 +49,8 @@ function Main() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(12);
   const [page, setPage] = useState(1);
+  const location = useLocation();
+  const grade = location?.state?.data;
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   // Success notification
@@ -96,9 +100,10 @@ function Main() {
 
   useEffect(() => {
     getLearningAreas();
-  }, [search, page, limit]);
+  }, [search, page, limit,gradeId]);
   useEffect(() => {
     getGrades();
+    setGradeId(grade)
   }, []);
   const getLearningAreas = async () => {
     isLoading(true);
@@ -106,6 +111,8 @@ function Main() {
       page: page,
       limit: limit,
       search: search,
+      gradeId: gradeId,
+     
     });
     setLearningAreas(response.data);
     const pagination = response.pagination;

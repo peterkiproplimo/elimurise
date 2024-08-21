@@ -76,11 +76,11 @@ const initialState: SideMenuState = {
       pathname: "/home/grade",
     },
 
-    {
-      icon: "FileCheck",
-      pathname: "/home/learning_areas",
-      title: "Learning Areas",
-    },
+    // {
+    //   icon: "FileCheck",
+    //   pathname: "/home/learning_areas",
+    //   title: "Learning Areas",
+    // },
     {
       icon: "Activity",
       pathname: "/home/assessment",

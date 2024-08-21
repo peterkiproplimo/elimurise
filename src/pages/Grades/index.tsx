@@ -180,10 +180,10 @@ function Main() {
     setDialog(false);
   };
 
-  const openStrand = (learningArea: any) => {
-    navigate("/home/Strands", {
+  const openLearningArea = (grade_id: any) => {
+    navigate("/home/learning_areas/", {
       replace: true,
-      state: { data: learningArea },
+      state: { data: grade_id },
     });
   };
 
@@ -259,7 +259,8 @@ function Main() {
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                       onClick={(e: any) => openLearningArea(grade)}>
                         <div className="flex items-center">
                           <div className="w-9 h-9 image-fit zoom-in">
                             <Tippy
@@ -275,9 +276,9 @@ function Main() {
                           <div className="ml-4">
                             <a
                               href="#"
-                              onClick={() =>
-                                navigate("/home/learning_areas/" + grade?._id)
-                              }
+                              // onClick={() =>
+                              //   navigate("/home/learning_areas/" + grade?._id)
+                              // }
                               className="font-medium whitespace-nowrap"
                             >
                               {grade.name}
