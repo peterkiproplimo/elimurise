@@ -291,7 +291,7 @@ function Users() {
   });
 
   const openConfig = (data: any) => {
-    navigate("/grading-config/" + data?._id);
+    navigate("/home/grading-config/" + data?._id);
   };
 
   return (

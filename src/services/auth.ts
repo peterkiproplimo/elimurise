@@ -1046,15 +1046,37 @@ export async function createGradingLearningArea(id: any, data: any) {
 // };
 export function handler(err: any) {
   let error = err;
+
+  // Check for specific status code and perform action
   if (error?.response?.status == 703) {
     localStorage.removeItem("@AuthData");
     window.location.reload();
   }
-  if (err.response && err.response.data.hasOwnProperty("error")) {
-    error = err.response.data;
-    error.message = err.response.data.error;
+
+  // Handle errors with a response data that has an 'error' property
+  if (error.response && error.response.data.hasOwnProperty("error")) {
+    error = error.response.data;
+    // Check if the error response contains a specific structure
+    if (error.error) {
+      error.message = error.error;
+    } else if (Array.isArray(error.errors)) {
+      // Handle custom errors with an array of errors
+      const customErrors = error.errors;
+      const firstError = customErrors[0]; // Assuming you want the first error message
+      error.message = firstError.msg || "An unknown error occurred.";
+    } else {
+      // Fallback if error.error is not present and the structure is unknown
+      error.message = "An unknown error occurred.";
+    }
     console.log(error);
-  } else if (!err.hasOwnProperty("error")) error = err.toJSON();
+  }
+
+  // Handle errors without 'error' property and convert to JSON if possible
+  else if (!err.hasOwnProperty("error")) {
+    error = err.toJSON();
+    error.message = error.message || "An unknown error occurred.";
+  }
+
   console.log("error");
   console.log(error.message);
   return new Error(error.message);

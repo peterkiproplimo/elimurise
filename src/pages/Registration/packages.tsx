@@ -12,7 +12,7 @@ import clsx from "clsx";
 import Table from "../../base-components/Table";
 import ReportPieChart from "../../components/ReportPieChart";
 import ReportDonutChart from "../../components/ReportDonutChart";
-import "./dashboard.css";
+
 import logoUrl from "../../assets/images/paypal.svg";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { Search } from "lucide-react";
@@ -32,18 +32,7 @@ function Main() {
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);
   const [packages, setPackages] = useState([]);
-  const [stats, setSats] = useState({
-    houseLose: 0,
-    houseLosses: 0,
-    houseRevenue: 0,
-    houseWins: 0,
-    mpesaBalancepaybill: 0,
-    mpesaBalanceb2cTotal: 0,
-    totalplayers: 0,
-    playersonline: 0,
-    walletsTotal: 0,
-    withholdingTax: 0,
-  });
+
   useEffect(() => {
     // getDashboard();
   }, []);

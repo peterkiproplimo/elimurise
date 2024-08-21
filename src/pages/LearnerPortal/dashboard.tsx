@@ -146,7 +146,7 @@ function Dashboard() {
               <div
                 onClick={() => {
                   localStorage.setItem("learner", JSON.stringify(learner));
-                  navigate("/v1/profile", {});
+                  navigate("/parent/profile", {});
                 }}
                 key={learner._id}
                 className="bg-white rounded-lg overflow-hidden p-5 shadow-lg cursor-pointer"

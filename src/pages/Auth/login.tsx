@@ -322,7 +322,7 @@ const Login = () => {
                   Remember me
                 </label>
               </div>
-              <Link to="/v1/auth/forgot-password">Forgot Password?</Link>
+              <Link to="/auth/v1/forgot-password">Forgot Password?</Link>
             </div>
             <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
               <Button

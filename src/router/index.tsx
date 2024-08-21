@@ -45,7 +45,7 @@ import SummativeReport from "../pages/SummativeReport";
 import User from "../pages/User";
 import Role from "../pages/roles";
 import Term from "../pages/Term";
-import Grade from "../pages/Grades"
+import Grade from "../pages/Grades";
 import Settings from "../pages/Settings";
 import GradeUserAssignment from "../pages/GradeUserAssignment";
 import Grading from "../pages/Grading";
@@ -66,7 +66,7 @@ function Router() {
       ),
       children: [
         {
-          path: "/home/",
+          path: "",
           element: <Dashboard />,
         },
         {
@@ -194,7 +194,7 @@ function Router() {
         },
         {
           path: "grade",
-          element: <Grade/>,
+          element: <Grade />,
         },
         {
           path: "learning_areas",
@@ -210,29 +210,40 @@ function Router() {
           path: "learner/:id",
           element: <LearnerDetails />,
         },
+      ],
+    },
+
+    {
+      path: "/parent",
+      element: (
+        <AuthGuard>
+          <Layout />
+        </AuthGuard>
+      ),
+      children: [
         {
-          path: "v1/profile",
-          element: <LearnerProfile />,
-        },
-        {
-          path: "v1/assessments",
-          element: <Strands />,
-        },
-        {
-          path: "v1",
+          path: "",
           element: <LearnerDashboard />,
         },
         {
-          path: "v1/report",
+          path: "profile",
+          element: <LearnerProfile />,
+        },
+        {
+          path: "assessments",
+          element: <Strands />,
+        },
+
+        {
+          path: "report",
           element: <LearnerProfiles />,
         },
         {
-          path: "v1/transfers",
+          path: "transfers",
           element: <LearnersTransfers />,
         },
       ],
     },
-
     {
       path: "/auth",
       element: (
