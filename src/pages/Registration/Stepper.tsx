@@ -25,23 +25,26 @@ const Stepper = () => {
   ];
   return (
     <>
-      <div className="flex justify-between">
-        {steps.map((step, i) => (
-          <div
-            key={i}
-            className={`step-item ${currentStep === i + 1 && "active"} ${
-              (i + 1 < currentStep || complete) && "complete"
-            } `}
-          >
-            <div className="step">
-              {i + 1 < currentStep || complete ? <TiTick size={24} /> : i + 1}
+      <div className="w-1/2 m-auto">
+        <div className="flex justify-between">
+          {steps.map((step, i) => (
+            <div
+              key={i}
+              className={`step-item ${currentStep === i + 1 && "active"} ${
+                (i + 1 < currentStep || complete) && "complete"
+              } `}
+            >
+              <div className="step">
+                {i + 1 < currentStep || complete ? <TiTick size={24} /> : i + 1}
+              </div>
+              <p className="text-black-500">{step}</p>
             </div>
-            <p className="text-black-500">{step}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-
-      <div className="step-content mt-4">{stepContent[currentStep - 1]}</div>
+      <div className="step-content mt-4  p-10">
+        {stepContent[currentStep - 1]}
+      </div>
 
       {/* {!complete && (
         <Button

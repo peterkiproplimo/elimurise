@@ -75,7 +75,7 @@ function Main() {
   return (
     <>
       <div className="price mt-5 ">
-        <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5">
+        <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5 text-center">
           Please select a pricing plan that works for you
         </h2>
         {loading ? (
@@ -83,14 +83,16 @@ function Main() {
             <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
           </div>
         ) : packages.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 m-4">
+          <div className="flex justify-center  min-h-screen">
+            {/* <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-8 m-4"> */}
+
             {packages.map((Package: any, key: any) => (
               <div
                 style={{ backgroundColor: Package.color }}
                 key={key}
-                className=" rounded-xl shadow-md flex flex-col text-white"
+                className="rounded-xl shadow-md flex flex-col justify-between text-white h-full"
               >
-                <div className="p-5 rounded-t-xl  z-10 flex flex-col justify-between h-full">
+                <div className="p-5 rounded-t-xl z-10 flex-1">
                   <h1 className="text-2xl sm:text-3xl font-bold mb-2">
                     {Package.name}
                   </h1>
@@ -123,8 +125,50 @@ function Main() {
                 </div>
               </div>
             ))}
+            {/* </div> */}
           </div>
         ) : (
+          // <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-8 m-4">
+          //   {packages.map((Package: any, key: any) => (
+          //     <div
+          //       style={{ backgroundColor: Package.color }}
+          //       key={key}
+          //       className=" rounded-xl shadow-md flex flex-col text-white"
+          //     >
+          //       <div className="p-5 rounded-t-xl  z-10 flex flex-col justify-between h-full">
+          //         <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+          //           {Package.name}
+          //         </h1>
+          //         <p
+          //           className="text-base"
+          //           dangerouslySetInnerHTML={{ __html: Package.description }}
+          //         ></p>
+          //       </div>
+          //       <div className="flex flex-col justify-between p-5">
+          //         <div>
+          //           <h2 className="text-lg font-bold">
+          //             Ksh. {Package.pricePerLearner}
+          //           </h2>
+          //           <p className="text-sm">(Per Learner Annually)</p>
+          //         </div>
+          //         <Button
+          //           variant="primary"
+          //           className="w-full px-4 py-3 mt-3 xl:w-auto"
+          //           onClick={() => subscribe(Package)}
+          //         >
+          //           Buy Now
+          //           {loading && (
+          //             <LoadingIcon
+          //               icon="spinning-circles"
+          //               color="white"
+          //               className="w-4 h-4 ml-2"
+          //             />
+          //           )}
+          //         </Button>
+          //       </div>
+          //     </div>
+          //   ))}
+          // </div>
           <div className="p-4 mt-5 bg-white dark:bg-gray-800 rounded-xl shadow-md">
             <p className="text-lg text-gray-700 dark:text-gray-300 ">
               No packages available
