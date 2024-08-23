@@ -458,7 +458,7 @@ function Main() {
 
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    New School<span className="text-danger ml-0.5">*</span>
+                    School Code<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
                     {...register("newSchoolCode")}

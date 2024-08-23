@@ -22,6 +22,7 @@ import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
+import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 
 function Level() {
@@ -152,6 +153,14 @@ function Level() {
     setPermission([""]);
     reset(record);
     setDialog(false);
+  };
+
+  const navigate = useNavigate();
+  const openTerm = (grade_id: any) => {
+    navigate("/home/learning_areas/", {
+      replace: true,
+      state: { data: grade_id },
+    });
   };
 
   return (
@@ -369,7 +378,8 @@ function Level() {
                     <Table.Tbody>
                       {academic.map((academic: any, key) => (
                         <Table.Tr key={key} className="intro-x">
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                           onClick={(e: any) => openTerm(academic)}>
                             <span className="font-medium whitespace-nowrap">
                               {key + 1}
                             </span>
