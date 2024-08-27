@@ -1,27 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./stepper.css";
 import { TiTick } from "react-icons/ti";
 import Register from "./register_account";
 import SchoolInfo from "./school_info";
 import Button from "../../base-components/Button";
 import Packages from "./packages";
+import Payment from "./payments";
 const Stepper = () => {
-  const steps = [
-    "Pricing Packages",
-    "Customer Info",
-    "School Info",
-    "Billing Info",
-    "Payment",
-  ];
+  const steps = ["Personal Info", "Pricing Packages", "School Info", "Payment"];
 
   const [currentStep, setCurrentStep] = useState(1);
+  useEffect(() => {
+    const setStep = () => {
+      const item = localStorage.getItem("step");
+      if (item) {
+        setCurrentStep(Number(item));
+      }
+    };
+    setStep();
+  }, []);
+  useEffect(() => {
+    const setStep = () => {
+      localStorage.setItem("step", currentStep.toString());
+    };
+    setStep();
+  }, [currentStep]);
   const [complete, setComplete] = useState(false);
   const stepContent = [
-    <Packages setCurrentStep={setCurrentStep} />,
     <Register setCurrentStep={setCurrentStep} />,
+    <Packages setCurrentStep={setCurrentStep} />,
     <SchoolInfo setCurrentStep={setCurrentStep} />,
-    <div key="3">Content for Payment</div>,
-    <div key="4">Content for Step 4</div>,
+    <Payment setCurrentStep={setCurrentStep} />,
   ];
   return (
     <>
@@ -42,7 +51,7 @@ const Stepper = () => {
           ))}
         </div>
       </div>
-      <div className="step-content mt-4  p-10">
+      <div className="step-content mt-4  p-10 md:w-12/12 lg:w-8/12 m-auto">
         {stepContent[currentStep - 1]}
       </div>
 

@@ -61,7 +61,18 @@ const GuestGuard = ({ children }: any) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (authData) {
+    const currentPath = window.location.pathname;
+
+    const step = localStorage.getItem("step");
+    if (
+      authData &&
+      step &&
+      currentPath !== "/register" &&
+      currentPath !== "/"
+    ) {
+      navigate("/register", { replace: true });
+    }
+    if (authData && !step) {
       const userType = localStorage.getItem("type");
       const routes: Record<string, string> = {
         parent: "/parent/",

@@ -35,21 +35,14 @@ const Auth = () => {
               <div className="flex items-center">
                 <div className=" text-center intro-x  xl:text-left">
                   <Link
-                    to="/auth/register"
+                    to="/"
                     className="btn-2 w-full px-4 py-3 align-top xl:w-32 border-blue-800"
                   >
                     <Button
                       variant="outline-primary"
                       className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
                     >
-                      Register
-                      {loading && (
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          color="white"
-                          className="w-4 h-4 ml-2 "
-                        />
-                      )}
+                      Home
                     </Button>
                   </Link>
                 </div>
@@ -63,13 +56,6 @@ const Auth = () => {
                       className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
                     >
                       Sign in
-                      {loading && (
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          color="white"
-                          className="w-4 h-4 ml-2"
-                        />
-                      )}
                     </Button>
                   </Link>
                 </div>

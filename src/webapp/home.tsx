@@ -43,12 +43,12 @@ const Home = () => {
           </div>
           <div className="buttons flex">
             <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-              <Button
-                variant="primary"
+              <Link
+                to="/register"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
               >
-                <Link
-                  to="/auth/register"
+                <Button
+                  variant="primary"
                   className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
                 >
                   Register
@@ -59,12 +59,12 @@ const Home = () => {
                       className="w-4 h-4 ml-2"
                     />
                   )}
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
             <div className="  mt-5 text-center xl:mt-8 xl:text-left">
-              <Button className=" btn-2 w-full px-4 py-3 align-top xl:w-32 xl:mr-3 border-blue-800">
-                <Link to="/auth/login">
+              <Link to="/auth/login">
+                <Button className=" btn-2 w-full px-4 py-3 align-top xl:w-32 xl:mr-3 border-blue-800">
                   Sign in
                   {loading && (
                     <LoadingIcon
@@ -72,9 +72,9 @@ const Home = () => {
                       color="white"
                       className="w-4 h-4 ml-2"
                     />
-                  )}
-                </Link>
-              </Button>
+                  )}{" "}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

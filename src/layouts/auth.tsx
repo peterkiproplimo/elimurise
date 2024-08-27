@@ -3,8 +3,12 @@ import { Outlet } from "react-router-dom";
 import logoUrl from "../assets/images/hero.png";
 import clsx from "clsx";
 import "./auth.css";
+import { useEffect } from "react";
 
 const Auth = () => {
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
   return (
     <>
       <div

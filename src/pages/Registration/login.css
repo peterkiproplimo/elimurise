@@ -45,3 +45,17 @@
   margin-top: 2%;
   margin-left: -7%;
 }
+@keyframes move {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(20px);
+    opacity: 0.5;
+  }
+}
+
+.animate-move {
+  animation: move 1s infinite;
+}

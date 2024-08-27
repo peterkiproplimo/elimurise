@@ -18,7 +18,9 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import { Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-function Main() {
+const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
+  setCurrentStep,
+}) => {
   const navigate = useNavigate();
   const importantNotesRef = useRef<TinySliderElement>();
   const prevImportantNotes = () => {
@@ -48,9 +50,12 @@ function Main() {
     return color;
   }
   const subscribe = async (data: any) => {
-    navigate("/home/subscription", {
-      state: { package: data },
-    });
+    localStorage.setItem("package", JSON.stringify(data));
+    setCurrentStep(3);
+
+    // navigate("/home/subscription", {
+    //   state: { package: data },
+    // });
   };
   const getDashboard = async () => {
     isLoading(true);
@@ -74,8 +79,8 @@ function Main() {
 
   return (
     <>
-      <div className="price mt-5 ">
-        <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5 text-center">
+      <div className="price ">
+        <h2 className="text xl:text-3xl  sm:text-xl md:text-3xl text-left ml-5 text-center">
           Please select a pricing plan that works for you
         </h2>
         {loading ? (
@@ -83,48 +88,89 @@ function Main() {
             <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
           </div>
         ) : packages.length > 0 ? (
-          <div className="flex justify-center  min-h-screen">
-            {/* <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-8 m-4"> */}
-
-            {packages.map((Package: any, key: any) => (
-              <div
-                style={{ backgroundColor: Package.color }}
-                key={key}
-                className="rounded-xl shadow-md flex flex-col justify-between text-white h-full"
-              >
-                <div className="p-5 rounded-t-xl z-10 flex-1">
-                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-                    {Package.name}
-                  </h1>
-                  <p
-                    className="text-base"
-                    dangerouslySetInnerHTML={{ __html: Package.description }}
-                  ></p>
-                </div>
-                <div className="flex flex-col justify-between p-5">
-                  <div>
-                    <h2 className="text-lg font-bold">
-                      Ksh. {Package.pricePerLearner}
-                    </h2>
-                    <p className="text-sm">(Per Learner Annually)</p>
-                  </div>
-                  <Button
-                    variant="primary"
-                    className="w-full px-4 py-3 mt-3 xl:w-auto"
-                    onClick={() => subscribe(Package)}
+          <div className="flex justify-center items-center">
+            <div className={`grid grid-cols-${packages.length} gap-2`}>
+              {/* <div className="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-3 gap-8 m-4"> */}
+              {packages.map((Package: any, key: any) => (
+                // <div
+                //   style={{ backgroundColor: key % 2 != 0 ? "#e2e8f0" : "#fff" }}
+                //   key={key}
+                //   className="rounded-xl shadow-md flex flex-col justify-between text-black h-full border-2 w-[200px]"
+                // >
+                //   <div className="p-5 rounded-t-xl z-10 flex-1">
+                //     <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                //       {Package.name}
+                //     </h1>
+                //     <p
+                //       className="text-base"
+                //       dangerouslySetInnerHTML={{ __html: Package.description }}
+                //     ></p>
+                //   </div>
+                //   <div className="flex flex-col justify-between p-5">
+                //     <div>
+                //       <h2 className="text-lg font-bold">
+                //         Ksh. {Package.pricePerLearner}
+                //       </h2>
+                //       <p className="text-sm">(Per Learner Annually)</p>
+                //     </div>
+                //     <Button
+                //       variant="primary"
+                //       className="w-full px-4 py-3 mt-3 xl:w-auto"
+                //       onClick={() => subscribe(Package)}
+                //     >
+                //       Buy Now
+                //       {loading && (
+                //         <LoadingIcon
+                //           icon="spinning-circles"
+                //           color="white"
+                //           className="w-4 h-4 ml-2"
+                //         />
+                //       )}
+                //     </Button>
+                //   </div>
+                // </div>
+                <>
+                  <div
+                    className={
+                      key % 2 != 0
+                        ? `flex flex-col items-center bg-gradient-to-br from-blue-100 via-orange-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-orange-200 max-w-sm`
+                        : `flex flex-col items-center bg-gradient-to-br from-green-100 via-blue-100 to-purple-100  p-8 rounded-lg shadow-lg relative border-8 border-blue-200 max-w-sm`
+                    }
                   >
-                    Buy Now
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            ))}
+                    <div className="">
+                      <h3 className="text-2xl">{Package.name}</h3>
+                      <div className="mt-4">
+                        <span className="text-red-500 text-2xl line-through">
+                          Ksh {Package.pricePerLearner + 200}
+                        </span>
+                      </div>
+                      <div className="mt-1">
+                        <span className="font-bold text-3xl">
+                          Ksh. {Package.pricePerLearner}
+                        </span>
+                        <span className="text-gray-600">/ Year</span>
+                      </div>
+                      <div className="mt-6">
+                        <div
+                          className="text-lg"
+                          dangerouslySetInnerHTML={{
+                            __html: Package.description,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="mt-8">
+                        <Button
+                          onClick={() => subscribe(Package)}
+                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-5 rounded"
+                        >
+                          Buy Now
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ))}
+            </div>
             {/* </div> */}
           </div>
         ) : (
@@ -214,6 +260,6 @@ function Main() {
       </div>
     </>
   );
-}
+};
 
 export default Main;

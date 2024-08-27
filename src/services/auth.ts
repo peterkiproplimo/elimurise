@@ -70,13 +70,16 @@ export const getPackages = async (data: any) => {
 
 export async function createSubscription(data: FieldValues) {
   try {
-    if (data._id) {
-      let res = await axios.put(c.SUBSCRIPTION, data);
-      return res.data;
-    } else {
-      let res = await axios.post(c.SUBSCRIPTION, data);
-      return res.data;
-    }
+    let res = await axios.post(c.SUBSCRIPTION, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function paySubscription(data: FieldValues) {
+  try {
+    let res = await axios.post(`${c.SUBSCRIPTION}/${data._id}/pay`, data);
+    return res.data;
   } catch (e) {
     throw handler(e);
   }
@@ -802,6 +805,32 @@ export async function signup(data: FieldValues) {
     throw handler(e);
   }
 }
+export async function payment(data: FieldValues) {
+  try {
+    const auth = await localStorage.getItem("registered_user");
+    console.log(auth);
+    if (auth !== null) {
+      // Value previously stored
+      const auth_data = JSON.parse(auth);
+      console.log(auth_data);
+      const token = auth_data.token;
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const res = await axios.post(`${c.PAYMENTS}/initiate-payment`, data, {
+        headers,
+      });
+
+      return res.data;
+    } else {
+      throw new Error("User is not authenticated");
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 export async function forgotPassword(email: string) {
   try {
@@ -1070,7 +1099,11 @@ export function handler(err: any) {
     }
     console.log(error);
   }
-
+  // if (error.step) {
+  //   localStorage.clear();
+  //   localStorage.setItem("step", error.step);
+  //   window.location.href = "/register";
+  // }
   // Handle errors without 'error' property and convert to JSON if possible
   else if (!err.hasOwnProperty("error")) {
     error = err.toJSON();

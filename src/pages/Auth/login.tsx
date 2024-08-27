@@ -52,13 +52,19 @@ const Login = () => {
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
-
+    localStorage.clear();
     if (result && !loading) {
       isLoading(true);
       try {
         const data = await getValues();
         if (selectedForm == "form1") {
           let res = await ApiService.login(data);
+          if (res.step) {
+            localStorage.setItem("step", res.step);
+            if (res.step == 4) {
+              localStorage.setItem("billing", JSON.stringify(res.billing));
+            }
+          }
           isLoading(false);
           console.log(res.user);
           let token = res.token;
@@ -82,7 +88,6 @@ const Login = () => {
         setSuccess(true);
         setMessage("Authenticated successfully");
         notify.current?.showToast();
-        // navigate("/");
       } catch (error) {
         isLoading(false);
         setSuccess(false);
@@ -224,7 +229,7 @@ const Login = () => {
               </Button>
             </div>
             <p className="mt-2">
-              Dont have an account? <Link to="/auth/register">Sign Up</Link>
+              Dont have an account? <Link to="/register">Sign Up</Link>
             </p>
           </form>
         ) : (
