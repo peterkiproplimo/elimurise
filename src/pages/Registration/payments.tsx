@@ -175,7 +175,7 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 Ksh. {formatCurrency(billing.totalCost)}
               </span>
             </div>
-            {/* dd */}
+            {/* ddg */}
             <div className="mb-5">
               <label className="font-bold text-gray-700 dark:text-gray-300">
                 Choose Payment Method
