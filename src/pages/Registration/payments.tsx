@@ -185,7 +185,6 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   <input
                     {...register("paymentMethod")}
                     name="mpesa"
-                    value="mpesa"
                     className="form-radio text-indigo-600"
                   />
                   <span className="ml-2 dark:text-white">MPESA</span>
@@ -195,7 +194,6 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                     {...register("paymentMethod")}
                     type="radio"
                     name="paypal"
-                    value="paypal"
                     className="form-radio text-indigo-600"
                   />
                   <span className="ml-2 dark:text-white">PayPal</span>
@@ -205,7 +203,6 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                     {...register("paymentMethod")}
                     type="radio"
                     name="rtg"
-                    value="other"
                     className="form-radio text-indigo-600"
                   />
                   <span className="ml-2 dark:text-white">RTG</span>
