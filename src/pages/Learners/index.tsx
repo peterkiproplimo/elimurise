@@ -240,6 +240,14 @@ function Main() {
     setDialog(true);
     
   };
+  useEffect(()=>{
+    handleGuardianIdNoBlur();
+  },[guardianIdNo])
+
+  useEffect(()=>{
+    handleGuardianIdNoBlur2();
+  },[guardianIdNo2])
+
   const handleGuardianIdNoBlur = async () => {
     reset({
       ...getValues(),
@@ -363,7 +371,7 @@ function Main() {
                     First Name<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
-                    {...register("first_name")}
+                    {...register("First Name")}
                     type="text"
                     name="first_name"
                     className={errors.first_name ? "border-danger" : ""}
@@ -381,7 +389,7 @@ function Main() {
                     Middle Name<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
-                    {...register("last_name")}
+                    {...register("Middle Name")}
                     type="text"
                     name="last_name"
                     className={errors.last_name ? "border-danger" : ""}
@@ -397,7 +405,7 @@ function Main() {
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>Surname</FormLabel>
                   <FormInput
-                    {...register("surname")}
+                    {...register("Surname")}
                     type="text"
                     name="surname"
                     className={errors.surname ? "border-danger" : ""}
@@ -416,7 +424,7 @@ function Main() {
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
-                    {...register("adm_no")}
+                    {...register("Admission no")}
                     type="text"
                     name="adm_no"
                     className={errors.adm_no ? "border-danger" : ""}
@@ -432,7 +440,7 @@ function Main() {
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>Nemis No</FormLabel>
                   <FormInput
-                    {...register("nemis_no")}
+                    {...register("Nemis no")}
                     type="text"
                     name="nemis_no"
                     className={errors.nemis_no ? "border-danger" : ""}
@@ -475,13 +483,16 @@ function Main() {
                 </div>
                 <div className="col-span-12 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">
-                    Select Stream<span className="text-danger ml-0.5">*</span>
+                   Stream<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormSelect
                     {...register("stream")}
                     name="stream"
                     disabled={isEditMode}
                   >
+                    <option>
+                    Select Stream
+                  </option>
                     {streams.map((stream: any, key) => (
                       <option key={key} value={stream._id}>
                         {stream.name}
@@ -512,13 +523,17 @@ function Main() {
                     Guardian ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
+               
                  
-                    <FormSelect
+                    <TomSelect
                   {...register("guardian_id_no")}
                   name="guardian_id_no"
                   value={guardianIdNo} 
-                  onChange={(event) => setGuardianIdNo(event.target.value)}
-                  onBlur={handleGuardianIdNoBlur}
+                  onChange={(event:any) => {
+                    reset({ ...getValues(), parent: event });
+                    setGuardianIdNo(event)}
+                  }
+                 
                   className={errors.guardian_id_no ? "border-danger" : ""}
                 >
                   <option>
@@ -529,7 +544,7 @@ function Main() {
                       {parent?.email}
                     </option>
                   ))}
-                </FormSelect>
+                </TomSelect>
                   <FormInput
                     {...register("guardian")}
                     type="hidden"
@@ -651,23 +666,26 @@ function Main() {
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
 
-                  <FormSelect
+                      <TomSelect
                   {...register("guardian2_id_no")}
                   name="guardian2_id_no"
                   value={guardianIdNo2} 
-                  onChange={(event) => setGuardianIdNo2(event.target.value)}
-                  onBlur={handleGuardianIdNoBlur2}
+                  onChange={(event:any) => {
+                    reset({ ...getValues(), parent: event });
+                    setGuardianIdNo2(event)}
+                  }
+                 
                   className={errors.guardian2_id_no ? "border-danger" : ""}
                 >
                   <option>
                     Select Email
                   </option>
-                  {learners.map((learner: any, key) => (
-                    <option key={key} value={learner.learner.guardian.email}>
-                      {learner?.learner?.guardian?.email}
+                  {parents.map((parent: any, key) => (
+                    <option key={key} value={parent.email}>
+                      {parent?.email}
                     </option>
                   ))}
-                </FormSelect>
+                </TomSelect>
                  
                   
                   <FormInput
