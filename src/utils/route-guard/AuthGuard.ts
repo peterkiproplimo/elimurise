@@ -12,10 +12,14 @@ import { useAuth } from "../../contexts/Auth";
 const AuthGuard = ({ children }: any) => {
   const { authData } = useAuth();
   const navigate = useNavigate();
+  const currentPath = window.location.pathname;
 
   useEffect(() => {
+    const step = localStorage.getItem("step");
     if (!authData) {
       navigate("/auth/login", { replace: true });
+    } else if (step) {
+      navigate("/register");
     }
   }, [authData, navigate]);
 

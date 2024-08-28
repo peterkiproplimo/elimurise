@@ -53,6 +53,7 @@ import GradingLeaningAreas from "../pages/GradingLeaningAreas";
 import Transfers from "../pages/Learners/transfers";
 import IncommingTransfers from "../pages/Learners/transfers_incoming";
 import LearnersTransfers from "../pages/LearnerPortal/incoming_transfers";
+import LayoutRegister from "../layouts/register";
 
 //nn
 function Router() {
@@ -265,10 +266,6 @@ function Router() {
           path: "v1/forgot-password",
           element: <ParentForgotPassword />,
         },
-        {
-          path: "register",
-          element: <Register />,
-        },
 
         {
           path: "otp",
@@ -284,6 +281,21 @@ function Router() {
         },
       ],
     },
+    {
+      path: "/register",
+      element: (
+        <GuestGuard>
+          <LayoutRegister />
+        </GuestGuard>
+      ),
+      children: [
+        {
+          path: "",
+          element: <Register />,
+        },
+      ],
+    },
+
     {
       path: "/error-page",
       element: <ErrorPage />,

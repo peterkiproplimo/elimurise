@@ -138,11 +138,11 @@ const initialState: SideMenuState = {
           pathname: "/home/academic",
           title: "Year",
         },
-        {
-          icon: "BarChart",
-          pathname: "/home/term",
-          title: "Term",
-        },
+        // {
+        //   icon: "BarChart",
+        //   pathname: "/home/term",
+        //   title: "Term",
+        // },
         {
           icon: "Activity",
           pathname: "/home/stream",

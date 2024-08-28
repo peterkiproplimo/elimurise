@@ -6,7 +6,7 @@ import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
 import Lucide from "../../base-components/Lucide";
-import { FormInput, FormCheck } from "../../base-components/Form";
+import { FormInput, FormCheck, FormLabel } from "../../base-components/Form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
@@ -17,14 +17,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./login.css";
 import logo from "../../assets/images/Untitled-1.png";
+import Alert from "../../base-components/Alert";
 
-const Register = ({ setCurrentStep }) => {
+const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
+  setCurrentStep,
+}) => {
   const auth = useAuth();
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
+  const [numberOfLearners, setNumberOfLearners] = useState("");
+  const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
-  // Success notification
+  const [Package, setPackage] = useState<any>(
+    JSON.parse(localStorage.getItem("package") || "{}")
+  );
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
@@ -52,20 +59,14 @@ const Register = ({ setCurrentStep }) => {
       try {
         const data = await getValues();
         let res = await ApiService.signup(data);
-        isLoading(false);
+        auth.signIn(res);
         setCurrentStep(2);
-
-        // console.log(res.user);
-        // let token = res.token;
-        // if (res.user.teacher && res.user.school) {
-        //   localStorage.setItem("type", "teacher");
-        // } else if (res.user.school) {
-        //   localStorage.setItem("type", "school");
-        // } else if (res.user.school == undefined) {
-        //   localStorage.setItem("type", "billing");
-        // }
-
-        // await auth.signIn({ ...res.user, token });
+        let token = res.token;
+        await auth.signIn({ ...res.user, token });
+        setRegistered(true);
+        // localStorage.setItem("user_id", res.data.user._id);
+        isLoading(false);
+        // setCurrentStep();
 
         setSuccess(true);
         setMessage("Authenticated successfully");
@@ -82,16 +83,24 @@ const Register = ({ setCurrentStep }) => {
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const togglePasswordVisibility = () => {
-    console.log("Button clicked");
-    setShowPassword(!showPassword);
-  };
+  // const togglePasswordVisibility = () => {
+  //   console.log("Button clicked");
+  //   setShowPassword(!showPassword);
+  // };
 
   return (
     <>
       <div className="">
+        {/* <Alert
+          variant="soft-danger"
+          className="flex items-center mb-2"
+          dismissTimeout={9000}
+        >
+          <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
+        </Alert> */}
         <form className="validate-form" onSubmit={onSubmit}>
-          <div className="mt-8 intro-x">
+          <p className="mt-5 text-xl">Customer details:</p>
+          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 intro-x">
             <div className="input-form">
               <label>First Name</label>
               <FormInput
@@ -101,8 +110,8 @@ const Register = ({ setCurrentStep }) => {
                 name="firstname"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
                 }
                 placeholder="firstname"
               />
@@ -122,8 +131,8 @@ const Register = ({ setCurrentStep }) => {
                 name="lastname"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
                 }
                 placeholder="lastname"
               />
@@ -143,8 +152,8 @@ const Register = ({ setCurrentStep }) => {
                 name="email"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
                 }
                 placeholder="Email"
               />
@@ -164,8 +173,8 @@ const Register = ({ setCurrentStep }) => {
                 name="phone"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
                 }
                 placeholder="Phone number"
               />
@@ -182,12 +191,38 @@ const Register = ({ setCurrentStep }) => {
                 <FormInput
                   {...register("password")}
                   id="validation-form-3"
-                  type={showPassword ? "text" : "password"}
+                  type={"password"}
                   name="password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
-                      : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px]  border pr-10 bg-blue-100 border-blue-300"
+                      ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger pr-10"
+                      : "block px-4 py-3 mt-4 intro-x min-w-[250px]   border pr-10   border-blue-300"
+                  }
+                  placeholder="Enter Password"
+                />
+              </div>
+
+              {errors.password && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.password.message === "string" &&
+                    errors.password.message}
+                </div>
+              )}
+
+              {/* Eye Icon */}
+            </div>
+            <div className="input-form">
+              <label>Confirm Password</label>
+              <div className="flex items-center">
+                <FormInput
+                  {...register("confirm_password")}
+                  id="validation-form-3"
+                  type={"password"}
+                  name="confirm_password"
+                  className={
+                    errors.password
+                      ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger pr-10"
+                      : "block px-4 py-3 mt-4 intro-x min-w-[250px]   border pr-10   border-blue-300"
                   }
                   placeholder="Enter Password"
                 />
@@ -228,12 +263,16 @@ const Register = ({ setCurrentStep }) => {
             </div>
             <Link to="/auth/forgot-password">Forgot Password?</Link>
           </div> */}
-          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-            <Button
-              variant="primary"
-              className="w-full px-4 py-3 align-top xl:w-22 xl:mr-3 "
+          <div className="mt-5 flex justify-end xl:mt-8 xl:text-left">
+            {/* <Button
+              onClick={() => {
+                register({ name: "" });
+                setCurrentStep(1);
+              }}
+              variant="secondary"
+              className="w-[200px] px-4 py-3 align-top xl:w-22 xl:mr-3 "
             >
-              Register
+              Back
               {loading && (
                 <LoadingIcon
                   icon="spinning-circles"
@@ -241,11 +280,23 @@ const Register = ({ setCurrentStep }) => {
                   className="w-2 h-4 ml-2"
                 />
               )}
-            </Button>
+            </Button> */}
+            {!registered && (
+              <Button
+                variant="primary"
+                className="w-[200px] px-4 py-3 align-top xl:w-22 xl:mr-3 "
+              >
+                Submit
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-2 h-4 ml-2"
+                  />
+                )}
+              </Button>
+            )}
           </div>
-          <p className="mt-2">
-            Already have an account? <Link to="/auth/login">Login</Link>
-          </p>
         </form>
       </div>
     </>
