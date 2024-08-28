@@ -156,10 +156,10 @@ function Level() {
   };
 
   const navigate = useNavigate();
-  const openTerm = (grade_id: any) => {
-    navigate("/home/learning_areas/", {
+  const openTerm = (academic: any) => {
+    navigate("/home/term", { 
       replace: true,
-      state: { data: grade_id },
+      state: { data: academic },
     });
   };
 
@@ -232,7 +232,7 @@ function Level() {
                 {errors.startDate && (
                   <div className="mt-2 text-danger">
                     {typeof errors.startDate.message === "string" &&
-                      errors.startDate.message}
+                      errors.startDate.message} 
                   </div>
                 )}
               </div>
@@ -379,12 +379,13 @@ function Level() {
                       {academic.map((academic: any, key) => (
                         <Table.Tr key={key} className="intro-x">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                           onClick={(e: any) => openTerm(academic)}>
+                           >
                             <span className="font-medium whitespace-nowrap">
                               {key + 1}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                          onClick={(e: any) => openTerm(academic)}>
                             <span className="font-medium whitespace-nowrap">
                               {academic.name}
                             </span>

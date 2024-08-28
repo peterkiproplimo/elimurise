@@ -459,7 +459,7 @@ function Main() {
                             height={208}
                             className="mt-3"
                             learners={[
-                              { value: totalLearners, color: "#009933" },
+                              { value: totalLearners, color: "#3399ff" },
                             ]}
                           />
                           <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">

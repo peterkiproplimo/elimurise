@@ -16,14 +16,18 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
+import { useLocation } from "react-router-dom";
 import { formatDate } from "../../utils/helper";
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const location = useLocation();
+  const academic = location?.state?.data;
+  const [academicId, setAcademicId] = useState("");
   const [terms, setTerms] = useState([]);
-  const [academic, setAcademic] = useState([]);
+  const [academics, setAcademics] = useState([]);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -93,13 +97,15 @@ function Main() {
 
   useEffect(() => {
     getTerms();
-  }, [search, page, limit]);
+  }, [search, page, limit,academicId]);
   useEffect(() => {
     getAcademicYear();
+    setAcademicId(academic)
   }, []);
   const getTerms = async () => {
     const response = await ApiService.getTerm({
       page: 1,
+      academicId:academicId
     });
     setTerms(response.data);
     const pagination = response.pagination;
@@ -112,7 +118,7 @@ function Main() {
   };
   const getAcademicYear = async () => {
     const response = await ApiService.getAcademic({ page: 1 });
-    setAcademic(response.data);
+    setAcademics(response.data);
   };
   const deleteRecord = async () => {
     isLoading(true);
