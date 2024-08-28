@@ -216,7 +216,7 @@ function Main() {
                   </div>
                 )}
               </div> */}
-              <div className="col-span-6 sm:col-span-6">
+              {/* <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Start Date<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -251,7 +251,7 @@ function Main() {
                       errors.endDate.message}
                   </div>
                 )}
-              </div>
+              </div> */}
               <div className="col-span-12 sm:col-span-12 mt-3">
                 <Button
                   type="button"
@@ -371,12 +371,12 @@ function Main() {
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Term
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Start Date
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       End Date
-                    </Table.Th>
+                    </Table.Th> */}
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Year
                     </Table.Th>
@@ -401,7 +401,7 @@ function Main() {
                           {term.name}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {new Date(term.startDate).toLocaleString("en-US", {
                             timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
@@ -420,7 +420,7 @@ function Main() {
                             day: "2-digit",
                           })}
                         </span>
-                      </Table.Td>
+                      </Table.Td> */}
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {term?.academicYear?.name}
