@@ -54,7 +54,7 @@ const ForgotPasswordOTP = () => {
         let res = await ApiService.verifyEmailOTP(data);
         isLoading(false);
         setSuccess(true);
-        setMessage("password reset successiful");
+        setMessage("Password reset successful");
         notify.current?.showToast();
 
         navigate("/login", {

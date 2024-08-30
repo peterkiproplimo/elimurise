@@ -90,7 +90,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
 
   return (
     <>
-      <div className="">
+      <div className="bg-white-200">
         {/* <Alert
           variant="soft-danger"
           className="flex items-center mb-2"
@@ -98,7 +98,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
         >
           <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
         </Alert> */}
-        <form className="validate-form" onSubmit={onSubmit}>
+        <form className="validate-form bg-white shadow-lg p-10 rounded-lg" onSubmit={onSubmit}>
           <p className="mt-5 text-xl">Customer details:</p>
           <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 intro-x">
             <div className="input-form">

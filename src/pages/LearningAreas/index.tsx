@@ -47,7 +47,7 @@ function Main() {
     per_page: 0,
   });
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(12); 
   const [page, setPage] = useState(1);
   const location = useLocation();
   const grade = location?.state?.data;

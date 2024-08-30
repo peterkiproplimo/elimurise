@@ -74,7 +74,7 @@ const ForgotPassword = () => {
           Forgot Password
         </h2>
         <div className="mt-2 text-center intro-x text-slate-400 xl:hidden">
-          Enter your email to reset your password.
+          Enter your email to re set your password.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
           <div className="mt-8 intro-x">

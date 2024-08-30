@@ -89,7 +89,8 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           </div>
         ) : packages.length > 0 ? (
           <div className="flex justify-center items-center">
-            <div className={`grid grid-cols-${packages.length} gap-2`}>
+           <div className={`mt-5 grid grid-cols-${packages.length} gap-5 lg:flex lg:flex-wrap lg:justify-center`}>
+
               {/* <div className="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-3 gap-8 m-4"> */}
               {packages.map((Package: any, key: any) => (
                 // <div
@@ -133,11 +134,10 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   <div
                     className={
                       key % 2 != 0
-                        ? `flex flex-col items-center bg-gradient-to-br from-blue-100 via-orange-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-orange-200 max-w-sm`
-                        : `flex flex-col items-center bg-gradient-to-br from-green-100 via-blue-100 to-purple-100  p-8 rounded-lg shadow-lg relative border-8 border-blue-200 max-w-sm`
-                    }
-                  >
-                    <div className="">
+                      ? `flex flex-col items-center w-full lg:w-1/4 bg-gradient-to-br from-blue-100 via-orange-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-orange-200`
+                      : `flex flex-col items-center w-full lg:w-1/4 bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-blue-200`}
+                      >
+                    <div className="text-left">
                       <h3 className="text-2xl">{Package.name}</h3>
                       <div className="mt-4">
                         <span className="text-red-500 text-2xl line-through">
