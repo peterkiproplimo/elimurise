@@ -88,54 +88,17 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
             <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
           </div>
         ) : packages.length > 0 ? (
-          <div className="flex justify-center items-center">
+          <div className="justify-center items-center">
            <div className={`mt-5 grid grid-cols-${packages.length} gap-5 lg:flex lg:flex-wrap lg:justify-center`}>
 
               {/* <div className="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-3 gap-8 m-4"> */}
               {packages.map((Package: any, key: any) => (
-                // <div
-                //   style={{ backgroundColor: key % 2 != 0 ? "#e2e8f0" : "#fff" }}
-                //   key={key}
-                //   className="rounded-xl shadow-md flex flex-col justify-between text-black h-full border-2 w-[200px]"
-                // >
-                //   <div className="p-5 rounded-t-xl z-10 flex-1">
-                //     <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-                //       {Package.name}
-                //     </h1>
-                //     <p
-                //       className="text-base"
-                //       dangerouslySetInnerHTML={{ __html: Package.description }}
-                //     ></p>
-                //   </div>
-                //   <div className="flex flex-col justify-between p-5">
-                //     <div>
-                //       <h2 className="text-lg font-bold">
-                //         Ksh. {Package.pricePerLearner}
-                //       </h2>
-                //       <p className="text-sm">(Per Learner Annually)</p>
-                //     </div>
-                //     <Button
-                //       variant="primary"
-                //       className="w-full px-4 py-3 mt-3 xl:w-auto"
-                //       onClick={() => subscribe(Package)}
-                //     >
-                //       Buy Now
-                //       {loading && (
-                //         <LoadingIcon
-                //           icon="spinning-circles"
-                //           color="white"
-                //           className="w-4 h-4 ml-2"
-                //         />
-                //       )}
-                //     </Button>
-                //   </div>
-                // </div>
                 <>
                   <div
                     className={
                       key % 2 != 0
-                      ? `flex flex-col items-center w-full lg:w-1/4 bg-gradient-to-br from-blue-100 via-orange-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-orange-200`
-                      : `flex flex-col items-center w-full lg:w-1/4 bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-blue-200`}
+                      ? `flex flex-col  w-full lg:w-1/4 bg-gradient-to-br from-blue-100 via-orange-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-orange-200`
+                      : `flex flex-col  w-full lg:w-1/4 bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-blue-200`}
                       >
                     <div className="text-left">
                       <h3 className="text-2xl">{Package.name}</h3>
@@ -158,7 +121,7 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                           }}
                         ></div>
                       </div>
-                      <div className="mt-8">
+                      <div className="mt-8 ">
                         <Button
                           onClick={() => subscribe(Package)}
                           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-5 rounded"

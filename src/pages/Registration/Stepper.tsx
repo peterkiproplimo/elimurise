@@ -51,7 +51,7 @@ const Stepper = () => {
           ))}
         </div>
       </div>
-      <div className="step-content mt-4  p-10 md:w-12/12 lg:w-12/12 m-auto">
+      <div className="step-content mt-4   md:w-12/12 lg:w-12/12 m-auto">
         {stepContent[currentStep - 1]}
       </div>
 

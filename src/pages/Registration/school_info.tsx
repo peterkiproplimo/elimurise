@@ -93,15 +93,15 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
 
   return (
     <>
-      <div className="">
+      <div className="p-10">
         {/* <Alert
-          variant="soft-danger"
+          variant="soft-danger" 
           className="flex items-center mb-2"
           dismissTimeout={9000}
         >
           <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
         </Alert> */}
-        <form className="validate-form" onSubmit={onSubmit}>
+        <form className="validate-form bg-white mt-5 shadow-lg p-8 rounded-lg " onSubmit={onSubmit}>
           <div className="">
             <h2 className=" text-3xl font-bold intro-x">Subscribe</h2>
             <h3 className=" text-2xl  intro-x">
