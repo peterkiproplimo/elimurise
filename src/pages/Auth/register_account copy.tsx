@@ -87,7 +87,7 @@ const Register = () => {
 
   return (
     <>
-      <div className="form-container mt-10">
+      <div className="form-container mt-10 m-4">
         <div className="icon flex justify-center items-center  ">
           <img alt="ACS" className="xl:w-30 md:w-10 xl:w-auto" src={logo} />
         </div>

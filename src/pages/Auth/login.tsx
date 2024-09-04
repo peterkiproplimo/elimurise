@@ -35,6 +35,7 @@ const Login = () => {
   const schema = yup
     .object({
       email: yup.string().required().email(),
+      code: yup.string().required(),
       password: yup.string().required().min(4),
     })
     .required();

@@ -525,7 +525,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="footer flex flex-col md:flex-row items-center justify-center border-t-2 border-[#948e8e79] w-full mt-10 h-[40vh] relative gap-[3%]">
+        <div className="footer flex flex-col md:flex-row items-center justify-center border-t-2 border-[#948e8e79] w-full mt-10 h-[40vh] relative lg:gap-[3%]">
         <div className="row1 flex-basis-[15%]">
     <div className="icon mt-10 ml-2">
       <img
