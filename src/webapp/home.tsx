@@ -209,7 +209,7 @@ const Home = () => {
                     <p className="mt-2">technology make learning fun.</p>
                   </li>
                 </ul>
-              </div>
+              </div> 
             </div>
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="secondArea">
@@ -443,7 +443,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="price mt-5 ">
+        <div className="price mt-5 mb-5 h-full lg:pl-[20%] lg:w-[82%]">
           <h1 className="mt-5 text xl:text-5xl sm:text-3xl md:text-3xl font-bold  text-center">
             How Much Will it Cost You?
           </h1>
@@ -452,8 +452,8 @@ const Home = () => {
           </h2>
 
           <div className="  mt-5 prices grid  divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
-            <div className="tag1 p-2 m-4 mt-5 ">
-              <h1 className="m-5 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
+          <div className="tag1 p-2 m-4 mt-5 mb-5 h-full lg:h-[80%]">
+              <h1 className="m-5  text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
                 HERO System
               </h1>
               <p className="ml-5 font-bold"> You get access to:</p>
@@ -468,7 +468,7 @@ const Home = () => {
               </h1>
               <p className="ml-5 text-left text-sm"> (Per Learner Annually)</p>
             </div>
-            <div className="tag2 p-2 m-4 mt-3">
+            <div className="tag2 p-2 m-4 mt-5 mb-5 h-full lg:h-[80%]">
               <h1 className="ml-5 mt-2 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
                 Evidence <br />
                 of Learning
@@ -497,7 +497,7 @@ const Home = () => {
                 600Ksh
               </h1>
             </div>
-            <div className="tag3 p-2 m-4 ">
+            <div className="tag3 p-2 m-4 mt-5 h-full lg:h-[80%] ">
               <h1 className="mt-2 ml-8 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold">
                 HERO
                 <br /> All in One
@@ -525,133 +525,106 @@ const Home = () => {
             </div>
           </div>
         </div>
-
-        <div className="footer">
-          <div className="row1">
-            <div className="icon mt-10 ml-2">
-              <img
-                alt="ACS"
-                className="xl:w-30 md:w-10 xl:w-auto"
-                src={logoUrl}
-              />
-            </div>
-          </div>
-          <div className="row2 mt-10">
-            <h2>You can reach us on:</h2>
-            <div className="flex-container mt-2">
-              <img
-                alt="ACS"
-                className="xl:w-35 md:w-10 xl:w-auto"
-                src={email}
-              />
-              <p>info@herolearning.ac.ke</p>
-            </div>
-            <div className="flex-container mt-2">
-              <img
-                alt="ACS"
-                className="xl:w-35 md:w-10 xl:w-auto"
-                src={phone}
-              />
-              <p>+254 123 456 789</p>
-            </div>
-            <div className="flex-container mt-2">
-              <img alt="ACS" className="xl:w-35 md:w-10 xl:w-auto" src={pin} />{" "}
-              <p>Location</p>
-            </div>
-            <h2 className="mt-5">Find us on:</h2>
-            <div className="socials mt-2">
-              <div>
-                <img
-                  alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
-                  src={youtube}
-                />
-              </div>
-              <div>
-                <img
-                  alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
-                  src={linked}
-                />
-              </div>
-              <div>
-                <img
-                  alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
-                  src={facebook}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="row3 mt-5">
-            <h2 className="text-xl  mt-5">Subscribe to our mailing list </h2>
-            <form className="validate-form">
-              <div className="mt-5 intro-x">
-                <div className="input-form">
-                  <FormInput
-                    // {...register("email")}
-                    id="validation-form-2"
-                    type="text"
-                    name="email"
-                    // className={
-                    //   errors.email
-                    //     ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    //     : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
-                    // }
-                    placeholder="Name"
-                  />
-                  {/* {errors.email && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.email.message === "string" &&
-                    errors.email.message}
-                </div>
-              )} */}
-                </div>
-                <div className="input-form mt-5">
-                  <div className="flex items-center">
-                    <FormInput
-                      // {...register("password")}
-                      id="validation-form-3"
-                      // type={showPassword ? "text" : "password"}
-                      name="password"
-                      // className={
-                      //   errors.password
-                      //     ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
-                      //     : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
-                      // }
-                      placeholder="Email"
-                    />
-                  </div>
-
-                  {/* {errors.password && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.password.message === "string" &&
-                    errors.password.message}
-                </div>
-              )} */}
-
-                  {/* Eye Icon */}
-                </div>
-              </div>
-
-              <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-                <Button
-                  variant="primary"
-                  className="w-full px-3  align-top xl:w-20 xl float-right"
-                >
-                  Submit
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
-            </form>
+        <div className="footer flex flex-col md:flex-row items-center justify-center border-t-2 border-[#948e8e79] w-full mt-10 h-[40vh] relative gap-[3%]">
+        <div className="row1 flex-basis-[15%]">
+    <div className="icon mt-10 ml-2">
+      <img
+        alt="ACS"
+        className="xl:w-30 md:w-10 xl:w-auto"
+        src={logoUrl}
+      />
+    </div>
+  </div>
+  <div className="row2 flex-basis-[30%]">
+    <h2 className="font-bold text-[22px] mt-2">You can reach us on:</h2>
+    <div className="flex-container flex items-center gap-2 mt-2">
+      <img
+        alt="ACS"
+        className="xl:w-35 md:w-10 xl:w-auto"
+        src={email}
+      />
+      <p className="text-[23px]">info@herolearning.ac.ke</p>
+    </div>
+    <div className="flex-container flex items-center gap-2 mt-2">
+      <img
+        alt="ACS"
+        className="xl:w-35 md:w-10 xl:w-auto"
+        src={phone}
+      />
+      <p className="text-[23px]">+254 123 456 789</p>
+    </div>
+    <div className="flex-container flex items-center gap-2 mt-2">
+      <img alt="ACS" className="xl:w-35 md:w-10 xl:w-auto" src={pin} />
+      <p className="text-[23px]">Location</p>
+    </div>
+    <h2 className="font-bold text-[22px] mt-5">Find us on:</h2>
+    <div className="socials flex w-[50%] gap-[10%] mt-2">
+      <div>
+        <img
+          alt="ACS"
+          className="xl:w-35 md:w-10 xl:w-auto"
+          src={youtube}
+        />
+      </div>
+      <div>
+        <img
+          alt="ACS"
+          className="xl:w-35 md:w-10 xl:w-auto"
+          src={linked}
+        />
+      </div>
+      <div>
+        <img
+          alt="ACS"
+          className="xl:w-35 md:w-10 xl:w-auto"
+          src={facebook}
+        />
+      </div>
+    </div>
+  </div>
+  <div className="row3 flex-basis-[30%]">
+    <h2 className="text-xl mt-5">Subscribe to our mailing list</h2>
+    <form className="validate-form">
+      <div className="mt-5 intro-x">
+        <div className="input-form">
+          <FormInput
+            id="validation-form-2"
+            type="text"
+            name="email"
+            placeholder="Name"
+            className="block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+          />
+        </div>
+        <div className="input-form mt-5">
+          <div className="flex items-center">
+            <FormInput
+              id="validation-form-3"
+              name="password"
+              placeholder="Email"
+              className="block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
+            />
           </div>
         </div>
+      </div>
+      <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+        <Button
+          variant="primary"
+          className="w-full px-3 align-top xl:w-20 xl:float-right"
+        >
+          Submit
+          {loading && (
+            <LoadingIcon
+              icon="spinning-circles"
+              color="white"
+              className="w-4 h-4 ml-2"
+            />
+          )}
+        </Button>
+      </div>
+    </form>
+  </div>
+</div>
+
       </div>
     </>
   );
