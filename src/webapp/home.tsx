@@ -39,9 +39,9 @@ const Home = () => {
       <div className="homeContainer  h-100vh  p-10">
         <div className="home flex justify-between">
           <div className="icon mt-5 ml-5">
-            <img alt="ACS" className="xl:w-35 md:w-10 xl:w-auto" src={logo} />
+            <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
           </div>
-          <div className="buttons flex">
+          <div className="buttons flex gap-3">
             <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
               <Link
                 to="/register"
@@ -49,7 +49,7 @@ const Home = () => {
               >
                 <Button
                   variant="primary"
-                  className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+                  className="w-full px-3 py-3 align-top xl:w-32 xl:mr-3"
                 >
                   Register
                   {loading && (
