@@ -174,7 +174,7 @@ const Home = () => {
           <h1 className="xl:text-5xl sm:text-5xl md:text-3xl font-semibold text-center">
             Who are we?
           </h1>
-          <div className=" p-4 grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl  dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
+          <div className="  grid overflow-hidden rounded-3xl  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  p-10 xl:grid-cols-3">
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="secondArea">
                 <img
@@ -254,7 +254,7 @@ const Home = () => {
           <h1 className="mt-5 text xl:text-5xl sm:text-3xl md:text-3xl font-bold  text-center mb-2">
             Why Hero Learning?
           </h1>
-          <div className="grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl  dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
+          <div className="grid  overflow-hidden rounded-3xl  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  p-10 xl:grid-cols-3">
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="secondArea">
                 <img
@@ -443,7 +443,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="price mt-5 mb-5 h-full lg:pl-[20%] lg:w-[82%]">
+        <div className="price mt-8 md:mb-5 h-full lg:pl-[20%] lg:w-[82%]">
           <h1 className="mt-5 text xl:text-5xl sm:text-3xl md:text-3xl font-bold  text-center">
             How Much Will it Cost You?
           </h1>
@@ -525,12 +525,12 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="footer flex flex-col md:flex-row items-center justify-center border-t-2 border-[#948e8e79] w-full mt-10 h-[40vh] relative lg:gap-[3%]">
-        <div className="row1 flex-basis-[15%]">
-    <div className="icon mt-10 ml-2">
+        <div className="footer flex flex-col md:flex-row xl:items-center xl:justify-center border-t-2 border-[#948e8e79] w-full mt-8 h-[40vh] relative lg:gap-[3%]">
+        <div className="row1 xl:flex-basis-[15%] sm:mt-10">
+    <div className="icon  xl:ml-2">
       <img
         alt="ACS"
-        className="xl:w-30 md:w-10 xl:w-auto"
+        className="xl:w-30  md:w-10 xl:w-auto"
         src={logoUrl}
       />
     </div>
