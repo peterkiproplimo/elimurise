@@ -37,6 +37,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
     .object({
       email: yup.string().required().email(),
       password: yup.string().required().min(4),
+      confirm_password: yup.string().required().min(4),
     })
     .required();
 
@@ -44,11 +45,15 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
     register,
     trigger,
     getValues,
+    watch,
     formState: { errors },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
+
+  const password = watch("password");
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -98,7 +103,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
         >
           <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
         </Alert> */}
-        <form className="validate-form bg-white shadow-lg p-10  m-5 rounded-lg" onSubmit={onSubmit}>
+     <form className="validate-form bg-white p-10 m-5 rounded-lg border border-gray-300" onSubmit={onSubmit}>
+
           <p className="mt-5 text-xl">Customer details:</p>
           <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 intro-x">
             <div className="input-form">
@@ -214,18 +220,22 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
             <div className="input-form">
               <label>Confirm Password</label>
               <div className="flex items-center">
-                <FormInput
-                  {...register("confirm_password")}
-                  id="validation-form-3"
-                  type={"password"}
-                  name="confirm_password"
-                  className={
-                    errors.password
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4 intro-x min-w-[250px]   border pr-10   border-blue-300"
-                  }
-                  placeholder="Enter Password"
-                />
+              <FormInput
+            {...register("confirm_password", {
+              required: "Confirm Password is required",
+              validate: (value) =>
+                value === password || "Passwords do not match",
+            })}
+            id="validation-form-3"
+            type="password"
+            name="confirm_password"
+            className={
+              errors.confirm_password
+                ? "block px-4 py-3 mt-4 intro-x min-w-full border-danger pr-10"
+                : "block px-4 py-3 mt-4 intro-x min-w-[250px] border pr-10 border-blue-300"
+            }
+            placeholder="Confirm Password"
+          />
                 {/* <div
                   className="flex items-center cursor-pointer eye-icon"
                   onClick={togglePasswordVisibility}
