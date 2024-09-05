@@ -35,7 +35,7 @@ const Login = () => {
   const schema = yup
     .object({
       email: yup.string().required().email(),
-      code: yup.string().required(),
+      // code: yup.string().required(),
       password: yup.string().required().min(4),
     })
     .required();
@@ -177,7 +177,7 @@ const Login = () => {
                     }
                     placeholder="Enter Password"
                   />
-                  {/* <div
+                  <div
                     className="flex items-center cursor-pointer eye-icon"
                     onClick={togglePasswordVisibility}
                   >
@@ -185,7 +185,7 @@ const Login = () => {
                       icon={showPassword ? faEyeSlash : faEye}
                       className="text-grey-800"
                     />
-                  </div> */}
+                  </div>
                 </div>
 
                 {errors.password && (
