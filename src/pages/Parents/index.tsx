@@ -209,7 +209,7 @@ function Main() {
                   type="text"
                   name="first_name"
                   className={errors.first_name ? "border-danger" : ""}
-                  placeholder="first name"
+                  placeholder="First name"
                 />
                 {errors.first_name && (
                   <div className="mt-2 text-danger">
@@ -245,7 +245,7 @@ function Main() {
                   type="text"
                   name="surname"
                   className={errors.surname ? "border-danger" : ""}
-                  placeholder="surname"
+                  placeholder="Surname"
                 />
                 {errors.surname && (
                   <div className="mt-2 text-danger">
@@ -263,7 +263,7 @@ function Main() {
                   type="text"
                   name="id_no"
                   className={errors.id_no ? "border-danger" : ""}
-                  placeholder="id_no"
+                  placeholder="ID number"
                 />
                 {errors.id_no && (
                   <div className="mt-2 text-danger">
@@ -281,7 +281,7 @@ function Main() {
                   type="email"
                   name="email"
                   className={errors.email ? "border-danger" : ""}
-                  placeholder="email"
+                  placeholder="Email"
                 />
                 {errors.email && (
                   <div className="mt-2 text-danger">
@@ -299,7 +299,7 @@ function Main() {
                   type="text"
                   name="phone"
                   className={errors.phone ? "border-danger" : ""}
-                  placeholder="phone"
+                  placeholder="Phone"
                 />
                 {errors.phone && (
                   <div className="mt-2 text-danger">
@@ -334,7 +334,7 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium intro-y">Parents</h2>
-          {message && success && (
+          {/* {message && success && (
             <Alert
               variant="soft-success"
               className="flex items-center mb-2"
@@ -352,7 +352,7 @@ function Main() {
               </svg>
               {message}
             </Alert>
-          )}
+          )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button

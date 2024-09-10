@@ -221,7 +221,7 @@ const ForgotPasswordOTP = () => {
               >
                 Cancel
               </Button>
-            </Link>
+            </Link> 
             {/* <Link to="/CreateNewPassword">
               <Button variant="outline-primary" className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3">
                 Verify

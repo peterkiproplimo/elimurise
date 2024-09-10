@@ -35,10 +35,10 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      firstname:yup.string().required(),
-      lastname:yup.string().required(),
-      phone: yup.string().required(),
-      email: yup.string().required().email(),
+      firstname:yup.string().required("Name is required"),
+      lastname:yup.string().required("Name is required"),
+      phone: yup.string().required("Phone Number is required"),
+      email: yup.string().required().email("Email is required"),
       password: yup.string().required().min(4),
       confirm_password: yup.string().required().min(4),
     })

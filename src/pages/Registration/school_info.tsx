@@ -36,11 +36,11 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-        name: yup.string().required(),
-        county: yup.string().required(),
-        subcounty:yup.string().required(),
-        address:yup.string().required(),
-        Year:yup.string().required()
+        name: yup.string().required("School Name is required"),
+        county: yup.string().required("County is required"),
+        subcounty:yup.string().required("Sub County is required"),
+        address:yup.string().required("Address is required"),
+        academic_year:yup.string().required("Academic year is required")
       // email: yup.string().required().email(),
       // password: yup.string().required().min(4),
     })
@@ -215,16 +215,16 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   {...register("academic_year")}
                   type="text"
                   name="academic_year"
-                  className={errors.Year ? "border-danger" : ""}
+                  className={errors.academic_year ? "border-danger" : ""}
                   placeholder="Academic Year Name"
                 />
                 <FormLabel htmlFor="modal-form-1" className="">
                   eg. 2024
                 </FormLabel>
-                {errors.Year && (
+                {errors.academic_year && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.Year.message === "string" &&
-                      errors.Year.message}
+                    {typeof errors.academic_year.message === "string" &&
+                      errors.academic_year.message}
                   </div>
                 )}
               </div>
