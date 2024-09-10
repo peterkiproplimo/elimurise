@@ -35,6 +35,9 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
+      firstname:yup.string().required(),
+      lastname:yup.string().required(),
+      phone: yup.string().required(),
       email: yup.string().required().email(),
       password: yup.string().required().min(4),
       confirm_password: yup.string().required().min(4),
@@ -115,16 +118,16 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 type="text"
                 name="firstname"
                 className={
-                  errors.email
+                  errors.firstname
                     ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
                     : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
                 }
                 placeholder="firstname"
               />
-              {errors.name && (
+              {errors.firstname && (
                 <div className="mt-2 text-danger">
-                  {typeof errors.name.message === "string" &&
-                    errors.name.message}
+                  {typeof errors.firstname.message === "string" &&
+                    errors.firstname.message}
                 </div>
               )}
             </div>
@@ -136,16 +139,16 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 type="text"
                 name="lastname"
                 className={
-                  errors.email
+                  errors.lastname
                     ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
                     : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
                 }
                 placeholder="lastname"
               />
-              {errors.name && (
+              {errors.lastname && (
                 <div className="mt-2 text-danger">
-                  {typeof errors.name.message === "string" &&
-                    errors.name.message}
+                  {typeof errors.lastname.message === "string" &&
+                    errors.lastname.message}
                 </div>
               )}
             </div>
@@ -178,7 +181,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 type="text"
                 name="phone"
                 className={
-                  errors.email
+                  errors.phone
                     ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
                     : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
                 }

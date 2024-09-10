@@ -36,6 +36,11 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
+        name: yup.string().required(),
+        county: yup.string().required(),
+        subcounty:yup.string().required(),
+        address:yup.string().required(),
+        Year:yup.string().required()
       // email: yup.string().required().email(),
       // password: yup.string().required().min(4),
     })
@@ -94,14 +99,14 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   return (
     <>
       <div className="p-10">
-        {/* <Alert
+        {/* <Alert 
           variant="soft-danger" 
           className="flex items-center mb-2"
           dismissTimeout={9000}
         >
           <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
         </Alert> */}
-        <form className="validate-form bg-white mt-5 shadow-lg p-8 rounded-lg " onSubmit={onSubmit}>
+        <form className="validate-form bg-white mt-5 border border-gray-300 p-8 rounded-lg " onSubmit={onSubmit}>
           <div className="">
             <h2 className=" text-3xl font-bold intro-x">Subscribe</h2>
             <h3 className=" text-2xl  intro-x">
@@ -123,7 +128,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   {...register("name")}
                   type="text"
                   name="name"
-                  className={errors.firstName ? "border-danger" : ""}
+                  className={errors.name ? "border-danger" : ""}
                   placeholder="St.Marys"
                 />
                 <FormLabel htmlFor="modal-form-1" className="">
@@ -146,16 +151,16 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   type="text"
                   // onChange={(e) => setNumberOfLearners(e.target.value)}
                   name="county"
-                  className={errors.numberOfLearners ? "border-danger" : ""}
+                  className={errors.county ? "border-danger" : ""}
                   placeholder="County"
                 />
                 <FormLabel htmlFor="modal-form-1" className="">
                   County the school is located
                 </FormLabel>
-                {errors.lastName && (
+                {errors.county && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.lastName.message === "string" &&
-                      errors.lastName.message}
+                    {typeof errors.county.message === "string" &&
+                      errors.county.message}
                   </div>
                 )}
               </div>
@@ -168,16 +173,16 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   type="text"
                   // onChange={(e) => setNumberOfLearners(e.target.value)}
                   name="subcounty"
-                  className={errors.numberOfLearners ? "border-danger" : ""}
-                  placeholder="County"
+                  className={errors.subcounty ? "border-danger" : ""}
+                  placeholder="Sub County"
                 />
                 <FormLabel htmlFor="modal-form-1" className="">
                   Sub County the school is located
                 </FormLabel>
-                {errors.lastName && (
+                {errors.subcounty && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.lastName.message === "string" &&
-                      errors.lastName.message}
+                    {typeof errors.subcounty.message === "string" &&
+                      errors.subcounty.message}
                   </div>
                 )}
               </div>
@@ -189,16 +194,16 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   {...register("address")}
                   type="text"
                   name="address"
-                  className={errors.numberOfLearners ? "border-danger" : ""}
+                  className={errors.address ? "border-danger" : ""}
                   placeholder="Address"
                 />
                 <FormLabel htmlFor="modal-form-1" className="">
                   eg. hero | hero@gmail.com | +2547273.... |
                 </FormLabel>
-                {errors.lastName && (
+                {errors.address && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.lastName.message === "string" &&
-                      errors.lastName.message}
+                    {typeof errors.address.message === "string" &&
+                      errors.address.message}
                   </div>
                 )}
               </div>
@@ -210,16 +215,16 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   {...register("academic_year")}
                   type="text"
                   name="academic_year"
-                  className={errors.numberOfLearners ? "border-danger" : ""}
+                  className={errors.Year ? "border-danger" : ""}
                   placeholder="Academic Year Name"
                 />
                 <FormLabel htmlFor="modal-form-1" className="">
                   eg. 2024
                 </FormLabel>
-                {errors.lastName && (
+                {errors.Year && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.lastName.message === "string" &&
-                      errors.lastName.message}
+                    {typeof errors.Year.message === "string" &&
+                      errors.Year.message}
                   </div>
                 )}
               </div>
