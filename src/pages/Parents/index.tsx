@@ -36,7 +36,7 @@ function Main() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
+  const [userPermissions, setUserPermissions] = useState([]); 
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,

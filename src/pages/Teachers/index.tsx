@@ -75,11 +75,14 @@ function Main() {
   const schema = yup
     .object({
       firstname: yup.string().required("First Name is required"),
-      lastname: yup.string().required("Last Name is required"),
+      lastname: yup.string().required("Middle Name is required"),
       email: yup.string().required(" Email is required"),
       surname: yup.string().required("Surname is required"),
-      phone: yup.string().required("Phone  Number is required"),
-      // .min(11, "Phone number must be at least 11 characters long")
+      phone: yup
+      .string()
+      .required("Phone number is required")
+      .min(10, "Phone number must be at least 10 characters long"),
+    
     })
     .required();
 
@@ -253,7 +256,7 @@ function Main() {
                   type="text"
                   name="firstname"
                   className={errors.firstname ? "border-danger" : ""}
-                  placeholder="first name"
+                  placeholder="First name"
                 />
                 {errors.firstname && (
                   <div className="mt-2 text-danger">
@@ -271,7 +274,7 @@ function Main() {
                   type="text"
                   name="lastname"
                   className={errors.lastname ? "border-danger" : ""}
-                  placeholder="last name"
+                  placeholder="Middle name"
                 />
                 {errors.lastname && (
                   <div className="mt-2 text-danger">
@@ -287,7 +290,7 @@ function Main() {
                   type="text"
                   name="surname"
                   className={errors.surname ? "border-danger" : ""}
-                  placeholder="surname"
+                  placeholder="Surname"
                 />
                 {errors.surname && (
                   <div className="mt-2 text-danger">
@@ -301,18 +304,18 @@ function Main() {
                   Phone Number<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
                 <FormInput
-                  {...register("phone", {
-                    pattern: {
-                      value: /^.{11,}$/,
-                      message:
-                        "Phone number must be at least 11 characters long",
-                    },
-                  })}
-                  type="text"
-                  name="phone"
-                  className={errors.phone ? "border-danger" : ""}
-                  placeholder="phone"
-                />
+  {...register("phone", {
+    pattern: {
+      value: /^.{10,}$/,
+      message: "Phone number must be at least 10 characters long",
+    },
+  })}
+  type="text"
+  name="phone"
+  className={errors.phone ? "border-danger" : ""}
+  placeholder="Phone Number"
+/>
+
                 {errors.phone && (
                   <div className="mt-2 text-danger">
                     {typeof errors.phone.message === "string" &&
@@ -329,7 +332,7 @@ function Main() {
                   type="email"
                   name="email"
                   className={errors.email ? "border-danger" : ""}
-                  placeholder="email"
+                  placeholder="Email"
                 />
                 {errors.email && (
                   <div className="mt-2 text-danger">
@@ -463,7 +466,7 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium intro-y">Teachers</h2>
-          {message && success && (
+          {/* {message && success && (
             <Alert
               variant="soft-success"
               className="flex items-center mb-2"
@@ -481,7 +484,7 @@ function Main() {
               </svg>
               {message}
             </Alert>
-          )}
+          )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
