@@ -45,11 +45,11 @@ const Home = () => {
             <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
               <Link
                 to="/register"
-                className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+                className="w-full align-top xl:w-32 xl:mr-3"
               >
                 <Button
                   variant="primary"
-                  className="w-full px-3 py-3 align-top xl:w-32 xl:mr-3"
+                  className="w-full xl:px-3 xl:py-3 px-2 py-2 align-top xl:w-32 xl:mr-3"
                 >
                   Register
                   {loading && (
@@ -64,7 +64,7 @@ const Home = () => {
             </div>
             <div className="  mt-5 text-center xl:mt-8 xl:text-left">
               <Link to="/auth/login">
-                <Button className=" btn-2 w-full px-4 py-3 align-top xl:w-32 xl:mr-3 border-blue-800">
+                <Button className=" btn-2 w-full xl:px-4 xl:py-3 px-2 py-2 align-top xl:w-32 xl:mr-3 border-blue-800">
                   Sign in
                   {loading && (
                     <LoadingIcon
