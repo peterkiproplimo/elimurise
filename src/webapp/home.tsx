@@ -528,22 +528,18 @@ const Home = () => {
         <div className="footer flex flex-col md:flex-row xl:items-center xl:justify-center border-t-2 border-[#948e8e79] w-full mt-8 h-[40vh] relative lg:gap-[3%]">
         <div className="row1 xl:flex-basis-[15%] sm:mt-10">
     <div className="icon  xl:ml-2">
-      <img
-        alt="ACS"
-        className="xl:w-30  md:w-10 xl:w-auto"
-        src={logoUrl}
-      />
+    <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
     </div>
   </div>
   <div className="row2 flex-basis-[30%]">
-    <h2 className="font-bold text-[22px] mt-2">You can reach us on:</h2>
+    <h2 className="font-bold lg:text-[22px] sm:text-xs mt-2">You can reach us on:</h2>
     <div className="flex-container flex items-center gap-2 mt-2">
       <img
         alt="ACS"
-        className="xl:w-35 md:w-10 xl:w-auto"
+        className="xl:w-35 md:w-10  xl:w-auto"
         src={email}
       />
-      <p className="text-[23px]">info@herolearning.ac.ke</p>
+      <p className="lg:text-[23px] sm:text-xs">info@herolearning.ac.ke</p>
     </div>
     <div className="flex-container flex items-center gap-2 mt-2">
       <img
@@ -551,13 +547,13 @@ const Home = () => {
         className="xl:w-35 md:w-10 xl:w-auto"
         src={phone}
       />
-      <p className="text-[23px]">+254 123 456 789</p>
+      <p className="lg:text-[23px] sm:text-xs">+254 123 456 789</p>
     </div>
-    <div className="flex-container flex items-center gap-2 mt-2">
+    <div className="flex-container   sm:text-sm flex items-center gap-2 mt-2">
       <img alt="ACS" className="xl:w-35 md:w-10 xl:w-auto" src={pin} />
-      <p className="text-[23px]">Location</p>
+      <p className="lg:text-[23px]">Location</p>
     </div>
-    <h2 className="font-bold text-[22px] mt-5">Find us on:</h2>
+    <h2 className="font-bold lg:text-[22px] mt-5">Find us on:</h2>
     <div className="socials flex w-[50%] gap-[10%] mt-2">
       <div>
         <img
@@ -583,7 +579,7 @@ const Home = () => {
     </div>
   </div>
   <div className="row3 flex-basis-[30%]">
-    <h2 className="text-xl mt-5">Subscribe to our mailing list</h2>
+    <h2 className="lg:text-xl mt-5">Subscribe to our mailing list</h2>
     <form className="validate-form">
       <div className="mt-5 intro-x">
         <div className="input-form">
@@ -592,7 +588,7 @@ const Home = () => {
             type="text"
             name="email"
             placeholder="Name"
-            className="block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+            className="block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] w-full"
           />
         </div>
         <div className="input-form mt-5">
