@@ -25,6 +25,7 @@ import pin from "../assets/images/mingcute_location-line.png";
 import youtube from "../assets/images/mingcute_youtube-line.png";
 import linked from "../assets/images/ant-design_linkedin-outlined.png";
 import facebook from "../assets/images/iconoir_facebook.png";
+import { Menu, X } from 'lucide-react';
 
 const Home = () => {
   const schema = yup
@@ -34,6 +35,8 @@ const Home = () => {
     })
     .required();
   const [loading, isLoading] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+
   return (
     <>
       <div className="homeContainer  h-100vh  lg:p-10 sm:p-5">
@@ -41,94 +44,71 @@ const Home = () => {
           <div className="icon mt-5 ml-5">
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
           </div>
-          <div className="buttons flex gap-3">
-            <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-              <Link
-                to="/register"
-                className="w-full align-top xl:w-32 xl:mr-3"
-              >
-                <Button
-                  variant="primary"
-                  className="w-full xl:px-3 xl:py-3 px-2 py-2 align-top xl:w-32 xl:mr-3"
-                >
-                  Register
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </Link>
-            </div>
-            <div className="  mt-5 text-center xl:mt-8 xl:text-left">
-              <Link to="/auth/login">
-                <Button className=" btn-2 w-full xl:px-4 xl:py-3 px-2 py-2 align-top xl:w-32 xl:mr-3 border-blue-800">
-                  Sign in
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}{" "}
-                </Button>
-              </Link>
-            </div>
+          <div className="buttons relative">
+      {/* Hamburger Menu Icon for small screens */}
+      <div className="block xl:hidden">
+        <button
+          onClick={() => setShowMenu(!showMenu)}
+          className="text-blue-800 focus:outline-none"
+        >
+          {showMenu ? (
+            <X className="w-8 h-8" /> // X icon to close menu
+          ) : (
+            <Menu className="w-8 h-8" /> // Three-line icon to open menu
+          )}
+        </button>
+      </div>
+
+      {/* Links as Dropdown (for small screens) */}
+      {showMenu && (
+        <div className="absolute z-10 mt-3 bg-white shadow-lg rounded-md p-4 w-full left-0 right-auto">
+          <div className="mt-2 text-center">
+            <Link to="/register" className="block mb-3 text-blue-800">
+              Register
+            </Link>
+          </div>
+          <div className="text-center">
+            <Link to="/auth/login" className="block text-blue-800">
+              Sign in
+            </Link>
           </div>
         </div>
+      )}
 
-        {/* <div className=" mt-5 text-center intro-x xl:mt-8  flex h-60vh w-100 md:flex-col flex-wrap p-10">
-          <div className=" flex-basis-1/2">
-            <h1 className="text-5xl font-semibold mt-5 text-black w-full">
-              Empowering Competency
-            </h1>
-            <h1 className="text-5xl font-semibold mt-2 text-black w-full">
-              {" "}
-              Based Curriculum (CBC)
-            </h1>
-            <h1 className="text-5xl font-semibold mt-2 text-black w-full">
-              {" "}
-              Education In Kenya{" "}
-            </h1>
-            <div className="mt-10">
-              <h2 className="mt-5 text-xl mb-5">Engage. Empower. Excel.</h2>
-              <p className="text-xl">
-                Welcome to Hero Learning, where we revolutionize{" "}
-              </p>
-              <p className=" text-xl">
-                education through our innovative digital Competency
-              </p>
-              <p className="text-xl">
-                Based Curriculum (CBC) approach. Join us in shaping{" "}
-              </p>
-              <p className=" text-xl">the future of learning.</p>
-            </div>
-            <div className="  mt-8 text-center intro-x xl:mt-8 xl:text-left">
-              <Button
-                variant="primary"
-                className=" btn-2 w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
-              >
-                <i className="fas fa-play-circle"></i>View Demo
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Button>
-            </div>
-          </div>
-          <div className=" flex-basis-1/2 ml-4">
-            <img
-              alt="ACS"
-              className="xl:w-35 md:w-100 xl:w-auto w-100"
-              src={homepic}
-            />
-          </div>
-        </div> */}
+      {/* Buttons for large screens (xl and above) */}
+      <div className="hidden xl:flex gap-3 mt-5 xl:mt-8">
+        <Link to="/register" className="xl:w-32 xl:mr-3">
+          <Button
+            variant="primary"
+            className="w-full xl:px-3 xl:py-3 px-2 py-2"
+          >
+            Register
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+        </Link>
+        <Link to="/auth/login" className="xl:w-32 xl:mr-3">
+          <Button className="w-full xl:px-4 xl:py-3 px-2 py-2 border-blue-800">
+            Sign in
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+        </Link>
+      </div>
+    </div>
+        </div>
+
+        
         <div className="p-10">
           <div className="grid  overflow-hidden rounded-3xl text-gray-600  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
@@ -209,7 +189,7 @@ const Home = () => {
                     <p className="mt-2">technology make learning fun.</p>
                   </li>
                 </ul>
-              </div> 
+              </div>
             </div>
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="secondArea">
@@ -239,9 +219,7 @@ const Home = () => {
                   src={aboutpic3}
                 />
               </div>
-              <h2 className="xl:text-3xl text-xl font-bold ml-2">
-                Our Vision
-              </h2>
+              <h2 className="xl:text-3xl text-xl font-bold ml-2">Our Vision</h2>
               <p className="mt-5 xl:text-xl sm:text-xl md:text-xl ml-2">
                 To empower every learner's talent <br /> with the skills and
                 knowledge to build
@@ -452,7 +430,7 @@ const Home = () => {
           </h2>
 
           <div className="  mt-5 prices grid  divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
-          <div className="tag1 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
+            <div className="tag1 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
               <h1 className="m-5  text-left text xl:text-4xl text-xl font-bold ">
                 HERO System
               </h1>
@@ -526,101 +504,108 @@ const Home = () => {
           </div>
         </div>
         <div className="footer flex flex-col md:flex-row xl:items-center xl:justify-center p-5 xl:p-0 border-t-2 border-[#948e8e79] w-full mt-8 h-[40vh] relative lg:gap-[3%]">
-        <div className="row1 xl:flex-basis-[15%] sm:mt-10 ">
-    <div className="icon  xl:ml-2">
-    <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
-    </div>
-  </div>
-  <div className="row2 flex-basis-[30%]">
-    <h2 className="font-bold lg:text-[22px] sm:text-xl mt-2">You can reach us on:</h2>
-    <div className="flex-container flex items-center gap-2 mt-2">
-      <img
-        alt="ACS"
-        className="xl:w-35 md:w-10  xl:w-auto"
-        src={email}
-      />
-      <p className="lg:text-[23px] sm:text-xl">info@herolearning.ac.ke</p>
-    </div>
-    <div className="flex-container flex items-center gap-2 mt-2">
-      <img
-        alt="ACS"
-        className="xl:w-35 md:w-10 xl:w-auto"
-        src={phone}
-      />
-      <p className="lg:text-[23px] sm:text-xl">+254 123 456 789</p>
-    </div>
-    <div className="flex-container sm:text-xl flex items-center gap-2 mt-2">
-      <img alt="ACS" className="xl:w-35 md:w-10 xl:w-auto" src={pin} />
-      <p className="lg:text-[23px] sm:text-xl">Location</p>
-    </div>
-    <h2 className="font-bold lg:text-[22px] sm:text-xl mt-5">Find us on:</h2>
-    <div className="socials flex w-[50%] gap-[10%] mt-2">
-      <div>
-        <img
-          alt="ACS"
-          className="xl:w-35 md:w-10 xl:w-auto"
-          src={youtube}
-        />
-      </div>
-      <div>
-        <img
-          alt="ACS"
-          className="xl:w-35 md:w-10 xl:w-auto"
-          src={linked}
-        />
-      </div>
-      <div>
-        <img
-          alt="ACS"
-          className="xl:w-35 md:w-10 xl:w-auto"
-          src={facebook}
-        />
-      </div>
-    </div>
-  </div>
-  <div className="row3 flex-basis-[30%]">
-    <h2 className="lg:text-xl sm:text-xl mt-5">Subscribe to our mailing list</h2>
-    <form className="validate-form">
-      <div className="mt-5 intro-x">
-        <div className="input-form">
-          <FormInput
-            id="validation-form-2"
-            type="text"
-            name="email"
-            placeholder="Name"
-            className="block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] w-full"
-          />
-        </div>
-        <div className="input-form mt-5">
-          <div className="flex items-center">
-            <FormInput
-              id="validation-form-3"
-              name="password"
-              placeholder="Email"
-              className="block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
-            />
+          <div className="row1 xl:flex-basis-[15%] sm:mt-10 ">
+            <div className="icon  xl:ml-2">
+              <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
+            </div>
+          </div>
+          <div className="row2 flex-basis-[30%]">
+            <h2 className="font-bold lg:text-[22px] sm:text-xl mt-2">
+              You can reach us on:
+            </h2>
+            <div className="flex-container flex items-center gap-2 mt-2">
+              <img
+                alt="ACS"
+                className="xl:w-35 md:w-10  xl:w-auto"
+                src={email}
+              />
+              <p className="lg:text-[23px] sm:text-xl">
+                info@herolearning.ac.ke
+              </p>
+            </div>
+            <div className="flex-container flex items-center gap-2 mt-2">
+              <img
+                alt="ACS"
+                className="xl:w-35 md:w-10 xl:w-auto"
+                src={phone}
+              />
+              <p className="lg:text-[23px] sm:text-xl">+254 123 456 789</p>
+            </div>
+            <div className="flex-container sm:text-xl flex items-center gap-2 mt-2">
+              <img alt="ACS" className="xl:w-35 md:w-10 xl:w-auto" src={pin} />
+              <p className="lg:text-[23px] sm:text-xl">Location</p>
+            </div>
+            <h2 className="font-bold lg:text-[22px] sm:text-xl mt-5">
+              Find us on:
+            </h2>
+            <div className="socials flex w-[50%] gap-[10%] mt-2">
+              <div>
+                <img
+                  alt="ACS"
+                  className="xl:w-35 md:w-10 xl:w-auto"
+                  src={youtube}
+                />
+              </div>
+              <div>
+                <img
+                  alt="ACS"
+                  className="xl:w-35 md:w-10 xl:w-auto"
+                  src={linked}
+                />
+              </div>
+              <div>
+                <img
+                  alt="ACS"
+                  className="xl:w-35 md:w-10 xl:w-auto"
+                  src={facebook}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="row3 flex-basis-[30%]">
+            <h2 className="lg:text-xl sm:text-xl mt-5">
+              Subscribe to our mailing list
+            </h2>
+            <form className="validate-form">
+              <div className="mt-5 intro-x">
+                <div className="input-form">
+                  <FormInput
+                    id="validation-form-2"
+                    type="text"
+                    name="email"
+                    placeholder="Name"
+                    className="block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] w-full"
+                  />
+                </div>
+                <div className="input-form mt-5">
+                  <div className="flex items-center">
+                    <FormInput
+                      id="validation-form-3"
+                      name="password"
+                      placeholder="Email"
+                      className="block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+                <Button
+                  variant="primary"
+                  className="w-full px-3 align-top xl:w-20 xl:float-right"
+                >
+                  Submit
+                  {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
+                  )}
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
-      <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-        <Button
-          variant="primary"
-          className="w-full px-3 align-top xl:w-20 xl:float-right"
-        >
-          Submit
-          {loading && (
-            <LoadingIcon
-              icon="spinning-circles"
-              color="white"
-              className="w-4 h-4 ml-2"
-            />
-          )}
-        </Button>
-      </div>
-    </form>
-  </div>
-</div>
-
       </div>
     </>
   );
