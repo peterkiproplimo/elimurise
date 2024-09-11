@@ -36,7 +36,7 @@ const Home = () => {
   const [loading, isLoading] = useState(false);
   return (
     <>
-      <div className="homeContainer  h-100vh  p-10">
+      <div className="homeContainer  h-100vh  lg:p-10 sm:p-5">
         <div className="home flex justify-between">
           <div className="icon mt-5 ml-5">
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
@@ -130,9 +130,9 @@ const Home = () => {
           </div>
         </div> */}
         <div className="p-10">
-          <div className="grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl border border-gray-100 text-gray-600 dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
+          <div className="grid  overflow-hidden rounded-3xl text-gray-600  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <h1 className="xl:text-5xl sm:text-5xl md:text-3xl font-semibold mt-5 text-black w-full">
+              <h1 className="xl:text-5xl sm:text-5xl md:text-5xl font-semibold mt-5 text-black w-full">
                 Empowering Competency Based Curriculum (CBC) Education In Kenya
               </h1>
               <div className="mt-10">
@@ -164,7 +164,7 @@ const Home = () => {
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <img
                 alt="ACS"
-                className="xl:w-35 md:w-100 xl:w-auto w-100"
+                className="xl:w-35 md:w-full xl:w-auto w-full"
                 src={homepic}
               />
             </div>
@@ -174,12 +174,12 @@ const Home = () => {
           <h1 className="xl:text-5xl sm:text-5xl md:text-3xl font-semibold text-center">
             Who are we?
           </h1>
-          <div className="  grid overflow-hidden rounded-3xl  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  p-10 xl:grid-cols-3">
+          <div className="  grid overflow-hidden rounded-3xl  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 p-10  xl:grid-cols-3">
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="secondArea">
                 <img
                   alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
+                  className="xl:w-35 md:w-full xl:w-auto w-full"
                   src={aboutpic}
                 />
               </div>
@@ -215,7 +215,7 @@ const Home = () => {
               <div className="secondArea">
                 <img
                   alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
+                  className="xl:w-35 md:w-full xl:w-auto w-full"
                   src={aboutpic2}
                 />
               </div>
@@ -235,7 +235,7 @@ const Home = () => {
               <div className="secondArea">
                 <img
                   alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
+                  className="xl:w-35 md:w-full xl:w-auto w-full"
                   src={aboutpic3}
                 />
               </div>
@@ -259,7 +259,7 @@ const Home = () => {
               <div className="secondArea">
                 <img
                   alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
+                  className="xl:w-35 md:w-full xl:w-auto w-full"
                   src={pic}
                 />
               </div>
@@ -281,7 +281,7 @@ const Home = () => {
               <div className="secondArea">
                 <img
                   alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
+                  className="xl:w-35 md:w-full xl:w-auto w-full"
                   src={pic2}
                 />
               </div>
@@ -299,7 +299,7 @@ const Home = () => {
               <div className="secondArea">
                 <img
                   alt="ACS"
-                  className="xl:w-35 md:w-10 xl:w-auto"
+                  className="xl:w-35 md:w-full xl:w-auto w-full"
                   src={aboutpic}
                 />
               </div>
