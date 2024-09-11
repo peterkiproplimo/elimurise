@@ -321,7 +321,7 @@ const Home = () => {
           <h1 className="mt-5 text xl:text-5xl text-2xl  font-bold  text-center mb-5">
             What can you do with our system?
           </h1>
-          <div className="grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl border border-gray-100 text-center dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
+          <div className="grid  overflow-hidden rounded-3xl  text-center  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className=" flex justify-center items-center">
                 <img
