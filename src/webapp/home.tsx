@@ -132,7 +132,7 @@ const Home = () => {
         <div className="p-10">
           <div className="grid  overflow-hidden rounded-3xl text-gray-600  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <h1 className="xl:text-5xl sm:text-5xl md:text-5xl font-semibold mt-5 text-black w-full">
+              <h1 className="xl:text-5xl text-2xl font-semibold mt-5 text-black w-full">
                 Empowering Competency Based Curriculum (CBC) Education In Kenya
               </h1>
               <div className="mt-10">
@@ -171,7 +171,7 @@ const Home = () => {
           </div>
         </div>
         <div className="aboutContainer mt-2">
-          <h1 className="xl:text-5xl sm:text-5xl md:text-3xl font-semibold text-center">
+          <h1 className="xl:text-5xl text-2xl font-semibold text-center">
             Who are we?
           </h1>
           <div className="  grid overflow-hidden rounded-3xl  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 p-10  xl:grid-cols-3">
@@ -184,7 +184,7 @@ const Home = () => {
                 />
               </div>
               <div className="contents">
-                <h2 className="xl:text-3xl sm:text-3xl md:text-3xl font-bold ml-2 ">
+                <h2 className="xl:text-3xl text-xl font-bold ml-2 ">
                   Our Core Values
                 </h2>
                 <ul className="mt-5 ml-5">
@@ -219,7 +219,7 @@ const Home = () => {
                   src={aboutpic2}
                 />
               </div>
-              <h2 className="xl:text-3xl sm:text-3xl md:text-3xl font-bold ml-2">
+              <h2 className="xl:text-3xl text-xl font-bold ml-2">
                 Our Mission
               </h2>
               <p className="mt-5 xl:text-xl sm:text-xl md:text-xl ml-2 ">
@@ -239,7 +239,7 @@ const Home = () => {
                   src={aboutpic3}
                 />
               </div>
-              <h2 className="xl:text-3xl sm:text-3xl md:text-3xl font-bold ml-2">
+              <h2 className="xl:text-3xl text-xl font-bold ml-2">
                 Our Vision
               </h2>
               <p className="mt-5 xl:text-xl sm:text-xl md:text-xl ml-2">
@@ -251,7 +251,7 @@ const Home = () => {
           </div>
         </div>
         <div className="aboutContainer mt-2">
-          <h1 className="mt-5 text xl:text-5xl sm:text-3xl md:text-3xl font-bold  text-center mb-2">
+          <h1 className="mt-5 text xl:text-5xl text-2xl md:text-3xl font-bold  text-center mb-2">
             Why Hero Learning?
           </h1>
           <div className="grid  overflow-hidden rounded-3xl  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  p-10 xl:grid-cols-3">
@@ -263,7 +263,7 @@ const Home = () => {
                   src={pic}
                 />
               </div>
-              <h2 className="text xl:text-3xl sm:text-3xl md:text-3xl font-bold ml-2">
+              <h2 className="text xl:text-3xl text-xl font-bold ml-2">
                 Innovative CBC Approach:{" "}
               </h2>
               <p className="mt-5 text xl:text-xl sm:text-xl md:text-xl ml-2">
@@ -285,7 +285,7 @@ const Home = () => {
                   src={pic2}
                 />
               </div>
-              <h2 className="text xl:text-3xl sm:text-3xl md:text-3xl font-bold ml-2">
+              <h2 className="text xl:text-3xl text-xl font-bold ml-2">
                 Technology Integration:{" "}
               </h2>
               <p className="mt-5 ml-2 text xl:text-xl sm:text-xl md:text-xl ">
@@ -303,7 +303,7 @@ const Home = () => {
                   src={aboutpic}
                 />
               </div>
-              <h2 className="text xl:text-3xl sm:text-3xl md:text-3xl font-bold ml-2">
+              <h2 className="text xl:text-3xl text-xl font-bold ml-2">
                 Experienced Educators:{" "}
               </h2>
               <p className="mt-5 ml-2 text xl:text-xl sm:text-xl md:text-xl">
@@ -318,7 +318,7 @@ const Home = () => {
           </div>
         </div>
         <div className="service mt-2">
-          <h1 className="mt-5 text xl:text-5xl sm:text-3xl md:text-3xl font-bold  text-center mb-5">
+          <h1 className="mt-5 text xl:text-5xl text-2xl  font-bold  text-center mb-5">
             What can you do with our system?
           </h1>
           <div className="grid divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl border border-gray-100 text-center dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
@@ -384,7 +384,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="customers">
+        {/* <div className="customers">
           <h1 className="mt-5 text xl:text-5xl sm:text-3xl md:text-3xl font-bold  text-center ">
             Impact:
           </h1>
@@ -441,10 +441,10 @@ const Home = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="price mt-8 md:mb-5 h-full lg:pl-[20%] lg:w-[82%]">
-          <h1 className="mt-5 text xl:text-5xl sm:text-3xl md:text-3xl font-bold  text-center">
+          <h1 className="mt-5 text-xl xl:text-3xl  font-bold  text-center">
             How Much Will it Cost You?
           </h1>
           <h2 className="text xl:text-xl sm:text-xl md:text-xl text-center">
@@ -452,8 +452,8 @@ const Home = () => {
           </h2>
 
           <div className="  mt-5 prices grid  divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
-          <div className="tag1 p-2 m-4 mt-5 mb-5 h-full lg:h-[80%]">
-              <h1 className="m-5  text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
+          <div className="tag1 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
+              <h1 className="m-5  text-left text xl:text-4xl text-xl font-bold ">
                 HERO System
               </h1>
               <p className="ml-5 font-bold"> You get access to:</p>
@@ -468,8 +468,8 @@ const Home = () => {
               </h1>
               <p className="ml-5 text-left text-sm"> (Per Learner Annually)</p>
             </div>
-            <div className="tag2 p-2 m-4 mt-5 mb-5 h-full lg:h-[80%]">
-              <h1 className="ml-5 mt-2 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
+            <div className="tag2 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
+              <h1 className="ml-5 mt-2 text-left text xl:text-4xl text-xl font-bold ">
                 Evidence <br />
                 of Learning
               </h1>
@@ -497,8 +497,8 @@ const Home = () => {
                 600Ksh
               </h1>
             </div>
-            <div className="tag3 p-2 m-4 mt-5 h-full lg:h-[80%] ">
-              <h1 className="mt-2 ml-8 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold">
+            <div className="tag3 p-2 m-4 mt-5 xl:h-full lg:h-[80%] ">
+              <h1 className="mt-2 ml-8 text-left text xl:text-4xl text-xl font-bold">
                 HERO
                 <br /> All in One
               </h1>
@@ -525,21 +525,21 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="footer flex flex-col md:flex-row xl:items-center xl:justify-center border-t-2 border-[#948e8e79] w-full mt-8 h-[40vh] relative lg:gap-[3%]">
-        <div className="row1 xl:flex-basis-[15%] sm:mt-10">
+        <div className="footer flex flex-col md:flex-row xl:items-center xl:justify-center p-5 xl:p-0 border-t-2 border-[#948e8e79] w-full mt-8 h-[40vh] relative lg:gap-[3%]">
+        <div className="row1 xl:flex-basis-[15%] sm:mt-10 ">
     <div className="icon  xl:ml-2">
     <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
     </div>
   </div>
   <div className="row2 flex-basis-[30%]">
-    <h2 className="font-bold lg:text-[22px] sm:text-xs mt-2">You can reach us on:</h2>
+    <h2 className="font-bold lg:text-[22px] sm:text-xl mt-2">You can reach us on:</h2>
     <div className="flex-container flex items-center gap-2 mt-2">
       <img
         alt="ACS"
         className="xl:w-35 md:w-10  xl:w-auto"
         src={email}
       />
-      <p className="lg:text-[23px] sm:text-xs">info@herolearning.ac.ke</p>
+      <p className="lg:text-[23px] sm:text-xl">info@herolearning.ac.ke</p>
     </div>
     <div className="flex-container flex items-center gap-2 mt-2">
       <img
@@ -547,13 +547,13 @@ const Home = () => {
         className="xl:w-35 md:w-10 xl:w-auto"
         src={phone}
       />
-      <p className="lg:text-[23px] sm:text-xs">+254 123 456 789</p>
+      <p className="lg:text-[23px] sm:text-xl">+254 123 456 789</p>
     </div>
-    <div className="flex-container   sm:text-sm flex items-center gap-2 mt-2">
+    <div className="flex-container sm:text-xl flex items-center gap-2 mt-2">
       <img alt="ACS" className="xl:w-35 md:w-10 xl:w-auto" src={pin} />
-      <p className="lg:text-[23px]">Location</p>
+      <p className="lg:text-[23px] sm:text-xl">Location</p>
     </div>
-    <h2 className="font-bold lg:text-[22px] mt-5">Find us on:</h2>
+    <h2 className="font-bold lg:text-[22px] sm:text-xl mt-5">Find us on:</h2>
     <div className="socials flex w-[50%] gap-[10%] mt-2">
       <div>
         <img
@@ -579,7 +579,7 @@ const Home = () => {
     </div>
   </div>
   <div className="row3 flex-basis-[30%]">
-    <h2 className="lg:text-xl mt-5">Subscribe to our mailing list</h2>
+    <h2 className="lg:text-xl sm:text-xl mt-5">Subscribe to our mailing list</h2>
     <form className="validate-form">
       <div className="mt-5 intro-x">
         <div className="input-form">
