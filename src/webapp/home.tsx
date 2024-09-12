@@ -26,6 +26,8 @@ import youtube from "../assets/images/mingcute_youtube-line.png";
 import linked from "../assets/images/ant-design_linkedin-outlined.png";
 import facebook from "../assets/images/iconoir_facebook.png";
 import { Menu, X } from "lucide-react";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import carousel styles
+import { Carousel } from "react-responsive-carousel";
 
 const Home = () => {
   const schema = yup
@@ -428,79 +430,101 @@ const Home = () => {
             Please select a pricing plan that works for you
           </h2>
 
-          <div className="  mt-5 prices grid  divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl dark:border-gray-700 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
-            <div className="tag1 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
-              <h1 className="m-5  text-left text xl:text-4xl text-xl font-bold ">
-                HERO System
-              </h1>
-              <p className="ml-5 font-bold"> You get access to:</p>
-              <ul className="ml-10 text-sm">
-                <li>Online Formative Assessment.</li>
-                <li>Online SummativeAssessment.</li>
-                <li>Chat features with parents/guardians.</li>
-                <li>Branded Termly/AnnualPrintable Reports</li>
-              </ul>
-              <h1 className="ml-5 mt-5 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold ">
-                1500Ksh
-              </h1>
-              <p className="ml-5 text-left text-sm"> (Per Learner Annually)</p>
-            </div>
-            <div className="tag2 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
-              <h1 className="ml-5 mt-2 text-left text xl:text-4xl text-xl font-bold ">
-                Evidence <br />
-                of Learning
-              </h1>
-              <h2 className="ml-5 mt-2 font-bold "> You get access to:</h2>
-              <p className="ml-5">
-                Hard copy assessment tool books for all grades with activities
-                for all the sub strands plus: A scoring guide, and teacher's
-                reflection.
-              </p>
-              <h2 className="ml-5 mt-2 "> Charges per book:</h2>
-              <p className="text-sm ml-5 mb-0"> Pre School</p>
-              <h1 className="ml-5  mt-0 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">
-                250Ksh
-              </h1>
-              <p className="text-sm  ml-5"> Lower Primary</p>
-              <h1 className="ml-5  mt-0 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">
-                350Ksh
-              </h1>
-              <p className="text-sm  ml-5"> Upper Primary</p>
-              <h1 className="ml-5  m-0 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">
-                500Ksh
-              </h1>
-              <p className="text-sm  ml-5"> Junior Secondary</p>
-              <h1 className="ml-5 text-left text xl:text-3xl sm:text-3xl md:text-3xl font-bold">
-                600Ksh
-              </h1>
-            </div>
-            <div className="tag3 p-2 m-4 mt-5 xl:h-full lg:h-[80%] ">
-              <h1 className="mt-2 ml-8 text-left text xl:text-4xl text-xl font-bold">
-                HERO
-                <br /> All in One
-              </h1>
-              <h2 className="ml-8 xl:text-xl sm:text-xl md:text-xl">
-                {" "}
-                (Recommended)
-              </h2>
-              <p className="ml-5 mt-5 font-bold"> You get access to:</p>
-              <ul className="ml-10 text-sm">
-                <li>Online Formative Assessment.</li>
-                <li>Online SummativeAssessment.</li>
-                <li>Chat features with parents/guardians.</li>
-                <li>Branded Termly/AnnualPrintable Reports</li>
-                <li>
-                  Hard copy assessment tool books for all grades with activities
-                  for all the substrands plus: A scoring guide, and teacher's
-                  reflection.
-                </li>
-              </ul>
-              <h1 className="ml-5 mt-5 text-left text xl:text-4xl sm:text-3xl md:text-3xl font-bold">
-                3000Ksh
-              </h1>
-              <p className="ml-5 text-left text-sm"> (Per Learner Annually)</p>
-            </div>
-          </div>
+          <div className="mt-5 prices divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl dark:border-gray-700">
+  {/* Carousel for small screens */}
+  <div className="lg:hidden flex overflow-x-auto space-x-4 snap-x snap-mandatory">
+    <div className="tag1 p-2 m-4 mt-5 mb-5 w-[90%] snap-center flex-shrink-0">
+      <h1 className="m-5 text-left xl:text-4xl text-xl font-bold">HERO System</h1>
+      <p className="ml-5 font-bold">You get access to:</p>
+      <ul className="ml-10 text-sm">
+        <li>Online Formative Assessment.</li>
+        <li>Online Summative Assessment.</li>
+        <li>Chat features with parents/guardians.</li>
+        <li>Branded Termly/Annual Printable Reports</li>
+      </ul>
+      <h1 className="ml-5 mt-5 text-left xl:text-4xl sm:text-3xl md:text-3xl font-bold">1500Ksh</h1>
+      <p className="ml-5 text-left text-sm">(Per Learner Annually)</p>
+    </div>
+
+    <div className="tag2 p-2 m-4 mt-5 mb-5 w-[90%] snap-center flex-shrink-0">
+      <h1 className="ml-5 mt-2 text-left xl:text-4xl text-xl font-bold">Evidence of Learning</h1>
+      <h2 className="ml-5 mt-2 font-bold">You get access to:</h2>
+      <p className="ml-5">Hard copy assessment tool books for all grades...</p>
+      <h2 className="ml-5 mt-2">Charges per book:</h2>
+      <p className="text-sm ml-5 mb-0">Pre School</p>
+      <h1 className="ml-5 mt-0 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">250Ksh</h1>
+      <p className="text-sm ml-5">Lower Primary</p>
+      <h1 className="ml-5 mt-0 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">350Ksh</h1>
+      <p className="text-sm ml-5">Upper Primary</p>
+      <h1 className="ml-5 m-0 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">500Ksh</h1>
+      <p className="text-sm ml-5">Junior Secondary</p>
+      <h1 className="ml-5 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">600Ksh</h1>
+    </div>
+
+    <div className="tag3 p-2 m-4 mt-5 w-[90%] snap-center flex-shrink-0">
+      <h1 className="mt-2 ml-8 text-left xl:text-4xl text-xl font-bold">HERO All in One</h1>
+      <h2 className="ml-8 xl:text-xl sm:text-xl md:text-xl">(Recommended)</h2>
+      <p className="ml-5 mt-5 font-bold">You get access to:</p>
+      <ul className="ml-10 text-sm">
+        <li>Online Formative Assessment.</li>
+        <li>Online Summative Assessment.</li>
+        <li>Chat features with parents/guardians.</li>
+        <li>Branded Termly/Annual Printable Reports</li>
+        <li>Hard copy assessment tool books for all grades...</li>
+      </ul>
+      <h1 className="ml-5 mt-5 text-left xl:text-4xl sm:text-3xl md:text-3xl font-bold">3000Ksh</h1>
+      <p className="ml-5 text-left text-sm">(Per Learner Annually)</p>
+    </div>
+  </div>
+
+  {/* Grid for large screens */}
+  <div className="hidden lg:grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 lg:divide-y-0 xl:grid-cols-3">
+    <div className="tag1 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
+      <h1 className="m-5 text-left xl:text-4xl text-xl font-bold">HERO System</h1>
+      <p className="ml-5 font-bold">You get access to:</p>
+      <ul className="ml-10 text-sm">
+        <li>Online Formative Assessment.</li>
+        <li>Online Summative Assessment.</li>
+        <li>Chat features with parents/guardians.</li>
+        <li>Branded Termly/Annual Printable Reports</li>
+      </ul>
+      <h1 className="ml-5 mt-5 text-left xl:text-4xl sm:text-3xl md:text-3xl font-bold">1500Ksh</h1>
+      <p className="ml-5 text-left text-sm">(Per Learner Annually)</p>
+    </div>
+
+    <div className="tag2 p-2 m-4 mt-5 mb-5 xl:h-full lg:h-[80%]">
+      <h1 className="ml-5 mt-2 text-left xl:text-4xl text-xl font-bold">Evidence of Learning</h1>
+      <h2 className="ml-5 mt-2 font-bold">You get access to:</h2>
+      <p className="ml-5">Hard copy assessment tool books for all grades...</p>
+      <h2 className="ml-5 mt-2">Charges per book:</h2>
+      <p className="text-sm ml-5 mb-0">Pre School</p>
+      <h1 className="ml-5 mt-0 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">250Ksh</h1>
+      <p className="text-sm ml-5">Lower Primary</p>
+      <h1 className="ml-5 mt-0 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">350Ksh</h1>
+      <p className="text-sm ml-5">Upper Primary</p>
+      <h1 className="ml-5 m-0 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">500Ksh</h1>
+      <p className="text-sm ml-5">Junior Secondary</p>
+      <h1 className="ml-5 text-left xl:text-3xl sm:text-3xl md:text-3xl font-bold">600Ksh</h1>
+    </div>
+
+    <div className="tag3 p-2 m-5 mt-5 xl:h-full lg:h-[80%]">
+      <h1 className="mt-2 ml-8 text-left xl:text-4xl text-xl font-bold">HERO All in One</h1>
+      <h2 className="ml-8 xl:text-xl sm:text-xl md:text-xl">(Recommended)</h2>
+      <p className="ml-5 mt-5 font-bold">You get access to:</p>
+      <ul className="ml-10 text-sm">
+        <li>Online Formative Assessment.</li>
+        <li>Online Summative Assessment.</li>
+        <li>Chat features with parents/guardians.</li>
+        <li>Branded Termly/Annual Printable Reports</li>
+        <li>Hard copy assessment tool books for all grades...</li>
+      </ul>
+      <h1 className="ml-5 mt-5 text-left xl:text-4xl sm:text-3xl md:text-3xl font-bold">3000Ksh</h1>
+      <p className="ml-5 text-left text-sm">(Per Learner Annually)</p>
+    </div>
+  </div>
+</div>
+
+
         </div>
         <div className="footer flex flex-col md:flex-row xl:items-center xl:justify-center p-5 xl:p-0 border-t-2 border-[#948e8e79] w-full mt-8 h-[40vh] relative lg:gap-[3%]">
           <div className="row1 xl:flex-basis-[15%] sm:mt-10 ">
