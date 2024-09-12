@@ -46,10 +46,10 @@ const Home = () => {
           </div>
           <div className="buttons relative">
       {/* Hamburger Menu Icon for small screens */}
-      <div className="block xl:hidden">
+      <div className="block xl:hidden ">
         <button
           onClick={() => setShowMenu(!showMenu)}
-          className="text-blue-800 focus:outline-none"
+          className="text-blue-800 focus:outline-none mt-5"
         >
           {showMenu ? (
             <X className="w-8 h-8" /> // X icon to close menu
@@ -61,8 +61,8 @@ const Home = () => {
 
       {/* Links as Dropdown (for small screens) */}
       {showMenu && (
-        <div className="absolute z-10 mt-2 bg-white shadow-lg rounded-md p-3 w-full -ml-10  ">
-          <div className="mt-2 text-center">
+        <div className="absolute z-10  bg-white shadow-lg rounded-md p-3 w-50 -ml-10  ">
+          <div className=" text-center">
             <Link to="/register" className="block mb-3 text-blue-800">
               Register
             </Link>
