@@ -45,67 +45,67 @@ const Home = () => {
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={logo} />
           </div>
           <div className="buttons relative">
-            {/* Hamburger Menu Icon for small screens */}
-            <div className="block xl:hidden">
-              <button
-                onClick={() => setShowMenu(!showMenu)}
-                className="text-blue-800 focus:outline-none"
-              >
-                {showMenu ? (
-                  <X className="w-8 h-8" /> // X icon to close menu
-                ) : (
-                  <Menu className="w-8 h-8" /> // Three-line icon to open menu
-                )}
-              </button>
-            </div>
+      {/* Hamburger Menu Icon for small screens */}
+      <div className="block xl:hidden">
+        <button
+          onClick={() => setShowMenu(!showMenu)}
+          className="text-blue-800 focus:outline-none"
+        >
+          {showMenu ? (
+            <X className="w-8 h-8" /> // X icon to close menu
+          ) : (
+            <Menu className="w-8 h-8" /> // Three-line icon to open menu
+          )}
+        </button>
+      </div>
 
-            {/* Links as Dropdown (for small screens) */}
-            {showMenu && (
-              <div className="absolute z-10 mt-3 bg-white shadow-lg rounded-md p-4 w-full left-0 right-auto">
-                <div className="mt-2 text-center">
-                  <Link to="/register" className="block mb-3 text-blue-800">
-                    Register
-                  </Link>
-                </div>
-                <div className="text-center">
-                  <Link to="/auth/login" className="block text-blue-800">
-                    Sign in
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* Buttons for large screens (xl and above) */}
-            <div className="hidden xl:flex gap-3 mt-5 xl:mt-8">
-              <Link to="/register" className="xl:w-32 xl:mr-3">
-                <Button
-                  variant="primary"
-                  className="w-full xl:px-3 xl:py-3 px-2 py-2"
-                >
-                  Register
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </Link>
-              <Link to="/auth/login" className="xl:w-32 xl:mr-3">
-                <Button className="w-full xl:px-4 xl:py-3 px-2 py-2 border-blue-800">
-                  Sign in
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </Link>
-            </div>
+      {/* Links as Dropdown (for small screens) */}
+      {showMenu && (
+        <div className="absolute z-10 mt-2 bg-white shadow-lg rounded-md p-3 w-full -ml-10  ">
+          <div className="mt-2 text-center">
+            <Link to="/register" className="block mb-3 text-blue-800">
+              Register
+            </Link>
           </div>
+          <div className="text-center">
+            <Link to="/auth/login" className="block text-blue-800">
+              Sign in
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Buttons for large screens (xl and above) */}
+      <div className="hidden xl:flex gap-3 mt-5 xl:mt-8">
+        <Link to="/register" className="xl:w-32 xl:mr-3">
+          <Button
+            variant="primary"
+            className="w-full xl:px-3 xl:py-3 px-2 py-2"
+          >
+            Register
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+        </Link>
+        <Link to="/auth/login" className="xl:w-32 xl:mr-3">
+          <Button className="w-full xl:px-4 xl:py-3 px-2 py-2 border-blue-800">
+            Sign in
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+        </Link>
+      </div>
+    </div>
         </div>
 
         <div className="p-10">
@@ -611,3 +611,4 @@ const Home = () => {
 };
 
 export default Home;
+
