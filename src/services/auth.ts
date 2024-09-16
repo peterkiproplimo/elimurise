@@ -42,6 +42,7 @@ getData();
 axios.interceptors.request.use(
   async (config) => {
     try {
+      console.log("Calling ...........");
       const user = await getData();
       return config;
     } catch (error) {
