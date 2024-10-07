@@ -1033,8 +1033,8 @@ export async function deleteLearningAreaAssignment(userId: any) {
 }
 export async function getListOfGradings(data: any) {
   try {
-    let res = await axios.get(c.GRADING,{
-      params:data
+    let res = await axios.get(c.GRADING, {
+      params: data,
     });
     console.log(res);
     return res.data;
@@ -1054,15 +1054,14 @@ export async function getGradingLearningAreas(id: any, data: any) {
 export async function createGrading(data: any) {
   try {
     if (data._id) {
-      let res = await axios.put(c.GRADING + "/" + data._id, data);
+      let res = await axios.put(c.GRADING + "/update-name/" + data._id, data);
       console.log(res);
       return res.data;
     } else {
-      let res = await axios.post(c.GRADING , data);
+      let res = await axios.post(c.GRADING, data);
       console.log(res);
       return res.data;
     }
-  
   } catch (e) {
     throw handler(e);
   }
