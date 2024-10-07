@@ -110,7 +110,7 @@ const initialState: SideMenuState = {
         {
           icon: "Activity",
           pathname: "/home/grading",
-          title: "Grading",
+          title: "Performance Level Scale",
         },
         {
           icon: "Activity",
