@@ -42,7 +42,14 @@ getData();
 axios.interceptors.request.use(
   async (config) => {
     try {
+      console.log("Calling ...........");
       const user = await getData();
+
+      // Assuming `getData()` returns an object with a token or some user info
+      if (user && user.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+      }
+
       return config;
     } catch (error) {
       // Handle the error as needed
@@ -59,6 +66,7 @@ axios.interceptors.request.use(
 
 export const getPackages = async (data: any) => {
   try {
+    await getData();
     let res = await axios.get(c.SUBSCRIPTION + "/packages", {
       params: data,
     });

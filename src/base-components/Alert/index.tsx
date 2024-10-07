@@ -60,12 +60,15 @@ const Alert: AlertComponent = forwardRef(
     const Component = as || "div";
 
     useEffect(() => {
-      const timer = setTimeout(() => {
+      if (props) {
         setShow(true);
-      }, dismissTimeout);
+        const timer = setTimeout(() => {
+          setShow(false);
+        }, 2000); // dismiss after 2 seconds
 
-      return () => clearTimeout(timer);
-    }, [dismissTimeout, props]);
+        return () => clearTimeout(timer);
+      }
+    }, [props]); // Run effect when props change
 
     // Main Colors
     const primary = [

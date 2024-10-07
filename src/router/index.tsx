@@ -268,13 +268,17 @@ function Router() {
         },
 
         {
-          path: "otp",
+          path: "reset-password/:token",
           element: <ForgotPasswordOTP />,
         },
         {
-          path: "v1/otp",
+          path: "v1/reset-password/:token",
           element: <ForgotPasswordOTPParent />,
         },
+        // {
+        //   path: "v1/otp",
+        //   element: <ForgotPasswordOTPParent />,
+        // },
         {
           path: "CreateNewPassword",
           element: <CreateNewPassword />,

@@ -35,8 +35,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      firstname:yup.string().required("Name is required"),
-      lastname:yup.string().required("Name is required"),
+      firstname: yup.string().required("Name is required"),
+      lastname: yup.string().required("Name is required"),
       phone: yup.string().required("Phone Number is required"),
       email: yup.string().required().email("Email is required"),
       password: yup.string().required().min(4),
@@ -55,7 +55,6 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
     resolver: yupResolver(schema),
   });
 
-
   const password = watch("password");
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
@@ -68,19 +67,19 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
         const data = await getValues();
         let res = await ApiService.signup(data);
         auth.signIn(res);
-        setCurrentStep(2);
         let token = res.token;
         await auth.signIn({ ...res.user, token });
         setRegistered(true);
         // localStorage.setItem("user_id", res.data.user._id);
         isLoading(false);
         // setCurrentStep();
-
-        setSuccess(true);
-        setMessage("Authenticated successfully");
-        notify.current?.showToast();
+        // setSuccess(true);
+        // setMessage("Account Created successfully");
+        // notify.current?.showToast();
+        setCurrentStep(2);
         // navigate("/");
       } catch (error: any) {
+        console.log(error);
         isLoading(false);
         setSuccess(false);
         setMessage(error.message);
@@ -102,12 +101,14 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
         {/* <Alert
           variant="soft-danger"
           className="flex items-center mb-2"
-          dismissTimeout={9000}
+          dismissTimeout={1000}
         >
           <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
         </Alert> */}
-     <form className="validate-form bg-white p-10 m-5 rounded-lg border border-gray-300" onSubmit={onSubmit}>
-
+        <form
+          className="validate-form bg-white p-10 m-5 rounded-lg border border-gray-300"
+          onSubmit={onSubmit}
+        >
           <p className="mt-5 text-xl">Customer details:</p>
           <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 intro-x">
             <div className="input-form">
@@ -223,22 +224,22 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
             <div className="input-form">
               <label>Confirm Password</label>
               <div className="flex items-center">
-              <FormInput
-            {...register("confirm_password", {
-              required: "Confirm Password is required",
-              validate: (value) =>
-                value === password || "Passwords do not match",
-            })}
-            id="validation-form-3"
-            type="password"
-            name="confirm_password"
-            className={
-              errors.confirm_password
-                ? "block px-4 py-3 mt-4 intro-x min-w-full border-danger pr-10"
-                : "block px-4 py-3 mt-4 intro-x min-w-[250px] border pr-10 border-blue-300"
-            }
-            placeholder="Confirm Password"
-          />
+                <FormInput
+                  {...register("confirm_password", {
+                    required: "Confirm Password is required",
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
+                  })}
+                  id="validation-form-3"
+                  type="password"
+                  name="confirm_password"
+                  className={
+                    errors.confirm_password
+                      ? "block px-4 py-3 mt-4 intro-x min-w-full border-danger pr-10"
+                      : "block px-4 py-3 mt-4 intro-x min-w-[250px] border pr-10 border-blue-300"
+                  }
+                  placeholder="Confirm Password"
+                />
                 {/* <div
                   className="flex items-center cursor-pointer eye-icon"
                   onClick={togglePasswordVisibility}
@@ -312,6 +313,22 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           </div>
         </form>
       </div>
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed "}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification>
     </>
   );
 };

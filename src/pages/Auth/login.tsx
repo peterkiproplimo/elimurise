@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import Button from "../../base-components/Button";
@@ -25,8 +25,19 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [selectedForm, setSelectedForm] = useState("form1");
 
-  const handleFormChange = (event: any) => {
-    setSelectedForm(event.target.value);
+  // Retrieve from local storage on component mount
+  useEffect(() => {
+    const storedForm = localStorage.getItem("selectedForm");
+    if (storedForm) {
+      setSelectedForm(storedForm);
+    }
+  }, []);
+
+  // Handle radio button changes
+  const handleFormChange = (e) => {
+    const value = e.target.value;
+    setSelectedForm(value);
+    localStorage.setItem("selectedForm", value); // Save to local storage
   };
 
   const navigate = useNavigate();
