@@ -155,8 +155,9 @@ function Main() {
   const getTransfers = async () => {
     isLoading(true);
     const response = await ApiService.getTransfers({
-      page: page,
-      limit: limit,
+      page,
+      limit,
+      search
     });
     const pagination = response.pagination;
     setPagination({

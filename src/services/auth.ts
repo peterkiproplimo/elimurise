@@ -1031,9 +1031,11 @@ export async function deleteLearningAreaAssignment(userId: any) {
     throw handler(e);
   }
 }
-export async function getListOfGradings(userId: any) {
+export async function getListOfGradings(data: any) {
   try {
-    let res = await axios.get(c.GRADING);
+    let res = await axios.get(c.GRADING,{
+      params:data
+    });
     console.log(res);
     return res.data;
   } catch (e) {

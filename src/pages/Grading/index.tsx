@@ -108,7 +108,7 @@ function Users() {
   }, [search, limit, page, gradeId]);
 
   const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
+    const response = await ApiService.getGrades({ page});
 
     setGrades(response.data);
   };
@@ -122,10 +122,9 @@ function Users() {
   const fetchGrading = async () => {
     isLoading(true);
     let res = await ApiService.getListOfGradings({
-      page: page,
-      search: search,
-      limit: 10000,
-
+      page,
+      search,
+      limit,
       gradeId: gradeId,
     });
     isLoading(false);
@@ -181,7 +180,7 @@ function Users() {
         // return;
         let res = await ApiService.createGrading(data);
         fetchGrading();
-        await reset();
+        cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
@@ -305,6 +304,7 @@ function Users() {
               event.preventDefault();
               cancel({ name: "" });
               setDialog(true);
+              setIsEditMode(false);
             }}
           >
             New Grading
@@ -365,9 +365,9 @@ function Users() {
                   {/* <Table.Th className="border-b-0 whitespace-nowrap">
                   <FormCheck.Input type="checkbox" />
                 </Table.Th> */}
-                  {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                    NO
-                  </Table.Th> */}
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    No
+                  </Table.Th>
 
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     Name
@@ -383,9 +383,11 @@ function Users() {
               <Table.Tbody>
                 {grading.map((grade: any, key) => (
                   <Table.Tr key={key} className="intro-x">
-                    {/* <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {key + 1}
-                    </Table.Td> */}
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                    <span className="font-medium whitespace-nowrap">
+                            {limit*(page-1)+key+1}
+                            </span>
+                    </Table.Td>
 
                     <Table.Td
                       onClick={(e) => openConfig(grade)}
@@ -402,16 +404,47 @@ function Users() {
                           >
                             {grade?.name && grade?.name}
                           </a>
-                          <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                          {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                             {grade?.grade?.name}
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {grade?.grade?.name}
                     </Table.Td>
+
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                            <div className="flex items-center justify-center">
+                              <a
+                                className="flex items-center mr-3 text-success"
+                                href="#"
+                                // onClick={() => editRecord(assignment)}
+                              >
+                                <Lucide
+                                  icon="CheckSquare"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Edit
+                              </a>
+                              <a
+                                className="flex items-center text-danger"
+                                href="#"
+                                onClick={() => {
+                                  // active(user)
+                                  setUser(grade);
+                                  setConfirmDelete(true);
+                                }}
+                              >
+                                <Lucide
+                                  icon="Trash2"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Delete
+                              </a>
+                            </div>
+                          </Table.Td>
+                    {/* <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                       {" "}
                       <div className="flex items-center justify-center">
                         <Menu>
@@ -421,9 +454,7 @@ function Users() {
                             </span>
                           </Menu.Button>
                           <Menu.Items className="w-40">
-                            {/* <Menu.Item onClick={() => editRecord(assignment)}>
-                            <Lucide icon="Edit" className="w-4 h-4 mr-2" /> Edit
-                          </Menu.Item> */}
+                        
                             <Menu.Item
                               onClick={() => {
                                 // active(user)
@@ -436,14 +467,11 @@ function Users() {
                               {"Remove"}
                             </Menu.Item>
 
-                            {/* <Menu.Item>
-                            <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
-                            Email Credentials
-                          </Menu.Item> */}
+                          
                           </Menu.Items>
                         </Menu>
                       </div>
-                    </Table.Td>
+                    </Table.Td> */}
                   </Table.Tr>
                 ))}
               </Table.Tbody>

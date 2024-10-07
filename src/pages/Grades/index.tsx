@@ -218,6 +218,7 @@ function Main() {
         </>
       ) : (
         <>
+          <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           <h2 className="mt-1 text-lg font-medium intro-y">Grades</h2>
           {message && success && (
             <Alert
@@ -238,6 +239,31 @@ function Main() {
               {message}
             </Alert>
           )}
+             <div className="hidden mx-auto md:block text-slate-500">
+                Showing{" "}
+                {pagination.current_page +
+                  " to " +
+                  pagination.total_pages +
+                  " of " +
+                  pagination.total}{" "}
+                entries
+              </div>
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                <div className="relative w-56 text-slate-500">
+                  <FormInput
+                    type="text"
+                    className="w-56 pr-10 !box"
+                    placeholder="Search..."
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                </div>
+             
+              </div>
+              </div>
           <div className="grid grid-cols-12 gap-6 mt-5">
           
             {/* BEGIN: Data List */}
