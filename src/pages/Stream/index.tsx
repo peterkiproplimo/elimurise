@@ -30,6 +30,7 @@ function Main() {
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
+  const [grade, setGrade] = useState(false);
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
@@ -74,11 +75,11 @@ function Main() {
         console.log(data);
         await ApiService.createStream(data);
         await getStreams();
-        await reset();
+        cancel({name:""})
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Stream created successfully.");
+        setMessage(isEditMode? "Stream Updated successfully": "Stream created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         console.log(error.message);
@@ -91,24 +92,32 @@ function Main() {
       }
     }
   };
-  useEffect(() => {
-    getStreams();
-    setTimeout(() => {
-      getStreams();
-      isLoading(false);
-    }, 2000);
-  }, []);
+  // useEffect(() => {
+  //   getStreams();
+  //   setTimeout(() => {
+  //     getStreams();
+  //     isLoading(false);
+  //   }, 2000);
+  // }, []);
   useEffect(() => {
     getGrades();
-  }, [search, page, limit]);
+    getStreams();
+  }, [search, page, limit,grade]);
 
   const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
+    const response = await ApiService.getGrades({ page });
     setGrades(response.data);
   };
   const getStreams = async () => {
     isLoading(true);
-    const response = await ApiService.getStream({ page: 1 });
+    const response = await ApiService.getStream({ page, limit, search ,grade});
+    const pagination = response.pagination;
+    setPagination({
+      current_page: pagination.current_page,
+      total: pagination.total,
+      total_pages: pagination.total_pages,
+      per_page: pagination.per_page,
+    });
     setStreams(response.data);
     isLoading(false);
   };
@@ -265,7 +274,7 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium intro-y">Streams</h2>
-          {message && success && (
+          {/* {message && success && (
             <Alert
               variant="soft-success"
               className="flex items-center mb-2"
@@ -283,7 +292,7 @@ function Main() {
               </svg>
               {message}
             </Alert>
-          )}
+          )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
@@ -292,6 +301,7 @@ function Main() {
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
                   setDialog(true);
+                  setIsEditMode(false);
                 }}
               >
                 New Stream
@@ -305,7 +315,22 @@ function Main() {
                   pagination.total}{" "}
                 entries
               </div>
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0 mr-5">
+              <FormSelect
+                  {...register("grade")}
+                  name="grade"
+                  onChange={(e:any)=>setGrade(e.target.value)}
+                  // defaultValue={selectedLevel}
+                >
+                  {grades.map((grade: any, key: any) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+              </div>
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                
                 <div className="relative w-56 text-slate-500">
                   <FormInput
                     type="text"
@@ -318,6 +343,7 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
+
               </div>
             </div>
             {/* BEGIN: Data List */}
@@ -359,7 +385,7 @@ function Main() {
                         <Table.Tr key={key} className="intro-x">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {key + 1}
+                            {limit*(page-1)+key+1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -424,7 +450,7 @@ function Main() {
                     <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
-                          onClick={() => setPage(previous_page)}
+                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
                           className="py-2 px-4 rounded-md"
                         >
                           <Lucide icon="ChevronLeft" className="w-4 h-4" />
@@ -449,7 +475,11 @@ function Main() {
                           )
                         )}
                         <button
-                          onClick={() => setPage(next_page)}
+                          onClick={() =>
+                            setPage(
+                              page < pagination.total_pages ? page - 1 : 1
+                            )
+                          }
                           className="py-2 px-4 rounded-md"
                         >
                           <Lucide icon="ChevronRight" className="w-4 h-4" />
