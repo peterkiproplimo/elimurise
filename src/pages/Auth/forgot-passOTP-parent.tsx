@@ -32,11 +32,16 @@ const ForgotPasswordOTP = () => {
     password: yup
       .string()
       .required("Password is required")
-      .min(8, "Password must be at least 8 characters long"),
+      .min(8, "Password must be at least 8 characters long")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      ),
     cpassword: yup
       .string()
-      .oneOf([yup.ref("password"), null], "Passwords must match")
-      .required("Confirm Password is required"),
+      .required("Confirm password is required")
+      .oneOf([yup.ref("password"), null], "Passwords must match"),
+
     token: yup
       .string()
       // .matches(/^\d{6}$/, "Enter a valid 6-digit OTP")
@@ -45,7 +50,7 @@ const ForgotPasswordOTP = () => {
 
   const handleClick = () => {
     setTimeout(() => {
-      navigate('/auth/login'); 
+      navigate("/auth/login");
     }, 1000);
   };
 
@@ -213,7 +218,6 @@ const ForgotPasswordOTP = () => {
               type="submit"
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
-              onClick={handleClick}
             >
               Verify
               {loading && (
