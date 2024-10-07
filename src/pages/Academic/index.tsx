@@ -81,11 +81,11 @@ function Level() {
         console.log(data);
         await ApiService.createAcademic(data);
         await getAcademics();
-        await reset();
+        cancel({name:""})
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Academic year created successfully.");
+        setMessage(isEditMode?"Academic Year Updated successfully": "Academic Year created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -108,7 +108,7 @@ function Level() {
   const getAcademics = async () => {
     isLoading(true);
     const response = await ApiService.getAcademic({
-      page: 1,
+      page,search, limit
     });
     setAcademic(response.data);
 
@@ -281,7 +281,7 @@ function Level() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium intro-y">Academic</h2>
-          {message && success && (
+          {/* {message && success && (
             <Alert
               variant="soft-success"
               className="flex items-center mb-2"
@@ -299,7 +299,7 @@ function Level() {
               </svg>
               {message}
             </Alert>
-          )}
+          )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               <Button
@@ -308,6 +308,7 @@ function Level() {
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
                   setDialog(true);
+                  setIsEditMode(false);
                 }}
               >
                 New Academia
@@ -381,7 +382,7 @@ function Level() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                            >
                             <span className="font-medium whitespace-nowrap">
-                              {key + 1}
+                            {limit*(page-1)+key+1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"

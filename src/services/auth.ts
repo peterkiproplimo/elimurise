@@ -1053,9 +1053,16 @@ export async function getGradingLearningAreas(id: any, data: any) {
 }
 export async function createGrading(data: any) {
   try {
-    let res = await axios.post(c.GRADING, data);
-    console.log(res);
-    return res.data;
+    if (data._id) {
+      let res = await axios.put(c.GRADING + "/" + data._id, data);
+      console.log(res);
+      return res.data;
+    } else {
+      let res = await axios.post(c.GRADING , data);
+      console.log(res);
+      return res.data;
+    }
+  
   } catch (e) {
     throw handler(e);
   }

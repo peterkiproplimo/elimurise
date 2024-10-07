@@ -195,12 +195,11 @@ function Users() {
       }
     }
   };
+
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    console.log(record);
-    reset({ ...record, role_id: record.role_id._id });
-
+    reset({...record,grade:record?.grade?._id});
     setDialog(true);
   };
   const deleteRecord = async () => {
@@ -419,7 +418,7 @@ function Users() {
                               <a
                                 className="flex items-center mr-3 text-success"
                                 href="#"
-                                // onClick={() => editRecord(assignment)}
+                                onClick={() => editRecord(grade)}
                               >
                                 <Lucide
                                   icon="CheckSquare"
