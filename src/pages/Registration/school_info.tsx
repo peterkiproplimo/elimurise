@@ -36,11 +36,11 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-        name: yup.string().required("School Name is required"),
-        county: yup.string().required("County is required"),
-        subcounty:yup.string().required("Sub County is required"),
-        address:yup.string().required("Address is required"),
-        academic_year:yup.string().required("Academic year is required")
+      name: yup.string().required("School Name is required"),
+      county: yup.string().required("County is required"),
+      subcounty: yup.string().required("Sub County is required"),
+      address: yup.string().required("Address is required"),
+      academic_year: yup.string().required("Academic year is required"),
       // email: yup.string().required().email(),
       // password: yup.string().required().min(4),
     })
@@ -106,7 +106,10 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
         >
           <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
         </Alert> */}
-        <form className="validate-form bg-white mt-5 border border-gray-300 p-8 rounded-lg " onSubmit={onSubmit}>
+        <form
+          className="validate-form bg-white mt-5 border border-gray-300 p-8 rounded-lg "
+          onSubmit={onSubmit}
+        >
           <div className="">
             <h2 className=" text-3xl font-bold intro-x">Subscribe</h2>
             <h3 className=" text-2xl  intro-x">
@@ -301,7 +304,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           </div> */}
           <div className="mt-5 flex justify-end xl:mt-8 xl:text-left">
             <Button
-              onClick={() => setCurrentStep(1)}
+              onClick={() => setCurrentStep(2)}
               variant="secondary"
               className="w-[200px] px-4 py-3 align-top xl:w-22 xl:mr-3 "
             >

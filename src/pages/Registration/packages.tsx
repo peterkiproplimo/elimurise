@@ -12,7 +12,9 @@ import clsx from "clsx";
 import Table from "../../base-components/Table";
 import ReportPieChart from "../../components/ReportPieChart";
 import ReportDonutChart from "../../components/ReportDonutChart";
-
+import Notification, {
+  NotificationElement,
+} from "../../base-components/Notification";
 import logoUrl from "../../assets/images/paypal.svg";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { Search } from "lucide-react";
@@ -34,6 +36,9 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);
   const [packages, setPackages] = useState([]);
+  const notify = useRef<NotificationElement>();
+  const [success, setSuccess] = useState(true);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     // getDashboard();
@@ -89,17 +94,19 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           </div>
         ) : packages.length > 0 ? (
           <div className="justify-center items-center">
-           <div className={`mt-5 grid grid-cols-${packages.length} gap-5 lg:flex lg:flex-wrap lg:justify-center`}>
-
+            <div
+              className={`mt-5 grid grid-cols-${packages.length} gap-5 lg:flex lg:flex-wrap lg:justify-center`}
+            >
               {/* <div className="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-3 gap-8 m-4"> */}
               {packages.map((Package: any, key: any) => (
                 <>
                   <div
                     className={
                       key % 2 != 0
-                      ? `flex flex-col  w-full lg:w-1/4 bg-gradient-to-br from-blue-100 via-orange-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-orange-200`
-                      : `flex flex-col  w-full lg:w-1/4 bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-blue-200`}
-                      >
+                        ? `flex flex-col  w-full lg:w-1/4 bg-gradient-to-br from-blue-100 via-orange-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-orange-200`
+                        : `flex flex-col  w-full lg:w-1/4 bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-8 rounded-lg shadow-lg relative border-8 border-blue-200`
+                    }
+                  >
                     <div className="text-left">
                       <h3 className="text-2xl">{Package.name}</h3>
                       <div className="mt-4">
@@ -221,6 +228,22 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           </div>
         </div> */}
       </div>
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed "}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification>
     </>
   );
 };

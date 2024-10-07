@@ -184,7 +184,6 @@ function Main() {
     setStreams(response.data);
     console.log(response);
   };
-  
 
   const getAcademics = async () => {
     const response = await ApiService.getAcademic({
@@ -238,15 +237,14 @@ function Main() {
     });
     console.log(record);
     setDialog(true);
-    
   };
-  useEffect(()=>{
+  useEffect(() => {
     handleGuardianIdNoBlur();
-  },[guardianIdNo])
+  }, [guardianIdNo]);
 
-  useEffect(()=>{
+  useEffect(() => {
     handleGuardianIdNoBlur2();
-  },[guardianIdNo2])
+  }, [guardianIdNo2]);
 
   const handleGuardianIdNoBlur = async () => {
     reset({
@@ -483,16 +481,14 @@ function Main() {
                 </div>
                 <div className="col-span-12 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">
-                   Stream<span className="text-danger ml-0.5">*</span>
+                    Stream<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormSelect
                     {...register("stream")}
                     name="stream"
                     disabled={isEditMode}
                   >
-                    <option>
-                    Select Stream
-                  </option>
+                    <option>Select Stream</option>
                     {streams.map((stream: any, key) => (
                       <option key={key} value={stream._id}>
                         {stream.name}
@@ -523,28 +519,24 @@ function Main() {
                     Guardian ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-               
-                 
-                    <TomSelect
-                  {...register("guardian_id_no")}
-                  name="guardian_id_no"
-                  value={guardianIdNo} 
-                  onChange={(event:any) => {
-                    reset({ ...getValues(), parent: event });
-                    setGuardianIdNo(event)}
-                  }
-                 
-                  className={errors.guardian_id_no ? "border-danger" : ""}
-                >
-                  <option>
-                    Select Email
-                  </option>
-                  {parents.map((parent: any, key) => (
-                    <option key={key} value={parent.email}>
-                      {parent?.email}
-                    </option>
-                  ))}
-                </TomSelect>
+
+                  <TomSelect
+                    {...register("guardian_id_no")}
+                    name="guardian_id_no"
+                    value={guardianIdNo}
+                    onChange={(event: any) => {
+                      reset({ ...getValues(), parent: event });
+                      setGuardianIdNo(event);
+                    }}
+                    className={errors.guardian_id_no ? "border-danger" : ""}
+                  >
+                    <option>Select Email</option>
+                    {parents.map((parent: any, key) => (
+                      <option key={key} value={parent.email}>
+                        {parent?.email}
+                      </option>
+                    ))}
+                  </TomSelect>
                   <FormInput
                     {...register("guardian")}
                     type="hidden"
@@ -666,28 +658,24 @@ function Main() {
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
 
-                      <TomSelect
-                  {...register("guardian2_id_no")}
-                  name="guardian2_id_no"
-                  value={guardianIdNo2} 
-                  onChange={(event:any) => {
-                    reset({ ...getValues(), parent: event });
-                    setGuardianIdNo2(event)}
-                  }
-                 
-                  className={errors.guardian2_id_no ? "border-danger" : ""}
-                >
-                  <option>
-                    Select Email
-                  </option>
-                  {parents.map((parent: any, key) => (
-                    <option key={key} value={parent.email}>
-                      {parent?.email}
-                    </option>
-                  ))}
-                </TomSelect>
-                 
-                  
+                  <TomSelect
+                    {...register("guardian2_id_no")}
+                    name="guardian2_id_no"
+                    value={guardianIdNo2}
+                    onChange={(event: any) => {
+                      reset({ ...getValues(), parent: event });
+                      setGuardianIdNo2(event);
+                    }}
+                    className={errors.guardian2_id_no ? "border-danger" : ""}
+                  >
+                    <option>Select Email</option>
+                    {parents.map((parent: any, key) => (
+                      <option key={key} value={parent.email}>
+                        {parent?.email}
+                      </option>
+                    ))}
+                  </TomSelect>
+
                   <FormInput
                     {...register("guardian2")}
                     type="hidden"

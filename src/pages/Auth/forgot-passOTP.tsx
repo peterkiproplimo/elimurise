@@ -13,10 +13,12 @@ import Lucide from "../../base-components/Lucide";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { Errors } from "../../type";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const ForgotPasswordOTP = () => {
   const location = useLocation();
+  const data = useParams();
+  const token = data.token;
   const email = location.state?.email;
   const channel = location.state?.channel;
   const navigate = useNavigate();
@@ -27,10 +29,18 @@ const ForgotPasswordOTP = () => {
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup.object({
-    otp: yup
+    password: yup
       .string()
-      .required("OTP is required")
-      .matches(/^\d{6}$/, "Enter a valid 6-digit OTP"),
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters long"),
+    cpassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
+    token: yup
+      .string()
+      // .matches(/^\d{6}$/, "Enter a valid 6-digit OTP")
+      .required("OTP is required"),
   });
 
   const {
@@ -50,23 +60,24 @@ const ForgotPasswordOTP = () => {
       isLoading(true);
       try {
         const data = await getValues();
+        console.log("Good morning great men of God");
         console.log(data);
         let res = await ApiService.verifyEmailOTP(data);
         isLoading(false);
         setSuccess(true);
-        setMessage("Password reset successful");
+        setMessage("Password reset successfully");
         notify.current?.showToast();
-
-        navigate("/login", {
-          replace: true,
-          state: { email },
-        });
+        setTimeout(() => {
+          navigate("/auth/login", {
+            replace: true,
+          });
+        }, 1000);
 
         /* this code was done by samsms*/
       } catch (err: any) {
         isLoading(false);
         setSuccess(false);
-        setMessage("Incorrect or invalid OTP");
+        setMessage(err.message);
         notify.current?.showToast();
       }
     }
@@ -82,36 +93,7 @@ const ForgotPasswordOTP = () => {
           Enter the 4-digit OTP sent to your email.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
-          <div className="mt-8 intro-x">  
-            <div className="input-form">
-              <FormInput
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Enter a valid email address"
-                  }
-                })}
-                id="validation-form-2"
-                type="hidden"
-                name="email"
-                value={email}
-               
-                className={
-                  errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
-                }
-                placeholder="Email"
-              />
-              {errors.email && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.email.message === "string" &&
-                    errors.email.message}
-                </div>
-              )}
-            </div>
-
+          <div className="mt-8 intro-x">
             {/* <div className="input-form flex items-center justify-center space-x-2">
               {[0, 1, 2, 3].map((index) => (
                 <FormInput
@@ -141,19 +123,14 @@ const ForgotPasswordOTP = () => {
             {/* {errors.otp && (
               <div className="mt-2 text-danger">{typeof errors.otp.message === 'string' && errors.otp.message}</div>
             )} */}
-
             <div className="input-form">
               <FormInput
-                {...register("otp")}
+                {...register("token")}
                 id="validation-form-2"
-                type="number"
-                name="otp"
-                className={
-                  errors.otp
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
-                }
-                placeholder="OTP"
+                type="hidden"
+                name="token"
+                defaultValue={token}
+                placeholder="otp"
               />
               {errors.otp && (
                 <div className="mt-2 text-danger">
@@ -161,6 +138,26 @@ const ForgotPasswordOTP = () => {
                 </div>
               )}
             </div>
+            {/* <div className="input-form">
+              <FormInput
+                {...register("otp")}
+                id="validation-form-2"
+                type="text"
+                name="otp"
+                defaultValue={token}
+                className={
+                  errors.otp
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                }
+                placeholder="otp"
+              />
+              {errors.otp && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.otp.message === "string" && errors.otp.message}
+                </div>
+              )}
+            </div> */}
             <div className="input-form">
               <FormInput
                 {...register("password")}
@@ -175,10 +172,31 @@ const ForgotPasswordOTP = () => {
                 }
                 placeholder="New Password"
               />
-              {errors.email && (
+              {errors.password && (
                 <div className="mt-2 text-danger">
-                  {typeof errors.email.message === "string" &&
-                    errors.email.message}
+                  {typeof errors.password.message === "string" &&
+                    errors.password.message}
+                </div>
+              )}
+            </div>
+            <div className="input-form">
+              <FormInput
+                {...register("cpassword")}
+                id="validation-form-2"
+                type="password"
+                autoComplete="off"
+                name="cpassword"
+                className={
+                  errors.cpassword
+                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                }
+                placeholder="Confirm Password"
+              />
+              {errors.cpassword && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.cpassword.message === "string" &&
+                    errors.cpassword.message}
                 </div>
               )}
             </div>
@@ -198,7 +216,7 @@ const ForgotPasswordOTP = () => {
                 />
               )}
             </Button>
-            <Link to="/auth/login">
+            <Link to="/login">
               <Button
                 variant="outline-primary"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
@@ -240,7 +258,7 @@ const ForgotPasswordOTP = () => {
           >
             {success ? "Success" : "Failed"}
           </div>
-          {/* <div className="mt-1 text-slate-500">{message}</div> */}
+          <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>
     </>

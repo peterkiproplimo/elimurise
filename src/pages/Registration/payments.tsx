@@ -116,7 +116,7 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
         isLoading(false);
         setSuccess(false);
         console.log(JSON.stringify(error));
-        setMessage("Failed to pay");
+        setMessage(error.message);
         notify.current?.showToast();
       }
     }
@@ -176,7 +176,7 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
               </span>
             </div>
             {/* ddg */}
-            <div className="mb-5">
+            {/* <div className="mb-5">
               <label className="font-bold text-gray-700 dark:text-gray-300">
                 Choose Payment Method
               </label>
@@ -208,7 +208,7 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   <span className="ml-2 dark:text-white">RTG</span>
                 </label>
               </div>
-            </div>
+            </div> */}
 
             <div className="mt-8 flex justify-center">
               <button className="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -306,6 +306,22 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           )}
         </div>
       </div>
+      {/* <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed "}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification> */}
     </>
   );
 };

@@ -66,6 +66,7 @@ axios.interceptors.request.use(
 
 export const getPackages = async (data: any) => {
   try {
+    await getData();
     let res = await axios.get(c.SUBSCRIPTION + "/packages", {
       params: data,
     });
