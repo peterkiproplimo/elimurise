@@ -58,11 +58,9 @@ const ForgotPasswordOTP = () => {
     resolver: yupResolver(schema),
   });
 
-  
   const handleClick = () => {
-      navigate('/auth/login'); 
+    navigate("/auth/login");
   };
-
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -217,7 +215,6 @@ const ForgotPasswordOTP = () => {
               type="submit"
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
-              onClick={handleClick}
             >
               Verify
               {loading && (
