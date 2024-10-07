@@ -81,10 +81,10 @@ function Main() {
     getRole();
   }, []);
 
-  useEffect(() => {
-    setUser(auth.authData && auth.authData?.user);
-    reset({...auth.authData?.user})
-  }, [user]);
+  // useEffect(() => {
+  //   setUser(auth.authData && auth.authData?.user);
+  //   reset({...auth.authData?.user})
+  // }, [user]);
 //   useEffect(() => {
 //     getUsers();
 //   }, [search, limit, page]);
@@ -108,8 +108,10 @@ function Main() {
   const getProfile = async () => {
     let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
     console.log("......")
-    console.log(res)
-    setProfile(res.data);
+    console.log(res.data)
+    // setProfile(res.data);
+    setUser(res.data);
+        reset({...res.data});
   };
   const getRole = async () => {
     let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
@@ -124,8 +126,10 @@ function Main() {
       try {
         const data = await getValues();
         let res = await ApiService.createProfile(data);
-        getProfile();
-        await reset();
+        setUser(res.data);
+        reset({...res.data})
+        // getProfile();
+        // await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
@@ -170,13 +174,13 @@ function Main() {
         <div className="px-5 pt-5 mt-5 intro-y box">
           <div className="flex flex-col pb-5 -mx-5 border-b lg:flex-row border-slate-200/60 dark:border-darkmode-400">
             <div className="flex items-center justify-center flex-1 px-5 lg:justify-start">
-              <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
+              {/* <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
                 <img
                   alt="Midone Tailwind HTML Admin Template"
                   className="rounded-full"
                   src={logo}
                 />
-              </div>
+              </div> */}
               <div className="ml-5">
                 <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
                 {user?.firstname + " " + user?.lastname}
