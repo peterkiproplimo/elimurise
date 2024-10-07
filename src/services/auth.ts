@@ -44,6 +44,12 @@ axios.interceptors.request.use(
     try {
       console.log("Calling ...........");
       const user = await getData();
+
+      // Assuming `getData()` returns an object with a token or some user info
+      if (user && user.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+      }
+
       return config;
     } catch (error) {
       // Handle the error as needed

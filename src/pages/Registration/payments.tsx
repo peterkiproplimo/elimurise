@@ -172,7 +172,7 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 You are about to pay
               </div>
               <span className="font-bold text-3xl">
-                Ksh. {formatCurrency(billing.totalCost)}
+                Ksh. {formatCurrency(billing?.totalCost)}
               </span>
             </div>
             {/* ddg */}
