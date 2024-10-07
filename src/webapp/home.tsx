@@ -38,6 +38,7 @@ const Home = () => {
     .required();
   const [loading, isLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  
 
   return (
     <>
@@ -430,7 +431,7 @@ const Home = () => {
             Please select a pricing plan that works for you
           </h2>
 
-          <div className="mt-5 prices divide-x divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden rounded-3xl dark:border-gray-700">
+          <div className="mt-5 prices  overflow-hidden rounded-3xl ">
   {/* Carousel for small screens */}
   <div className="lg:hidden flex overflow-x-auto space-x-4 snap-x snap-mandatory">
     <div className="tag1 p-2 m-4 mt-5 mb-5 w-[90%] snap-center flex-shrink-0">

@@ -88,14 +88,14 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      first_name: yup.string().required("Firstname is required"),
-      last_name: yup.string().required("Lastname is required"),
+      first_name: yup.string().required("First name is required"),
+      last_name: yup.string().required("Last name is required"),
       surname: yup.string().required("Surname is required"),
       adm_no: yup.string().required("Adm.No is required"),
       grade: yup.string().required("Grade is required"),
       stream: yup.string().required("Stream is required"),
-      guardian_first_name: yup.string().required("Firstname is required"),
-      guardian_last_name: yup.string().required("Lastname is required"),
+      guardian_first_name: yup.string().required("First name is required"),
+      guardian_last_name: yup.string().required("Last name is required"),
       guardian_id_no: yup.string().required("ID Number is required"),
       guardian_email: yup.string().required("Email is required"),
       guardian_phone: yup.string().required("Phone Number is required"),
@@ -127,7 +127,7 @@ function Main() {
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Learner added successfully.");
+        setMessage(isEditMode?"Learner Updated successfully": "Learner created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -159,7 +159,9 @@ function Main() {
     isLoading(true);
     const response = await ApiService.getEnrolments(
       {
-        page: page,
+        page,
+        search,
+        limit
       },
       strandFilter
     );
@@ -371,11 +373,11 @@ function Main() {
                     First Name<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
-                    {...register("First Name")}
+                    {...register("first_name")}
                     type="text"
                     name="first_name"
                     className={errors.first_name ? "border-danger" : ""}
-                    placeholder="first name"
+                    placeholder="First name"
                   />
                   {errors.first_name && (
                     <div className="mt-2 text-danger">
@@ -389,11 +391,11 @@ function Main() {
                     Middle Name<span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
-                    {...register("Middle Name")}
+                    {...register("last_name")}
                     type="text"
                     name="last_name"
                     className={errors.last_name ? "border-danger" : ""}
-                    placeholder="last name"
+                    placeholder="Last name"
                   />
                   {errors.last_name && (
                     <div className="mt-2 text-danger">
@@ -405,11 +407,11 @@ function Main() {
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>Surname</FormLabel>
                   <FormInput
-                    {...register("Surname")}
+                    {...register("surname")}
                     type="text"
                     name="surname"
                     className={errors.surname ? "border-danger" : ""}
-                    placeholder="surname"
+                    placeholder="Surname"
                   />
                   {errors.surname && (
                     <div className="mt-2 text-danger">
@@ -424,11 +426,11 @@ function Main() {
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
-                    {...register("Admission no")}
+                    {...register("adm_no")}
                     type="text"
                     name="adm_no"
                     className={errors.adm_no ? "border-danger" : ""}
-                    placeholder="admission no"
+                    placeholder="Admission no"
                   />
                   {errors.adm_no && (
                     <div className="mt-2 text-danger">
@@ -440,11 +442,11 @@ function Main() {
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>Nemis No</FormLabel>
                   <FormInput
-                    {...register("Nemis no")}
+                    {...register("nemis_no")}
                     type="text"
                     name="nemis_no"
                     className={errors.nemis_no ? "border-danger" : ""}
-                    placeholder="nemis no"
+                    placeholder="Nemis no"
                   />
                   {errors.nemis_no && (
                     <div className="mt-2 text-danger">
@@ -460,14 +462,14 @@ function Main() {
                   <TomSelect
                     name="grade"
                     value={grade}
+                    className={errors.grade ? "border-danger" : ""}
                     onChange={(event: any) => {
                       reset({ ...getValues(), grade: event });
-                      console.log("test");
                       setGrade(event);
                     }}
                     disabled={isEditMode}
                   >
-                    <option>Select Grade</option>
+                    <option value={""} selected>Select Grade</option>
                     {grades.map((grade: any, key) => (
                       <option key={key} value={grade._id}>
                         {grade.name}
@@ -488,9 +490,10 @@ function Main() {
                   <FormSelect
                     {...register("stream")}
                     name="stream"
+                    className={errors.stream ? "border-danger" : ""}
                     disabled={isEditMode}
                   >
-                    <option>
+                    <option value={""} selected>
                     Select Stream
                   </option>
                     {streams.map((stream: any, key) => (
@@ -499,6 +502,12 @@ function Main() {
                       </option>
                     ))}
                   </FormSelect>
+                  {errors.stream && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.stream.message === "string" &&
+                        errors.stream.message}
+                    </div>
+                  )}
                 </div>
                 <div className="col-span-12 sm:col-span-4"></div>
                 <div className="col-span-12 sm:col-span-4"></div>
@@ -523,8 +532,6 @@ function Main() {
                     Guardian ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-               
-                 
                     <TomSelect
                   {...register("guardian_id_no")}
                   name="guardian_id_no"
@@ -550,7 +557,7 @@ function Main() {
                     type="hidden"
                     name="guardian"
                     className={errors.guardian_id_no ? "border-danger" : ""}
-                    placeholder="guardian ID number"
+                    placeholder="Guardian ID number"
                   />
                   {errors.guardian_id_no && (
                     <div className="mt-2 text-danger">
@@ -571,7 +578,7 @@ function Main() {
                     className={
                       errors.guardian_first_name ? "border-danger" : ""
                     }
-                    placeholder="guardian first name"
+                    placeholder="Guardian First name"
                     disabled
                   />
                   {errors.guardian_first_name && (
@@ -588,7 +595,7 @@ function Main() {
                     type="text"
                     name="guardian_surname"
                     className={errors.guardian_surname ? "border-danger" : ""}
-                    placeholder="guardian surname"
+                    placeholder="Guardian surname"
                     disabled
                   />
                   {errors.guardian_surname && (
@@ -608,7 +615,7 @@ function Main() {
                     type="text"
                     name="guardian_last_name"
                     className={errors.guardian_last_name ? "border-danger" : ""}
-                    placeholder="guardian last name"
+                    placeholder="Guardian Last name"
                     disabled
                   />
                   {errors.guardian_last_name && (
@@ -626,7 +633,7 @@ function Main() {
                     type="email"
                     name="guardian_email"
                     className={errors.guardian_email ? "border-danger" : ""}
-                    placeholder="guardian email"
+                    placeholder="Guardian email"
                     disabled
                   />
                   {errors.guardian_email && (
@@ -643,7 +650,7 @@ function Main() {
                     type="text"
                     name="guardian_phone"
                     className={errors.guardian_phone ? "border-danger" : ""}
-                    placeholder="guardian phone"
+                    placeholder="Guardian phone"
                     disabled
                   />
                   {errors.guardian_phone && (
@@ -693,7 +700,7 @@ function Main() {
                     type="hidden"
                     name="guardian2"
                     className={errors.guardian2_id_no ? "border-danger" : ""}
-                    placeholder="Second guardian ID number"
+                    placeholder="Second Guardian ID number"
                   />
                   {errors.guardian2_id_no && (
                     <div className="mt-2 text-danger">
@@ -714,7 +721,7 @@ function Main() {
                     className={
                       errors.guardian2_first_name ? "border-danger" : ""
                     }
-                    placeholder="Second guardian first name"
+                    placeholder="Second Guardian First name"
                     disabled
                   />
                   {errors.guardian2_first_name && (
@@ -731,7 +738,7 @@ function Main() {
                     type="text"
                     name="guardian2_surname"
                     className={errors.guardian2_surname ? "border-danger" : ""}
-                    placeholder="Second guardian surname"
+                    placeholder="Second Guardian surname"
                     disabled
                   />
                   {errors.guardian2_surname && (
@@ -754,7 +761,7 @@ function Main() {
                     className={
                       errors.guardian2_last_name ? "border-danger" : ""
                     }
-                    placeholder="Second guardian last name"
+                    placeholder="Second Guardian Last name"
                   />
                   {errors.guardian2_last_name && (
                     <div className="mt-2 text-danger">
@@ -771,7 +778,7 @@ function Main() {
                     type="email"
                     name="guardian2_email"
                     className={errors.guardian2_email ? "border-danger" : ""}
-                    placeholder="Second guardian email"
+                    placeholder="Second Guardian email"
                     disabled
                   />
                   {errors.guardian2_email && (
@@ -788,7 +795,7 @@ function Main() {
                     type="text"
                     name="guardian2_phone"
                     className={errors.guardian2_phone ? "border-danger" : ""}
-                    placeholder="Second guardian phone"
+                    placeholder="Second Guardian phone"
                     disabled
                   />
                   {errors.guardian2_phone && (
@@ -857,6 +864,7 @@ function Main() {
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
                 setDialog(true);
+                setIsEditMode(false);
               }}
             >
               New Learner
@@ -950,7 +958,7 @@ function Main() {
                         <Table.Tr key={key} className="intro-x">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                             <span className="font-medium whitespace-nowrap">
-                              {key + 1}
+                            {limit*(page-1)+key+1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">

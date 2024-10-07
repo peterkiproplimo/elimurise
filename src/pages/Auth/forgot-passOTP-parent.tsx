@@ -35,6 +35,12 @@ const ForgotPasswordOTP = () => {
       .matches(/^\d{6}$/, "Enter a valid 6-digit OTP"),
   });
 
+  const handleClick = () => {
+    setTimeout(() => {
+      navigate('/auth/login'); 
+    }, 1000);
+  };
+
   const {
     register,
     trigger,
@@ -204,6 +210,7 @@ const ForgotPasswordOTP = () => {
               type="submit"
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
+              onClick={handleClick}
             >
               Verify
               {loading && (

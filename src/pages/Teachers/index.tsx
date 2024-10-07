@@ -79,10 +79,9 @@ function Main() {
       email: yup.string().required(" Email is required"),
       surname: yup.string().required("Surname is required"),
       phone: yup
-      .string()
-      .required("Phone number is required")
-      .min(10, "Phone number must be at least 10 characters long"),
-    
+        .string()
+        .required("Phone number is required")
+        .min(10, "Phone number must be at least 10 characters long"),
     })
     .required();
 
@@ -120,11 +119,15 @@ function Main() {
           navigate("/home/teacher/" + response._id);
         }
         await getTeachers();
-        await reset();
+        cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Teacher added successfully.");
+        setMessage(
+          isEditMode
+            ? "Teacher Updated successfully"
+            : "Teacher created successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -146,7 +149,9 @@ function Main() {
   const getTeachers = async () => {
     isLoading(true);
     const response = await ApiService.getTeachers({
-      page: 1,
+      page,
+      limit,
+      search,
     });
     setTeachers(response.data);
     const pagination = response.pagination;
@@ -304,17 +309,18 @@ function Main() {
                   Phone Number<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
                 <FormInput
-  {...register("phone", {
-    pattern: {
-      value: /^.{10,}$/,
-      message: "Phone number must be at least 10 characters long",
-    },
-  })}
-  type="text"
-  name="phone"
-  className={errors.phone ? "border-danger" : ""}
-  placeholder="Phone Number"
-/>
+                  {...register("phone", {
+                    pattern: {
+                      value: /^.{10,}$/,
+                      message:
+                        "Phone number must be at least 10 characters long",
+                    },
+                  })}
+                  type="text"
+                  name="phone"
+                  className={errors.phone ? "border-danger" : ""}
+                  placeholder="Phone Number"
+                />
 
                 {errors.phone && (
                   <div className="mt-2 text-danger">
@@ -493,30 +499,11 @@ function Main() {
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
                   setDialog(true);
+                  setIsEditMode(false);
                 }}
               >
                 Add Teacher
               </Button>
-              {/* <Menu>
-                <Menu.Button as={Button} className="px-2 !box">
-                  <span className="flex items-center justify-center w-5 h-5">
-                    <Lucide icon="Plus" className="w-4 h-4" />
-                  </span>
-                </Menu.Button>
-                <Menu.Items className="w-40">
-                  <Menu.Item>
-                    <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    to Excel
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    to PDF
-                  </Menu.Item>
-                </Menu.Items>
-              </Menu> */}
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
                 {pagination.current_page +
@@ -550,9 +537,9 @@ function Main() {
                       No.
                     </Table.Th>
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                       Name
+                      Name
                     </Table.Th>
-                  
+
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Phone Number
                     </Table.Th>
@@ -596,18 +583,15 @@ function Main() {
                               {teacher.firstname && teacher.firstname}
                               {" " + teacher.surname + " " + teacher.lastname}
                             </a>
-                            {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                              {teacher.phone}
-                            </div> */}
                           </div>
                         </div>
                       </Table.Td>
-                  
+
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {teacher.phone}
                         </span>
-                      </Table.Td> 
+                      </Table.Td>
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {teacher.email}
@@ -710,8 +694,6 @@ function Main() {
                 </div>
               )}
             </div>
-
-            {/* END: Pagination */}
           </div>
           <Dialog
             staticBackdrop
@@ -723,7 +705,6 @@ function Main() {
           >
             <Dialog.Panel></Dialog.Panel>
           </Dialog>
-          {/* BEGIN: Delete Confirmation Modal */}
           <Dialog
             open={confirmDelete}
             onClose={() => {

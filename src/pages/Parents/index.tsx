@@ -87,11 +87,11 @@ function Main() {
         const data = await getValues();
         await ApiService.createParents(data);
         await getParents();
-        await reset();
+        cancel({name:""})
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Parent created successfully.");
+        setMessage(isEditMode?"Parent Updated successfully": "Parent created successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -110,14 +110,14 @@ function Main() {
       getParents();
       isLoading(false);
     }, 2000);
-  }, [search, page, limit]);
+  }, [search, page, limit]); 
   useEffect(() => {
     getAcademicYear();
   }, []);
   const getParents = async () => {
    
     const response = await ApiService.getParents({
-      page: 1,
+      page, limit, search
     });
     setParents(response.data);
     const pagination = response.pagination;
@@ -361,6 +361,7 @@ function Main() {
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
                   setDialog(true);
+                  setIsEditMode(false);
                 }}
               >
                 Add Parent
@@ -457,7 +458,7 @@ function Main() {
                         <Table.Tr key={key} className="intro-x">
                           <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {key + 1}
+                            {limit*(page-1)+key+1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">

@@ -116,8 +116,7 @@ function Users() {
   };
   const getLearningAreas = async () => {
     const response = await ApiService.getLearningAreas({
-      page: 1,
-      limit: 100000,
+      page, limit
     });
     setLearningAreas(response.data);
   };

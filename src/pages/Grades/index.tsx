@@ -130,17 +130,23 @@ function Main() {
   useEffect(() => {
     getLearningAreas();
     getGrades();
-  }, []);
+  }, [search, page, limit]);
 
   const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-
+    const response = await ApiService.getGrades({ page,limit ,search});
     setGrades(response.data);
+    const pagination = response.pagination;
+    setPagination({
+      current_page: pagination.current_page,
+      total: pagination.total,
+      total_pages: pagination.total_pages,
+      per_page: pagination.per_page,
+    });
   };
   const getLearningAreas = async () => {
     const response = await ApiService.getLearningAreas({
       page: 1,
-      limit: 100000,
+     
     });
     setLearningAreas(response.data);
   };
@@ -256,7 +262,8 @@ function Main() {
                     <Table.Tr key={key} className="intro-x">
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
-                          {key + 1}
+                          {limit*(page-1)+key+1
+                          }
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
@@ -301,73 +308,73 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
+
+              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                        <button
+                          onClick={() => setPage(previous_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                        </button>
+                        {_.times(pagination.total_pages).map((page, key) =>
+                          page + 1 == pagination.current_page ? (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 bg-white rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          )
+                        )}
+                        <button
+                          onClick={() => setPage(next_page)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                        </button>
+                      </Pagination>
+                      <div className="text-slate-500">
+                        <span className="mr-3">Total {pagination.total}</span>
+                        <FormSelect
+                          className="w-30 mt-3 !box sm:mt-0"
+                          onChange={(e) => setLimit(parseInt(e.target.value))}
+                        >
+                          <option value={10}>10/page</option>
+                          <option value={25}>25/page</option>
+                          <option value={50}>50/page</option>
+                          <option value={100}>100/page</option>
+                        </FormSelect>
+                      </div>
+                      </div>
+                    </div>
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
                 </div>
               ) : (
                 <>
-                  {teachers.length === 0 && (
+                  {grades.length === 0 && (
                     <div className="flex flex-col items-center mt-10 bg-white p-8">
                       {/* <Search size={28} className="" /> */}
                       <p className="text-xl text-slate-500 ">
                         No records found
-                      </p>
+                      </p> 
                     </div>
                   )}
                 </>
               )}
-              {loading === false && teachers.length > 0 && (
-                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                    <Pagination className="w-full sm:w-auto sm:mr-auto">
-                      <button
-                        onClick={() => setPage(previous_page)}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                      </button>
-                      {_.times(pagination.total_pages).map((page, key) =>
-                        page + 1 == pagination.current_page ? (
-                          <button
-                            onClick={() => setPage(page + 1)}
-                            key={key}
-                            className="py-2 px-4 bg-white rounded-md"
-                          >
-                            {page + 1}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => setPage(page + 1)}
-                            key={key}
-                            className="py-2 px-4 rounded-md"
-                          >
-                            {page + 1}
-                          </button>
-                        )
-                      )}
-                      <button
-                        onClick={() => setPage(next_page)}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        <Lucide icon="ChevronRight" className="w-4 h-4" />
-                      </button>
-                    </Pagination>
-                    <div className="text-slate-500">
-                      <span className="mr-3">Total {pagination.total}</span>
-                      <FormSelect
-                        className="w-30 mt-3 !box sm:mt-0"
-                        onChange={(e) => setLimit(parseInt(e.target.value))}
-                      >
-                        <option value={10}>10/page</option>
-                        <option value={25}>25/page</option>
-                        <option value={50}>50/page</option>
-                        <option value={100}>100/page</option>
-                      </FormSelect>
-                    </div>
-                  </div>
-                </div>
-              )}
+             
             </div>
 
             {/* END: Pagination */}

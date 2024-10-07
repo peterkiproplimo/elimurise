@@ -118,11 +118,11 @@ function Main() {
         const data = await getValues();
         await ApiService.createTransfers(data);
         await getTransfers();
-        await reset({ name: "" });
+        cancel({name:""})
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Transfer Initated successfully.");
+        setMessage(isEditMode?"Transfer Updated successfully": "Transfer initiated successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -135,8 +135,7 @@ function Main() {
     }
   };
   const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-
+    const response = await ApiService.getGrades({ page });
     setGrades(response.data);
   };
   useEffect(() => {
@@ -556,6 +555,7 @@ function Main() {
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
                 setDialog(true);
+                setIsEditMode(false);
               }}
             >
               Initiate Transfer
