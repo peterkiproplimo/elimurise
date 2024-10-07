@@ -35,13 +35,24 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      firstname: yup.string().required("Name is required"),
-      lastname: yup.string().required("Name is required"),
+      firstname: yup.string().required("First name is required"),
+      lastname: yup.string().required("Last name is required"),
       phone: yup.string().required("Phone Number is required"),
-      email: yup.string().required().email("Email is required"),
-      password: yup.string().required().min(4),
-      confirm_password: yup.string().required().min(4),
+      email: yup.string().required().email("Valid email is required"),
+      password: yup
+        .string()
+        .required("Password is required")
+        .min(8, "Password must be at least 8 characters long")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        ),
+      confirm_password: yup
+        .string()
+        .required("Confirm password is required")
+        .oneOf([yup.ref("password"), null], "Passwords must match"),
     })
+
     .required();
 
   const {
