@@ -34,7 +34,7 @@ const Login = () => {
   }, []);
 
   // Handle radio button changes
-  const handleFormChange = (e) => {
+  const handleFormChange = (e: any) => {
     const value = e.target.value;
     setSelectedForm(value);
     localStorage.setItem("selectedForm", value); // Save to local storage
