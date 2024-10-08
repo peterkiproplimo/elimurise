@@ -115,6 +115,8 @@ function Main() {
     getAcademicYear();
   }, []);
   const getParents = async () => {
+    isLoading(true);
+
     try {
       const response = await ApiService.getParents({
         page,
@@ -526,8 +528,8 @@ function Main() {
                                   className="flex items-center text-danger"
                                   href="#"
                                   onClick={() => {
-                                    setRecordId(parent._id),
-                                      setConfirmDelete(true);
+                                    setParent(parent);
+                                    setConfirmDelete(true);
                                   }}
                                 >
                                   <Lucide
