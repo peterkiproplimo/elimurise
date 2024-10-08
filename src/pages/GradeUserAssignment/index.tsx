@@ -103,10 +103,7 @@ function Users() {
   }, []);
   useEffect(() => {
     getLearningAreasAssignments();
-    setTimeout(() => {
-      getLearningAreasAssignments();
-      isLoading(false);
-    }, 2000);
+  
   }, [search, limit, page, gradeId]);
 
   const getGrades = async () => {

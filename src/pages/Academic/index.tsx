@@ -55,8 +55,19 @@ function Level() {
   const schema = yup
     .object({
       name: yup.string().required("Academic Year is required"),
-      startDate: yup.string().required("Start date is required"),
-      endDate: yup.string().required("End date is required"),
+      startDate: yup
+      .string()
+      .required("Start date is required")
+      .test('isValidDate', 'Start date must be a valid date', value => !isNaN(new Date(value || '').getTime())), 
+      endDate: yup
+      .string()
+      .required("End date is required")
+      .test('isValidDate', 'End date must be a valid date', value => !isNaN(new Date(value || '').getTime())) 
+      .test('isAfterStartDate', 'End date cannot be before start date', function (value) {
+        const { startDate } = this.parent;
+        if (!startDate || !value) return true;
+        return new Date(value) >= new Date(startDate); 
+      })
     })
     .required();
 

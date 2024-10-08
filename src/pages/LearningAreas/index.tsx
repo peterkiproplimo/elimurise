@@ -326,18 +326,19 @@ function Main() {
           {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
           {/* </div> */}
 
-          <div className="grid grid-cols-12 gap-5 mt-5">
+          <div>
             {loading ? (
               <div className="fixed inset-0 flex items-center justify-center">
                 <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
               </div>
             ) : learningAreas.length === 0 ? (
-              <div className="flex flex-col items-center mt-10 bg-white p-8">
+              <div className="flex flex-col items-center mt-10 bg-white w-full p-8">
                 {/* <Search size={28} className="" /> */}
                 <p className="text-xl text-slate-500 ">No records found</p>
               </div>
             ) : (
-              <>
+              <div className="grid grid-cols-12 gap-5 mt-5">
+
                 {learningAreas.map((learningArea: any, key) => (
                   <div
                     key={key}
@@ -362,7 +363,7 @@ function Main() {
                     </div> */}
                   </div>
                 ))}
-              </>
+              </div>
             )}
           </div>
           {!loading && learningAreas.length > 0 && (
