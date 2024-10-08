@@ -29,6 +29,7 @@ import { useParams } from "react-router-dom";
 function Users() {
   const data = useParams();
   const userId = data?.id;
+  console.log("test",userId)
   const [dialog, setDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -100,7 +101,7 @@ function Users() {
     getLearningAreas();
     getGrades();
     // getStreams();
-  }, []);
+  }, [stream]);
   useEffect(() => {
     getLearningAreasAssignments();
   
@@ -113,7 +114,8 @@ function Users() {
   };
   const getLearningAreas = async () => {
     const response = await ApiService.getLearningAreas({
-      page, limit
+      page, 
+      gradeId:strandFilter.grade
     });
     setLearningAreas(response.data);
   };
@@ -175,6 +177,7 @@ function Users() {
         // console.log(data);
         // isLoading(false);
         // return;
+        data.user=userId
         let res = await ApiService.createLearningAreaAssignment(data);
         getLearningAreasAssignments();
         await reset();
@@ -223,17 +226,6 @@ function Users() {
     setDialog(false);
     setIsEditMode(false);
   };
-  useEffect(() => {
-    setFilteredLearningAreas([]);
-    const lerning_areas = learningAreas.filter(
-      (area: any) => area?.grade_id?._id === strandFilter.grade
-    );
-    const data = getValues();
-
-    reset();
-    reset({ user: userId, grade: strandFilter.grade });
-    setFilteredLearningAreas(lerning_areas);
-  }, [strandFilter.grade]);
   const handleGradeChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -248,26 +240,8 @@ function Users() {
 
     // You might want to fetch filtered data here
   };
-  const handleLearningAreaChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-
-    await setStrandFilter({
-      ...strandFilter,
-      learning_area: selectedValue,
-    });
-    // You might want to fetch filtered data here
-  };
-  const [selectAll, setSelectAll] = useState(false);
-
-  const handleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    filteredLearningAreas.forEach((_, index) => {
-      setValue(`learningArea[${index}].selected`, newSelectAll);
-    });
-  };
+  
+  
 
   return (
     <>
@@ -328,18 +302,7 @@ function Users() {
               </TomSelect>
             </div>
 
-            <div className="relative w-56 text-slate-500">
-              <FormInput
-                type="text"
-                className="w-56 pr-10 !box"
-                placeholder="Search..."
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <Lucide
-                icon="Search"
-                className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-              />
-            </div>
+            
           </div>
         </div>
         <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
@@ -390,34 +353,29 @@ function Users() {
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                       <div className="flex items-center justify-center">
-                        <Menu>
-                          <Menu.Button as={Button} className="px-2 !box">
-                            <span className="flex items-center justify-center w-5 h-5">
-                              <Lucide icon="MoreVertical" className="w-4 h-4" />
-                            </span>
-                          </Menu.Button>
-                          <Menu.Items className="w-40">
+                        
                             {/* <Menu.Item onClick={() => editRecord(assignment)}>
                             <Lucide icon="Edit" className="w-4 h-4 mr-2" /> Edit
                           </Menu.Item> */}
-                            <Menu.Item
+                                                      
+                                
+                            <div className="flex items-center mr-3 text-danger cursor-pointer"
                               onClick={() => {
                                 // active(user)
                                 setUser(assignment);
                                 setConfirmDelete(true);
                               }}
-                              className="text-danger"
                             >
-                              <Lucide icon="Trash" className="w-4 h-4 mr-2 " />
-                              {"Remove"}
-                            </Menu.Item>
+                              <Lucide icon="Undo" className="w-4 h-4 mr-2 " />
+                              {"Unassign"}
+                            </div>
 
                             {/* <Menu.Item>
                             <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
                             Email Credentials
                           </Menu.Item> */}
-                          </Menu.Items>
-                        </Menu>
+                        
+                        
                       </div>
                     </Table.Td>
                   </Table.Tr>
@@ -507,7 +465,6 @@ function Users() {
               </a>
             </Dialog.Title>
             <Dialog.Description className="grid grid-cols-12 gap-4 gap-y-3">
-              <FormInput {...register("user")} name="user" type="hidden" />
               <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <FormSelect
@@ -600,7 +557,7 @@ function Users() {
                 </Table.Thead>
                 <Table.Tbody>
                   {stream &&
-                    filteredLearningAreas.map((filteredArea: any, key) => (
+                    learningAreas.map((learningArea: any, key) => (
                       <Table.Tr key={key} className="">
                         <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
                           <span className="font-medium whitespace-nowrap">
@@ -614,7 +571,7 @@ function Users() {
                               type="hidden"
                               {...register(`lerningArea[${key}].id`)}
                               name={`lerningArea[${key}].id`}
-                              defaultValue={filteredArea?._id} // Use defaultValue instead of value
+                              defaultValue={learningArea?._id} // Use defaultValue instead of value
                               className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
                             />
                           </span>
@@ -622,7 +579,7 @@ function Users() {
 
                         <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
                           <span className="font-medium whitespace-nowrap">
-                            {filteredArea.name}
+                            {learningArea.name}
                           </span>
                         </Table.Td>
                       </Table.Tr>
@@ -670,10 +627,10 @@ function Users() {
               className="w-16 h-16 mx-auto mt-3 text-danger"
             />
             <div className="mt-5 text-3xl">Are you sure?</div>
-            {/* <div className="mt-2 text-slate-500">
-              Do you want to{user.status !== 1 ? "Activate" : "Deactivate"} user? <br />
+            <div className="mt-2 text-slate-500">
+              Do you want to unassign {user.learning_area.name}<br/> {user.stream.grade.name} from this teacher? <br />
              
-            </div> */}
+            </div>
           </div>
           <div className="px-5 pb-8 text-center">
             <Button
