@@ -97,15 +97,15 @@ function Main() {
 
   useEffect(() => {
     getTerms();
-  }, [search, page, limit,academicId]);
+  }, [search, page, limit, academicId]);
   useEffect(() => {
     getAcademicYear();
-    setAcademicId(academic)
+    setAcademicId(academic);
   }, []);
   const getTerms = async () => {
     const response = await ApiService.getTerm({
       page: 1,
-      academicId:academicId
+      academicId: academicId,
     });
     setTerms(response.data);
     const pagination = response.pagination;
@@ -305,7 +305,7 @@ function Main() {
           )}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-              <Button
+              {/* <Button
                 variant="primary"
                 className="mr-2 shadow-md"
                 onClick={(event: React.MouseEvent) => {
@@ -314,7 +314,7 @@ function Main() {
                 }}
               >
                 New Term
-              </Button>
+              </Button> */}
               {/* <Menu>
                 <Menu.Button as={Button} className="px-2 !box">
                   <span className="flex items-center justify-center w-5 h-5">
@@ -345,18 +345,6 @@ function Main() {
                 entries
               </div>
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                <div className="relative w-56 text-slate-500">
-                  <FormInput
-                    type="text"
-                    className="w-56 pr-10 !box"
-                    placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <Lucide
-                    icon="Search"
-                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                  />
-                </div>
                 {/* <FormSelect className="w-56 ml-2 xl:w-auto !box">
                   <option>Status</option>
                   <option>Active</option>
@@ -389,9 +377,9 @@ function Main() {
                     {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       Created At
                     </Table.Th> */}
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
+                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
                       Actions
-                    </Table.Th>
+                    </Table.Th> */}
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
@@ -402,7 +390,7 @@ function Main() {
                           {key + 1}
                         </span>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-3 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {term.name}
                         </span>
@@ -427,7 +415,7 @@ function Main() {
                           })}
                         </span>
                       </Table.Td> */}
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-3 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {term?.academicYear?.name}
                         </span>
@@ -453,7 +441,7 @@ function Main() {
                         </span>
                       </Table.Td> */}
 
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           <a
                             className="flex items-center mr-3 text-success"
@@ -477,7 +465,7 @@ function Main() {
                             Delete
                           </a>
                         </div>
-                      </Table.Td>
+                      </Table.Td> */}
 
                       {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
                         <div className="flex items-center justify-center">

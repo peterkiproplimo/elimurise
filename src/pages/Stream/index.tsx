@@ -75,11 +75,15 @@ function Main() {
         console.log(data);
         await ApiService.createStream(data);
         await getStreams();
-        cancel({name:""})
+        cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage(isEditMode? "Stream Updated successfully": "Stream created successfully.");
+        setMessage(
+          isEditMode
+            ? "Stream Updated successfully"
+            : "Stream created successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         console.log(error.message);
@@ -102,24 +106,33 @@ function Main() {
   useEffect(() => {
     getGrades();
     getStreams();
-  }, [search, page, limit,grade]);
+  }, [search, page, limit, grade]);
 
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page });
     setGrades(response.data);
   };
   const getStreams = async () => {
-    isLoading(true);
-    const response = await ApiService.getStream({ page, limit, search ,grade});
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    setStreams(response.data);
-    isLoading(false);
+    try {
+      isLoading(true);
+      const response = await ApiService.getStream({
+        page,
+        limit,
+        search,
+        grade,
+      });
+      const pagination = response.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+      setStreams(response.data);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+    }
   };
   // const getGrades = async () => {
   //   const response = await ApiService.getGrades({
@@ -316,10 +329,10 @@ function Main() {
                 entries
               </div>
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0 mr-5">
-              <FormSelect
+                <FormSelect
                   {...register("grade")}
                   name="grade"
-                  onChange={(e:any)=>setGrade(e.target.value)}
+                  onChange={(e: any) => setGrade(e.target.value)}
                   // defaultValue={selectedLevel}
                 >
                   {grades.map((grade: any, key: any) => (
@@ -330,7 +343,6 @@ function Main() {
                 </FormSelect>
               </div>
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                
                 <div className="relative w-56 text-slate-500">
                   <FormInput
                     type="text"
@@ -343,7 +355,6 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
-
               </div>
             </div>
             {/* BEGIN: Data List */}
@@ -385,7 +396,7 @@ function Main() {
                         <Table.Tr key={key} className="intro-x">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                            {limit*(page-1)+key+1}
+                              {limit * (page - 1) + key + 1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
