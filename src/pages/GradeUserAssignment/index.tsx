@@ -258,26 +258,7 @@ function Users() {
           >
             New Learning Area Assignment
           </Button>
-          <Menu>
-            <Menu.Button as={Button} className="px-2 !box">
-              <span className="flex items-center justify-center w-5 h-5">
-                <Lucide icon="Plus" className="w-4 h-4" />
-              </span>
-            </Menu.Button>
-            <Menu.Items className="w-40">
-              <Menu.Item>
-                <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                Excel
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                PDF
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
+ 
           <div className="hidden mx-auto md:block text-slate-500">
             Showing{" "}
             {pagination.current_page +
@@ -311,10 +292,10 @@ function Users() {
               <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
             </div>
           ) : assignments.length === 0 ? (
-            <div className="flex flex-col items-center mt-10">
-              <Search size={88} className="animate-bounce" />
-              <p className="text-xl">No data found</p>
-            </div>
+            <div className="flex flex-col items-center mt-10 bg-white w-full p-8">
+            {/* <Search size={28} className="" /> */}
+            <p className="text-xl text-slate-500 ">No records found</p>
+          </div>
           ) : (
             <Table className="border-spacing-y-[10px] border-separate -mt-2">
               <Table.Thead>
@@ -628,7 +609,7 @@ function Users() {
             />
             <div className="mt-5 text-3xl">Are you sure?</div>
             <div className="mt-2 text-slate-500">
-              Do you want to unassign {user.learning_area.name}<br/> {user.stream.grade.name} from this teacher? <br />
+              Do you want to unassign {user?.learning_area?.name}<br/> {user?.stream?.grade?.name} from this teacher? <br />
              
             </div>
           </div>
