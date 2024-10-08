@@ -28,7 +28,7 @@ function Main() {
   const [teachers, setTeachers] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
-  const [recordId, setRecordId] = useState(null);
+  const [teacher, setTeacher] = useState<any>({});
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
@@ -187,7 +187,7 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteTeachers(recordId);
+      let res = await ApiService.deleteTeachers(teacher?._id);
       getTeachers();
       isLoading(false);
       setConfirmDelete(false);
@@ -614,7 +614,7 @@ function Main() {
                             className="flex items-center text-danger"
                             href="#"
                             onClick={() => {
-                              setRecordId(teacher._id), setConfirmDelete(true);
+                              setTeacher(teacher), setConfirmDelete(true);
                             }}
                           >
                             <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
@@ -720,7 +720,7 @@ function Main() {
                 />
                 <div className="mt-5 text-3xl">Are you sure?</div>
                 <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
+                  Do you really want to delete {teacher?.firstname} {teacher?.lastname}<br />
                   This process cannot be undone.
                 </div>
               </div>

@@ -34,7 +34,7 @@ function Users() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [users, setUsers] = useState([]);
-  const [user, setUser] = useState<any>({});
+  const [assigned, setAssigned] = useState<any>({});
   const [selectGroup, setGroup] = useState([""]);
   const [roles, setRoles] = useState([]);
   // const [userId, setUserId] = useState("");
@@ -206,7 +206,7 @@ function Users() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearningAreaAssignment(user?._id);
+      let res = await ApiService.deleteLearningAreaAssignment(assigned?._id);
       getLearningAreasAssignments();
       isLoading(false);
       setConfirmDelete(false);
@@ -343,7 +343,7 @@ function Users() {
                             <div className="flex items-center mr-3 text-danger cursor-pointer"
                               onClick={() => {
                                 // active(user)
-                                setUser(assignment);
+                                setAssigned(assignment);
                                 setConfirmDelete(true);
                               }}
                             >
@@ -609,7 +609,7 @@ function Users() {
             />
             <div className="mt-5 text-3xl">Are you sure?</div>
             <div className="mt-2 text-slate-500">
-              Do you want to unassign {user?.learning_area?.name}<br/> {user?.stream?.grade?.name} from this teacher? <br />
+              Do you want to unassign {assigned?.learning_area?.name}<br/> {assigned?.stream?.grade?.name} from this teacher? <br />
              
             </div>
           </div>

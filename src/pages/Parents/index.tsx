@@ -31,7 +31,7 @@ function Main() {
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
-  const [recordId, setRecordId] = useState(null);
+  const [parent, setParent] =  useState<any>({});
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
@@ -135,7 +135,7 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteParents(recordId);
+      let res = await ApiService.deleteParents(parent);
       getParents();
       isLoading(false);
       setConfirmDelete(false);
@@ -523,7 +523,7 @@ function Main() {
                                 className="flex items-center text-danger"
                                 href="#"
                                 onClick={() => {
-                                  setRecordId(parent._id),
+                                  setParent(parent),
                                     setConfirmDelete(true);
                                 }}
                               >
@@ -662,7 +662,7 @@ function Main() {
                 />
                 <div className="mt-5 text-3xl">Are you sure?</div>
                 <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
+                  Do you really want to delete {parent.first_name} {parent.last_name}? <br />
                   This process cannot be undone.
                 </div>
               </div>
