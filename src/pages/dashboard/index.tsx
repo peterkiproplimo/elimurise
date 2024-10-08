@@ -36,7 +36,7 @@ function Main() {
   const user = auth?.authData?.user as Learner;
   const [page, setPage] = useState(1);
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [dashboards, setDashboards] = useState<any>({});
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",

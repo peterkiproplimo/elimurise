@@ -36,7 +36,7 @@ function Level() {
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [pagination, setPagination] = useState({
@@ -56,18 +56,30 @@ function Level() {
     .object({
       name: yup.string().required("Academic Year is required"),
       startDate: yup
-      .string()
-      .required("Start date is required")
-      .test('isValidDate', 'Start date must be a valid date', value => !isNaN(new Date(value || '').getTime())), 
+        .string()
+        .required("Start date is required")
+        .test(
+          "isValidDate",
+          "Start date must be a valid date",
+          (value) => !isNaN(new Date(value || "").getTime())
+        ),
       endDate: yup
-      .string()
-      .required("End date is required")
-      .test('isValidDate', 'End date must be a valid date', value => !isNaN(new Date(value || '').getTime())) 
-      .test('isAfterStartDate', 'End date cannot be before start date', function (value) {
-        const { startDate } = this.parent;
-        if (!startDate || !value) return true;
-        return new Date(value) >= new Date(startDate); 
-      })
+        .string()
+        .required("End date is required")
+        .test(
+          "isValidDate",
+          "End date must be a valid date",
+          (value) => !isNaN(new Date(value || "").getTime())
+        )
+        .test(
+          "isAfterStartDate",
+          "End date cannot be before start date",
+          function (value) {
+            const { startDate } = this.parent;
+            if (!startDate || !value) return true;
+            return new Date(value) >= new Date(startDate);
+          }
+        ),
     })
     .required();
 

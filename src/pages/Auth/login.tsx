@@ -20,7 +20,7 @@ import logo from "../../assets/images/Untitled-1.png";
 
 const Login = () => {
   const auth = useAuth();
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [selectedForm, setSelectedForm] = useState("form1");

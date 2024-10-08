@@ -30,7 +30,7 @@ const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   setCurrentStep,
 }) => {
   const auth = useAuth();
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [paymentUrl, setPaymentUrl] = useState("");

@@ -42,7 +42,7 @@ function Main() {
   const [terms, setTerms] = useState([]);
 
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -262,87 +262,98 @@ function Main() {
               </div> */}
             </div>
             <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
-            <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
-          <div className=" overflow-hidden intro-y box">
-            <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
-              <div className="text-base text-slate-500lg:ml-auto lg:text-left flex">
-              <div>
-            <img
-                         src={logo}
-                         alt="Learner"
-                         className="w-32 h-32 mb-2"
-                         />
-           </div>
-           
-                <div className="text-lg font-semibold text-primary ml-5">
-                  Name:
-                  <br/>
-                  Adm No:  
-                  <br/>
-                  Year:  
-                  <br/>
-                  Term:  
-                  <br/>
-                
-               
-              
+              <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
+                <div className=" overflow-hidden intro-y box">
+                  <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
+                    <div className="text-base text-slate-500lg:ml-auto lg:text-left flex">
+                      <div>
+                        <img
+                          src={logo}
+                          alt="Learner"
+                          className="w-32 h-32 mb-2"
+                        />
+                      </div>
+
+                      <div className="text-lg font-semibold text-primary ml-5">
+                        Name:
+                        <br />
+                        Adm No:
+                        <br />
+                        Year:
+                        <br />
+                        Term:
+                        <br />
+                      </div>
+                    </div>
+                    <div className="mt-2 topic">
+                      <div></div>
+                    </div>
+                  </div>
+                  <div className="px- py-2 sm:px-16 sm:py-20 mt-5">
+                    <div className="text-center font-bold text-xl mb-5">
+                      Performance Report
+                    </div>
+                    <Table className="border">
+                      <Table.Thead>
+                        <Table.Tr className="bg-secondary ">
+                          <Table.Th className="border-b-0 whitespace-nowrap">
+                            Strand
+                          </Table.Th>
+                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
+                            Substrand
+                          </Table.Th>
+                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
+                            Learning Area
+                          </Table.Th>
+                          <Table.Th className="border-b-0 whitespace-nowrap text-center">
+                            Indicator Description
+                          </Table.Th>
+                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
+                            Score
+                          </Table.Th>
+                          <Table.Th className="border-b-0 whitespace-nowrap text-center">
+                            Description
+                          </Table.Th>
+                        </Table.Tr>
+                      </Table.Thead>
+                      <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 ">
+                        {learnerReport?.assessment?.map(
+                          (enrollment: any, index: any) => (
+                            <Table.Tr key={index} className="bg-secondary">
+                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                                {enrollment.strand.name}
+                              </Table.Td>
+                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                                {enrollment.substrand.name}
+                              </Table.Td>
+                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                                {enrollment.learning_area.name}
+                              </Table.Td>
+                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                                {enrollment.indicator_description}
+                              </Table.Td>
+                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                                {enrollment.score}
+                              </Table.Td>
+                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                                {enrollment.description}
+                              </Table.Td>
+                            </Table.Tr>
+                          )
+                        )}
+                      </Table.Tbody>
+                    </Table>
+                    {loading && (
+                      <div className="flex flex-col items-center mt-5">
+                        <LoadingIcon
+                          icon="spinning-circles"
+                          className="w-8 h-8"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="mt-2 topic">
-              <div>
-           </div>
-              </div>
-            </div>
-            <div className="px- py-2 sm:px-16 sm:py-20 mt-5">
-            <div className="text-center font-bold text-xl mb-5">
-              Performance Report
-            </div>
-              <Table className="border">
-                <Table.Thead>
-                  <Table.Tr className="bg-secondary ">
-                    <Table.Th className="border-b-0 whitespace-nowrap">Strand</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-left">Substrand</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-left">Learning Area</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-center">Indicator Description</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-left">Score</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-center">Description</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 ">
-                  {learnerReport?.assessment?.map(
-                    (enrollment: any, index: any) => (
-                      <Table.Tr key={index} className="bg-secondary">
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {enrollment.strand.name}
-                          </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {enrollment.substrand.name}
-                          </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {enrollment.learning_area.name}
-                          </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {enrollment.indicator_description}
-                          </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {enrollment.score}
-                          </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          {enrollment.description}
-                          </Table.Td>
-                      </Table.Tr>
-                    )
-                  )}
-                </Table.Tbody>
-              </Table>
-              {loading && (
-                <div className="flex flex-col items-center mt-5">
-                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-                </div>
-              )}
-            </div>
-            </div>
-            </main>
+              </main>
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">

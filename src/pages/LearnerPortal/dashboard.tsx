@@ -53,7 +53,7 @@ function Main() {
   const [tranfers, setTransfers] = useState([]);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [approveTranfer, setApproveTranfer] = useState<any>({
     id: "",
     phone: "",

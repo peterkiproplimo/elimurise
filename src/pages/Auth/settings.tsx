@@ -33,7 +33,7 @@ function Settings() {
     }
   };
 
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();

@@ -35,7 +35,7 @@ function Users() {
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const { authData } = useAuth();

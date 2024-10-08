@@ -10,7 +10,7 @@ import Lucide from "../../base-components/Lucide";
 import FileIcon from "../../base-components/FileIcon";
 import { Menu, Tab } from "../../base-components/Headless";
 import { Tab as HeadlessTab } from "@headlessui/react";
-import logo from "../../assets/images/CONTACTS ICON.jpeg"
+import logo from "../../assets/images/CONTACTS ICON.jpeg";
 import {
   FormCheck,
   FormInput,
@@ -20,15 +20,14 @@ import {
 import logoUrl from "../../assets/images/heros.png";
 import { useState, useRef, useEffect } from "react";
 import Notification, {
-    NotificationElement,
-  } from "../../base-components/Notification";
-  import LoadingIcon from "../../base-components/LoadingIcon";
-  import { useForm } from "react-hook-form";
+  NotificationElement,
+} from "../../base-components/Notification";
+import LoadingIcon from "../../base-components/LoadingIcon";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as ApiService from "../../services/auth";
 import * as yup from "yup";
 import { useAuth } from "../../contexts/Auth";
-
 
 function Main() {
   const auth = useAuth();
@@ -42,7 +41,7 @@ function Main() {
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [profile, setProfile] = useState<any>([]);
@@ -59,11 +58,7 @@ function Main() {
   const [previous_page, setPreviousPage] = useState(1);
   // Success notification
   const notify = useRef<NotificationElement>();
-  const schema = yup
-    .object({
-    
-    })
-    .required();
+  const schema = yup.object({}).required();
 
   const {
     register,
@@ -85,33 +80,33 @@ function Main() {
   //   setUser(auth.authData && auth.authData?.user);
   //   reset({...auth.authData?.user})
   // }, [user]);
-//   useEffect(() => {
-//     getUsers();
-//   }, [search, limit, page]);
+  //   useEffect(() => {
+  //     getUsers();
+  //   }, [search, limit, page]);
 
-//   const getUsers = async () => {
-//     let res = await ApiService.getUsers({
-//       page: page,
-//       search: search,
-//       limit: limit,
-//     });
+  //   const getUsers = async () => {
+  //     let res = await ApiService.getUsers({
+  //       page: page,
+  //       search: search,
+  //       limit: limit,
+  //     });
 
-//     const pagination = res.pagination;
-//     setPagination({
-//       current_page: pagination.current_page,
-//       total: pagination.total,
-//       total_pages: pagination.total_pages,
-//       per_page: pagination.per_page,
-//     });
-//     setUsers(res.data);
-//   };
+  //     const pagination = res.pagination;
+  //     setPagination({
+  //       current_page: pagination.current_page,
+  //       total: pagination.total,
+  //       total_pages: pagination.total_pages,
+  //       per_page: pagination.per_page,
+  //     });
+  //     setUsers(res.data);
+  //   };
   const getProfile = async () => {
     let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
-    console.log("......")
-    console.log(res.data)
+    console.log("......");
+    console.log(res.data);
     // setProfile(res.data);
     setUser(res.data);
-        reset({...res.data});
+    reset({ ...res.data });
   };
   const getRole = async () => {
     let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
@@ -127,7 +122,7 @@ function Main() {
         const data = await getValues();
         let res = await ApiService.createProfile(data);
         setUser(res.data);
-        reset({...res.data})
+        reset({ ...res.data });
         // getProfile();
         // await reset();
         isLoading(false);
@@ -149,7 +144,6 @@ function Main() {
     reset(record);
     setDialog(false);
   };
-
 
   const prevNewProducts = () => {
     newProductsRef.current?.tns.goTo("prev");
@@ -183,7 +177,7 @@ function Main() {
               </div> */}
               <div className="ml-5">
                 <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
-                {user?.firstname + " " + user?.lastname}
+                  {user?.firstname + " " + user?.lastname}
                 </div>
                 {/* <div className="text-slate-500">{fakerData[0].jobs[0]}</div> */}
               </div>
@@ -201,10 +195,8 @@ function Main() {
                   <Lucide icon="Instagram" className="w-4 h-4 mr-2" />
                   {user.phone}
                 </div>
-               
               </div>
             </div>
-           
           </div>
           <Tab.List
             variant="link-tabs"
@@ -220,7 +212,6 @@ function Main() {
                 <Lucide icon="Lock" className="w-4 h-4 mr-2" /> Change Password
               </Tab.Button>
             </Tab> */}
-          
           </Tab.List>
         </div>
         {/* END: Profile Info */}
@@ -229,66 +220,68 @@ function Main() {
             <div className="grid grid-cols-12 gap-6 ">
               <div className="col-span-12 intro-y box shadow-lg">
                 <div className="flex items-center px-5 py-4 border-b border-slate-200/60 dark:border-darkmode-400">
-                  <h2 className="mr-auto text-base font-medium">Update Profile</h2>
-                 
+                  <h2 className="mr-auto text-base font-medium">
+                    Update Profile
+                  </h2>
                 </div>
                 <div id="new-authors" className="py-5 tiny-slider">
-                        <form className="validate-form" onSubmit={onSubmit}>
-                        <div className=" p-5   grid grid-cols-12 gap-4 gap-y-3 rounded-xl">
-                         
-                          <div className="col-span-12 sm:col-span-6">
-                            <FormLabel htmlFor="modal-form-1">Full Name </FormLabel>
-                            <FormInput
-                              type="text"
-                              value={user?.firstname + " " + user?.lastname}
-                              readOnly={true}
-                              placeholder="+254 712 345 6789"
-                            />
+                  <form className="validate-form" onSubmit={onSubmit}>
+                    <div className=" p-5   grid grid-cols-12 gap-4 gap-y-3 rounded-xl">
+                      <div className="col-span-12 sm:col-span-6">
+                        <FormLabel htmlFor="modal-form-1">Full Name </FormLabel>
+                        <FormInput
+                          type="text"
+                          value={user?.firstname + " " + user?.lastname}
+                          readOnly={true}
+                          placeholder="+254 712 345 6789"
+                        />
+                      </div>
+                      <div className="col-span-12 sm:col-span-6">
+                        <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
+                        <FormInput
+                          {...register("firstname")}
+                          type="text"
+                          name="firstname"
+                          className={errors.firstName ? "border-danger" : ""}
+                          placeholder="John"
+                        />
+                        {errors.firstName && (
+                          <div className="mt-2 text-danger">
+                            {typeof errors.firstName.message === "string" &&
+                              errors.firstName.message}
                           </div>
-                          <div className="col-span-12 sm:col-span-6">
-                            <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
-                            <FormInput
-                              {...register("firstname")}
-                              type="text"
-                              name="firstname"
-                              className={errors.firstName ? "border-danger" : ""}
-                              placeholder="John"
-                            />
-                            {errors.firstName && (
-                              <div className="mt-2 text-danger">
-                                {typeof errors.firstName.message === "string" &&
-                                  errors.firstName.message}
-                              </div>
-                            )}
+                        )}
+                      </div>
+                      <div className="col-span-12 sm:col-span-6">
+                        <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+                        <FormInput
+                          {...register("lastname")}
+                          type="text"
+                          name="lastname"
+                          className={errors.lastName ? "border-danger" : ""}
+                          placeholder="Doe"
+                        />
+                        {errors.lastName && (
+                          <div className="mt-2 text-danger">
+                            {typeof errors.lastName.message === "string" &&
+                              errors.lastName.message}
                           </div>
-                          <div className="col-span-12 sm:col-span-6">
-                            <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
-                            <FormInput
-                              {...register("lastname")}
-                              type="text"
-                              name="lastname"
-                              className={errors.lastName ? "border-danger" : ""}
-                              placeholder="Doe"
-                            />
-                            {errors.lastName && (
-                              <div className="mt-2 text-danger">
-                                {typeof errors.lastName.message === "string" &&
-                                  errors.lastName.message}
-                              </div>
-                            )}
-                          </div>
-                
-                          <div className="col-span-12 sm:col-span-6">
-                            <FormLabel htmlFor="modal-form-1">Phone Number</FormLabel>
-                            <FormInput
-                              {...register("phone")}
-                              type="text"
-                              name="phone"
-                              placeholder="+254 712 345 6789"
-                            />
-                          </div>
-                
-                          {/* <Button
+                        )}
+                      </div>
+
+                      <div className="col-span-12 sm:col-span-6">
+                        <FormLabel htmlFor="modal-form-1">
+                          Phone Number
+                        </FormLabel>
+                        <FormInput
+                          {...register("phone")}
+                          type="text"
+                          name="phone"
+                          placeholder="+254 712 345 6789"
+                        />
+                      </div>
+
+                      {/* <Button
                             type="button"
                             variant="outline-secondary"
                             onClick={() => {
@@ -298,20 +291,22 @@ function Main() {
                           >
                             Cancel
                           </Button> */}
-                          <Button variant="primary" type="submit" className="w-20 h-10 mt-7">
-                            Save
-                            {loading && (
-                              <LoadingIcon
-                                icon="spinning-circles"
-                                color="white"
-                                className="w-4 h-4 ml-2"
-                              />
-                            )}
-                          </Button>
-                        </div>
-                      </form>
-                
-               
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="w-20 h-10 mt-7"
+                      >
+                        Save
+                        {loading && (
+                          <LoadingIcon
+                            icon="spinning-circles"
+                            color="white"
+                            className="w-4 h-4 ml-2"
+                          />
+                        )}
+                      </Button>
+                    </div>
+                  </form>
                 </div>
               </div>
               {/* END: New Authors */}

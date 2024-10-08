@@ -29,7 +29,7 @@ import { useParams } from "react-router-dom";
 function Users() {
   const data = useParams();
   const userId = data?.id;
-  console.log("test",userId)
+  console.log("test", userId);
   const [dialog, setDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -40,7 +40,7 @@ function Users() {
   // const [userId, setUserId] = useState("");
   const [gradeId, setGradeId] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [grades, setGrades] = useState([]);
@@ -104,7 +104,6 @@ function Users() {
   }, [stream]);
   useEffect(() => {
     getLearningAreasAssignments();
-  
   }, [search, limit, page, gradeId]);
 
   const getGrades = async () => {
@@ -114,8 +113,8 @@ function Users() {
   };
   const getLearningAreas = async () => {
     const response = await ApiService.getLearningAreas({
-      page, 
-      gradeId:strandFilter.grade
+      page,
+      gradeId: strandFilter.grade,
     });
     setLearningAreas(response.data);
   };
@@ -177,7 +176,7 @@ function Users() {
         // console.log(data);
         // isLoading(false);
         // return;
-        data.user=userId
+        data.user = userId;
         let res = await ApiService.createLearningAreaAssignment(data);
         getLearningAreasAssignments();
         await reset();
@@ -240,12 +239,12 @@ function Users() {
 
     // You might want to fetch filtered data here
   };
-  
-  
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium intro-y">Learning Area Assignment</h2>
+      <h2 className="mt-1 text-lg font-medium intro-y">
+        Learning Area Assignment
+      </h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           <Button
@@ -258,7 +257,7 @@ function Users() {
           >
             New Learning Area Assignment
           </Button>
- 
+
           <div className="hidden mx-auto md:block text-slate-500">
             Showing{" "}
             {pagination.current_page +
@@ -282,8 +281,6 @@ function Users() {
                 ))}
               </TomSelect>
             </div>
-
-            
           </div>
         </div>
         <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
@@ -293,9 +290,9 @@ function Users() {
             </div>
           ) : assignments.length === 0 ? (
             <div className="flex flex-col items-center mt-10 bg-white w-full p-8">
-            {/* <Search size={28} className="" /> */}
-            <p className="text-xl text-slate-500 ">No records found</p>
-          </div>
+              {/* <Search size={28} className="" /> */}
+              <p className="text-xl text-slate-500 ">No records found</p>
+            </div>
           ) : (
             <Table className="border-spacing-y-[10px] border-separate -mt-2">
               <Table.Thead>
@@ -334,29 +331,26 @@ function Users() {
                     </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                       <div className="flex items-center justify-center">
-                        
-                            {/* <Menu.Item onClick={() => editRecord(assignment)}>
+                        {/* <Menu.Item onClick={() => editRecord(assignment)}>
                             <Lucide icon="Edit" className="w-4 h-4 mr-2" /> Edit
                           </Menu.Item> */}
-                                                      
-                                
-                            <div className="flex items-center mr-3 text-danger cursor-pointer"
-                              onClick={() => {
-                                // active(user)
-                                setAssigned(assignment);
-                                setConfirmDelete(true);
-                              }}
-                            >
-                              <Lucide icon="Undo" className="w-4 h-4 mr-2 " />
-                              {"Unassign"}
-                            </div>
 
-                            {/* <Menu.Item>
+                        <div
+                          className="flex items-center mr-3 text-danger cursor-pointer"
+                          onClick={() => {
+                            // active(user)
+                            setAssigned(assignment);
+                            setConfirmDelete(true);
+                          }}
+                        >
+                          <Lucide icon="Undo" className="w-4 h-4 mr-2 " />
+                          {"Unassign"}
+                        </div>
+
+                        {/* <Menu.Item>
                             <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
                             Email Credentials
                           </Menu.Item> */}
-                        
-                        
                       </div>
                     </Table.Td>
                   </Table.Tr>
@@ -609,8 +603,8 @@ function Users() {
             />
             <div className="mt-5 text-3xl">Are you sure?</div>
             <div className="mt-2 text-slate-500">
-              Do you want to unassign {assigned?.learning_area?.name}<br/> {assigned?.stream?.grade?.name} from this teacher? <br />
-             
+              Do you want to unassign {assigned?.learning_area?.name}
+              <br /> {assigned?.stream?.grade?.name} from this teacher? <br />
             </div>
           </div>
           <div className="px-5 pb-8 text-center">

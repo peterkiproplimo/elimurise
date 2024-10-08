@@ -22,7 +22,7 @@ const ForgotPasswordOTP = () => {
   const email = location.state?.email;
   const channel = location.state?.channel;
   const navigate = useNavigate();
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
 

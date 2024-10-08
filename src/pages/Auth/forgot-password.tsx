@@ -15,7 +15,7 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -36,8 +36,6 @@ const ForgotPassword = () => {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-
-
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();

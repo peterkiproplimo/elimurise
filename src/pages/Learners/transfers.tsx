@@ -49,7 +49,7 @@ function Main() {
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [photo, setPhoto] = useState("");
@@ -118,11 +118,15 @@ function Main() {
         const data = await getValues();
         await ApiService.createTransfers(data);
         await getTransfers();
-        cancel({name:""})
+        cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage(isEditMode?"Transfer Updated successfully": "Transfer initiated successfully.");
+        setMessage(
+          isEditMode
+            ? "Transfer Updated successfully"
+            : "Transfer initiated successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -157,7 +161,7 @@ function Main() {
     const response = await ApiService.getTransfers({
       page,
       limit,
-      search
+      search,
     });
     const pagination = response.pagination;
     setPagination({
@@ -454,7 +458,8 @@ function Main() {
 
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    New School Code:<span className="text-danger ml-0.5">*</span>
+                    New School Code:
+                    <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
                     {...register("newSchoolCode")}
@@ -639,7 +644,7 @@ function Main() {
                         <Table.Tr key={key} className="intro-x">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                             <span className="font-medium whitespace-nowrap">
-                            {limit*(page-1)+key+1}
+                              {limit * (page - 1) + key + 1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
