@@ -39,7 +39,7 @@ function Main() {
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [learners, setLearners] = useState([]);
@@ -118,10 +118,6 @@ function Main() {
 
   useEffect(() => {
     getStudents();
-    setTimeout(() => {
-      getStudents();
-      isLoading(false);
-    }, 2000);
   }, [search, page, limit]);
 
   const getStudents = async () => {

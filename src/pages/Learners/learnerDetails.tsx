@@ -111,10 +111,6 @@ function Main() {
   }, [grade]);
   useEffect(() => {
     getStudents();
-    setTimeout(() => {
-      getStudents();
-      isLoading(false);
-    }, 2000);
   }, [strandFilter, search, page, limit]);
 
   const getStudents = async () => {

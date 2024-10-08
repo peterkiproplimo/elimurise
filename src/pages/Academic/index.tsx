@@ -126,10 +126,6 @@ function Level() {
 
   useEffect(() => {
     getAcademics();
-    setTimeout(() => {
-      getAcademics();
-      isLoading(false);
-    }, 2000);
   }, [search, page, limit]);
 
   const getAcademics = async () => {

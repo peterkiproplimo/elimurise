@@ -98,10 +98,6 @@ function Main() {
   };
   useEffect(() => {
     getTests();
-    setTimeout(() => {
-      getTests();
-      isLoading(false);
-    }, 2000);
   }, []);
   useEffect(() => {
     fetchGrading();

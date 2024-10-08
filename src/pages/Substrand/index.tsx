@@ -215,10 +215,6 @@ function Main() {
   }, [strandFilter]);
   useEffect(() => {
     getSubstrand();
-    setTimeout(() => {
-      getSubstrand();
-      isLoading(false);
-    }, 2000);
   }, [search, limit, page, selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
