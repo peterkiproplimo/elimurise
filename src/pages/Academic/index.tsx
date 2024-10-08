@@ -92,11 +92,15 @@ function Level() {
         console.log(data);
         await ApiService.createAcademic(data);
         await getAcademics();
-        cancel({name:""})
+        cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage(isEditMode?"Academic Year Updated successfully": "Academic Year created successfully.");
+        setMessage(
+          isEditMode
+            ? "Academic Year Updated successfully"
+            : "Academic Year created successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -119,7 +123,9 @@ function Level() {
   const getAcademics = async () => {
     isLoading(true);
     const response = await ApiService.getAcademic({
-      page,search, limit
+      page,
+      search,
+      limit,
     });
     setAcademic(response.data);
 
@@ -155,7 +161,11 @@ function Level() {
     setIsEditMode(true);
     setGroup(record.groups);
     setMessage("Record edited successfully");
-    reset({ ...record });
+    reset({
+      ...record,
+      startDate: formatDate(record.startDate, "YYYY-MM-DD"),
+      endDate: formatDate(record.endDate, "YYYY-MM-DD"),
+    });
     setDialog(true);
   };
 
@@ -168,7 +178,7 @@ function Level() {
 
   const navigate = useNavigate();
   const openTerm = (academic: any) => {
-    navigate("/home/term", { 
+    navigate("/home/term", {
       replace: true,
       state: { data: academic },
     });
@@ -231,19 +241,19 @@ function Level() {
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Start Date <span className="text-danger ml-0.5">*</span>
+                  {getValues("startDate")}
                 </FormLabel>
 
                 <FormInput
                   {...register("startDate")}
                   type="date"
                   name="startDate"
-                  //  value={formatDate(getValues("startDate"),"DD/MM/YYYY")}
                   className={errors.startDate ? "border-danger" : ""}
                 />
                 {errors.startDate && (
                   <div className="mt-2 text-danger">
                     {typeof errors.startDate.message === "string" &&
-                      errors.startDate.message} 
+                      errors.startDate.message}
                   </div>
                 )}
               </div>
@@ -390,14 +400,15 @@ function Level() {
                     <Table.Tbody>
                       {academic.map((academic: any, key) => (
                         <Table.Tr key={key} className="intro-x">
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                           >
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                            {limit*(page-1)+key+1}
+                              {limit * (page - 1) + key + 1}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                          onClick={(e: any) => openTerm(academic)}>
+                          <Table.Td
+                            className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                            onClick={(e: any) => openTerm(academic)}
+                          >
                             <span className="font-medium whitespace-nowrap">
                               {academic.name}
                             </span>

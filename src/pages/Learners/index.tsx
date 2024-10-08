@@ -123,11 +123,15 @@ function Main() {
         const data = await getValues();
         await ApiService.createLearner(data);
         await getStudents();
-        await reset({ name: "" });
+        await cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage(isEditMode?"Learner Updated successfully": "Learner created successfully.");
+        setMessage(
+          isEditMode
+            ? "Learner Updated successfully"
+            : "Learner created successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -161,7 +165,7 @@ function Main() {
       {
         page,
         search,
-        limit
+        limit,
       },
       strandFilter
     );
@@ -298,6 +302,10 @@ function Main() {
     });
   };
   const cancel = (record: any) => {
+    setGrade("");
+    setGuardianIdNo("");
+    setPhoto("");
+    setGuardianIdNo2("");
     setGroup([""]);
     setPermission([""]);
     reset({ name: "" });
@@ -325,7 +333,8 @@ function Main() {
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
-                reset({ name: "" });
+                cancel({ name: "" });
+
                 setDialog(false);
                 setIsEditMode(false);
               }}
@@ -467,7 +476,9 @@ function Main() {
                     }}
                     disabled={isEditMode}
                   >
-                    <option value={""} selected>Select Grade</option>
+                    <option value={""} selected>
+                      Select Grade
+                    </option>
                     {grades.map((grade: any, key) => (
                       <option key={key} value={grade._id}>
                         {grade.name}
@@ -492,8 +503,8 @@ function Main() {
                     disabled={isEditMode}
                   >
                     <option value={""} selected>
-                    Select Stream
-                  </option>
+                      Select Stream
+                    </option>
                     {streams.map((stream: any, key) => (
                       <option key={key} value={stream._id}>
                         {stream.name}
@@ -530,28 +541,24 @@ function Main() {
                     Guardian ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-               
-                 
-                    <TomSelect
-                  {...register("guardian_id_no")}
-                  name="guardian_id_no"
-                  value={guardianIdNo} 
-                  onChange={(event:any) => {
-                    reset({ ...getValues(), parent: event });
-                    setGuardianIdNo(event)}
-                  }
-                 
-                  className={errors.guardian_id_no ? "border-danger" : ""}
-                >
-                  <option>
-                    Select Email
-                  </option>
-                  {parents.map((parent: any, key) => (
-                    <option key={key} value={parent.email}>
-                      {parent?.email}
-                    </option>
-                  ))}
-                </TomSelect>
+
+                  <TomSelect
+                    {...register("guardian_id_no")}
+                    name="guardian_id_no"
+                    value={guardianIdNo}
+                    onChange={(event: any) => {
+                      reset({ ...getValues(), parent: event });
+                      setGuardianIdNo(event);
+                    }}
+                    className={errors.guardian_id_no ? "border-danger" : ""}
+                  >
+                    <option>Select Email</option>
+                    {parents.map((parent: any, key) => (
+                      <option key={key} value={parent.email}>
+                        {parent?.email}
+                      </option>
+                    ))}
+                  </TomSelect>
                   <FormInput
                     {...register("guardian")}
                     type="hidden"
@@ -809,8 +816,6 @@ function Main() {
                 variant="outline-secondary"
                 onClick={() => {
                   cancel({ name: "" });
-                  reset({ name: "" });
-                  setPhoto("");
                 }}
                 className="w-20 mr-1"
               >
@@ -954,7 +959,7 @@ function Main() {
                         <Table.Tr key={key} className="intro-x">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                             <span className="font-medium whitespace-nowrap">
-                            {limit*(page-1)+key+1}
+                              {limit * (page - 1) + key + 1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
