@@ -118,10 +118,6 @@ function Main() {
 
   useEffect(() => {
     getStudents();
-    setTimeout(() => {
-      getStudents();
-      isLoading(false);
-    }, 2000);
   }, [search, page, limit]);
 
   const getStudents = async () => {

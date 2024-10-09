@@ -36,7 +36,7 @@ function Main() {
   const [recordId, setRecordId] = useState(null);
   const [gradeId, setGradeId] = useState("");
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
@@ -47,7 +47,7 @@ function Main() {
     per_page: 0,
   });
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(12); 
+  const [limit, setLimit] = useState(12);
   const [page, setPage] = useState(1);
   const location = useLocation();
   const grade = location?.state?.data;
@@ -100,10 +100,10 @@ function Main() {
 
   useEffect(() => {
     getLearningAreas();
-  }, [search, page, limit,gradeId]);
+  }, [search, page, limit, gradeId]);
   useEffect(() => {
     getGrades();
-    setGradeId(grade)
+    setGradeId(grade);
   }, []);
   const getLearningAreas = async () => {
     isLoading(true);
@@ -112,7 +112,6 @@ function Main() {
       limit: limit,
       search: search,
       gradeId: gradeId,
-     
     });
     setLearningAreas(response.data);
     const pagination = response.pagination;
@@ -264,7 +263,20 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">Learning Areas</h2>
+          <h2 className="mt-1 text-lg font-medium intro-y">
+            <a
+              onClick={(e: any) =>
+                navigate("/home/grade", {
+                  replace: true,
+                })
+              }
+              className=" mr-5 "
+              href="#"
+            >
+              <Lucide icon="ArrowLeft" className="text-slate-400 " />
+            </a>
+            Learning Areas
+          </h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
               {/* <Button
@@ -338,7 +350,6 @@ function Main() {
               </div>
             ) : (
               <div className="grid grid-cols-12 gap-5 mt-5">
-
                 {learningAreas.map((learningArea: any, key) => (
                   <div
                     key={key}

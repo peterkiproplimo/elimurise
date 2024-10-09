@@ -126,15 +126,15 @@ function Main() {
   };
 
   const handleReset = () => {
-    setYear('');
-    setNextYear('');
-    setCurrentStream('');
-    setNextStream('');
+    setYear("");
+    setNextYear("");
+    setCurrentStream("");
+    setNextStream("");
     reset({
-      year: '',
-      stream: '',
-      grade: '',
-      learning_area: ''
+      year: "",
+      stream: "",
+      grade: "",
+      learning_area: "",
     });
   };
 
@@ -344,9 +344,7 @@ function Main() {
               <Button
                 type="button"
                 variant="outline-secondary"
-                onClick= 
-                  {handleReset}
-                
+                onClick={handleReset}
                 className="w-20 ml-4"
               >
                 Reset

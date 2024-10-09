@@ -225,7 +225,7 @@ const ForgotPasswordOTP = () => {
                 />
               )}
             </Button>
-            <Link to="/login">
+            <Link to="/auth/login">
               <Button
                 variant="outline-primary"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"

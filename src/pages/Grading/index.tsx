@@ -41,7 +41,7 @@ function Users() {
   // const [userId, setUserId] = useState("");
   const [gradeId, setGradeId] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [grades, setGrades] = useState([]);
@@ -108,7 +108,7 @@ function Users() {
   }, [search, limit, page, gradeId]);
 
   const getGrades = async () => {
-    const response = await ApiService.getGrades({ page});
+    const response = await ApiService.getGrades({ page });
 
     setGrades(response.data);
   };
@@ -199,7 +199,7 @@ function Users() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    reset({...record,grade:record?.grade?._id});
+    reset({ ...record, grade: record?.grade?._id });
     setDialog(true);
   };
   const deleteRecord = async () => {
@@ -308,7 +308,7 @@ function Users() {
           >
             New Grading
           </Button>
-       
+
           <div className="hidden mx-auto md:block text-slate-500">
             {/* Showing{" "}
             {pagination.current_page +
@@ -383,9 +383,9 @@ function Users() {
                 {grading.map((grade: any, key) => (
                   <Table.Tr key={key} className="intro-x">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <span className="font-medium whitespace-nowrap">
-                            {limit*(page-1)+key+1}
-                            </span>
+                      <span className="font-medium whitespace-nowrap">
+                        {limit * (page - 1) + key + 1}
+                      </span>
                     </Table.Td>
 
                     <Table.Td
@@ -414,35 +414,29 @@ function Users() {
                     </Table.Td>
 
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            <div className="flex items-center justify-center">
-                              <a
-                                className="flex items-center mr-3 text-success"
-                                href="#"
-                                onClick={() => editRecord(grade)}
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Edit
-                              </a>
-                              <a
-                                className="flex items-center text-danger"
-                                href="#"
-                                onClick={() => {
-                                  // active(user)
-                                  setUser(grade);
-                                  setConfirmDelete(true);
-                                }}
-                              >
-                                <Lucide
-                                  icon="Trash2"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Delete
-                              </a>
-                            </div>
-                          </Table.Td>
+                      <div className="flex items-center justify-center">
+                        <a
+                          className="flex items-center mr-3 text-success"
+                          href="#"
+                          onClick={() => editRecord(grade)}
+                        >
+                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                          Edit
+                        </a>
+                        <a
+                          className="flex items-center text-danger"
+                          href="#"
+                          onClick={() => {
+                            // active(user)
+                            setUser(grade);
+                            setConfirmDelete(true);
+                          }}
+                        >
+                          <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
+                          Delete
+                        </a>
+                      </div>
+                    </Table.Td>
                     {/* <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                       {" "}
                       <div className="flex items-center justify-center">

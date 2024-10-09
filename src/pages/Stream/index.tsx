@@ -31,7 +31,7 @@ function Main() {
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
   const [grade, setGrade] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const [selectedStream, setSelectedStream] = useState("");

@@ -45,7 +45,7 @@ function Main() {
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
@@ -143,23 +143,28 @@ function Main() {
   }, []);
   const getStrands = async () => {};
   const getSubstrand = async () => {
-    let res = await ApiService.getSubstrandByStrand(
-      {
-        page: page,
-        search: search,
-        limit: limit,
-      },
-      selectedStrand
-    );
-    const pagination = res.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-
-    setSubstrands(res.data);
+    try {
+      isLoading(true);
+      let res = await ApiService.getSubstrandByStrand(
+        {
+          page: page,
+          search: search,
+          limit: limit,
+        },
+        selectedStrand
+      );
+      const pagination = res.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+      setSubstrands(res.data);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+    }
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
@@ -215,10 +220,6 @@ function Main() {
   }, [strandFilter]);
   useEffect(() => {
     getSubstrand();
-    setTimeout(() => {
-      getSubstrand();
-      isLoading(false);
-    }, 2000);
   }, [search, limit, page, selectedStrand]);
   const handleGradeChange = (event: any) => {
     // console.log("hello");
@@ -491,11 +492,11 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className=" text-lg font-medium intro-y"> 
-              <span className="font-medium whitespace-nowrap"  dangerouslySetInnerHTML={{ __html: substrand.name }}>
-                
-                 
-              </span>
+            <h2 className=" text-lg font-medium intro-y">
+              <span
+                className="font-medium whitespace-nowrap"
+                dangerouslySetInnerHTML={{ __html: substrand.name }}
+              ></span>
             </h2>
           </div>
           <br />
@@ -649,14 +650,16 @@ function Main() {
                             <img
                               alt="Midone Tailwind HTML Admin Template"
                               className="rounded-full w-14 h-14"
-                              src={logo} 
+                              src={logo}
                             />
                           </div>
                           <div className="mt-3 ml-4 text-center lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
-                            <h2 className="font-bold text-xl"
-                              dangerouslySetInnerHTML={{ __html: substrand.name}}>
-                              
-                            </h2>
+                            <h2
+                              className="font-bold text-xl"
+                              dangerouslySetInnerHTML={{
+                                __html: substrand.name,
+                              }}
+                            ></h2>
                             <div className="font-bold text  mt-0.5">
                               Strand: {state_strand?.name}
                             </div>

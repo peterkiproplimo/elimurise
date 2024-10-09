@@ -31,12 +31,12 @@ function Main() {
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
-  const [parent, setParent] =  useState<any>({});
+  const [parent, setParent] = useState<any>({});
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]); 
+  const [userPermissions, setUserPermissions] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -57,13 +57,13 @@ function Main() {
       email: yup.string().required(" Email is required"),
       surname: yup.string().required("Surname is required"),
       phone: yup
-      .string()
-      .required("Phone Number is required")
-      .min(6, "Phone Number must be at least 6 characters long"),
+        .string()
+        .required("Phone Number is required")
+        .min(6, "Phone Number must be at least 6 characters long"),
       id_no: yup
-      .string()
-      .required("ID Number is required")
-      .min(6, "ID Number must be at least 6 characters long"),
+        .string()
+        .required("ID Number is required")
+        .min(6, "ID Number must be at least 6 characters long"),
     })
     .required();
 
@@ -87,11 +87,15 @@ function Main() {
         const data = await getValues();
         await ApiService.createParents(data);
         await getParents();
-        cancel({name:""})
+        cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage(isEditMode?"Parent Updated successfully": "Parent created successfully.");
+        setMessage(
+          isEditMode
+            ? "Parent Updated successfully"
+            : "Parent created successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -106,27 +110,32 @@ function Main() {
 
   useEffect(() => {
     getParents();
-    setTimeout(() => {
-      getParents();
-      isLoading(false);
-    }, 2000);
-  }, [search, page, limit]); 
+  }, [search, page, limit]);
   useEffect(() => {
     getAcademicYear();
   }, []);
   const getParents = async () => {
-   
-    const response = await ApiService.getParents({
-      page, limit, search
-    });
-    setParents(response.data);
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
+    isLoading(true);
+
+    try {
+      const response = await ApiService.getParents({
+        page,
+        limit,
+        search,
+      });
+      setParents(response.data);
+      const pagination = response.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+      isLoading(false);
+    } catch (error: any) {
+      setMessage("Ooops failed to load");
+      isLoading(false);
+    }
   };
   const getAcademicYear = async () => {
     const response = await ApiService.getAcademic({ page: 1 });
@@ -408,10 +417,7 @@ function Main() {
                     className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                   />
                 </div>
-             
               </div>
-
-            
             </div>
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
@@ -423,120 +429,119 @@ function Main() {
                 <div className="flex flex-col items-center mt-10 bg-white p-8">
                   {/* <Search size={28} className="" /> */}
                   <p className="text-xl text-slate-500 ">No records found</p>
-                </div> 
+                </div>
               ) : (
                 <>
                   {" "}
                   <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-                  <Table className="border-spacing-y-[3px] border-separate mt-2 ">
-                    <Table.Thead > 
-                      <Table.Tr>
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          No.
-                        </Table.Th>
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          Name
-                        </Table.Th>
-          
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          Email
-                        </Table.Th>
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          ID Number
-                        </Table.Th> 
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                          Phone Number
-                        </Table.Th>
-                      
-                        <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
-                          Actions
-                        </Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                      {parents.map((parent: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
-                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                            {limit*(page-1)+key+1}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <div className="flex items-center">
-                              <div className="w-9 h-9 image-fit zoom-in">
-                                <Tippy
-                                  as="img"
-                                  alt=""
-                                  className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                  src={avarter}
-                                  content={
-                                    parent.first_name + " " + parent.last_name
-                                  }
-                                />
+                    <Table className="border-spacing-y-[3px] border-separate mt-2 ">
+                      <Table.Thead>
+                        <Table.Tr>
+                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                            No.
+                          </Table.Th>
+                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                            Name
+                          </Table.Th>
+
+                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                            Email
+                          </Table.Th>
+                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                            ID Number
+                          </Table.Th>
+                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
+                            Phone Number
+                          </Table.Th>
+
+                          <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
+                            Actions
+                          </Table.Th>
+                        </Table.Tr>
+                      </Table.Thead>
+                      <Table.Tbody>
+                        {parents.map((parent: any, key) => (
+                          <Table.Tr key={key} className="intro-x">
+                            <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <span className="font-medium whitespace-nowrap">
+                                {limit * (page - 1) + key + 1}
+                              </span>
+                            </Table.Td>
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <div className="flex items-center">
+                                <div className="w-9 h-9 image-fit zoom-in">
+                                  <Tippy
+                                    as="img"
+                                    alt=""
+                                    className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                    src={avarter}
+                                    content={
+                                      parent.first_name + " " + parent.last_name
+                                    }
+                                  />
+                                </div>
+                                <div className="ml-4">
+                                  <a
+                                    href="#"
+                                    onClick={() => editRecord(parent)}
+                                    className="font-medium whitespace-nowrap"
+                                  >
+                                    {parent.first_name && parent.first_name}
+                                    {" " +
+                                      parent.surname +
+                                      " " +
+                                      parent.last_name}
+                                  </a>
+                                </div>
                               </div>
-                              <div className="ml-4">
+                            </Table.Td>
+                            <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <span className="font-medium whitespace-nowrap">
+                                {parent.email}
+                              </span>
+                            </Table.Td>
+                            <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <span className="font-medium whitespace-nowrap">
+                                {parent.id_no}
+                              </span>
+                            </Table.Td>
+                            <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                              <span className="font-medium whitespace-nowrap">
+                                {parent.phone}
+                              </span>
+                            </Table.Td>
+
+                            <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                              <div className="flex items-center justify-center">
                                 <a
+                                  className="flex items-center mr-3 text-success"
                                   href="#"
                                   onClick={() => editRecord(parent)}
-                                  className="font-medium whitespace-nowrap"
                                 >
-                                  {parent.first_name && parent.first_name}
-                                  {" " +
-                                    parent.surname +
-                                    " " +
-                                    parent.last_name}
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Edit
                                 </a>
-                            
-                              </div>
-                            </div>
-                          </Table.Td>
-                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {parent.email}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {parent.id_no}
-                            </span>
-                          </Table.Td> 
-                          <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {parent.phone}
-                            </span>
-                          </Table.Td>
-
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            <div className="flex items-center justify-center">
-                              <a
-                                className="flex items-center mr-3 text-success"
-                                href="#"
-                                onClick={() => editRecord(parent)}
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Edit
-                              </a>
-                              <a
-                                className="flex items-center text-danger"
-                                href="#"
-                                onClick={() => {
-                                  setParent(parent),
+                                <a
+                                  className="flex items-center text-danger"
+                                  href="#"
+                                  onClick={() => {
+                                    setParent(parent);
                                     setConfirmDelete(true);
-                                }}
-                              >
-                                <Lucide
-                                  icon="Trash2"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Delete
-                              </a>
-                            </div>
-                          </Table.Td>
+                                  }}
+                                >
+                                  <Lucide
+                                    icon="Trash2"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Delete
+                                </a>
+                              </div>
+                            </Table.Td>
 
-                          {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
+                            {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
                         <div className="flex items-center justify-center">
                           {true && (
                             <Menu>
@@ -575,58 +580,58 @@ function Main() {
                           )}
                         </div>
                       </Table.Td> */}
-                        </Table.Tr>
-                      ))}
-                    </Table.Tbody>
-                  </Table>
-                
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                          </Table.Tr>
+                        ))}
+                      </Table.Tbody>
+                    </Table>
+
                     <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                      <Pagination className="w-full sm:w-auto sm:mr-auto">
-                        <button
-                          onClick={() => setPage(previous_page)}
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                        </button>
-                        {_.times(pagination.total_pages).map((page, key) =>
-                          page + 1 == pagination.current_page ? (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 bg-white rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          )
-                        )}
-                        <button
-                          onClick={() => setPage(next_page)}
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronRight" className="w-4 h-4" />
-                        </button>
-                      </Pagination>
-                      <div className="text-slate-500">
-                        <span className="mr-3">Total {pagination.total}</span>
-                        <FormSelect
-                          className="w-30 mt-3 !box sm:mt-0"
-                          onChange={(e) => setLimit(parseInt(e.target.value))}
-                        >
-                          <option value={10}>10/page</option>
-                          <option value={25}>25/page</option>
-                          <option value={50}>50/page</option>
-                          <option value={100}>100/page</option>
-                        </FormSelect>
-                      </div>
+                      <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                        <Pagination className="w-full sm:w-auto sm:mr-auto">
+                          <button
+                            onClick={() => setPage(previous_page)}
+                            className="py-2 px-4 rounded-md"
+                          >
+                            <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                          </button>
+                          {_.times(pagination.total_pages).map((page, key) =>
+                            page + 1 == pagination.current_page ? (
+                              <button
+                                onClick={() => setPage(page + 1)}
+                                key={key}
+                                className="py-2 px-4 bg-white rounded-md"
+                              >
+                                {page + 1}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => setPage(page + 1)}
+                                key={key}
+                                className="py-2 px-4 rounded-md"
+                              >
+                                {page + 1}
+                              </button>
+                            )
+                          )}
+                          <button
+                            onClick={() => setPage(next_page)}
+                            className="py-2 px-4 rounded-md"
+                          >
+                            <Lucide icon="ChevronRight" className="w-4 h-4" />
+                          </button>
+                        </Pagination>
+                        <div className="text-slate-500">
+                          <span className="mr-3">Total {pagination.total}</span>
+                          <FormSelect
+                            className="w-30 mt-3 !box sm:mt-0"
+                            onChange={(e) => setLimit(parseInt(e.target.value))}
+                          >
+                            <option value={10}>10/page</option>
+                            <option value={25}>25/page</option>
+                            <option value={50}>50/page</option>
+                            <option value={100}>100/page</option>
+                          </FormSelect>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -662,7 +667,8 @@ function Main() {
                 />
                 <div className="mt-5 text-3xl">Are you sure?</div>
                 <div className="mt-2 text-slate-500">
-                  Do you really want to delete {parent.first_name} {parent.last_name}? <br />
+                  Do you really want to delete {parent.first_name}{" "}
+                  {parent.last_name}? <br />
                   This process cannot be undone.
                 </div>
               </div>

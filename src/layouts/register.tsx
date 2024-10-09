@@ -27,9 +27,9 @@ const Auth = () => {
             <div className="home bg-slate-200 rounded shandow flex justify-between ">
               <div className="icon ">
                 <img
-                  alt="ACS" 
+                  alt="ACS"
                   className="xl:w-35 md:w-10 xl:w-auto"
-                  src={logo} 
+                  src={logo}
                 />
               </div>
               <div className="flex items-center">

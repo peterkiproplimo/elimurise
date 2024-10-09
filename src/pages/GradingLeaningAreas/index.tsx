@@ -39,7 +39,7 @@ function Users() {
   // const [userId, setUserId] = useState("");
   const [gradeId, setGradeId] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, isLoading] = useState(false);
+  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [grades, setGrades] = useState([]);
