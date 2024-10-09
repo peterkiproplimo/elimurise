@@ -143,23 +143,28 @@ function Main() {
   }, []);
   const getStrands = async () => {};
   const getSubstrand = async () => {
-    let res = await ApiService.getSubstrandByStrand(
-      {
-        page: page,
-        search: search,
-        limit: limit,
-      },
-      selectedStrand
-    );
-    const pagination = res.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-
-    setSubstrands(res.data);
+    try {
+      isLoading(true);
+      let res = await ApiService.getSubstrandByStrand(
+        {
+          page: page,
+          search: search,
+          limit: limit,
+        },
+        selectedStrand
+      );
+      const pagination = res.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+      setSubstrands(res.data);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+    }
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
