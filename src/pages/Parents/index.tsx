@@ -658,7 +658,7 @@ function Main() {
               <div className="p-5 text-center">
                 <Lucide
                   icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
+                  className="w-16 h-16 mx-auto mt-3 text-danger" 
                 />
                 <div className="mt-5 text-3xl">Are you sure?</div>
                 <div className="mt-2 text-slate-500">
