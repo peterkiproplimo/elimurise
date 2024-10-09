@@ -31,7 +31,7 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const nextImportantNotes = () => {
     importantNotesRef.current?.tns.goTo("next");
   };
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [feeds, setFeeds] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);

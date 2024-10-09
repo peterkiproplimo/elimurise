@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 //h
 function CreateNewPassword() {
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();

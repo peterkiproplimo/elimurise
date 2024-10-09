@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import React, { useState, useRef } from "react";
 
 const Auth = () => {
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
 
   return (
     <>

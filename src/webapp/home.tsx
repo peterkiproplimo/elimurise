@@ -36,7 +36,7 @@ const Home = () => {
       password: yup.string().required().min(4),
     })
     .required();
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
   return (

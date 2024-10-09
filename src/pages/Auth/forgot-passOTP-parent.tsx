@@ -22,7 +22,7 @@ const ForgotPasswordOTP = () => {
   const email = location.state?.email;
   const channel = location.state?.channel;
   const navigate = useNavigate();
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -228,7 +228,7 @@ const ForgotPasswordOTP = () => {
                 />
               )}
             </Button>
-            <Link to="/login">
+            <Link to="/auth/login">
               <Button
                 variant="outline-primary"
                 className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"

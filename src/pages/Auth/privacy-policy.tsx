@@ -11,7 +11,7 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import { ClassicEditor } from "../../base-components/Ckeditor";
 
 function Policy() {
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [privacy_policy, setPrivacyPolicy] = useState("");
