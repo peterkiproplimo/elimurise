@@ -41,7 +41,7 @@ function Main() {
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [profile, setProfile] = useState<any>([]);

@@ -102,7 +102,6 @@ function Main() {
     getLearningAreas();
   }, [search, page, limit, gradeId]);
   useEffect(() => {
-    getGrades();
     setGradeId(grade);
   }, []);
   const getLearningAreas = async () => {
@@ -124,10 +123,6 @@ function Main() {
     isLoading(false);
   };
   //ss
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-    setGrades(response.data);
-  };
 
   const openStrand = (learningArea: any) => {
     navigate("/home/Strands", {
@@ -135,132 +130,18 @@ function Main() {
       state: { data: learningArea },
     });
   };
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteLearningArea(recordId);
-      getLearningAreas();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
 
-  const editRecord = (record: any) => {
-    setIsEditMode(true);
-    setGroup(record.groups);
-    reset({ ...record, grade_id: record.grade_id._id });
-    setDialog(true);
-  };
-
-  const cancel = (record: any) => {
-    setGroup([""]);
-    setPermission([""]);
-    reset(record);
-    setDialog(false);
-  };
+  // const cancel = (record: any) => {
+  //   setGroup([""]);
+  //   setPermission([""]);
+  //   reset(record);
+  //   setDialog(false);
+  // };
 
   return (
     <>
       {dialog ? (
-        <>
-          <div className="flex items-center mt-8 intro-y">
-            <a
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                reset({ name: "" });
-                setDialog(false);
-              }}
-              href="#"
-            >
-              <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-            </a>
-            <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Learning Area" : "New Learning Area"}
-            </h2>
-          </div>
-
-          <form
-            className="mt-5 p-5 intro-y  box validate-form"
-            onSubmit={onSubmit}
-          >
-            <div>
-              <a
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(false);
-                }}
-                className="absolute  top-0 right-0 mt-3 mr-3"
-                href="#"
-              ></a>
-            </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel>Learning Area</FormLabel>
-                <FormInput
-                  {...register("name")}
-                  type="text"
-                  name="name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Learning Area"
-                />
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-12 sm:col-span-12">
-                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect {...register("grade_id")} name="grade_id">
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div>
-              <div className="col-span-12 sm:col-span-12 mt-3">
-                <Button
-                  type="button"
-                  variant="outline-secondary"
-                  onClick={() => cancel({ name: "" })}
-                  className="w-20 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit" className="w-20">
-                  Save
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </form>
-        </>
+        <></>
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium intro-y">
@@ -279,36 +160,6 @@ function Main() {
           </h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-              {/* <Button
-                variant="primary"
-                className="mr-2 shadow-md"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                }}
-              >
-                New Learning Area
-              </Button> */}
-              {/* <Menu>
-                <Menu.Button as={Button} className="px-2 !box">
-                  <span className="flex items-center justify-center w-5 h-5">
-                    <Lucide icon="Plus" className="w-4 h-4" />
-                  </span>
-                </Menu.Button>
-                <Menu.Items className="w-40">
-                  <Menu.Item>
-                    <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    to Excel
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    to PDF
-                  </Menu.Item>
-                </Menu.Items>
-              </Menu> */}
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
                 {pagination.current_page +
@@ -435,59 +286,7 @@ function Main() {
           {/* </div> */}
 
           <div>{/* END: Pagination */}</div>
-          <Dialog
-            staticBackdrop
-            size="lg"
-            open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
-          >
-            <Dialog.Panel></Dialog.Panel>
-          </Dialog>
-          {/* BEGIN: Delete Confirmation Modal */}
-          <Dialog
-            open={confirmDelete}
-            onClose={() => {
-              setConfirmDelete(false);
-            }}
-            initialFocus={deleteButtonRef}
-          >
-            <Dialog.Panel>
-              <div className="p-5 text-center">
-                <Lucide
-                  icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
-                />
-                <div className="mt-5 text-3xl">Are you sure?</div>
-                <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
-                  This process cannot be undone.
-                </div>
-              </div>
-              <div className="px-5 pb-8 text-center">
-                <Button
-                  variant="outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    setConfirmDelete(false);
-                  }}
-                  className="w-24 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => deleteRecord()}
-                  variant="danger"
-                  type="button"
-                  className="w-24"
-                  ref={deleteButtonRef}
-                >
-                  Delete
-                </Button>
-              </div>
-            </Dialog.Panel>
-          </Dialog>
+
           {/* END: Delete Confirmation Modal */}
         </>
       )}

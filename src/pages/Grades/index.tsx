@@ -24,39 +24,13 @@ function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
-
-  const [teachers, setTeachers] = useState([]);
-  const [selectGroup, setGroup] = useState([""]);
-  const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
-  const [learningAreas, setLearningAreas] = useState([]);
-  const [filteredLearningAreas, setFilteredLearningAreas] = useState([]);
   const [grades, setGrades] = useState([]);
-  const initialState = {
-    grade: "",
-    learning_area: "",
-    term: "",
-  };
-  const [strandFilter, updateStrandFilter] = useState(initialState);
-  const setStrandFilter = (newFilter: any) => {
-    updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
-  };
-  useEffect(() => {
-    setFilteredLearningAreas([]);
-    const lerning_areas = learningAreas.filter(
-      (area: any) => area?.grade_id?._id === strandFilter.grade
-    );
-    const data = getValues();
 
-    reset();
-    reset({ user: data.user, grade: strandFilter.grade });
-    setFilteredLearningAreas(lerning_areas);
-  }, [strandFilter.grade]);
   const navigate = useNavigate();
 
   const [pagination, setPagination] = useState({
@@ -70,64 +44,8 @@ function Main() {
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
-  // Success notification
-  const notify = useRef<NotificationElement>();
-  const schema = yup
-    .object({
-      firstname: yup.string().required("First Name is required"),
-      lastname: yup.string().required("Last Name is required"),
-      email: yup.string().required(" Email is required"),
-      surname: yup.string().required("Surname is required"),
-      phone: yup.string().required("Phone  Number is required"),
-      // .min(11, "Phone number must be at least 11 characters long")
-    })
-    .required();
-
-  const {
-    register,
-    trigger,
-    getValues,
-    reset,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
-  const handleGradeChange = async (value: any) => {
-    // const selectedValue = event.target.value;
-
-    await setStrandFilter({
-      learning_area: "na",
-      term: "na",
-      grade: value,
-    });
-
-    // You might want to fetch filtered data here
-  };
 
   useEffect(() => {
-    getTeachers();
-  }, [search, page, limit]);
-  useEffect(() => {
-    // getAcademicYear();
-  }, []);
-  const getTeachers = async () => {
-    isLoading(true);
-    const response = await ApiService.getTeachers({
-      page: 1,
-    });
-    setTeachers(response.data);
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    isLoading(false);
-  };
-  useEffect(() => {
-    getLearningAreas();
     getGrades();
   }, [search, page, limit]);
 
@@ -148,47 +66,11 @@ function Main() {
       isLoading(false);
     }
   };
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({
-      page: 1,
-    });
-    setLearningAreas(response.data);
-  };
+
   // const getAcademicYear = async () => {
   //   const response = await ApiService.getAcademic({ page: 1 });
   //   setAcademic(response.data);
   // };
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteTeachers(recordId);
-      getTeachers();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
-
-  const editRecord = (record: any) => {
-    setIsEditMode(true);
-    setGroup(record.groups);
-    reset(record);
-    setDialog(true);
-  };
-
-  const cancel = (record: any) => {
-    setGroup([""]);
-    setPermission([""]);
-    reset(record);
-    setDialog(false);
-  };
 
   const openLearningArea = (grade_id: any) => {
     navigate("/home/learning_areas/", {
@@ -200,24 +82,7 @@ function Main() {
   return (
     <>
       {dialog ? (
-        <>
-          <div className="flex items-center mt-8 intro-y">
-            <a
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                reset({ name: "" });
-                setDialog(false);
-                setIsEditMode(false);
-              }}
-              href="#"
-            >
-              <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-            </a>
-            <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Teacher" : "Add Teacher"}
-            </h2>
-          </div>
-        </>
+        <></>
       ) : (
         <>
           <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
@@ -412,78 +277,8 @@ function Main() {
 
             {/* END: Pagination */}
           </div>
-          <Dialog
-            staticBackdrop
-            size="lg"
-            open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
-          >
-            <Dialog.Panel></Dialog.Panel>
-          </Dialog>
-          {/* BEGIN: Delete Confirmation Modal */}
-          <Dialog
-            open={confirmDelete}
-            onClose={() => {
-              setConfirmDelete(false);
-            }}
-            initialFocus={deleteButtonRef}
-          >
-            <Dialog.Panel>
-              <div className="p-5 text-center">
-                <Lucide
-                  icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
-                />
-                <div className="mt-5 text-3xl">Are you sure?</div>
-                <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
-                  This process cannot be undone.
-                </div>
-              </div>
-              <div className="px-5 pb-8 text-center">
-                <Button
-                  variant="outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    setConfirmDelete(false);
-                  }}
-                  className="w-24 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => deleteRecord()}
-                  variant="danger"
-                  type="button"
-                  className="w-24"
-                  ref={deleteButtonRef}
-                >
-                  Delete
-                </Button>
-              </div>
-            </Dialog.Panel>
-          </Dialog>
-          {/* END: Delete Confirmation Modal */}
         </>
       )}
-      <Notification
-        options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
-        className="flex"
-      >
-        <Lucide
-          icon={success ? "CheckCircle" : "XCircle"}
-          className={success ? "text-success" : "text-danger"}
-        />
-        <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Success" : "Failed"}</div>
-          <div className="mt-1 text-slate-500">{message}</div>
-        </div>
-      </Notification>
     </>
   );
 }

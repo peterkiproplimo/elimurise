@@ -24,6 +24,8 @@ function Main() {
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
   const [gradeId, setGradeId] = useState("");
+  const [grade, setGrade] = useState("");
+
   const [tests, setTests] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState("");
@@ -52,9 +54,10 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Test is required"),
-      grading: yup.string().required("Test is required"),
-      term: yup.string().required("Test is required"),
+      name: yup.string().required("Name is required"),
+      grading: yup.string().required("Select Performance Level Scale"),
+      term: yup.string().required("Select Term"),
+      grade: yup.string().required("Select Grade"),
     })
     .required();
 
@@ -79,7 +82,7 @@ function Main() {
         console.log(data);
         await ApiService.createTests(data);
         await getTests();
-        await reset();
+        cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
@@ -164,7 +167,7 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteStream(recordId);
+      let res = await ApiService.deleteTests(recordId);
       getTests();
       isLoading(false);
       setConfirmDelete(false);
@@ -182,9 +185,13 @@ function Main() {
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
+    setSelectedTerm(record?.term?._id);
+    setGradeId(record.grading._id);
+    setGrade(record.grade._id);
     reset({
       ...record,
       grade: record.grade._id,
+      grading: record.grading._id,
       academicYear: record.academicYear._id,
       term: record?.term?._id,
     });
@@ -195,6 +202,9 @@ function Main() {
     setGroup([""]);
     setPermission([""]);
     reset(record);
+    setSelectedTerm("");
+    setGradeId("");
+    setGrade("");
 
     setDialog(false);
   };
@@ -233,15 +243,34 @@ function Main() {
                 href="#"
               ></a>
             </div>{" "}
-            <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="col-span-6 sm:col-span-6">
+            <div className="grid grid-cols-12 gap-6 ">
+              <div className="col-span-6 sm:col-span-6 py-2">
+                <FormLabel className="modal-form-6">
+                  Name<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
+                <FormInput
+                  {...register("name")}
+                  type="text"
+                  name="name"
+                  className={errors.name ? "border-danger" : ""}
+                  placeholder="Summative Test"
+                />
+                {errors.name && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.name.message === "string" &&
+                      errors.name.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-6 sm:col-span-6 py-2">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
                   name="grade"
-
+                  onChange={(event: any) => setGrade(event.target.value)}
                   // defaultValue={selectedLevel}
                 >
+                  <option value={""}>Select Grade</option>
                   {grades.map((grade: any, key: any) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -255,7 +284,9 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
+            </div>
+            <div className="grid grid-cols-12 gap-6 ">
+              <div className="col-span-6 sm:col-span-6 py-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <FormSelect
                   {...register("term")}
@@ -263,7 +294,7 @@ function Main() {
                   value={selectedTerm}
                   onChange={(event: any) => setSelectedTerm(event.target.value)}
                 >
-                  <option>Select Academic Term</option>
+                  <option value={""}>Select Academic Term</option>
 
                   {academic_terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
@@ -271,39 +302,19 @@ function Main() {
                     </option>
                   ))}
                 </FormSelect>
-                {errors.grade && (
+                {errors.term && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.term.message === "string" &&
+                      errors.term.message}
                   </div>
                 )}
               </div>
-            </div>
-            <div className="grid grid-cols-12 gap-6 ">
+
               <div className="col-span-6 sm:col-span-6">
-                <div className="col-span-4 sm:col-span-12">
-                  <FormLabel className="mt-2">
-                    Name<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("name")}
-                    type="text"
-                    name="name"
-                    className={errors.name ? "border-danger" : ""}
-                    placeholder="Summative Test"
-                  />
-                  {errors.name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.name.message === "string" &&
-                        errors.name.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-span-6 sm:col-span-6">
-                <div className="col-span-4 sm:col-span-12">
-                  <FormLabel className="mt-2">
-                    Grading<span className="text-danger ml-0.5">*</span>
+                <div className="col-span-4 sm:col-span-12 py-2">
+                  <FormLabel className="modal-form-6">
+                    Performance Level Scale
+                    <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <TomSelect
                     onChange={(data: any) => {
@@ -312,43 +323,43 @@ function Main() {
                     }}
                     value={gradeId}
                   >
-                    <option>Select Grading</option>
-                    {gradings.map((grading: any, key) => (
-                      <option key={key} value={grading._id}>
-                        {grading.name}
-                      </option>
-                    ))}
+                    <option value={""}>Select Scale</option>
+                    {gradings
+                      .filter((grading: any) => grading.grade._id === grade)
+                      .map((grading: any, key) => (
+                        <option key={key} value={grading._id}>
+                          {grading.name} ({grading.grade.name})
+                        </option>
+                      ))}
                   </TomSelect>
-                  {errors.name && (
+                  {errors.grading && (
                     <div className="mt-2 text-danger">
-                      {typeof errors.name.message === "string" &&
-                        errors.name.message}
+                      {typeof errors.grading.message === "string" &&
+                        errors.grading.message}
                     </div>
                   )}
                 </div>
               </div>
             </div>
-            <div>
-              <div className="col-span-12 sm:col-span-12 mt-3">
-                <Button
-                  type="button"
-                  variant="outline-secondary"
-                  onClick={() => cancel({ name: "" })}
-                  className="w-20 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit" className="w-20">
-                  Save
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
+            <div className="col-span-12 sm:col-span-12 mt-3">
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={() => cancel({ name: "" })}
+                className="w-20 mr-1"
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" className="w-20">
+                Save
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </Button>
             </div>
           </form>
         </>
@@ -434,13 +445,16 @@ function Main() {
                           Name
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
-                          Academic Year
+                          Type
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Term
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Grade
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Scale
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Created At
@@ -465,7 +479,7 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {test.academicYear.name}
+                              {test?.term ? "Custom" : "Hero Assessment"}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -476,6 +490,11 @@ function Main() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {test?.grade?.name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {test?.grading?.name}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">

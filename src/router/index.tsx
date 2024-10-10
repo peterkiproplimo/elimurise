@@ -150,7 +150,7 @@ function Router() {
           element: <Grading />,
         },
         {
-          path: "grading-config/:id",
+          path: "grading/:id",
           element: <GradingLeaningAreas />,
         },
         {

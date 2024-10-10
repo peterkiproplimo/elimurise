@@ -191,13 +191,6 @@ function Main() {
     console.log(response);
   };
 
-  const getAcademics = async () => {
-    const response = await ApiService.getAcademic({
-      page: 1,
-    });
-    setAcademic(response.data);
-  };
-
   const deleteRecord = async () => {
     isLoading(true);
     try {
@@ -220,7 +213,9 @@ function Main() {
     setIsEditMode(true);
     setGroup(record.groups);
     setPhoto(record.learner.photo);
-
+    setGrade(record?.stream?.grade?._id);
+    setGuardianIdNo(record?.learner?.guardian?.email);
+    setGuardianIdNo2(record?.learner?.guardian2?.email);
     reset({
       ...record.learner,
       image: "",
@@ -502,9 +497,7 @@ function Main() {
                     className={errors.stream ? "border-danger" : ""}
                     disabled={isEditMode}
                   >
-                    <option value={""} selected>
-                      Select Stream
-                    </option>
+                    <option value={""}>Select Stream</option>
                     {streams.map((stream: any, key) => (
                       <option key={key} value={stream._id}>
                         {stream.name}
@@ -541,7 +534,6 @@ function Main() {
                     Guardian ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
-
                   <TomSelect
                     {...register("guardian_id_no")}
                     name="guardian_id_no"
@@ -553,11 +545,14 @@ function Main() {
                     className={errors.guardian_id_no ? "border-danger" : ""}
                   >
                     <option>Select Email</option>
-                    {parents.map((parent: any, key) => (
-                      <option key={key} value={parent.email}>
-                        {parent?.email}
-                      </option>
-                    ))}
+                    {parents
+                      .filter((parent: any) => parent.email !== guardianIdNo2)
+                      .map((parent: any, key) => (
+                        <option key={key} value={parent.email}>
+                          {parent?.first_name} {parent?.last_name} -{" "}
+                          {parent?.email}
+                        </option>
+                      ))}
                   </TomSelect>
                   <FormInput
                     {...register("guardian")}
@@ -691,11 +686,13 @@ function Main() {
                     className={errors.guardian2_id_no ? "border-danger" : ""}
                   >
                     <option>Select Email</option>
-                    {parents.map((parent: any, key) => (
-                      <option key={key} value={parent.email}>
-                        {parent?.email}
-                      </option>
-                    ))}
+                    {parents
+                      .filter((parent: any) => parent.email !== guardianIdNo)
+                      .map((parent: any, key) => (
+                        <option key={key} value={parent.email}>
+                          {parent?.email}
+                        </option>
+                      ))}
                   </TomSelect>
 
                   <FormInput

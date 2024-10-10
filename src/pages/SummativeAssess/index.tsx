@@ -48,7 +48,7 @@ function Main() {
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
@@ -440,32 +440,6 @@ function Main() {
                 </a>{" "}
                 Summative Assessment
               </h2>
-              {/* <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Grade:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {learningArea?.grade_id?._id }
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Learning Area:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {learningArea?._id}
-                  </span>
-                </div>
-              
-                <div className="meta-row flex items-center col-span-2 mt-0.5">
-                  <Loader className="text-success animate-spin mr-2" />
-
-                  <span className="text-sm text-success font-medium">
-                    (Auto-saving)
-                  </span>
-                </div>
-              </div> */}
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
@@ -767,7 +741,7 @@ function Main() {
                   <option>Select Test</option>
                   {tests.map((test: any, key) => (
                     <option key={key} value={test._id}>
-                      {test.name}
+                      {test.name} ({test?.term ? "Custom" : "Hero Assessment"})
                     </option>
                   ))}
                 </FormSelect>
@@ -798,59 +772,6 @@ function Main() {
             </div>
           </div>
 
-          <Dialog
-            staticBackdrop
-            size="lg"
-            open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
-          >
-            <Dialog.Panel></Dialog.Panel>
-          </Dialog>
-          {/* BEGIN: Delete Confirmation Modal */}
-          <Dialog
-            open={confirmDelete}
-            onClose={() => {
-              setConfirmDelete(false);
-            }}
-            initialFocus={deleteButtonRef}
-          >
-            <Dialog.Panel>
-              <div className="p-5 text-center">
-                <Lucide
-                  icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
-                />
-                <div className="mt-5 text-3xl">Are you sure?</div>
-                <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
-                  This process cannot be undone.
-                </div>
-              </div>
-              <div className="px-5 pb-8 text-center">
-                <Button
-                  variant="outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    setConfirmDelete(false);
-                  }}
-                  className="w-24 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => deleteRecord()}
-                  variant="danger"
-                  type="button"
-                  className="w-24"
-                  ref={deleteButtonRef}
-                >
-                  Delete
-                </Button>
-              </div>
-            </Dialog.Panel>
-          </Dialog>
           {/* END: Delete Confirmation Modal */}
         </>
       )}

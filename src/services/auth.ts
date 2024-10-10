@@ -222,6 +222,15 @@ export async function createTests(data: FieldValues) {
   }
 }
 
+export async function deleteTests(data: any) {
+  try {
+    let res = await axios.delete(c.TESTS + "/" + data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
 //streams
 export const getStream = async (data: any) => {
   try {
@@ -1042,9 +1051,9 @@ export async function getListOfGradings(data: any) {
     throw handler(e);
   }
 }
-export async function getGradingLearningAreas(id: any, data: any) {
+export async function getGradingScale(id: any) {
   try {
-    let res = await axios.get(c.GRADING + "/" + id, data);
+    let res = await axios.get(c.GRADING + "/" + id);
     console.log(res);
     return res.data;
   } catch (e) {
@@ -1062,6 +1071,23 @@ export async function createGrading(data: any) {
       console.log(res);
       return res.data;
     }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function deleteGrading(data: any) {
+  try {
+    let res = await axios.delete(c.GRADING + "/" + data);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function updateGradingScale(data: any) {
+  try {
+    let res = await axios.put(c.GRADING + "/" + data._id, data);
+    return res.data;
   } catch (e) {
     throw handler(e);
   }

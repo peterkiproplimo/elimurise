@@ -35,7 +35,7 @@ function Users() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [users, setUsers] = useState([]);
-  const [user, setUser] = useState<any>({});
+  const [gradingScale, setGradingScale] = useState<any>({});
   const [selectGroup, setGroup] = useState([""]);
   const [roles, setRoles] = useState([]);
   // const [userId, setUserId] = useState("");
@@ -97,9 +97,6 @@ function Users() {
     resolver: yupResolver(schema),
   });
   useEffect(() => {
-    getRole();
-    getUsers();
-    getLearningAreas();
     getGrades();
     // getStreams();
   }, []);
@@ -112,62 +109,32 @@ function Users() {
 
     setGrades(response.data);
   };
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({
-      page: 1,
-      limit: 100000,
-    });
-    setLearningAreas(response.data);
-  };
   const fetchGrading = async () => {
     isLoading(true);
-    let res = await ApiService.getListOfGradings({
-      page,
-      search,
-      limit,
-      gradeId: gradeId,
-    });
-    isLoading(false);
+    try {
+      let res = await ApiService.getListOfGradings({
+        page,
+        search,
+        limit,
+        gradeId: gradeId,
+      });
 
-    const pagination = res.pagination;
-    setPagination({
-      current_page: pagination?.current_page,
-      total: pagination?.total,
-      total_pages: pagination?.total_pages,
-      per_page: pagination?.per_page,
-    });
-    setGrading(res.data);
-    console.log(grading);
-    isLoading(false);
-  };
-  const getUsers = async () => {
-    // let res = await ApiService.getUsers({
-    //   page: page,
-    //   search: search,
-    //   limit: 10000,
-    // });
-    // setUsers(res.data);
-  };
-  const getStreams = async (selectedValue: any) => {
-    setStreams([]);
-    const response = await ApiService.getStream({
-      page: 1,
-      grade: selectedValue,
-    });
-    setStreams(response.data);
-  };
-  const getRole = async () => {
-    let res = await ApiService.getRole({ page: 1, search: "", limit: "" });
-    setRoles(res.data?.roles);
+      const pagination = res.pagination;
+      setPagination({
+        current_page: pagination?.current_page,
+        total: pagination?.total,
+        total_pages: pagination?.total_pages,
+        per_page: pagination?.per_page,
+      });
+      setGrading(res.data);
+
+      console.log(grading);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+    }
   };
 
-  const activateUser = async (data: any) => {
-    isLoading(true);
-    let res = await ApiService.activateorDeactivateUsers(data);
-    getUsers();
-    setConfirmDelete(false);
-    isLoading(false);
-  };
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
@@ -205,7 +172,7 @@ function Users() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearningAreaAssignment(user?._id);
+      let res = await ApiService.deleteGrading(gradingScale._id);
       fetchGrading();
       isLoading(false);
       setConfirmDelete(false);
@@ -225,76 +192,17 @@ function Users() {
     setDialog(false);
     setIsEditMode(false);
   };
-  useEffect(() => {
-    setFilteredLearningAreas([]);
-    const lerning_areas = learningAreas.filter(
-      (area: any) => area?.grade_id?._id === strandFilter.grade
-    );
-    const data = getValues();
-
-    reset();
-    reset({ grade: strandFilter.grade });
-    setFilteredLearningAreas(lerning_areas);
-  }, [strandFilter.grade]);
-  const handleGradeChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-
-    await setStrandFilter({
-      learning_area: "na",
-      term: "na",
-      grade: selectedValue,
-    });
-    getStreams(selectedValue);
-
-    // You might want to fetch filtered data here
-  };
-  const handleLearningAreaChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-
-    await setStrandFilter({
-      ...strandFilter,
-      learning_area: selectedValue,
-    });
-    // You might want to fetch filtered data here
-  };
-  const [selectAll, setSelectAll] = useState(false);
-
-  const handleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    filteredLearningAreas.forEach((_, index) => {
-      setValue(`learningArea[${index}].selected`, newSelectAll);
-    });
-  };
-  const [form, setForm] = useState({
-    name: "",
-    academicYear: "",
-    grade: "",
-    learningAreas: [
-      {
-        learning_area: "",
-        gradings: [
-          {
-            minScore: "",
-            maxScore: "",
-            description: "",
-          },
-        ],
-      },
-    ],
-  });
 
   const openConfig = (data: any) => {
-    navigate("/home/grading-config/" + data?._id);
+    navigate(data?._id);
   };
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium intro-y">Gradings</h2>
+      <h2 className="mt-1 text-lg font-medium intro-y">
+        {" "}
+        Performance Level Scale
+      </h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
           <Button
@@ -306,7 +214,7 @@ function Users() {
               setIsEditMode(false);
             }}
           >
-            New Grading
+            New Performance Level Scale
           </Button>
 
           <div className="hidden mx-auto md:block text-slate-500">
@@ -367,13 +275,16 @@ function Users() {
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     No
                   </Table.Th>
-
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Name
-                  </Table.Th>
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     Grade
                   </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Type
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Name
+                  </Table.Th>
+
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     Actions
                   </Table.Th>
@@ -387,34 +298,46 @@ function Users() {
                         {limit * (page - 1) + key + 1}
                       </span>
                     </Table.Td>
+                    <Table.Td
+                      onClick={(e) => openConfig(grade)}
+                      className="cursor-pointer font-medium first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                    >
+                      {grade?.grade?.name}
+                    </Table.Td>
+                    <Table.Td
+                      onClick={(e) => openConfig(grade)}
+                      className="cursor-pointer font-medium first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                    >
+                      {!grade?.school ? "Hero Assessment" : "Custom"}
+                    </Table.Td>
 
                     <Table.Td
                       onClick={(e) => openConfig(grade)}
-                      className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] cursor-pointer"
+                      className="cursor-pointer first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] cursor-pointer"
                     >
                       {/* {grade?.name}{" "} */}
-                      <div className="flex items-center">
+                      <div className="flex font-medium items-center">
                         {/* <div className="w-9 h-9 image-fit zoom-in"></div> */}
                         <div className="ml-0">
-                          <a
-                            href="#"
-                            onClick={() => editRecord(grade)}
-                            className="font-medium whitespace-nowrap"
-                          >
-                            {grade?.name && grade?.name}
-                          </a>
+                          {grade?.name && grade?.name}
+
                           {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                             {grade?.grade?.name}
                           </div> */}
                         </div>
                       </div>
                     </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {grade?.grade?.name}
-                    </Table.Td>
 
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                       <div className="flex items-center justify-center">
+                        <a
+                          className="flex items-center mr-3 text-success"
+                          href="#"
+                          onClick={() => openConfig(grade)}
+                        >
+                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
+                          Scale
+                        </a>
                         <a
                           className="flex items-center mr-3 text-success"
                           href="#"
@@ -428,7 +351,7 @@ function Users() {
                           href="#"
                           onClick={() => {
                             // active(user)
-                            setUser(grade);
+                            setGradingScale(grade);
                             setConfirmDelete(true);
                           }}
                         >
@@ -538,7 +461,9 @@ function Users() {
             <Dialog.Title>
               <h2 className="mr-auto text-base font-medium">
                 {" "}
-                {isEditMode ? "Edit Grading" : "New Grading"}
+                {isEditMode
+                  ? "Edit Performance Level Scale"
+                  : " Performance Level Scale"}
               </h2>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -553,18 +478,6 @@ function Users() {
             </Dialog.Title>
             <Dialog.Description className="">
               <div className="space-y-6 p-4 max-w-4xl mx-auto  rounded-lg ">
-                <div className="mb-4">
-                  <label className="block text-gray-700">Name</label>
-                  <input
-                    {...register("name")}
-                    type="text"
-                    name="name"
-                    // value={form.name}
-                    // onChange={handleInputChange}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                  />
-                </div>
-
                 <div className="mb-4">
                   <label className="block text-gray-700">Grade</label>
                   <FormSelect
@@ -581,6 +494,17 @@ function Users() {
                       </option>
                     ))}
                   </FormSelect>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Name</label>
+                  <input
+                    {...register("name")}
+                    type="text"
+                    name="name"
+                    // value={form.name}
+                    // onChange={handleInputChange}
+                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  />
                 </div>
               </div>
             </Dialog.Description>
