@@ -27,7 +27,7 @@ const LearningArea: React.FC<LearningAreaProps> = ({
       ...learningArea,
       gradings: updatedGradings,
     };
-    //ss
+    //sss
     setScale({
       ...scale,
       learningAreas: updatedLearningAreas,
