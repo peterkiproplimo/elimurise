@@ -746,8 +746,8 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -777,7 +777,7 @@ function Main() {
                         <button
                           onClick={() =>
                             setPage(
-                              page < pagination.total_pages ? page - 1 : 1
+                              page < pagination.total_pages ? page + 1 : 1
                             )
                           }
                           className="py-2 px-4 rounded-md"

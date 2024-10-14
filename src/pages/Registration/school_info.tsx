@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import Button from "../../base-components/Button";
@@ -19,6 +19,14 @@ import "./login.css";
 import logo from "../../assets/images/Untitled-1.png";
 import Alert from "../../base-components/Alert";
 import { formatCurrency } from "../../utils/helper";
+import { Controller } from "react-hook-form";
+import TomSelect from "../../base-components/TomSelect";
+interface County {
+  name: string;
+  capital: string;
+  code: number;
+  sub_counties: string[];
+}
 
 const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   setCurrentStep,
@@ -28,7 +36,10 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [numberOfLearners, setNumberOfLearners] = useState("");
-
+  const [selectedCounty, setSelectedCounty] = useState<any>({});
+  const [subCounties, setSubCounties] = useState([]);
+  const [counties, setCounties] = useState<County[]>([]); // List<County>
+  let county_list: County[] = [];
   const navigate = useNavigate();
   const [Package, setPackage] = useState<any>(
     JSON.parse(localStorage.getItem("package") || "{}")
@@ -47,6 +58,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
     .required();
 
   const {
+    control,
     register,
     trigger,
     getValues,
@@ -55,6 +67,35 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+  useEffect(() => {
+    const getCounties = async () => {
+      const counties = await ApiService.getCounties({});
+      const data = await counties.data;
+      setCounties(data);
+      localStorage.setItem("counties", JSON.stringify(data));
+    };
+
+    getCounties();
+    console.log(county_list);
+  }, []);
+  const handleCountyChange = (countyName: any) => {
+    setSelectedCounty(countyName);
+    const counties = localStorage.getItem("counties");
+    const county_list = JSON.parse(counties);
+    // Find the selected county in the counties array
+    const selected = county_list.find(
+      (county: any) => county.name === countyName
+    );
+
+    console.log("updated", selected);
+
+    // Update subCounties based on the selected county
+    if (selected) {
+      setSubCounties(selected.sub_counties);
+    } else {
+      setSubCounties([]);
+    }
+  };
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -146,20 +187,38 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
               </div>
 
               <div>
-                <FormLabel htmlFor="modal-form-1" className="font-bold">
+                <FormLabel htmlFor="county" className="font-bold">
                   County
                 </FormLabel>
-                <FormInput
-                  {...register("county")}
-                  type="text"
-                  // onChange={(e) => setNumberOfLearners(e.target.value)}
+                <Controller
+                  control={control}
                   name="county"
-                  className={errors.county ? "border-danger" : ""}
-                  placeholder="County"
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TomSelect
+                      {...field}
+                      // options={counties.map((county: any) => ({
+                      //   value: county.name,
+                      //   label: county.name,
+                      // }))}
+                      onChange={(value: any) => {
+                        console.log(value);
+                        field.onChange(value);
+                        handleCountyChange(value);
+                      }}
+                      className={errors.county ? "border-danger" : ""}
+                    >
+                      <option value={""}>Select County</option>
+
+                      {counties.map((county: any) => (
+                        <option key={county.code} value={county.name}>
+                          {county.name}
+                        </option>
+                      ))}
+                    </TomSelect>
+                  )}
                 />
-                <FormLabel htmlFor="modal-form-1" className="">
-                  County the school is located
-                </FormLabel>
+
                 {errors.county && (
                   <div className="mt-2 text-danger">
                     {typeof errors.county.message === "string" &&
@@ -167,21 +226,35 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   </div>
                 )}
               </div>
+
+              {/* Sub County Selection */}
               <div>
-                <FormLabel htmlFor="modal-form-1" className="font-bold">
+                <FormLabel htmlFor="subcounty" className="font-bold">
                   Sub County
                 </FormLabel>
-                <FormInput
-                  {...register("subcounty")}
-                  type="text"
-                  // onChange={(e) => setNumberOfLearners(e.target.value)}
+                <Controller
+                  control={control}
                   name="subcounty"
-                  className={errors.subcounty ? "border-danger" : ""}
-                  placeholder="Sub County"
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TomSelect
+                      {...field}
+                      // options={subCounties.map((subcounty: any) => ({
+                      //   value: subcounty,
+                      //   label: subcounty,
+                      // }))}
+                      className={errors.subcounty ? "border-danger" : ""}
+                    >
+                      <option value={""}>Select Subcounty</option>
+                      {subCounties.map((subcounty: any, key: any) => (
+                        <option key={key} value={subcounty}>
+                          {subcounty}
+                        </option>
+                      ))}
+                    </TomSelect>
+                  )}
                 />
-                <FormLabel htmlFor="modal-form-1" className="">
-                  Sub County the school is located
-                </FormLabel>
+
                 {errors.subcounty && (
                   <div className="mt-2 text-danger">
                     {typeof errors.subcounty.message === "string" &&

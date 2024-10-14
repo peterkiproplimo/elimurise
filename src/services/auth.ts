@@ -76,6 +76,30 @@ export const getPackages = async (data: any) => {
   }
 };
 
+export const getSubscriptions = async (data: any) => {
+  try {
+    await getData();
+    let res = await axios.get(c.SUBSCRIPTION + "/trasactions", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getPrintSubscription = async (data: any) => {
+  try {
+    await getData();
+    let res = await axios.get(c.SUBSCRIPTION + "/trasactions/" + data._id, {
+      params: data,
+      responseType: "arraybuffer",
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
 export async function createSubscription(data: FieldValues) {
   try {
     let res = await axios.post(c.SUBSCRIPTION, data);
@@ -506,10 +530,20 @@ export async function deleteTeachers(userId: any) {
     throw handler(e);
   }
 }
-
 export const getLearningAreas = async (data: any) => {
   try {
     let res = await axios.get(c.LEARNING_AREA, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getCounties = async (data: any) => {
+  try {
+    let res = await axios.get(c.COUNTIES, {
       params: data,
     });
     return res.data;

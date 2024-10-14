@@ -106,7 +106,7 @@ function Main() {
   });
   useEffect(() => {
     getStrands();
-  }, []);
+  }, [strandFilter]);
   const getStrands = async () => {
     isLoading(true);
     const response = await ApiService.getStrands(
@@ -139,7 +139,7 @@ function Main() {
     console.log(learningArea);
     navigate("/home/learning_areas", {
       replace: true,
-      state: { data: learningArea.grade },
+      state: { data: learningArea.grade_id },
     });
   };
 
@@ -152,6 +152,19 @@ function Main() {
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
+
+  const handleTermChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStrands([]);
+    await updateStrandFilter({
+      ...strandFilter,
+      term: selectedValue,
+    });
+    console.log(strandFilter);
+    // You might want to fetch filtered data here
+  };
 
   return (
     <>
@@ -167,7 +180,7 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 " />
             </a>
-            {learningArea?.name}
+            Strands for {learningArea?.name}({learningArea?.grade_id?.name})
           </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
@@ -266,6 +279,22 @@ function Main() {
                 entries
               </div>
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                <FormSelect
+                  {...register("term")}
+                  name="term"
+                  className="relative w-56 text-slate-500 "
+                  value={strandFilter.term}
+                  onChange={(event) => handleTermChange(event)}
+                >
+                  <option>Select Term</option>
+                  {terms.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))}
+                </FormSelect>
+              </div>
+              <div className="flex items-center w-full mt-3 ml-3 xl:w-auto xl:mt-0">
                 <div className="relative w-56 text-slate-500">
                   <FormInput
                     type="text"
@@ -326,11 +355,11 @@ function Main() {
                     </div>
                   </div>
                 ))}
-                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
                     <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
-                        onClick={() => setPage(previous_page)}
+                        onClick={() => setPage(page > 1 ? page - 1 : 1)}
                         className="py-2 px-4 rounded-md"
                       >
                         <Lucide icon="ChevronLeft" className="w-4 h-4" />
@@ -355,7 +384,9 @@ function Main() {
                         )
                       )}
                       <button
-                        onClick={() => setPage(next_page)}
+                        onClick={() =>
+                          setPage(page < pagination.total_pages ? page + 1 : 1)
+                        }
                         className="py-2 px-4 rounded-md"
                       >
                         <Lucide icon="ChevronRight" className="w-4 h-4" />

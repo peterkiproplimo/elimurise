@@ -280,7 +280,7 @@ function Main() {
                   value={currentStream}
                   onChange={(event: any) => setCurrentStream(event)}
                 >
-                  <option>Current Grade</option>
+                  <option>Current Stream</option>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade?.grade?.name}
@@ -296,7 +296,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Next Grade </FormLabel>
+                <FormLabel htmlFor="modal-form-6">Next Stream </FormLabel>
                 <TomSelect
                   {...register("learning_area")}
                   value={nextStream}
@@ -319,11 +319,19 @@ function Main() {
                 )}
               </div>
             </div>
-            <div className="flex mt-4  ">
+            <div className="p-5 text-right ">
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={handleReset}
+                className="w-20 ml-4"
+              >
+                Reset
+              </Button>
               <Button
                 variant="primary"
                 type="submit"
-                className="w-20"
+                className="w-20 ml-5"
                 onClick={(e: any) => handleTransition()}
                 // onClick={async () => {
                 //   const result = await trigger();
@@ -332,22 +340,14 @@ function Main() {
                 //   }
                 // }}
               >
-                Save
+                Promote
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"
                     color="white"
-                    className="w-4 h-4 ml-2"
+                    className="w-4 h-4 ml-"
                   />
                 )}
-              </Button>
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={handleReset}
-                className="w-20 ml-4"
-              >
-                Reset
               </Button>
             </div>
           </div>

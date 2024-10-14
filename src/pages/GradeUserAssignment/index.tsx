@@ -112,11 +112,13 @@ function Users() {
     setGrades(response.data);
   };
   const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({
-      page,
-      gradeId: strandFilter.grade,
-    });
-    setLearningAreas(response.data);
+    if (strandFilter.grade) {
+      const response = await ApiService.getLearningAreas({
+        page,
+        gradeId: strandFilter.grade,
+      });
+      setLearningAreas(response.data);
+    }
   };
   const getLearningAreasAssignments = async () => {
     isLoading(true);
@@ -361,11 +363,11 @@ function Users() {
         </div>
         {/* END: Data List */}
         {/* END: Data List */}
-        <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-          <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+        <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+          <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
             <Pagination className="w-full sm:w-auto sm:mr-auto">
               <button
-                onClick={() => setPage(previous_page)}
+                onClick={() => setPage(page > 1 ? page - 1 : 1)}
                 className="py-2 px-4 rounded-md"
               >
                 <Lucide icon="ChevronLeft" className="w-4 h-4" />
@@ -390,7 +392,9 @@ function Users() {
                 )
               )}
               <button
-                onClick={() => setPage(next_page)}
+                onClick={() =>
+                  setPage(page < pagination.total_pages ? page + 1 : 1)
+                }
                 className="py-2 px-4 rounded-md"
               >
                 <Lucide icon="ChevronRight" className="w-4 h-4" />
@@ -531,34 +535,33 @@ function Users() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {stream &&
-                    learningAreas.map((learningArea: any, key) => (
-                      <Table.Tr key={key} className="">
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
-                          <span className="font-medium whitespace-nowrap">
-                            <FormInput
-                              type="checkbox"
-                              {...register(`lerningArea[${key}].selected`)}
-                              name={`lerningArea[${key}].selected`}
-                              className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                            />
-                            <FormInput
-                              type="hidden"
-                              {...register(`lerningArea[${key}].id`)}
-                              name={`lerningArea[${key}].id`}
-                              defaultValue={learningArea?._id} // Use defaultValue instead of value
-                              className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                            />
-                          </span>
-                        </Table.Td>
+                  {learningAreas.map((learningArea: any, key) => (
+                    <Table.Tr key={key} className="">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
+                        <span className="font-medium whitespace-nowrap">
+                          <FormInput
+                            type="checkbox"
+                            {...register(`lerningArea[${key}].selected`)}
+                            name={`lerningArea[${key}].selected`}
+                            className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                          <FormInput
+                            type="hidden"
+                            {...register(`lerningArea[${key}].id`)}
+                            name={`lerningArea[${key}].id`}
+                            defaultValue={learningArea?._id} // Use defaultValue instead of value
+                            className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                        </span>
+                      </Table.Td>
 
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
-                          <span className="font-medium whitespace-nowrap">
-                            {learningArea.name}
-                          </span>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))}
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
+                        <span className="font-medium whitespace-nowrap">
+                          {learningArea.name}
+                        </span>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
                 </Table.Tbody>
               </Table>
             </Dialog.Description>

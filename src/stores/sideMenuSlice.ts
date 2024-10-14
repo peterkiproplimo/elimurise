@@ -86,11 +86,11 @@ const initialState: SideMenuState = {
       pathname: "/home/assessment",
       title: " Assessment",
     },
-    // {
-    //   icon: "FileText",
-    //   pathname: "/home/billing",
-    //   title: "Billing",
-    // },
+    {
+      icon: "FileText",
+      pathname: "/home/billing",
+      title: "Billing",
+    },
 
     {
       icon: "Users",
@@ -120,7 +120,7 @@ const initialState: SideMenuState = {
         {
           icon: "User",
           pathname: "/home/assess",
-          title: "Summative Assess",
+          title: "Summative Assessment",
         },
         {
           icon: "User",

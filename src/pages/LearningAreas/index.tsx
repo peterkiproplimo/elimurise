@@ -40,6 +40,7 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
+  const [grade, setGrade] = useState<any>({});
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -50,7 +51,6 @@ function Main() {
   const [limit, setLimit] = useState(12);
   const [page, setPage] = useState(1);
   const location = useLocation();
-  const grade = location?.state?.data;
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   // Success notification
@@ -102,25 +102,33 @@ function Main() {
     getLearningAreas();
   }, [search, page, limit, gradeId]);
   useEffect(() => {
-    setGradeId(grade);
+    const grade = location?.state?.data;
+    setGrade(grade);
+    console.log("grade", grade);
+
+    if (grade) {
+      setGradeId(grade._id);
+    }
   }, []);
   const getLearningAreas = async () => {
     isLoading(true);
-    const response = await ApiService.getLearningAreas({
-      page: page,
-      limit: limit,
-      search: search,
-      gradeId: gradeId,
-    });
-    setLearningAreas(response.data);
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    isLoading(false);
+    if (gradeId) {
+      const response = await ApiService.getLearningAreas({
+        page: page,
+        limit: limit,
+        search: search,
+        gradeId: gradeId,
+      });
+      setLearningAreas(response.data);
+      const pagination = response.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+      isLoading(false);
+    }
   };
   //ss
 
@@ -144,7 +152,7 @@ function Main() {
         <></>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">
+          <h2 className="mt-1 text-lg font-medium intro-y flex flex-wrap">
             <a
               onClick={(e: any) =>
                 navigate("/home/grade", {
@@ -156,7 +164,7 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 " />
             </a>
-            Learning Areas
+            Learning Areas for({grade?.name})
           </h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">

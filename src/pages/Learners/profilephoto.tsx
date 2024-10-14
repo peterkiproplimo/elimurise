@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FieldValues, UseFormRegister, FieldErrors } from "react-hook-form";
+import { IMG_URL } from "../../utils/constants";
 
 interface PassportUploadProps {
   name: string;
@@ -49,7 +50,8 @@ const PassportUpload: React.FC<PassportUploadProps> = ({
         accept=".jpg, .jpeg, .png"
         className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
       />
-      {previewImage && (
+
+      {previewImage && IMG_URL != previewImage && (
         <div className="mt-4">
           <img
             src={previewImage as string}

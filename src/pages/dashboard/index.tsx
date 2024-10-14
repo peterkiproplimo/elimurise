@@ -20,6 +20,7 @@ import { useState, useRef, useEffect } from "react";
 import * as c from "../../utils/constants";
 import logo from "../../assets/images/teacher.jpeg";
 import image from "../../assets/images/parent.jpeg";
+import { useNavigate } from "react-router-dom";
 
 function Main() {
   interface Learner {
@@ -66,6 +67,7 @@ function Main() {
     // console.log(grading);
     isLoading(false);
   };
+  const navigate = useNavigate();
 
   return (
     <>
@@ -83,6 +85,10 @@ function Main() {
                       "relative zoom-in",
                       "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
                     ])}
+                    onClick={(event) => {
+                      event.preventDefault(); // Prevent the default anchor behavior
+                      navigate("/home/learners"); // Navigate using your custom function
+                    }}
                   >
                     <div className="p-5 box">
                       <div className="flex">
@@ -119,6 +125,10 @@ function Main() {
                       "relative zoom-in",
                       "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
                     ])}
+                    onClick={(event) => {
+                      event.preventDefault(); // Prevent the default anchor behavior
+                      navigate("/home/teachers"); // Navigate using your custom function
+                    }}
                   >
                     <div className="p-5 box">
                       <div className="flex">
@@ -154,6 +164,10 @@ function Main() {
                       "relative zoom-in",
                       "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
                     ])}
+                    onClick={(event) => {
+                      event.preventDefault(); // Prevent the default anchor behavior
+                      navigate("/home/parents"); // Navigate using your custom function
+                    }}
                   >
                     <div className="p-5 box">
                       <div className="flex">
@@ -190,6 +204,10 @@ function Main() {
                       "relative zoom-in",
                       "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
                     ])}
+                    onClick={(event) => {
+                      event.preventDefault(); // Prevent the default anchor behavior
+                      navigate("/home/tests"); // Navigate using your custom function
+                    }}
                   >
                     <div className="p-5 box">
                       <div className="flex">
@@ -213,7 +231,7 @@ function Main() {
                       <div className="mt-6 text-3xl font-medium leading-8">
                         {dashboards.totalTeachers}
                       </div>
-                      <div className="mt-1 text-base text-slate-500">Exams</div>
+                      <div className="mt-1 text-base text-slate-500">Tests</div>
                     </div>
                   </div>
                 </div>
@@ -308,12 +326,7 @@ function Main() {
                               </div>
                             </Table.Td>
                             <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                              <a
-                                href="/learners"
-                                className="font-medium whitespace-nowrap"
-                              >
-                                {learner?.first_name} {learner?.last_name}
-                              </a>
+                              {learner?.first_name} {learner?.last_name}
                               {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                             {learner.adm_no}
                           </div> */}
@@ -403,8 +416,12 @@ function Main() {
                     </div>
                   ))}
                   <a
-                    href=""
-                    className="block w-full py-3 text-center border bg-success text-white rounded-md intro-x border-slate-400 dark:border-darkmode-300 text-slate-500"
+                    href="#" // The href attribute can be kept for accessibility but won't affect navigation
+                    onClick={(event) => {
+                      event.preventDefault(); // Prevent the default anchor behavior
+                      navigate("/home/teachers"); // Navigate using your custom function
+                    }}
+                    className="block cursor-pointer w-full py-3 text-center border bg-success text-white rounded-md intro-x border-slate-400 dark:border-darkmode-300 text-slate-500"
                   >
                     See More
                   </a>
@@ -445,8 +462,11 @@ function Main() {
                     </div>
                   ))}
                   <a
-                    href=""
-                    className="block w-full py-3 text-center border bg-success text-white rounded-md intro-x border-slate-400 dark:border-darkmode-300 text-slate-500"
+                    onClick={(event) => {
+                      event.preventDefault(); // Prevent the default anchor behavior
+                      navigate("/home/teachers"); // Navigate using your custom function
+                    }}
+                    className="block  cursor-point w-full py-3 text-center border bg-success text-white rounded-md intro-x border-slate-400 dark:border-darkmode-300 text-slate-500"
                   >
                     See More
                   </a>

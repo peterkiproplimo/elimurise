@@ -355,11 +355,11 @@ function Main() {
                 </div>
               </main>
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
-                    onClick={() => setPage(previous_page)}
+                    onClick={() => setPage(page > 1 ? page - 1 : 1)}
                     className="py-2 px-4 rounded-md"
                   >
                     <Lucide icon="ChevronLeft" className="w-4 h-4" />
@@ -384,7 +384,9 @@ function Main() {
                     )
                   )}
                   <button
-                    onClick={() => setPage(next_page)}
+                    onClick={() =>
+                      setPage(page < pagination.total_pages ? page + 1 : 1)
+                    }
                     className="py-2 px-4 rounded-md"
                   >
                     <Lucide icon="ChevronRight" className="w-4 h-4" />

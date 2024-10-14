@@ -335,10 +335,10 @@ function Main() {
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
-                      Key
+                      Score
                     </th>
                     <th className="py-2 px-4 border-gray-300 text-left text-sm font-semibold">
-                      Value
+                      Description
                     </th>
                   </tr>
                 </thead>
@@ -622,7 +622,14 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 " />
             </a>
-            Substrands
+            <span className="ml-3">Substrands for strand :</span>{" "}
+            <b>{state_strand.name}</b>{" "}
+            <span className="ml-3">
+              Learning Area:{" "}
+              <b>
+                {learning_area?.name} ({learning_area?.grade_id?.name})
+              </b>
+            </span>
           </h2>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
@@ -682,11 +689,11 @@ function Main() {
                     </div>
                   </div>
                 ))}
-                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
                     <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
-                        onClick={() => setPage(previous_page)}
+                        onClick={() => setPage(page > 1 ? page - 1 : 1)}
                         className="py-2 px-4 rounded-md"
                       >
                         <Lucide icon="ChevronLeft" className="w-4 h-4" />
@@ -711,7 +718,9 @@ function Main() {
                         )
                       )}
                       <button
-                        onClick={() => setPage(next_page)}
+                        onClick={() =>
+                          setPage(page < pagination.total_pages ? page + 1 : 1)
+                        }
                         className="py-2 px-4 rounded-md"
                       >
                         <Lucide icon="ChevronRight" className="w-4 h-4" />

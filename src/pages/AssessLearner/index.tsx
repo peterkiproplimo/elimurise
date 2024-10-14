@@ -670,55 +670,59 @@ function Main() {
                 </Table.Tbody>
               </Table>
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap mt-5">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
+            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                        <button
+                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                        </button>
+                        {_.times(pagination.total_pages).map((page, key) =>
+                          page + 1 == pagination.current_page ? (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 bg-white rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          )
+                        )}
+                        <button
+                          onClick={() =>
+                            setPage(
+                              page < pagination.total_pages ? page + 1 : 1
+                            )
+                          }
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                        </button>
+                      </Pagination>
+                      <div className="text-slate-500">
+                        <span className="mr-3">Total {pagination.total}</span>
+                        <FormSelect
+                          className="w-30 mt-3 !box sm:mt-0"
+                          onChange={(e) => setLimit(parseInt(e.target.value))}
+                        >
+                          <option value={10}>10/page</option>
+                          <option value={25}>25/page</option>
+                          <option value={50}>50/page</option>
+                          <option value={100}>100/page</option>
+                        </FormSelect>
+                      </div>
+                    </div>
+                  </div>
           </form>
         </>
       ) : (

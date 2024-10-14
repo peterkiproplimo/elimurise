@@ -17,6 +17,7 @@ import logoUrl from "../../assets/images/paypal.svg";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import Menu from "../../base-components/Headless/Menu";
 
 function Main() {
   const navigate = useNavigate();
@@ -27,11 +28,15 @@ function Main() {
   const nextImportantNotes = () => {
     importantNotesRef.current?.tns.goTo("next");
   };
+  const [pdfUrl, setPdfUrl] = useState("");
+
   const [loading, isLoading] = useState(true);
   const [feeds, setFeeds] = useState([]);
+  const [success, setSuccess] = useState(true);
+
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);
-  const [packages, setPackages] = useState([]);
+  const [subscriptions, setSubscription] = useState([]);
   const [stats, setSats] = useState({
     houseLose: 0,
     houseLosses: 0,
@@ -44,6 +49,10 @@ function Main() {
     walletsTotal: 0,
     withholdingTax: 0,
   });
+  const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
     // getDashboard();
   }, []);
@@ -63,11 +72,11 @@ function Main() {
       state: { package: data },
     });
   };
-  const getDashboard = async () => {
+  const getSubscriptions = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.getPackages({});
-      setPackages(res.data);
+      let res = await ApiService.getSubscriptions({});
+      setSubscription(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -77,63 +86,227 @@ function Main() {
     // setQuestions(res.questions);
   };
 
-  const [totalUsers, setTotalUsers] = useState<number | null>(null);
-
   useEffect(() => {
-    getDashboard();
+    getSubscriptions();
   }, []);
+  const generateInvoicePrint = async (data: any) => {
+    isLoading(true);
+
+    isLoading(true);
+    try {
+      let res = await ApiService.getPrintSubscription(data);
+      const blob = new Blob([res], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+
+      setPdfUrl(url);
+      // setEnrollments(res);
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination?.current_page,
+      //   total: pagination?.total,
+      //   total_pages: pagination?.total_pages,
+      //   per_page: pagination?.per_page,
+      // });
+      // setDialog(true);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      console.log(error);
+      // setMessage(error.message);
+      // notify.current?.showToast();
+    }
+  };
+  const generateInvoice = async (data: any) => {
+    isLoading(true);
+
+    isLoading(true);
+    try {
+      let res = await ApiService.getPrintSubscription(data);
+      const blob = new Blob([res], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "hero invoice.pdf"; // Set the download name
+
+      // Programmatically trigger the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url); // Free up memory
+
+      setPdfUrl(url);
+      // setEnrollments(res);
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination?.current_page,
+      //   total: pagination?.total,
+      //   total_pages: pagination?.total_pages,
+      //   per_page: pagination?.per_page,
+      // });
+      // setDialog(true);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      console.log(error);
+      // setMessage(error.message);
+      // notify.current?.showToast();
+    }
+  };
 
   return (
     <>
       <div className="price mt-5 ">
         <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5">
-          Please select a pricing plan that works for you
+          Plans
         </h2>
         {loading ? (
           <div className="flex flex-col items-center mt-5">
             <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
           </div>
-        ) : packages.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-8 m-4">
-            {packages.map((Package: any, key: any) => (
-              <div
-                style={{ backgroundColor: Package.color }}
-                key={key}
-                className=" rounded-xl shadow-md flex flex-col text-white"
-              >
-                <div className="p-5 rounded-t-xl  z-10 flex flex-col justify-between h-full">
-                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-                    {Package.name}
-                  </h1>
-                  <p
-                    className="text-base"
-                    dangerouslySetInnerHTML={{ __html: Package.description }}
-                  ></p>
-                </div>
-                <div className="flex flex-col justify-between p-5">
-                  <div>
-                    <h2 className="text-lg font-bold">
-                      Ksh. {Package.pricePerLearner}
-                    </h2>
-                    <p className="text-sm">(Per Learner Annually)</p>
-                  </div>
-                  <Button
-                    variant="primary"
-                    className="w-full px-4 py-3 mt-3 xl:w-auto"
-                    onClick={() => subscribe(Package)}
-                  >
-                    Buy Now
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            ))}
+        ) : subscriptions.length > 0 ? (
+          <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
+            <Table className="border-spacing-y-[5px]  border-separate -mt-2">
+              <Table.Thead>
+                <Table.Tr className="bg-primary text-white shadow-[20px_3px_20px_#0000000b]">
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    No.
+                  </Table.Th>
+
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Package
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Price Per Learner
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Learners(Paid For)
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Duration
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Total Cost
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Payment Method
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Payment Ref
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Amount Paid
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Status
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    ACTIONS
+                  </Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {subscriptions.map((subscription: any, key) => (
+                  <Table.Tr key={key} className="intro-x">
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        {(page - 1) * limit + key + 1}
+                      </span>
+                    </Table.Td>
+
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        {subscription.packageId.name}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        {subscription.packageId.pricePerLearner}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        {subscription.numberOfLearners}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        {subscription.packageId.duration}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        KES {formatCurrency(subscription.totalCost)}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        {subscription.payment.payment_method}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        {subscription.payment.confirmation_code}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <span className="font-medium whitespace-nowrap">
+                        KES {formatCurrency(subscription.payment.amount)}
+                      </span>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <div
+                        className={
+                          subscription.status == "active"
+                            ? "flex items-center text-success"
+                            : "flex items-center text-danger"
+                        }
+                      >
+                        {subscription.status == "active" ? "Paid" : "Pending"}
+                      </div>
+                    </Table.Td>
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                      <div className="flex items-center justify-center">
+                        <Menu className="flex items-center justify-center">
+                          <Menu.Item
+                            onClick={() => generateInvoicePrint(subscription)}
+                          >
+                            <Lucide icon="Printer" className="w-4 h-4 mr-2" />{" "}
+                          </Menu.Item>
+                          <Menu.Item
+                            onClick={() => generateInvoice(subscription)}
+                          >
+                            <Lucide icon="Download" className="w-4 h-4 mr-2" />{" "}
+                          </Menu.Item>
+                          {/* <Menu.Item onClick={() => {}}>
+                              <Lucide icon="Printer" className="w-4 h-4 mr-2" />{" "}
+                              Print
+                            </Menu.Item> */}
+                          {/* <Menu.Item
+                                  onClick={() => {
+                                    setRecordId(school._id),
+                                      setConfirmDelete(true);
+                                  }}
+                                >
+                                  <Lucide
+                                    icon="Trash"
+                                    className="w-4 h-4 mr-2"
+                                  />{" "}
+                                  Delete
+                                </Menu.Item>*/}
+                        </Menu>
+                      </div>
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
           </div>
         ) : (
           <div className="p-4 mt-5 bg-white dark:bg-gray-800 rounded-xl shadow-md">

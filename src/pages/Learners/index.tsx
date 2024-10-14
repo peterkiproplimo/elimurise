@@ -457,62 +457,68 @@ function Main() {
                     </div>
                   )}
                 </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Grade<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <TomSelect
-                    name="grade"
-                    value={grade}
-                    className={errors.grade ? "border-danger" : ""}
-                    onChange={(event: any) => {
-                      reset({ ...getValues(), grade: event });
-                      setGrade(event);
-                    }}
-                    disabled={isEditMode}
-                  >
-                    <option value={""} selected>
-                      Select Grade
-                    </option>
-                    {grades.map((grade: any, key) => (
-                      <option key={key} value={grade._id}>
-                        {grade.name}
-                      </option>
-                    ))}
-                  </TomSelect>
-                  {errors.grade && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.grade.message === "string" &&
-                        errors.grade.message}
+                {!isEditMode && (
+                  <>
+                    {" "}
+                    <div className="col-span-4 sm:col-span-4">
+                      <FormLabel htmlFor="modal-form-6">
+                        Grade<span className="text-danger ml-0.5">*</span>
+                      </FormLabel>
+                      <TomSelect
+                        name="grade"
+                        value={grade}
+                        className={errors.grade ? "border-danger" : ""}
+                        onChange={(event: any) => {
+                          reset({ ...getValues(), grade: event });
+                          setGrade(event);
+                        }}
+                        disabled={isEditMode}
+                      >
+                        <option value={""} selected>
+                          Select Grade
+                        </option>
+                        {grades.map((grade: any, key) => (
+                          <option key={key} value={grade._id}>
+                            {grade.name}
+                          </option>
+                        ))}
+                      </TomSelect>
+                      {errors.grade && (
+                        <div className="mt-2 text-danger">
+                          {typeof errors.grade.message === "string" &&
+                            errors.grade.message}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="col-span-12 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Stream<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormSelect
-                    {...register("stream")}
-                    name="stream"
-                    className={errors.stream ? "border-danger" : ""}
-                    disabled={isEditMode}
-                  >
-                    <option value={""}>Select Stream</option>
-                    {streams.map((stream: any, key) => (
-                      <option key={key} value={stream._id}>
-                        {stream.name}
-                      </option>
-                    ))}
-                  </FormSelect>
-                  {errors.stream && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.stream.message === "string" &&
-                        errors.stream.message}
+                    <div className="col-span-12 sm:col-span-4">
+                      <FormLabel htmlFor="modal-form-6">
+                        Stream<span className="text-danger ml-0.5">*</span>
+                      </FormLabel>
+                      <FormSelect
+                        {...register("stream")}
+                        name="stream"
+                        className={errors.stream ? "border-danger" : ""}
+                        disabled={isEditMode}
+                      >
+                        <option value={""}>Select Stream</option>
+                        {streams.map((stream: any, key) => (
+                          <option key={key} value={stream._id}>
+                            {stream.name}
+                          </option>
+                        ))}
+                      </FormSelect>
+                      {errors.stream && (
+                        <div className="mt-2 text-danger">
+                          {typeof errors.stream.message === "string" &&
+                            errors.stream.message}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="col-span-12 sm:col-span-4"></div>
-                <div className="col-span-12 sm:col-span-4"></div>
+                    {/* <div className="col-span-12 sm:col-span-4"></div>
+                    <div className="col-span-12 sm:col-span-4"></div> */}
+                  </>
+                )}
+
                 <div className="col-span-12 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">Passport Photo</FormLabel>
                   <PassportUpload
@@ -1092,8 +1098,8 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -1123,7 +1129,7 @@ function Main() {
                         <button
                           onClick={() =>
                             setPage(
-                              page < pagination.total_pages ? page - 1 : 1
+                              page < pagination.total_pages ? page + 1 : 1
                             )
                           }
                           className="py-2 px-4 rounded-md"
