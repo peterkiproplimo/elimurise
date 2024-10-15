@@ -80,7 +80,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   }, []);
   const handleCountyChange = (countyName: any) => {
     setSelectedCounty(countyName);
-    const counties = localStorage.getItem("counties");
+    const counties = localStorage.getItem("counties") || "{}";
     const county_list = JSON.parse(counties);
     // Find the selected county in the counties array
     const selected = county_list.find(

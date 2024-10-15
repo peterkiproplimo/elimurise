@@ -163,7 +163,7 @@ function Main() {
   return (
     <>
       <div className="price mt-5 ">
-        <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5">
+        <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5 ">
           Plans
         </h2>
         {loading ? (
