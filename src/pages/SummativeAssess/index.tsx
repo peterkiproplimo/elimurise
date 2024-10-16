@@ -65,6 +65,8 @@ function Main() {
   const [strand, setStrand] = useState("");
   const [selectedSubStrand, setSelectedSubStrand] = useState("");
   const [enrollments, setEnrollments] = useState([]);
+  const [meta, setMeta] = useState<any>({});
+
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -72,6 +74,8 @@ function Main() {
     per_page: 0,
   });
   const [search, setSearch] = useState("");
+  const [adm_no, setAdmNo] = useState("");
+
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
@@ -277,10 +281,15 @@ function Main() {
     reset(record);
     setDialog(false);
   };
+
   useEffect(() => {
     getStrands();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter, search, page, limit]);
+  useEffect(() => {
+    generateAssessment();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adm_no]);
 
   const handleGradeChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -288,6 +297,7 @@ function Main() {
     const selectedValue = event.target.value;
     setStream("");
     setStrands([]);
+    setTest([]);
     await setStrandFilter({
       learning_area: "na",
       term: "na",
@@ -346,11 +356,14 @@ function Main() {
       stream: stream,
       learning_area: strandFilter.learning_area,
       test: test,
+      adm_no,
     };
+
     isLoading(true);
     try {
       let res = await ApiService.getSummativeAssessment(data);
       setEnrollments(res.data);
+      setMeta(res.meta);
       // const pagination = res.pagination;
       // setPagination({
       //   current_page: pagination.current_page,
@@ -441,24 +454,51 @@ function Main() {
                 Summative Assessment
               </h2>
             </div>
+            <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg ">
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Grade:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  {meta?.stream?.grade?.name}
+                </span>
+              </div>
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Stream:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  {meta?.stream?.name}
+                </span>
+              </div>
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Learning Area:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  {meta?.learningArea?.name}
+                </span>
+              </div>
+            </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
-                <div className="hidden mx-auto md:block text-slate-500 mt-5">
-                  Showing{" "}
+                <div className="hidden  md:block ">
+                  {/* Showing{" "}
                   {pagination.current_page +
                     " to " +
                     pagination.total_pages +
                     " of " +
                     pagination.total}{" "}
-                  entries
+                  entries */}
                 </div>
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
+                <div className="hidden  mx-auto md:block  mt-5"></div>
+                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3  ">
                   <div className="relative w-56 text-slate-500">
                     <FormInput
                       type="text"
                       className="w-56 pr-10 !box"
-                      placeholder="Search..."
-                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Adm No"
+                      onChange={(e) => setAdmNo(e.target.value)}
                     />
                     <Lucide
                       icon="Search"
@@ -467,68 +507,63 @@ function Main() {
                   </div>
                 </div>
               </div>
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
+              <Table className="border-spacing-y-[0px] border-separate mt-2 p-2">
                 <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      <FormCheck.Input type="checkbox" />
+                  <Table.Tr className="bg-white">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[20px] ">
+                      No
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      LEARNER NAME
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[150px] ">
+                      ADM No
                     </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
-                      ADMISSION NUMBER
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px] ">
                       NEMIS NO.
                     </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
-                      GRADE
+                    <Table.Th className="border-b-1 whitespace-nowrap w-[300px] ">
+                      NAME
                     </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-wrap w-[500px] overflow-hidden">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
+                      Score
+                    </Table.Th>
+                    <Table.Th className="text-left border-b-1 whitespace-wrap ">
                       DESCRIPTION
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {enrollments?.map((enrollment: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <FormCheck.Input type="checkbox" />
+                    <Table.Tr key={key} className="border-b-4 border-grey">
+                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
+                        {key + 1}
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <div className="flex">
-                          <img
-                            src={logo}
-                            alt="Learner"
-                            className="w-12 h-12   "
-                          />
-                          <div className="ml-4">
-                            <a href="#" className="font-semibold">
-                              {enrollment?.learner?.first_name}{" "}
-                              {enrollment?.learner?.last_name}
-                            </a>
-                            <div className="text-gray-600 text-sm ">
-                              {enrollment?.learner?.surname}
-                            </div>
-                          </div>
-                        </div>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="flex items-center  ">
+
+                      <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
+                        <span className="flex items-center">
                           {enrollment?.learner?.adm_no}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="flex items-center  ">
+
+                      <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
+                        <span className="flex items-center">
                           {enrollment?.learner?.nemis_no}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+
+                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
+                        <div className="flex">
+                          <div className="ml-4">
+                            {enrollment?.learner?.first_name}{" "}
+                            {enrollment?.learner?.last_name}{" "}
+                            {enrollment?.learner?.surname}
+                          </div>
+                        </div>
+                      </Table.Td>
+
+                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
                         <FormInput
                           {...register("score[" + key + "]")}
                           type="number"
-                          className={`form-control ${
+                          className={`no-spinner appearance-none form-control w-[100px] ${
                             getValues("score") ? "is-invalid" : ""
                           }`}
                           defaultValue={enrollment?.assessmentDetails?.score}
@@ -536,7 +571,6 @@ function Main() {
                           min={1}
                           onChange={(e) => {
                             const enteredValue = parseInt(e.target.value);
-
                             handleInputChange({
                               score: e.target.value,
                               enrollment,
@@ -544,14 +578,14 @@ function Main() {
                           }}
                         />
                       </Table.Td>
+
                       <Table.Td
-                        className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  ${getDescriptionColor(
-                          enrollment?.assessmentDetails?.score
+                        className={`  bg-white border-b border-grey dark:bg-darkmode-600 ${getDescriptionColor(
+                          enrollment?.assessmentDetails?.score || 0 // Fallback if score is undefined
                         )}`}
                       >
-                        <span>
-                          {enrollment?.assessmentDetails?.description}
-                        </span>
+                        {enrollment?.assessmentDetails?.description ||
+                          "No description"}
                       </Table.Td>
                     </Table.Tr>
                   ))}
@@ -559,7 +593,7 @@ function Main() {
               </Table>
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+              {/* <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -607,7 +641,7 @@ function Main() {
                     <option value={100}>100/page</option>
                   </FormSelect>
                 </div>
-              </div>
+              </div> */}
             </div>
           </form>
         </>
@@ -741,11 +775,16 @@ function Main() {
                   onChange={(event: any) => setTest(event.target.value)}
                 >
                   <option>Select Test</option>
-                  {tests.map((test: any, key) => (
-                    <option key={key} value={test._id}>
-                      {test.name} ({test?.term ? "Custom" : "Hero Assessment"})
-                    </option>
-                  ))}
+                  {tests
+                    .filter(
+                      (test: any) => test?.grade?._id == strandFilter.grade
+                    )
+                    .map((test: any, key) => (
+                      <option key={key} value={test._id}>
+                        {test.name} ({test?.term ? "Custom" : "Hero Assessment"}
+                        )
+                      </option>
+                    ))}
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">

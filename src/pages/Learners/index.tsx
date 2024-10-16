@@ -920,7 +920,13 @@ function Main() {
                         </Table.Th>
 
                         <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Name
+                          First Name
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                          Surname
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                          Last Name
                         </Table.Th>
                         {/* <Table.Th className="border-b-0 whitespace-nowrap w-24">
                           Last Name
@@ -931,11 +937,14 @@ function Main() {
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Adm No
                         </Table.Th>
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Grade
-                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Name
+                          Nemis
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Grade
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Stream
                         </Table.Th>
                         {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Last Name
@@ -943,15 +952,15 @@ function Main() {
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Surname
                         </Table.Th> */}
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian ID No
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                        </Table.Th> */}
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Email
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                        </Table.Th> */}
+                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Phone
-                        </Table.Th>
+                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
                           Actions
                         </Table.Th>
@@ -1000,13 +1009,16 @@ function Main() {
                               </div>
                             </div>
                           </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.first_name}{" "}
-                              {learner?.learner?.last_name}{" "}
                               {learner?.learner?.surname}
                             </span>
-                          </Table.Td> */}
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.last_name}
+                            </span>
+                          </Table.Td>
                           {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.last_name}
@@ -1022,19 +1034,28 @@ function Main() {
                               {learner?.learner?.adm_no}
                             </span>
                           </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.learner?.nemis_no}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.stream?.grade?.name}{" "}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
                               {learner?.stream?.name}
                             </span>
-                          </Table.Td> */}
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                          </Table.Td>
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.first_name}{" "}
                               {learner?.learner?.guardian?.last_name}{" "}
                               {learner?.learner?.guardian?.surname}
                             </span>
-                          </Table.Td>
+                          </Table.Td> */}
                           {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.last_name}
@@ -1045,7 +1066,7 @@ function Main() {
                               {learner?.learner?.guardian?.surname}
                             </span>
                           </Table.Td> */}
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.id_no}
                             </span>
@@ -1059,7 +1080,7 @@ function Main() {
                             <span className="font-medium whitespace-nowrap">
                               {learner?.learner?.guardian?.phone}
                             </span>
-                          </Table.Td>
+                          </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
                               <a

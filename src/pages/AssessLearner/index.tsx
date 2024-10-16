@@ -71,6 +71,8 @@ function Main() {
     per_page: 0,
   });
   const [search, setSearch] = useState("");
+
+  const [adm_no, setAdmNo] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
@@ -207,19 +209,11 @@ function Main() {
     setLearningAreas(response.data);
   };
 
-  const openSubStrand = (strand: any) => {
-    navigate("/substrand", {
-      replace: true,
-      state: { data: strand, learningArea: learningArea },
-    });
-  };
-
-  const openLearningArea = (strand: any) => {
-    navigate("/learning_areas", {
-      replace: true,
-      state: { data: strand },
-    });
-  };
+  useEffect(() => {
+    if (indicator) {
+      generateAssessment(indicator);
+    }
+  }, [adm_no]);
 
   const setStrandFilter = (newFilter: any) => {
     updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
@@ -358,8 +352,7 @@ function Main() {
   // }, [indicator]);
 
   const generateAssessment = async (indicator: any) => {
-    const data = { indicator, term: selectedTerm, stream };
-    console.log(data);
+    const data = { indicator, term: selectedTerm, stream, adm_no };
     isLoading(true);
     try {
       let res = await ApiService.getAssessmentLerners(data);
@@ -533,22 +526,14 @@ function Main() {
             </div>
             <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
               <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
-                <div className="hidden mx-auto md:block text-slate-500 mt-5">
-                  Showing{" "}
-                  {pagination.current_page +
-                    " to " +
-                    pagination.total_pages +
-                    " of " +
-                    pagination.total}{" "}
-                  entries
-                </div>
+                <div className="hidden mx-auto md:block text-slate-500 mt-5"></div>
                 <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
                   <div className="relative w-56 text-slate-500">
                     <FormInput
                       type="text"
                       className="w-56 pr-10 !box"
-                      placeholder="Search..."
-                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Adm No..."
+                      onChange={(e) => setAdmNo(e.target.value)}
                     />
                     <Lucide
                       icon="Search"
@@ -560,49 +545,31 @@ function Main() {
               <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      <FormCheck.Input type="checkbox" />
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[20px] ">
+                      No
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      LEARNER NAME
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[150px] ">
+                      ADM No
                     </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
-                      ADMISSION NUMBER
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px] ">
                       NEMIS NO.
                     </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-nowrap">
-                      SCORE
+                    <Table.Th className="border-b-1 whitespace-nowrap w-[300px] ">
+                      NAME
                     </Table.Th>
-                    <Table.Th className="text-left border-b-0 whitespace-wrap w-[500px] overflow-hidden">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
+                      Score
+                    </Table.Th>
+                    <Table.Th className="text-left border-b-1 whitespace-wrap ">
                       DESCRIPTION
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {enrollments.map((enrollment: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
+                    <Table.Tr key={key} className="">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <FormCheck.Input type="checkbox" />
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <div className="flex">
-                          <img
-                            src={logo}
-                            alt="Learner"
-                            className="w-12 h-12   "
-                          />
-                          <div className="ml-4">
-                            <a href="#" className="font-semibold">
-                              {enrollment?.learner?.first_name}{" "}
-                              {enrollment?.learner?.last_name}
-                            </a>
-                            <div className="text-gray-600 text-sm ">
-                              {enrollment?.learner?.surname}
-                            </div>
-                          </div>
-                        </div>
+                        {key + 1}
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="flex items-center  ">
@@ -615,10 +582,25 @@ function Main() {
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <div className="flex">
+                          {/* <img
+                            src={logo}
+                            alt="Learner"
+                            className="w-12 h-12   "
+                          /> */}
+                          <div className="ml-4">
+                            {enrollment?.learner?.first_name}{" "}
+                            {enrollment?.learner?.last_name}{" "}
+                            {enrollment?.learner?.surname}
+                          </div>
+                        </div>
+                      </Table.Td>
+
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <FormInput
                           {...register("score[" + key + "]")}
                           type="number"
-                          className={`form-control ${
+                          className={`form-control  w-[100px] ${
                             getValues("score") ? "is-invalid" : ""
                           }`}
                           defaultValue={enrollment?.assessmentDetails?.score}
@@ -670,59 +652,6 @@ function Main() {
                 </Table.Tbody>
               </Table>
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                      <Pagination className="w-full sm:w-auto sm:mr-auto">
-                        <button
-                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                        </button>
-                        {_.times(pagination.total_pages).map((page, key) =>
-                          page + 1 == pagination.current_page ? (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 bg-white rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          )
-                        )}
-                        <button
-                          onClick={() =>
-                            setPage(
-                              page < pagination.total_pages ? page + 1 : 1
-                            )
-                          }
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronRight" className="w-4 h-4" />
-                        </button>
-                      </Pagination>
-                      <div className="text-slate-500">
-                        <span className="mr-3">Total {pagination.total}</span>
-                        <FormSelect
-                          className="w-30 mt-3 !box sm:mt-0"
-                          onChange={(e) => setLimit(parseInt(e.target.value))}
-                        >
-                          <option value={10}>10/page</option>
-                          <option value={25}>25/page</option>
-                          <option value={50}>50/page</option>
-                          <option value={100}>100/page</option>
-                        </FormSelect>
-                      </div>
-                    </div>
-                  </div>
           </form>
         </>
       ) : (
