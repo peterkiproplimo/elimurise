@@ -117,6 +117,7 @@ function Users() {
         page,
         gradeId: strandFilter.grade,
       });
+
       setLearningAreas(response.data);
     }
   };
@@ -150,6 +151,7 @@ function Users() {
   };
   const getStreams = async (selectedValue: any) => {
     setStreams([]);
+
     const response = await ApiService.getStream({
       page: 1,
       grade: selectedValue,
@@ -237,6 +239,12 @@ function Users() {
       term: "na",
       grade: selectedValue,
     });
+    reset({
+      grade: gradeId, // Keep the selected grade
+      stream: "", // Reset the stream
+      lerningArea: [], // Reset the learning areas
+    });
+    setLearningAreas([]);
     getStreams(selectedValue);
 
     // You might want to fetch filtered data here
@@ -488,36 +496,7 @@ function Users() {
                   </div>
                 )}
               </div>
-              {/* <div className="col-span-12 sm:col-span-6"></div> */}
-              {/*   <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">
-                  Select Learning Area
-                </FormLabel>
-              <FormSelect
-                  {...register("learning_area")}
-                  name="learning_area"
-                  value={strandFilter.learning_area}
-                  onChange={(event) => handleLearningAreaChange(event)}
-                >
-                  <option value={""}>Select Learning Area</option>
-                  {learningAreas
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
-                    
-                </FormSelect>
-                {errors.learning_area && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
-                  </div>
-                )}
-              </div> */}
+
               <Table className="w-100 ">
                 <Table.Thead>
                   <Table.Tr>

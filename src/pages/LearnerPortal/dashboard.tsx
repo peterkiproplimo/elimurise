@@ -239,7 +239,7 @@ function Main() {
                             "learner",
                             JSON.stringify(learner)
                           );
-                          navigate("/v1/profile", {});
+                          navigate("/parent/profile", {});
                         }}
                         className="relative zoom-in bg-purple-100 min-h-[150px] rounded-lg"
                         style={{

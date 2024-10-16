@@ -24,6 +24,7 @@ import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useAuth } from "../../contexts/Auth";
+import { useNavigate } from "react-router-dom";
 
 interface TableRow {
   no: number;
@@ -72,6 +73,7 @@ function Main() {
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
+  const navigate = useNavigate();
 
   // Success notification
   const notify = useRef<NotificationElement>();
@@ -229,6 +231,7 @@ function Main() {
 
     setRows([...rows, newRow]);
   };
+
   return (
     <>
       <div className="flex items-center mt-8 intro-y">
@@ -237,14 +240,13 @@ function Main() {
             event.preventDefault();
             reset({ name: "" });
             setDialog(false);
+            navigate("/parent");
           }}
           href="#"
         >
           <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
         </a>
-        <h2 className="mr-auto text-lg font-medium">
-          {isEditMode ? "Edit Learner" : "New Learner"}
-        </h2>
+        <h2 className="mr-auto text-lg font-medium">{"Profile Details"}</h2>
       </div>
       <br />
       <form className="mt-5 p-5 intro-y box validate-form" onSubmit={onSubmit}>

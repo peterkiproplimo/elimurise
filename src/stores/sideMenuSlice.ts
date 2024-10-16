@@ -39,6 +39,11 @@ const initialState: SideMenuState = {
         // },
         {
           icon: "Users",
+          title: "Parents",
+          pathname: "/home/parents",
+        },
+        {
+          icon: "Users",
           pathname: "/home/learners",
           title: "Learners Details",
         },
@@ -81,28 +86,18 @@ const initialState: SideMenuState = {
     //   pathname: "/home/learning_areas",
     //   title: "Learning Areas",
     // },
+
     {
       icon: "Activity",
       pathname: "/home/assessment",
       title: " Assessment",
     },
     {
-      icon: "FileText",
-      pathname: "/home/billing",
-      title: "Billing",
-    },
-
-    {
-      icon: "Users",
-      title: "Parents",
-      pathname: "/home/parents",
-    },
-
-    {
       icon: "User",
       pathname: "/home/reports",
       title: "Formative Report",
     },
+
     {
       icon: "Users",
       title: "Summative",
@@ -129,6 +124,12 @@ const initialState: SideMenuState = {
         },
       ],
     },
+    {
+      icon: "FileText",
+      pathname: "/home/billing",
+      title: "Billing",
+    },
+
     {
       icon: "Users",
       title: "Settings",
@@ -192,31 +193,50 @@ const teacherState: SideMenuState = {
     },
 
     {
-      icon: "FileCheck",
-      pathname: "/home/learning_areas",
-      title: "Learning Areas",
+      icon: "FileText",
+      title: "Content",
+      pathname: "/home/grade",
     },
+
     {
       icon: "Activity",
       pathname: "/home/assessment",
-      title: " Assessment",
+      title: "Formative Assessment",
+    },
+
+    {
+      icon: "User",
+      pathname: "/home/reports",
+      title: "Formative Report",
+    },
+
+    {
+      icon: "User",
+      pathname: "/home/assess",
+      title: "Summative Assessment",
     },
     {
-      icon: "Users",
-      title: "Reports",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/home/indicatorReport",
-          title: "By Indicators",
-        },
-        {
-          icon: "User",
-          pathname: "/home/reports",
-          title: "By Learner",
-        },
-      ],
+      icon: "User",
+      pathname: "/home/summativereports",
+      title: "Summative Report",
     },
+
+    // {
+    //   icon: "Users",
+    //   title: "Reports",
+    //   subMenu: [
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/home/indicatorReport",
+    //       title: "By Indicators",
+    //     },
+    //     {
+    //       icon: "User",
+    //       pathname: "/home/reports",
+    //       title: "By Learner",
+    //     },
+    //   ],
+    // },
     {
       icon: "FileText",
       pathname: "/home/profile",
@@ -237,11 +257,11 @@ const parentState: SideMenuState = {
       title: "Reports",
       pathname: "/parent/report",
     },
-    {
-      icon: "Users",
-      title: "Profile",
-      pathname: "/parent/profile",
-    },
+    // {
+    //   icon: "Users",
+    //   title: "Profile",
+    //   pathname: "/parent/profile",
+    // },
     {
       icon: "FileText",
       title: "Transfers",
