@@ -1034,6 +1034,7 @@ export async function getLeanerAssessmentReport(data: FieldValues) {
   try {
     let res = await axios.get(c.PARENT + "/v1/assessment/report", {
       params: data,
+      responseType: "arraybuffer",
     });
     return res.data;
   } catch (e) {

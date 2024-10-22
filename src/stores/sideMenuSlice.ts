@@ -254,8 +254,13 @@ const parentState: SideMenuState = {
 
     {
       icon: "FileText",
-      title: "Reports",
+      title: "Formartive Report",
       pathname: "/parent/report",
+    },
+    {
+      icon: "FileText",
+      title: "Summative Report",
+      pathname: "/parent/summative",
     },
     // {
     //   icon: "Users",

@@ -54,7 +54,7 @@ import Transfers from "../pages/Learners/transfers";
 import IncommingTransfers from "../pages/Learners/transfers_incoming";
 import LearnersTransfers from "../pages/LearnerPortal/incoming_transfers";
 import LayoutRegister from "../layouts/register";
-
+import LearnerSummative from "../pages/LearnerProfiles/summative";
 //nn
 function Router() {
   const routes = [
@@ -238,6 +238,10 @@ function Router() {
         {
           path: "report",
           element: <LearnerProfiles />,
+        },
+        {
+          path: "summative",
+          element: <LearnerSummative />,
         },
         {
           path: "transfers",

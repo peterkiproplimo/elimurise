@@ -153,22 +153,13 @@ function Main() {
   const generateAssessment = async () => {
     const data = {
       term: selectedTerm,
-      // test: test,
       learner: selectedLearner,
     };
-    console.log(data);
-
     isLoading(true);
-    // try {
-    //   let res = await ApiService.getSummativeByLearners(data);
-    //   const blob = new Blob([res], { type: "application/pdf" });
-    //   const url = URL.createObjectURL(blob);
-    //   isLoading(true);
     try {
       let res = await ApiService.getLeanerAssessmentReport(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-
       const popup = window.open(
         url,
 
@@ -276,151 +267,6 @@ function Main() {
                 </div>
               </div> */}
             </div>
-            <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
-              <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
-                <div className=" overflow-hidden intro-y box">
-                  <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
-                    <div className="text-base text-slate-500lg:ml-auto lg:text-left flex">
-                      <div>
-                        <img
-                          src={logo}
-                          alt="Learner"
-                          className="w-32 h-32 mb-2"
-                        />
-                      </div>
-
-                      <div className="text-lg font-semibold text-primary ml-5">
-                        Name:
-                        <br />
-                        Adm No:
-                        <br />
-                        Year:
-                        <br />
-                        Term:
-                        <br />
-                      </div>
-                    </div>
-                    <div className="mt-2 topic">
-                      <div></div>
-                    </div>
-                  </div>
-                  <div className="px- py-2 sm:px-16 sm:py-20 mt-5">
-                    <div className="text-center font-bold text-xl mb-5">
-                      Performance Report
-                    </div>
-                    <Table className="border">
-                      <Table.Thead>
-                        <Table.Tr className="bg-secondary ">
-                          <Table.Th className="border-b-0 whitespace-nowrap">
-                            Strand
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
-                            Substrand
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
-                            Learning Area
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                            Indicator Description
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
-                            Score
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                            Description
-                          </Table.Th>
-                        </Table.Tr>
-                      </Table.Thead>
-                      <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 ">
-                        {learnerReport?.assessment?.map(
-                          (enrollment: any, index: any) => (
-                            <Table.Tr key={index} className="bg-secondary">
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.strand.name}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.substrand.name}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.learning_area.name}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.indicator_description}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.score}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.description}
-                              </Table.Td>
-                            </Table.Tr>
-                          )
-                        )}
-                      </Table.Tbody>
-                    </Table>
-                    {loading && (
-                      <div className="flex flex-col items-center mt-5">
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          className="w-8 h-8"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </main>
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() =>
-                      setPage(page < pagination.total_pages ? page + 1 : 1)
-                    }
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
           </form>
         </>
       ) : (
@@ -502,34 +348,11 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
-                <TomSelect
-                  {...register("learning_area")}
-                  value={selectedLeaningArea}
-                  name="learning_area"
-                  onChange={(event: any) => setSelectedLearningArea(event)}
-                >
-                  <option>Select Learning Area</option>
-                  {learningAreas?.map((filteredArea: any, key) => (
-                    <option key={key} value={filteredArea?._id}>
-                      {filteredArea.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.learning_area && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
-                  </div>
-                )}
-              </div>
-
               {/* {substrands.map((substrand: any, key: any) => (
                 <span>{substrand.name}</span>
               ))} */}
             </div>
-            <div className="px-5  text-right">
+            <div className="p-5 mt-3  text-right">
               <Button
                 onClick={() => generateAssessment()}
                 variant="primary"
