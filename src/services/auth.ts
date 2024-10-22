@@ -683,7 +683,12 @@ export const getSummativeAssessment = async (data: any) => {
 
 export const getReportByLearners = async (data: any) => {
   try {
-    let res = await axios.get(c.ASSESSMENT + "/assessments", {
+    let type =
+      data.type == "analysis-grade" || data.type == "analysis-stream"
+        ? "/analysis"
+        : "";
+    console.log(type);
+    let res = await axios.get(c.ASSESSMENT + "/assessments" + type, {
       params: data,
       responseType: "arraybuffer",
     });
@@ -694,7 +699,25 @@ export const getReportByLearners = async (data: any) => {
 };
 export const getSummativeByLearners = async (data: any) => {
   try {
-    let res = await axios.get(c.SUMMATIVE + "/assessments", {
+    let type =
+      data.type == "analysis-grade" || data.type == "analysis-stream"
+        ? "/analysis"
+        : data.type == "grade" || data.type == "stream"
+        ? "/all"
+        : "";
+
+    let res = await axios.get(c.SUMMATIVE + "/assessments" + type, {
+      params: data,
+      responseType: "arraybuffer",
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getSummativeForParent = async (data: any) => {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/summative", {
       params: data,
       responseType: "arraybuffer",
     });
@@ -1023,6 +1046,17 @@ export async function getLeanerTerm(data: FieldValues) {
 export async function getLeanerLeaningArea(data: FieldValues) {
   try {
     let res = await axios.get(c.PARENT + "/v1/learning-areas", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getLeanerTests(data: FieldValues) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/tests", {
       params: data,
     });
     return res.data;

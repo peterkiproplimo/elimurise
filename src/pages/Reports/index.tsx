@@ -41,6 +41,7 @@ function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [lastSaved, setLastSaved] = useState(null);
+  const [type, setType] = useState("");
 
   const [grades, setGrades] = useState([]);
   const [levels, setLevels] = useState([]);
@@ -85,9 +86,9 @@ function Main() {
   const location = useLocation();
   const learningArea = location?.state?.data;
   const initialState = {
-    grade: learningArea?.grade_id?._id || "na",
-    learning_area: learningArea?._id || "na",
-    term: learningArea?._id ? 1 : "na",
+    grade: learningArea?.grade_id?._id || "",
+    learning_area: learningArea?._id || "",
+    term: learningArea?._id ? 1 : "",
   };
   const [academic_terms, setTerms] = useState([]);
 
@@ -306,8 +307,8 @@ function Main() {
     setStream("");
     setStrands([]);
     await setStrandFilter({
-      learning_area: "na",
-      term: "na",
+      learning_area: "",
+      term: "",
       grade: selectedValue,
     });
     getStreams(selectedValue);
@@ -347,20 +348,45 @@ function Main() {
   ]);
   const generateAssessment = async () => {
     isLoading(true);
-    const data = {
-      learning_area: strandFilter.learning_area,
-      term: selectedTerm,
-      learner,
-    };
+    let data = {};
+    if (type == "learner") {
+      data = {
+        learning_area: strandFilter.learning_area,
+        term: selectedTerm,
+        learner,
+        type,
+      };
+    } else if (type == "analysis-stream" || type == "analysis-grade") {
+      data = {
+        learning_area: strandFilter.learning_area,
+        term: selectedTerm,
+        grade: strandFilter.grade,
+        stream,
+        type,
+      };
+    }
 
     isLoading(true);
     try {
+      if (type == "") {
+        throw Error("Select report type to continue");
+      } else if (strandFilter.grade == "") {
+        throw Error("Select grade to continue");
+      } else if (stream == "" && type == "analysis-stream") {
+        throw Error("Select stream to continue");
+      } else if (strandFilter.learning_area == "") {
+        throw Error("Select learning area to continue");
+      } else if (selectedTerm == "") {
+        throw Error("Select term to continue");
+      } else if (learner == "" && type == "learner") {
+        throw Error("Select learner to continue");
+      }
       let res = await ApiService.getReportByLearners(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const popup = window.open(
         url,
-        "_blank",
+        // "_blank",
         `width=${window.innerWidth},height=${window.innerHeight},scrollbars=yes`
       );
 
@@ -528,150 +554,6 @@ function Main() {
                 height="900px"
                 title="PDF Viewer"
               />
-              {/* <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
-                <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
-                  <div className=" overflow-hidden intro-y box">
-                    <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
-                      <div className="text-base text-slate-500lg:ml-auto lg:text-left flex">
-                        <div>
-                          <img
-                            src={
-                              "http://localhost:3000/portal" +
-                              assessmentsData?.learner?.learner?.photo
-                            }
-                            alt="Learner"
-                            className="w-32 h-32 mb-2"
-                          />
-                        </div>
-
-                        <div className="text-lg font-semibold text-primary ml-5">
-                          Name: {assessmentsData?.learner?.learner?.first_name}{" "}
-                          {assessmentsData?.learner?.learner?.last_name}
-                          <br />
-                          Adm No: {assessmentsData?.learner?.learner?.adm_no}
-                          <br />
-                          Year: {assessmentsData?.learner?.academicYear?.name}
-                          <br />
-                          Term: {assessmentsData?.term?.name}
-                          <br />
-                          Grade: {assessmentsData?.learner?.stream?.grade?.name}
-                          <br />
-                          Stream: {assessmentsData?.learner?.stream?.name}
-                        </div>
-                      </div>
-                      <div className="mt-2 topic">
-                        <div>
-                          <img
-                            src={logo2}
-                            alt="Learner"
-                            className="w-64 h-24 mb-2"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="px- py-2 sm:px-16 sm:py-20 mt-5">
-                      <div className="text-center font-bold text-2xl mb-5">
-                        Formative Performance Report
-                      </div>
-                      <div className="overflow-x-auto">
-                        <Table className="border">
-                          <Table.Thead className="bg-secondary h-20 text-lg">
-                            <Table.Tr>
-                              <Table.Th className="border-b-0 whitespace-nowrap">
-                                Learning Area
-                              </Table.Th>
-                              <Table.Th className="border-b-0 whitespace-nowrap">
-                                Strand
-                              </Table.Th>
-                              <Table.Th className="border-b-0 whitespace-nowrap">
-                                Substrand
-                              </Table.Th>
-                              <Table.Th className="border-b-0 whitespace-nowrap">
-                                Indicator Description
-                              </Table.Th>
-                              <Table.Th className="border-b-0 whitespace-nowrap">
-                                Score
-                              </Table.Th>
-                              <Table.Th className="border-b-0 whitespace-nowrap">
-                                Description
-                              </Table.Th>
-                            </Table.Tr>
-                          </Table.Thead>
-                          <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 text-lg">
-                            {assessmentsData?.assessment?.map(
-                              (enrollment: any, index: any) => (
-                                <Table.Tr className="bg-secondary">
-                                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                    {enrollment.learning_area.name}
-                                  </Table.Td>
-                                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                    {enrollment.strand.name}
-                                  </Table.Td>
-                                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                    {enrollment.substrand.name}
-                                  </Table.Td>
-                                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                    {enrollment.indicator_description}
-                                  </Table.Td>
-                                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                    {enrollment.score}
-                                  </Table.Td>
-                                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                    {enrollment.description}
-                                  </Table.Td>
-                                </Table.Tr>
-                              )
-                            )}
-                          </Table.Tbody>
-                        </Table>
-                      </div>
-                    </div>
-                
-                  </div>
-                </main>
-              </div> */}
-              {/* <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead >
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">Learning Area</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">Strand</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">Substrand</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">Indicator Description</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">Score</Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">Description</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {assessmentsData?.assessment?.map((enrollment:any, index:any) => (
-                    <Table.Tr key={index}>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        {enrollment.learning_area.name}
-                        </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        {enrollment.strand.name}
-                        </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        {enrollment.substrand.name}
-                        </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        {enrollment.indicator_description}
-                        </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        {enrollment.score}
-                        </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        {enrollment.description}
-                        </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-              {loading && (
-            <div className="flex flex-col items-center mt-5">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-            </div>
-          )} */}
             </div>
             <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
               <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
@@ -733,9 +615,41 @@ function Main() {
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <h2 className="mr-auto text-base font-medium border-b p-2">
-              Learner Report
+              Formartive Report
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Type</FormLabel>
+                <FormSelect
+                  value={type}
+                  onChange={(event) => {
+                    setStream("");
+                    setStrandFilter({
+                      ...strandFilter,
+                      grade: "",
+                      learning_area: "",
+                    });
+                    setType(event.target.value);
+                  }}
+                >
+                  <option value={""}>Select Type</option>
+
+                  <option value={"learner"}>Learner Report</option>
+                  {/* <option value={"indicator"}>Indicator Report</option> */}
+                  <option value={"analysis-stream"}>Analysis StreamWise</option>
+                  <option value={"analysis-grade"}>Analysis GradeWise</option>
+
+                  {/* <option value={"learner"}>Single learner</option>
+                  <option value={"analysis-grade"}>Analysis GradeWise</option>
+                  <option value={"analysis-stream"}>Analysis StreamWise</option> */}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
@@ -758,55 +672,59 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
-                <FormSelect
-                  {...register("stream")}
-                  name="stream"
-                  value={stream}
-                  onChange={(event) => {
-                    setEnrollments([]);
-                    setStream(event.target.value);
-                  }}
-                >
-                  <option>Select Stream</option>
+              {(type == "analysis-stream" || type === "learner") && (
+                <div className="col-span-12 sm:col-span-2">
+                  <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
+                  <FormSelect
+                    {...register("stream")}
+                    name="stream"
+                    value={stream}
+                    onChange={(event) => {
+                      setEnrollments([]);
+                      setStream(event.target.value);
+                    }}
+                  >
+                    <option>Select Stream</option>
 
-                  {streams.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Learners</FormLabel>
-                <FormSelect
-                  {...register("learner")}
-                  name="learner"
-                  value={learner}
-                  onChange={(event) => setLearner(event.target.value)}
-                >
-                  <option>Select Learner</option>
+                    {streams.map((grade: any, key) => (
+                      <option key={key} value={grade._id}>
+                        {grade.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                  {errors.grade && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.grade.message === "string" &&
+                        errors.grade.message}
+                    </div>
+                  )}
+                </div>
+              )}
+              {type == "learner" && (
+                <div className="col-span-12 sm:col-span-2">
+                  <FormLabel htmlFor="modal-form-6">Learners</FormLabel>
+                  <FormSelect
+                    {...register("learner")}
+                    name="learner"
+                    value={learner}
+                    onChange={(event) => setLearner(event.target.value)}
+                  >
+                    <option>Select Learner</option>
 
-                  {enrollments?.map((enrollment: any, key) => (
-                    <option key={key} value={enrollment?._id}>
-                      {enrollment?.learner.first_name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
+                    {enrollments?.map((enrollment: any, key) => (
+                      <option key={key} value={enrollment?._id}>
+                        {enrollment?.learner.first_name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                  {errors.grade && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.grade.message === "string" &&
+                        errors.grade.message}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
@@ -831,7 +749,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-2 ">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
                 <FormSelect
                   {...register("learning_area")}
@@ -839,7 +757,7 @@ function Main() {
                   name="learning_area"
                   onChange={(event) => handleLearningAreaChange(event)}
                 >
-                  <option>Select Learning Area</option>
+                  <option value={""}>Select Learning Area</option>
                   {learningAreas
                     .filter(
                       (area: any) => area?.grade_id?._id === strandFilter?.grade
@@ -862,7 +780,7 @@ function Main() {
                 <span>{substrand.name}</span>
               ))} */}
             </div>
-            <div className="px-5  text-right">
+            <div className="px-5  text-right mt-5">
               <Button
                 onClick={() => generateAssessment()}
                 variant="primary"

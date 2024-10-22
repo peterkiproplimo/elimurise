@@ -153,7 +153,7 @@ function Main() {
   const generateAssessment = async () => {
     const data = {
       term: selectedTerm,
-      // test: test,
+      learning_area: selectedLeaningArea,
       learner: selectedLearner,
     };
     console.log(data);

@@ -55,10 +55,12 @@ function Main() {
   const [selectedLeaningArea, setSelectedLearningArea] = useState("");
   const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
   const [selectedLearner, setSelectedLearner] = useState("");
+  const [test, setTest] = useState("");
 
   const [learners, setLearners] = useState<any>([]);
   const [strand, setStrand] = useState("");
   const [learnerReport, setLearnerReport] = useState<any>([]);
+  const [tests, setTests] = useState<any>([]);
 
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -137,7 +139,17 @@ function Main() {
     const response = await ApiService.getLeanerTerm({
       academic_year: selectedAcademicYear,
     });
+
     setTerms(response.data);
+  };
+
+  const getTests = async () => {
+    const response = await ApiService.getLeanerTests({
+      learner: selectedLearner,
+      term: selectedTerm,
+    });
+
+    setTests(response.data);
   };
   useEffect(() => {
     getLearningAcademicYear();
@@ -147,6 +159,8 @@ function Main() {
     getLearningTerm();
   }, [selectedAcademicYear]);
   useEffect(() => {
+    getTests();
+
     getLearningAreas();
   }, [selectedTerm]);
   const notify = useRef<NotificationElement>();
@@ -154,11 +168,21 @@ function Main() {
     const data = {
       term: selectedTerm,
       learner: selectedLearner,
+      test,
     };
     isLoading(true);
     try {
-      let res = await ApiService.getLeanerAssessmentReport(data);
+      if (selectedLearner == "") {
+        throw Error("Select learner to continue");
+      } else if (selectedTerm == "") {
+        throw Error("Select term to continue");
+      } else if (test == "") {
+        throw Error("Select test to continue");
+      }
+      let res = await ApiService.getSummativeForParent(data);
       const blob = new Blob([res], { type: "application/pdf" });
+      //   const url = URL.createObjectURL(blob);
+      //   isLoading(true);      const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const popup = window.open(
         url,
@@ -287,7 +311,7 @@ function Main() {
                   name="term"
                   onChange={(event: any) => setSelectedLearner(event)}
                 >
-                  <option>Select Learner</option>
+                  <option value={""}>Select Learner</option>
                   {learners.map((learner: any) => (
                     <option value={learner.learner._id}>
                       {learner.learner.adm_no}-{learner.learner.first_name}{" "}
@@ -311,7 +335,7 @@ function Main() {
                   name="term"
                   onChange={(event: any) => setSelectedAcademicYear(event)}
                 >
-                  <option>Select Grade</option>
+                  <option value={""}>Select Grade</option>
                   {academicYear.map((year: any, key) => (
                     <option key={key} value={year.academicYear._id}>
                       {year.academicYear.name}- {year.stream.grade.name}
@@ -333,10 +357,32 @@ function Main() {
                   name="term"
                   onChange={(event: any) => setSelectedTerm(event)}
                 >
-                  <option>Select Term</option>
+                  <option value={""}>Select Term</option>
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
+                    </option>
+                  ))}
+                </TomSelect>
+                {errors.term && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.term.message === "string" &&
+                      errors.term.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Test</FormLabel>
+                <TomSelect
+                  {...register("test")}
+                  value={test}
+                  name="test"
+                  onChange={(event: any) => setTest(event)}
+                >
+                  <option value={""}>Select Test</option>
+                  {tests.map((test: any, key: any) => (
+                    <option key={key} value={test._id}>
+                      {test.name}
                     </option>
                   ))}
                 </TomSelect>
