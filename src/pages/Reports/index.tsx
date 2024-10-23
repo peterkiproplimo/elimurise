@@ -637,7 +637,7 @@ function Main() {
                   <option value={"learner"}>Learner Report</option>
                   {/* <option value={"indicator"}>Indicator Report</option> */}
                   <option value={"analysis-grade"}>
-                    Streamm Analysis Report
+                    Stream Analysis Report
                   </option>
 
                   <option value={"analysis-stream"}>
