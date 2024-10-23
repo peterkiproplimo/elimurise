@@ -664,11 +664,15 @@ function Main() {
                 >
                   <option value={""}>Select Type</option>
 
-                  <option value={"grade"}>Grade Broadsheet</option>
-                  <option value={"stream"}>Stream Broadsheet</option>
-                  <option value={"learner"}>Single learner</option>
-                  <option value={"analysis-grade"}>Analysis GradeWise</option>
-                  <option value={"analysis-stream"}>Analysis StreamWise</option>
+                  <option value={"grade"}>Grade Report</option>
+                  <option value={"stream"}>Stream Report</option>
+                  <option value={"learner"}>Learner Report</option>
+                  <option value={"analysis-stream"}>
+                    Stream Analysis Report
+                  </option>
+                  <option value={"analysis-grade"}>
+                    Grade Analysis Report{" "}
+                  </option>
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
