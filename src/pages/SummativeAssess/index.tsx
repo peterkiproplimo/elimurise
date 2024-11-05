@@ -378,192 +378,191 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form className="mt-5 p-5  validate-form  " onSubmit={onSubmit}>
-            <div className="assessment-header">
-              <h2 className="text-xl flex items-center font-semibold mb-5">
-                <a
-                  onClick={(event: React.MouseEvent) => {
-                    event.preventDefault();
-                    reset({ name: "" });
-                    setDialog(false);
-                  }}
-                  href="#"
-                >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-                </a>{" "}
-                Summative Assessment
-              </h2>
+          <div className="assessment-header">
+            <h2 className="text-xl flex items-center font-semibold mb-5">
+              <a
+                onClick={(event: React.MouseEvent) => {
+                  event.preventDefault();
+                  reset({ name: "" });
+                  setDialog(false);
+                }}
+                href="#"
+              >
+                <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+              </a>{" "}
+              Summative Assessment
+            </h2>
+          </div>
+          <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg ">
+            <div className="meta-row flex items-center mb-2">
+              <label className="font-semibold text-md text-gray-700">
+                Grade:
+              </label>
+              <span className="text-md text-gray-800 ml-2">
+                {meta?.stream?.grade?.name}
+              </span>
             </div>
-            <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg ">
-              <div className="meta-row flex items-center mb-2">
-                <label className="font-semibold text-md text-gray-700">
-                  Grade:
-                </label>
-                <span className="text-md text-gray-800 ml-2">
-                  {meta?.stream?.grade?.name}
-                </span>
-              </div>
-              <div className="meta-row flex items-center mb-2">
-                <label className="font-semibold text-md text-gray-700">
-                  Stream:
-                </label>
-                <span className="text-md text-gray-800 ml-2">
-                  {meta?.stream?.name}
-                </span>
-              </div>
-              <div className="meta-row flex items-center mb-2">
-                <label className="font-semibold text-md text-gray-700">
-                  Learning Area:
-                </label>
-                <span className="text-md text-gray-800 ml-2">
-                  {meta?.learningArea?.name}
-                </span>
-              </div>
+            <div className="meta-row flex items-center mb-2">
+              <label className="font-semibold text-md text-gray-700">
+                Stream:
+              </label>
+              <span className="text-md text-gray-800 ml-2">
+                {meta?.stream?.name}
+              </span>
             </div>
-            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
-              <div className="flex flex-wrap  col-span-12 mt-2  xl:flex-nowrap">
-                <div className="hidden  md:block ">
-                  {/* Showing{" "}
+            <div className="meta-row flex items-center mb-2">
+              <label className="font-semibold text-md text-gray-700">
+                Learning Area:
+              </label>
+              <span className="text-md text-gray-800 ml-2">
+                {meta?.learningArea?.name}
+              </span>
+            </div>
+          </div>
+          <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+            <div className="flex flex-wrap  col-span-12 mt-2  xl:flex-nowrap">
+              <div className="hidden  md:block ">
+                {/* Showing{" "}
                   {pagination.current_page +
                     " to " +
                     pagination.total_pages +
                     " of " +
                     pagination.total}{" "}
                   entries */}
-                </div>
-                <div className="hidden  mx-auto md:block  mt-5"></div>
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3  ">
-                  <div className="relative w-56 text-slate-500">
-                    <FormInput
-                      type="text"
-                      className="w-56 pr-10 !box"
-                      placeholder="Adm No"
-                      onChange={(e) => setAdmNo(e.target.value)}
-                    />
-                    <Lucide
-                      icon="Search"
-                      className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                    />
-                  </div>
+              </div>
+              <div className="hidden  mx-auto md:block  mt-5"></div>
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3  ">
+                <div className="relative w-56 text-slate-500">
+                  <FormInput
+                    type="text"
+                    className="w-56 pr-10 !box"
+                    placeholder="Adm No"
+                    onChange={(e) => setAdmNo(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
                 </div>
               </div>
-              <Table className="border-spacing-y-[0px] border-separate mt-2 p-2">
-                <Table.Thead>
-                  <Table.Tr className="bg-white">
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[20px] ">
-                      No
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[150px] ">
-                      ADM No
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px] ">
-                      NEMIS NO.
-                    </Table.Th>
-                    <Table.Th className="border-b-1 whitespace-nowrap w-[300px] ">
-                      NAME
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
-                      Score
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-wrap ">
-                      DESCRIPTOR
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {enrollments?.map((assessment: any, key) => (
-                    <Table.Tr key={key} className="border-b-4 border-grey">
-                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
-                        {key + 1}
-                      </Table.Td>
-
-                      <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
-                        <span className="flex items-center">
-                          {assessment?.learner?.adm_no}
-                        </span>
-                      </Table.Td>
-
-                      <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
-                        <span className="flex items-center">
-                          {assessment?.learner?.nemis_no}
-                        </span>
-                      </Table.Td>
-
-                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
-                        <div className="flex">
-                          <div className="ml-4">
-                            {assessment?.learner?.first_name}{" "}
-                            {assessment?.learner?.last_name}{" "}
-                            {assessment?.learner?.surname}
-                          </div>
-                        </div>
-                      </Table.Td>
-
-                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
-                        <FormInput
-                          {...register("score[" + key + "]")}
-                          type="number"
-                          className={`no-spinner appearance-none form-control w-[100px] ${
-                            getValues("score") &&
-                            parseInt(getValues("score")[key]) > 100
-                              ? "is-invalid"
-                              : ""
-                          }`}
-                          defaultValue={assessment?.assessmentDetails?.score}
-                          max={4}
-                          min={1}
-                          onChange={(e) => {
-                            const enteredValue = parseInt(e.target.value);
-
-                            if (enteredValue > 100) {
-                              alert("Score cannot exceed 100");
-                              e.target.value =
-                                assessment?.assessmentDetails?.score; // Clear the input if value exceeds 100
-                              return; // Exit without triggering handleInputChange
-                            }
-
-                            handleInputChange({
-                              score: enteredValue ? enteredValue : "",
-                              ...assessment,
-                            });
-                          }}
-                        />
-                      </Table.Td>
-
-                      <Table.Td
-                        className={`  bg-white border-b border-grey dark:bg-darkmode-600 `}
-                      >
-                        <span
-                          className={`${getDescriptionColor(
-                            assessment?.assessmentDetails?.grading_score || 0 // Fallback if score is undefined
-                          )}`}
-                        >
-                          <b>
-                            {assessment?.assessmentDetails?.grading_score == 4
-                              ? "Exceeding Expectation(4): "
-                              : ""}
-                            {assessment?.assessmentDetails?.grading_score == 3
-                              ? "Meeting Expectation(3): "
-                              : ""}
-                            {assessment?.assessmentDetails?.grading_score == 2
-                              ? "Approaching Expectation(2): "
-                              : ""}
-                            {assessment?.assessmentDetails?.grading_score == 1
-                              ? "Below Expectation(1): "
-                              : ""}
-                          </b>
-                          <br />
-                        </span>
-                        {assessment?.assessmentDetails?.description ||
-                          "Not assessed"}
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
             </div>
-            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-              {/* <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+            <Table className="border-spacing-y-[0px] border-separate mt-2 p-2">
+              <Table.Thead>
+                <Table.Tr className="bg-white">
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[20px] ">
+                    No
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[150px] ">
+                    ADM No
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px] ">
+                    NEMIS NO.
+                  </Table.Th>
+                  <Table.Th className="border-b-1 whitespace-nowrap w-[300px] ">
+                    NAME
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
+                    Score
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-wrap ">
+                    DESCRIPTOR
+                  </Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {enrollments?.map((assessment: any, key) => (
+                  <Table.Tr key={key} className="border-b-4 border-grey">
+                    <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
+                      {key + 1}
+                    </Table.Td>
+
+                    <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
+                      <span className="flex items-center">
+                        {assessment?.learner?.adm_no}
+                      </span>
+                    </Table.Td>
+
+                    <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
+                      <span className="flex items-center">
+                        {assessment?.learner?.nemis_no}
+                      </span>
+                    </Table.Td>
+
+                    <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
+                      <div className="flex">
+                        <div className="ml-4">
+                          {assessment?.learner?.first_name}{" "}
+                          {assessment?.learner?.last_name}{" "}
+                          {assessment?.learner?.surname}
+                        </div>
+                      </div>
+                    </Table.Td>
+
+                    <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
+                      <FormInput
+                        {...register("score[" + key + "]")}
+                        type="number"
+                        className={`no-spinner appearance-none form-control w-[100px] ${
+                          getValues("score") &&
+                          parseInt(getValues("score")[key]) > 100
+                            ? "is-invalid"
+                            : ""
+                        }`}
+                        defaultValue={assessment?.assessmentDetails?.score}
+                        max={4}
+                        min={1}
+                        onChange={(e) => {
+                          const enteredValue = parseInt(e.target.value);
+
+                          if (enteredValue > 100) {
+                            alert("Score cannot exceed 100");
+                            e.target.value =
+                              assessment?.assessmentDetails?.score; // Clear the input if value exceeds 100
+                            return; // Exit without triggering handleInputChange
+                          }
+
+                          handleInputChange({
+                            score: enteredValue ? enteredValue : "",
+                            ...assessment,
+                          });
+                        }}
+                      />
+                    </Table.Td>
+
+                    <Table.Td
+                      className={`  bg-white border-b border-grey dark:bg-darkmode-600 `}
+                    >
+                      <span
+                        className={`${getDescriptionColor(
+                          assessment?.assessmentDetails?.grading_score || 0 // Fallback if score is undefined
+                        )}`}
+                      >
+                        <b>
+                          {assessment?.assessmentDetails?.grading_score == 4
+                            ? "Exceeding Expectation(4): "
+                            : ""}
+                          {assessment?.assessmentDetails?.grading_score == 3
+                            ? "Meeting Expectation(3): "
+                            : ""}
+                          {assessment?.assessmentDetails?.grading_score == 2
+                            ? "Approaching Expectation(2): "
+                            : ""}
+                          {assessment?.assessmentDetails?.grading_score == 1
+                            ? "Below Expectation(1): "
+                            : ""}
+                        </b>
+                        <br />
+                      </span>
+                      {assessment?.assessmentDetails?.description ||
+                        "Not assessed"}
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          </div>
+          <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+            {/* <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -612,8 +611,7 @@ function Main() {
                   </FormSelect>
                 </div>
               </div> */}
-            </div>
-          </form>
+          </div>
         </>
       ) : (
         <>
