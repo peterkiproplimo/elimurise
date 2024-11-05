@@ -66,7 +66,7 @@ function Main() {
   const [learner, setLearner] = useState("");
   const [substrand, setSubstrand] = useState<any>({});
   const [indicator, setIndicator] = useState("");
-  const [selectedTerm, setSelectedTerm] = useState("");
+  const [selectedTerm, setSelectedTerm] = useState("1");
   const [strand, setStrand] = useState("");
   const [selectedSubStrand, setSelectedSubStrand] = useState("");
   const [enrollments, setEnrollments] = useState([]);
@@ -252,7 +252,7 @@ function Main() {
   };
   useEffect(() => {
     handleTestChange();
-  }, [selectedTerm, strandFilter.grade]);
+  }, [selectedTerm, learner, strandFilter.grade]);
   const handleStrandChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -415,6 +415,7 @@ function Main() {
     }
     isLoading(true);
     try {
+      console.log(data);
       validateData(data);
 
       let res = await ApiService.getSummativeByLearners(data);
@@ -769,11 +770,8 @@ function Main() {
                   value={selectedTerm}
                   onChange={(event: any) => {
                     setSelectedTerm(event);
-                    handleTestChange();
                   }}
                 >
-                  <option>Select Academic Term</option>
-
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
