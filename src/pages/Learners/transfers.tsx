@@ -69,8 +69,8 @@ function Main() {
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
     // school: "na",
-    grade: "na",
-    stream: "na",
+    grade: "",
+    stream: "",
   });
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
@@ -151,7 +151,9 @@ function Main() {
     getStreams();
   }, [grade]);
   useEffect(() => {
-    getStudents();
+    if (strandFilter.stream !== "") {
+      getStudents();
+    }
   }, [strandFilter]);
   useEffect(() => {
     getTransfers();
@@ -222,55 +224,7 @@ function Main() {
     console.log(record);
     setDialog(true);
   };
-  const handleGuardianIdNoBlur = async () => {
-    reset({
-      ...getValues(),
-      guardian_id_no: guardianIdNo,
-      guardian: "",
-      guardian_first_name: "",
-      guardian_email: "",
-      guardian_last_name: "",
-      guardian_surname: "",
-      guardian_phone: "",
-    });
-    const res = await ApiService.getOneParents({ search: guardianIdNo });
-    const response = res.data;
-    console.log(response._id);
-    reset({
-      ...getValues(),
-      guardian_id_no: guardianIdNo,
-      guardian: response._id,
-      guardian_first_name: response.first_name,
-      guardian_email: response.email,
-      guardian_last_name: response.last_name,
-      guardian_surname: response.surname,
-      guardian_phone: response.phone,
-    });
-  };
-  const handleGuardianIdNoBlur2 = async () => {
-    reset({
-      ...getValues(),
-      guardian2_id_no: guardianIdNo2,
-      guardian2: "",
-      guardian2_first_name: "",
-      guardian2_email: "",
-      guardian2_last_name: "",
-      guardian2_surname: "",
-      guardian2_phone: "",
-    });
-    const res = await ApiService.getOneParents({ search: guardianIdNo2 });
-    const response = res.data;
-    reset({
-      ...getValues(),
-      guardian2_id_no: guardianIdNo2,
-      guardian2: response._id,
-      guardian2_first_name: response.first_name,
-      guardian2_email: response.email,
-      guardian2_last_name: response.last_name,
-      guardian2_surname: response.surname,
-      guardian2_phone: response.phone,
-    });
-  };
+
   const cancel = (record: any) => {
     setGroup([""]);
     setPermission([""]);
@@ -416,7 +370,7 @@ function Main() {
                       })
                     }
                   >
-                    <option>Select Stream</option>
+                    <option value={""}>Select Stream</option>
 
                     {streams.map((stream: any, key) => (
                       <option key={key} value={stream._id}>
