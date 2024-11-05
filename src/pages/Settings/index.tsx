@@ -67,7 +67,7 @@ function Settings() {
           i <= currentYear + yearsForward;
           i++
         ) {
-          years.push(`${i}-${i + 1}`);
+          years.push(`${i}`);
         }
 
         setAcademicYears(years);

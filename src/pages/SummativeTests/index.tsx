@@ -273,8 +273,8 @@ function Main() {
                   // defaultValue={selectedLevel}
                 >
                   <option value={""}>Select Type</option>
-                  <option value={"Tunner"}>Tunner</option>
-                  <option value={"Mid Term"}>Mid Term</option>
+                  <option value={"Tunner"}>Tunner-Up</option>
+                  <option value={"Mid Term"}>Mid-Term</option>
                   <option value={"End of the Term"}>End of the Term</option>
                 </FormSelect>
                 {errors.grade && (
