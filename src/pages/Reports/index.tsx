@@ -113,10 +113,7 @@ function Main() {
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
-  const getTerms = async () => {
-    const response = await ApiService.getTerm({});
-    setTerms(response.data);
-  };
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -194,7 +191,7 @@ function Main() {
 
   useEffect(() => {
     getGrades();
-    getTerms();
+
     // getLevels();
     getLearningAreas();
   }, []);
@@ -243,62 +240,6 @@ function Main() {
     // setSubstrands([]);
     // setSubstrands(res.data);
   };
-
-  const handleStrandChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    // await setSelectedStrand(selectedValue);
-    setSubstrands([]);
-    setStrand(selectedValue);
-    // ///call substrands for this strand
-    let res = await ApiService.getSubstrandByStrand(
-      { limit: 10000 },
-      selectedValue
-    );
-    console.log(res.data);
-
-    setSubstrands(res.data);
-    // You might want to fetch filtered data here
-  };
-
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteStrand(recordId);
-      getStrands();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
-
-  const editRecord = (record: any) => {
-    setGroup(record.groups);
-    reset(record);
-    reset({ ...record, learning_area: record.learning_area._id });
-
-    console.log(record);
-    setDialog(true);
-  };
-
-  const cancel = (record: any) => {
-    setGroup([""]);
-    setPermission([""]);
-    reset(record);
-    setDialog(false);
-  };
-  useEffect(() => {
-    getStrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [strandFilter, search, page, limit]);
 
   const handleGradeChange = async (
     event: React.ChangeEvent<HTMLSelectElement>

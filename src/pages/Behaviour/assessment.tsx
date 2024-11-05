@@ -124,10 +124,7 @@ function Main() {
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
-  const getTerms = async () => {
-    const response = await ApiService.getTerm({});
-    setTerms(response.data);
-  };
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -191,7 +188,6 @@ function Main() {
 
   useEffect(() => {
     getGrades();
-    getTerms();
     // getLevels();
     getLearningAreas();
   }, []);

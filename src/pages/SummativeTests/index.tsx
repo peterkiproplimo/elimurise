@@ -113,16 +113,11 @@ function Main() {
   }, [search, limit, page]);
   useEffect(() => {
     getGrades();
-    getTerms();
   }, [search, page, limit]);
 
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
     setGrades(response.data);
-  };
-  const getTerms = async () => {
-    const response = await ApiService.getTerm({});
-    setTerms(response.data);
   };
 
   const getTests = async () => {
@@ -274,7 +269,7 @@ function Main() {
                 >
                   <option value={""}>Select Type</option>
                   <option value={"Tunner"}>Tunner-Up</option>
-                  <option value={"Mid Term"}>Mid-Term</option>
+                  <option value={"Mid Term"}>Miderm</option>
                   <option value={"End of the Term"}>End of the Term</option>
                 </FormSelect>
                 {errors.grade && (

@@ -95,13 +95,6 @@ function Main() {
     }
   };
 
-  useEffect(() => {
-    getTerms();
-  }, [search, page, limit, academicId]);
-  useEffect(() => {
-    getAcademicYear();
-    setAcademicId(academic);
-  }, []);
   const getTerms = async () => {
     const response = await ApiService.getTerm({
       page: 1,

@@ -47,8 +47,6 @@ function Settings() {
   });
   useEffect(() => {
     const fetchData = async () => {
-      await getAcademicYears();
-      await getTerms();
       await getSchoolDetails();
     };
 
@@ -89,15 +87,6 @@ function Settings() {
       });
     } catch (error) {
       console.error("Failed to fetch academic years", error);
-    }
-  };
-
-  const getTerms = async () => {
-    try {
-      const response = await ApiService.getTerm({ page: 1 });
-      setTerms(response.data);
-    } catch (error) {
-      console.error("Failed to fetch terms", error);
     }
   };
 

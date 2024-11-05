@@ -81,20 +81,20 @@ function Main() {
   const location = useLocation();
   const learningArea = location?.state?.data;
   const initialState = {
-    grade: learningArea?.grade_id?._id || "na",
-    learning_area: learningArea?._id || "na",
-    term: learningArea?._id ? 1 : "na",
+    grade: learningArea?.grade_id?._id || "",
+    learning_area: learningArea?._id || "",
+    term: learningArea?._id ? 1 : "",
   };
   const [academic_terms, setTerms] = useState([]);
 
   // const [selectedStrand, setSelectedStrand] = useState(
-  //   state_strand?._id || "na"
+  //   state_strand?._id || ""
   // );
 
   // const [strandFilter, setStrandFilter] = useState({
-  //   grade: "na",
-  //   learning_area: "na",
-  //   term: "na",
+  //   grade: "",
+  //   learning_area: "",
+  //   term: "",
   // });
   // useState(() => {
   //   console.log(selectedSubStrand);
@@ -108,10 +108,7 @@ function Main() {
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
-  const getTerms = async () => {
-    const response = await ApiService.getTerm({});
-    setTerms(response.data);
-  };
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -175,7 +172,6 @@ function Main() {
 
   useEffect(() => {
     getGrades();
-    getTerms();
     // getLevels();
     getLearningAreas();
   }, []);
@@ -188,15 +184,17 @@ function Main() {
     setStreams(response.data);
   };
   const getStrands = async () => {
-    const response = await ApiService.getStrands(
-      {
-        page: page,
-        search: search,
-        limit: limit,
-      },
-      strandFilter
-    );
-    setStrands(response.data);
+    if (strandFilter.grade && strandFilter.term) {
+      const response = await ApiService.getStrands(
+        {
+          page: page,
+          search: search,
+          limit: limit,
+        },
+        strandFilter
+      );
+      setStrands(response.data);
+    }
   };
 
   const getGrades = async () => {
@@ -205,7 +203,7 @@ function Main() {
     setGrades(response.data);
   };
   const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({ limit: 100000 });
+    const response = await ApiService.getLearningAreas({});
     setLearningAreas(response.data);
   };
 
@@ -307,8 +305,8 @@ function Main() {
     setStream("");
     setStrands([]);
     await setStrandFilter({
-      learning_area: "na",
-      term: "na",
+      learning_area: "",
+      term: "",
       grade: selectedValue,
     });
     getStreams(selectedValue);

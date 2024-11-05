@@ -55,7 +55,7 @@ function Main() {
   const [hasTheme, setHasTheme] = useState(false);
   const [strands, setStrands] = useState([]);
   const [tests, setTests] = useState([]);
-  const [test, setTest] = useState([]);
+  const [test, setTest] = useState("");
   const [streams, setStreams] = useState([]);
   const [substrands, setSubstrands] = useState([]);
   const [stream, setStream] = useState("");
@@ -83,11 +83,7 @@ function Main() {
   const navigate = useNavigate();
   const location = useLocation();
   const learningArea = location?.state?.data;
-  const initialState = {
-    grade: learningArea?.grade_id?._id || "na",
-    learning_area: learningArea?._id || "na",
-    term: learningArea?._id ? 1 : "na",
-  };
+
   const [academic_terms, setTerms] = useState([]);
 
   // const [selectedStrand, setSelectedStrand] = useState(
@@ -102,9 +98,10 @@ function Main() {
   // useState(() => {
   //   console.log(selectedSubStrand);
   // }, []);
-  const [strandFilter, updateStrandFilter] = useState(() => {
-    const savedState = localStorage.getItem("strandFilter");
-    return initialState;
+  const [strandFilter, updateStrandFilter] = useState({
+    grade: "",
+    learning_area: "",
+    term: "",
   });
   const terms = [
     { _id: 1, name: "Term 1" },
@@ -240,7 +237,7 @@ function Main() {
     const selectedValue = event.target.value;
     setStream("");
     setStrands([]);
-    setTest([]);
+    setTests([]);
     await setStrandFilter({
       learning_area: "",
       term: "1",
@@ -293,6 +290,29 @@ function Main() {
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
+  const validateData = (data: any) => {
+    // Check each key for null or undefined
+    if (!data.term) {
+      throw new Error("Academic Term is required.");
+    }
+
+    if (!data.stream) {
+      throw new Error("Stream is required.");
+    }
+
+    if (!data.learning_area) {
+      throw new Error("Learning Area is required.");
+    }
+
+    if (!data.test) {
+      throw new Error("Test is required.");
+    }
+
+    // if (!data.adm_no) {
+    //   throw new Error("Admission number (ADM NO) is required.");
+    // }
+  };
+
   const generateAssessment = async () => {
     const data = {
       term: selectedTerm,
@@ -304,6 +324,8 @@ function Main() {
 
     isLoading(true);
     try {
+      validateData(data);
+
       let res = await ApiService.getSummativeAssessment(data);
       setEnrollments(res.data);
       setMeta(res.meta);
@@ -324,22 +346,57 @@ function Main() {
       notify.current?.showToast();
     }
   };
+  const validateAssessmentData = (data: any) => {
+    // Check each key for null or undefined
+    if (!data.stream) {
+      throw new Error("Stream is required.");
+    }
+
+    if (!data.term) {
+      throw new Error("Academic Term is required.");
+    }
+
+    if (!data.learning_area) {
+      throw new Error("Learning Area is required.");
+    }
+
+    if (!data.test) {
+      throw new Error("Test is required.");
+    }
+
+    if (isNaN(data.score) || data.score === null || data.score === undefined) {
+      throw new Error("Score must be a valid number.");
+    }
+
+    if (!data.learner || !data.learner._id) {
+      throw new Error("Learner information is missing or invalid.");
+    }
+  };
+
   const handleInputChange = async (data: any) => {
     // if (data.score < 1 || data.score > 4) {
     //   return false;
     // }
-    const assessment = {
-      stream: stream,
-      term: selectedTerm,
-      learning_area: strandFilter.learning_area,
-      test: test,
-      score: Number(data.score),
-      learner: data?.learner?._id,
-    };
-    let res = await ApiService.createSummativeTests(assessment);
-    console.log(assessment);
-    console.log(res);
-    generateAssessment();
+    try {
+      const assessment = {
+        stream: stream,
+        term: selectedTerm,
+        learning_area: strandFilter.learning_area,
+        test: test,
+        score: Number(data.score),
+        learner: data?.learner?._id,
+      };
+      await validateAssessmentData(assessment);
+      let res = await ApiService.createSummativeTests(assessment);
+      console.log(assessment);
+      console.log(res);
+      generateAssessment();
+    } catch (error: any) {
+      setSuccess(false);
+      console.log(error);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
   };
 
   const getDescriptionColor = (score: any) => {
@@ -784,7 +841,7 @@ function Main() {
           {/* END: Delete Confirmation Modal */}
         </>
       )}
-      {/* <Notification
+      <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {
           notify.current = el;
@@ -799,7 +856,7 @@ function Main() {
           <div className="font-medium">{success ? "Success" : "Failed"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
-      </Notification> */}
+      </Notification>
     </>
   );
 }

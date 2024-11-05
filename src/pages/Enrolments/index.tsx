@@ -144,12 +144,6 @@ function Main() {
     setStreams(response.data);
     console.log(response);
   };
-  const getAcademics = async () => {
-    const response = await ApiService.getAcademic({
-      page: 1,
-    });
-    setAcademic(response.data);
-  };
 
   const deleteRecord = async () => {
     isLoading(true);

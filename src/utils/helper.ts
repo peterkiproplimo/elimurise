@@ -204,15 +204,8 @@ const is_admin = (): boolean | null => {
   return type && type == "school" ? true : false;
 };
 function getNextSession(currentSession: any) {
-  // Split the current session string to extract start and end years
-  const [startYear, endYear] = currentSession.split("-").map(Number);
-
-  // Increment each year by 1 for the next session
-  const nextStartYear = startYear + 1;
-  const nextEndYear = endYear + 1;
-
   // Return in the format "nextStartYear-nextEndYear"
-  return `${nextStartYear}-${nextEndYear}`;
+  return `${Number(currentSession) + 1}`;
 }
 
 // Example usage
