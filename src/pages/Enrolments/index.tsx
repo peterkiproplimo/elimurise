@@ -240,7 +240,7 @@ function Main() {
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -256,10 +256,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -471,10 +468,8 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">
-            Learners Enrollment
-          </h2>
-          <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+          <h2 className="mt-1 text-lg font-medium ">Learners Enrollment</h2>
+          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
             <Button
               variant="primary"
               className="mr-2 shadow-md"
@@ -561,7 +556,7 @@ function Main() {
               )}
             </div> */}
 
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -610,7 +605,7 @@ function Main() {
                     </Table.Thead>
                     <Table.Tbody>
                       {learners.map((enrollment: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
+                        <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {key + 1}
@@ -709,8 +704,8 @@ function Main() {
                       ))}
                     </Table.Tbody>
                   </Table>
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}

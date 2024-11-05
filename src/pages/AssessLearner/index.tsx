@@ -49,7 +49,7 @@ function Main() {
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
@@ -385,8 +385,11 @@ function Main() {
       learning_area: strandFilter.learning_area,
       score: Number(data.score),
       strand: strand,
-      enrollment: data?.enrollment?.enrollmentId,
+      learner: data?.learner?._id,
     };
+    console.log(data);
+
+    console.log(assessment);
     let res = await ApiService.createAssessment(assessment);
     console.log(assessment);
     console.log(res);
@@ -440,10 +443,7 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form
-            className="mt-5 p-5 intro-y validate-form  "
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  validate-form  " onSubmit={onSubmit}>
             <div className="assessment-header">
               <h2 className="text-xl flex items-center font-semibold mb-5">
                 <a
@@ -524,8 +524,8 @@ function Main() {
                 </div>
               </div>
             </div>
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+              <div className="flex flex-wrap  col-span-12 mt-2  xl:flex-nowrap">
                 <div className="hidden mx-auto md:block text-slate-500 mt-5"></div>
                 <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
                   <div className="relative w-56 text-slate-500">
@@ -566,19 +566,19 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {enrollments.map((enrollment: any, key) => (
+                  {enrollments.map((assessment: any, key) => (
                     <Table.Tr key={key} className="">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         {key + 1}
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="flex items-center  ">
-                          {enrollment?.learner?.adm_no}
+                          {assessment?.learner?.adm_no}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="flex items-center  ">
-                          {enrollment?.learner?.nemis_no}
+                          {assessment?.learner?.nemis_no}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -589,9 +589,9 @@ function Main() {
                             className="w-12 h-12   "
                           /> */}
                           <div className="ml-4">
-                            {enrollment?.learner?.first_name}{" "}
-                            {enrollment?.learner?.last_name}{" "}
-                            {enrollment?.learner?.surname}
+                            {assessment?.learner?.first_name}{" "}
+                            {assessment?.learner?.last_name}{" "}
+                            {assessment?.learner?.surname}
                           </div>
                         </div>
                       </Table.Td>
@@ -603,7 +603,7 @@ function Main() {
                           className={`form-control  w-[100px] ${
                             getValues("score") ? "is-invalid" : ""
                           }`}
-                          defaultValue={enrollment?.assessmentDetails?.score}
+                          defaultValue={assessment?.assessmentDetails?.score}
                           max={4}
                           min={1}
                           onChange={(e) => {
@@ -618,33 +618,33 @@ function Main() {
                             }
                             handleInputChange({
                               score: e.target.value,
-                              enrollment,
+                              ...assessment,
                             });
                           }}
                         />
                       </Table.Td>
                       <Table.Td
                         className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  ${getDescriptionColor(
-                          enrollment?.assessmentDetails?.score
+                          assessment?.assessmentDetails?.score
                         )}`}
                       >
                         <span>
                           <b>
-                            {enrollment?.assessmentDetails?.score == 4
+                            {assessment?.assessmentDetails?.score == 4
                               ? "Exceeding Expectation: "
                               : ""}
-                            {enrollment?.assessmentDetails?.score == 3
+                            {assessment?.assessmentDetails?.score == 3
                               ? "Meeting Expectation: "
                               : ""}
-                            {enrollment?.assessmentDetails?.score == 2
+                            {assessment?.assessmentDetails?.score == 2
                               ? "Approaching Expectation: "
                               : ""}
-                            {enrollment?.assessmentDetails?.score == 1
+                            {assessment?.assessmentDetails?.score == 1
                               ? "Below Expectation: "
                               : ""}
                           </b>
                           <br />
-                          {enrollment?.assessmentDetails?.description}
+                          {assessment?.assessmentDetails?.description}
                         </span>
                       </Table.Td>
                     </Table.Tr>
@@ -656,7 +656,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -730,12 +730,17 @@ function Main() {
                   onChange={(event: any) => setSelectedTerm(event)}
                 >
                   <option>Select Academic Term</option>
-
-                  {academic_terms.map((term: any, key) => (
+                  {/* <option>Select Term</option> */}
+                  {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
                     </option>
                   ))}
+                  {/* {.map((term: any, key) => (
+                    <option key={key} value={term._id}>
+                      {term.name}
+                    </option>
+                  ))} */}
                 </TomSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">

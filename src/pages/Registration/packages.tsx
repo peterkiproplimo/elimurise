@@ -192,7 +192,7 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           </div>
         )}
         {/* <div className="buttons flex justify-center items-center mt-10">
-          <div className=" text-center intro-x  xl:text-left">
+          <div className=" text-center   xl:text-left">
             <Button
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
@@ -209,7 +209,7 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
               </Link>
             </Button>
           </div>
-          <div className=" text-center intro-x  xl:text-left">
+          <div className=" text-center   xl:text-left">
             <Button
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"

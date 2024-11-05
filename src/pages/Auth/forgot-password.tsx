@@ -69,14 +69,14 @@ const ForgotPassword = () => {
   return (
     <>
       <div className="w-full px-5 py-8 mx-auto my-auto bg-white rounded-md shadow-md xl:ml-20 dark:bg-darkmode-600 xl:bg-transparent sm:px-8 xl:p-0 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto">
-        <h2 className="text-2xl font-bold text-center intro-x xl:text-3xl xl:text-left">
+        <h2 className="text-2xl font-bold text-center  xl:text-3xl xl:text-left">
           Forgot Password
         </h2>
-        <div className="mt-2 text-center intro-x text-slate-400 xl:hidden">
+        <div className="mt-2 text-center  text-slate-400 xl:hidden">
           Enter your email to re set your password.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
-          <div className="mt-8 intro-x">
+          <div className="mt-8 ">
             <div className="input-form">
               <FormInput
                 {...register("email")}
@@ -85,8 +85,8 @@ const ForgotPassword = () => {
                 name="email"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px]"
                 }
                 placeholder="Email"
               />
@@ -108,8 +108,8 @@ const ForgotPassword = () => {
                 value={"email"}
                 className={
                   errors.channel
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px]"
                 }
                 placeholder="channel"
               />
@@ -121,7 +121,7 @@ const ForgotPassword = () => {
               )}
             </div>
           </div>
-          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+          <div className="mt-5 text-center  xl:mt-8 xl:text-left">
             <Button
               type="submit"
               variant="primary"

@@ -4,8 +4,6 @@ import { parseColor } from "tailwindcss/lib/util/color";
 
 dayjs.extend(duration);
 
-
-
 const cutText = (text: string, length: number) => {
   if (text.split(" ").length > 1) {
     const string = text.substring(0, length);
@@ -129,7 +127,7 @@ const stringToHTML = (arg: string) => {
 const slideUp = (
   el: HTMLElement,
   duration = 300,
-  callback = (el: HTMLElement) => { }
+  callback = (el: HTMLElement) => {}
 ) => {
   el.style.transitionProperty = "height, margin, padding";
   el.style.transitionDuration = duration + "ms";
@@ -158,7 +156,7 @@ const slideUp = (
 const slideDown = (
   el: HTMLElement,
   duration = 300,
-  callback = (el: HTMLElement) => { }
+  callback = (el: HTMLElement) => {}
 ) => {
   el.style.removeProperty("display");
   let display = window.getComputedStyle(el).display;
@@ -187,8 +185,42 @@ const slideDown = (
     callback(el);
   }, duration);
 };
+interface School {
+  [key: string]: any; // Allows for additional properties if needed
+}
 
+// Function to store the school object in localStorage
+const setSchool = (school: School): void => {
+  localStorage.setItem("school", JSON.stringify(school));
+};
+
+// Function to retrieve the school object from localStorage
+const getSchool = (): School | null => {
+  const schoolData = localStorage.getItem("school");
+  return schoolData ? (JSON.parse(schoolData) as School) : null;
+};
+const is_admin = (): boolean | null => {
+  const type = localStorage.getItem("type");
+  return type && type == "school" ? true : false;
+};
+function getNextSession(currentSession: any) {
+  // Split the current session string to extract start and end years
+  const [startYear, endYear] = currentSession.split("-").map(Number);
+
+  // Increment each year by 1 for the next session
+  const nextStartYear = startYear + 1;
+  const nextEndYear = endYear + 1;
+
+  // Return in the format "nextStartYear-nextEndYear"
+  return `${nextStartYear}-${nextEndYear}`;
+}
+
+// Example usage
 export {
+  getNextSession,
+  is_admin,
+  setSchool,
+  getSchool,
   cutText,
   formatDate,
   capitalizeFirstLetter,

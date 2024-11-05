@@ -314,7 +314,7 @@ function Main() {
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -331,7 +331,7 @@ function Main() {
           </div>
           <br />
           <form
-            className="mt-5 p-5 intro-y box validate-form"
+            className="mt-5 p-5  box validate-form"
             // onSubmit={onSubmit}
           >
             {message && !success && (
@@ -374,7 +374,7 @@ function Main() {
                 href="#"
               ></a>
             </div>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
+            <fieldset className="mt-5 p-5  box validate-form">
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">
@@ -521,7 +521,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">Transfers</h2>
+          <h2 className="mt-1 text-lg font-medium ">Transfers</h2>
           {message && success && (
             <Alert
               variant="soft-success"
@@ -553,7 +553,7 @@ function Main() {
             // </div>
           )}
 
-          <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
             <div className="hidden mx-auto md:block text-slate-500">
               Showing{" "}
               {pagination.current_page +
@@ -580,7 +580,7 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -628,7 +628,7 @@ function Main() {
                     </Table.Thead>
                     <Table.Tbody>
                       {tranfers.map((tranfer: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
+                        <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                             <span className="font-medium whitespace-nowrap">
                               {key + 1}
@@ -652,7 +652,9 @@ function Main() {
                               <div className="ml-4">
                                 <a
                                   href="#"
-                                  onClick={() => editRecord(tranfer)}
+                                  onClick={(e: any) => {
+                                    e.preventDefault();
+                                  }}
                                   className="font-medium whitespace-nowrap"
                                 >
                                   {tranfer?.learner?.first_name &&
@@ -760,8 +762,8 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}

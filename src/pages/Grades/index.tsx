@@ -85,8 +85,8 @@ function Main() {
         <></>
       ) : (
         <>
-          <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-            <h2 className="mt-1 text-lg font-medium intro-y">Grades</h2>
+          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
+            <h2 className="mt-1 text-lg font-medium ">Grades</h2>
             {message && success && (
               <Alert
                 variant="soft-success"
@@ -161,7 +161,7 @@ function Main() {
                   </Table.Thead>
                   <Table.Tbody>
                     {grades.map((grade: any, key) => (
-                      <Table.Tr key={key} className="intro-x">
+                      <Table.Tr key={key} className="">
                         <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                           <span className="font-medium whitespace-nowrap">
                             {limit * (page - 1) + key + 1}
@@ -172,11 +172,11 @@ function Main() {
                           onClick={(e: any) => openLearningArea(grade)}
                         >
                           <div className="flex items-center">
-                            <div className="w-9 h-9 image-fit zoom-in">
+                            <div className="w-9 h-9">
                               <Tippy
                                 as="img"
                                 alt=""
-                                className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                className=""
                                 src={avarter}
                                 content={grade.name}
                               />
@@ -206,8 +206,8 @@ function Main() {
                     ))}
                   </Table.Tbody>
                 </Table>
-                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                     <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
                         onClick={() => setPage(page > 1 ? page - 1 : 1)}

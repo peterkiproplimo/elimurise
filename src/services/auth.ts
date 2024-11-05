@@ -149,6 +149,35 @@ export const setCurrentSettings = async (data: any) => {
   }
 };
 
+export async function importLearners(data: FieldValues) {
+  try {
+    let res = await axios.post(c.LEARNERS + "/import", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function exportLearners(data: FieldValues) {
+  try {
+    let res = await axios.post(c.LEARNERS + "/export", data, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(
+      new Blob([res.data], { type: "text/csv" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "learners.csv"); // Filename for download
+    document.body.appendChild(link);
+    link.click(); // Trigger the download
+    link.remove(); // Clean up the DOM
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
 export async function createAcademic(data: any) {
   try {
     if (data._id) {
@@ -447,6 +476,42 @@ export async function deleteLearner(gradeId: any) {
     throw handler(e);
   }
 }
+export async function toggleLearnerStatus(gradeId: any) {
+  try {
+    let res = await axios.put(c.LEARNERS + "/" + gradeId + "/status");
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function deleteTransfer(transferId: any) {
+  try {
+    let res = await axios.delete(c.TRANSFERS + "/" + transferId);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getBehaviour() {
+  try {
+    let res = await axios.get(c.BEHAVIOUR);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function createBehaviour(data: any) {
+  try {
+    let res = await axios.post(c.BEHAVIOUR, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 export const getParents = async (data: any) => {
   try {
@@ -482,6 +547,16 @@ export async function createParents(data: FieldValues) {
 export async function parentDashboard() {
   try {
     let res = await axios.get(c.PARENT + "/v1/dashboard");
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function leanerClasses(learner: any) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/learner-classes", {
+      params: learner,
+    });
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -618,7 +693,16 @@ export async function createStrand(data: FieldValues) {
     throw handler(e);
   }
 }
-export async function leanersPromotion(data: FieldValues) {
+export async function fetchPromotion(data: FieldValues) {
+  try {
+    let res = await axios.post(c.ENROLLMENT + "/enroll", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function leanersPromote(data: FieldValues) {
   try {
     let res = await axios.put(c.ENROLLMENT + "/enroll", data);
     return res.data;
@@ -680,6 +764,42 @@ export const getSummativeAssessment = async (data: any) => {
     throw handler(e);
   }
 };
+export const getBehaviourAssessment = async (data: any) => {
+  try {
+    let res = await axios.get(c.BEHAVIOUR + "/assessment", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const createBehaviourAssessment = async (data: any) => {
+  try {
+    let res = await axios.put(c.BEHAVIOUR + "/assessment", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getCommentAssessment = async (data: any) => {
+  try {
+    let res = await axios.get(c.COMMENTS + "/assessment", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const createCommentAssessment = async (data: any) => {
+  try {
+    let res = await axios.put(c.COMMENTS + "/assessment", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
 export const getReportByLearners = async (data: any) => {
   try {
@@ -702,6 +822,8 @@ export const getSummativeByLearners = async (data: any) => {
     let type =
       data.type == "analysis-grade" || data.type == "analysis-stream"
         ? "/analysis"
+        : data.type == "learner-comparison"
+        ? "-comparison"
         : data.type == "grade" || data.type == "stream"
         ? "/all"
         : "";
@@ -906,62 +1028,9 @@ export async function payment(data: FieldValues) {
   }
 }
 
-export async function forgotPassword(email: string) {
-  try {
-    let res = await axios.post(c.FORGOT_PASSWORD + email);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function changePassword(data: any) {
-  try {
-    let res = await axios.post(c.CHANGE_PASSWORD, data);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
 export async function schoolDashboard() {
   try {
     let res = await axios.get(c.SCHOOLDASHBOARD);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function getConferences() {
-  try {
-    let res = await axios.get(c.CONFERENCES);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function getThemes(data: { page: number }) {
-  try {
-    let res = await axios.get(c.THEMES + "?page=" + data.page);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function getPolicy() {
-  try {
-    let res = await axios.get(c.POLICY);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-export async function getEvents(data: { page: any }) {
-  try {
-    let res = await axios.get(c.EVENTS + "?page=" + data.page);
     return res.data;
   } catch (e) {
     throw handler(e);

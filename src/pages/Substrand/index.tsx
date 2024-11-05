@@ -481,7 +481,7 @@ function Main() {
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -492,7 +492,7 @@ function Main() {
             >
               <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             </a>
-            <h2 className=" text-lg font-medium intro-y">
+            <h2 className=" text-lg font-medium ">
               <span
                 className="font-medium whitespace-nowrap"
                 dangerouslySetInnerHTML={{ __html: substrand.name }}
@@ -500,7 +500,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form className=" intro-y  validate-form" onSubmit={onSubmit}>
+          <form className="   validate-form" onSubmit={onSubmit}>
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -611,7 +611,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y flex flex-wrap">
+          <h2 className="mt-1 text-lg font-medium  flex flex-wrap">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -646,7 +646,7 @@ function Main() {
             ) : (
               <>
                 {substrands.map((substrand: any, key) => (
-                  <div className="col-span-12 intro-y md:col-span-6">
+                  <div className="col-span-12  md:col-span-6">
                     <div
                       className="box p-2 min-h-[100px]"
                       onClick={() => editRecord(substrand)}
@@ -689,8 +689,8 @@ function Main() {
                     </div>
                   </div>
                 ))}
-                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                     <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
                         onClick={() => setPage(page > 1 ? page - 1 : 1)}

@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./login.css";
 import logo from "../../assets/images/Untitled-1.png";
+import { setSchool } from "../../utils/helper";
 
 const Login = () => {
   const auth = useAuth();
@@ -80,7 +81,7 @@ const Login = () => {
           isLoading(false);
           console.log(res.user);
           let token = res.token;
-
+          setSchool(res.school);
           if (res.user.teacher) {
             localStorage.setItem("type", "teacher");
           } else {
@@ -123,7 +124,7 @@ const Login = () => {
           <img alt="ACS" className="xl:w-20 md:w-8 xl:w-auto" src={logo} />
         </div>
         <h2 className="text-3xl font-bold  ">Login</h2>
-        <div className="mt-2 text-center intro-x text-slate-900 xl text-xl">
+        <div className="mt-2 text-center  text-slate-900 xl text-xl">
           Please log in to continue.
         </div>
         <div>
@@ -151,7 +152,7 @@ const Login = () => {
 
         {selectedForm === "form1" ? (
           <form className="validate-form" onSubmit={onSubmit}>
-            <div className="mt-5 intro-x">
+            <div className="mt-5 ">
               <div className="input-form">
                 <label>Email</label>
                 <FormInput
@@ -161,8 +162,8 @@ const Login = () => {
                   name="email"
                   className={
                     errors.email
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                      : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                      ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                      : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                   }
                   placeholder="Email"
                 />
@@ -183,8 +184,8 @@ const Login = () => {
                     name="password"
                     className={
                       errors.password
-                        ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
-                        : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10 bg-blue-100 border-blue-300"
+                        ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
+                        : "block px-4 py-3 mt-4  min-w-[250px] xl:min-w-[350px] border pr-10 bg-blue-100 border-blue-300"
                     }
                     placeholder="Enter Password"
                   />
@@ -209,7 +210,7 @@ const Login = () => {
                 {/* Eye Icon */}
               </div>
             </div>
-            <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
+            <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
               <div className="flex items-center mr-auto">
                 <FormCheck.Input
                   id="remember-me"
@@ -225,7 +226,7 @@ const Login = () => {
               </div>
               <Link to="/auth/forgot-password">Forgot Password?</Link>
             </div>
-            <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+            <div className="mt-5 text-center  xl:mt-8 xl:text-left">
               <Button
                 variant="primary"
                 className="w-full px-4 py-3 align-top xl:w-22 xl:mr-3"
@@ -246,7 +247,7 @@ const Login = () => {
           </form>
         ) : (
           <form className="validate-form" onSubmit={onSubmit}>
-            <div className="mt-5 intro-x">
+            <div className="mt-5 ">
               <div className="input-form">
                 <label>Guardian Email</label>
                 <FormInput
@@ -256,8 +257,8 @@ const Login = () => {
                   name="email"
                   className={
                     errors.email
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                      : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                      ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                      : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                   }
                   placeholder="Email"
                 />
@@ -277,8 +278,8 @@ const Login = () => {
                   name="code"
                   className={
                     errors.code
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                      : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                      ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                      : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                   }
                   placeholder="School Code"
                 />
@@ -299,8 +300,8 @@ const Login = () => {
                     name="password"
                     className={
                       errors.password
-                        ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
-                        : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10 bg-blue-100 border-blue-300"
+                        ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
+                        : "block px-4 py-3 mt-4  min-w-[250px] xl:min-w-[350px] border pr-10 bg-blue-100 border-blue-300"
                     }
                     placeholder="Enter Password"
                   />
@@ -325,7 +326,7 @@ const Login = () => {
                 {/* Eye Icon */}
               </div>
             </div>
-            <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
+            <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
               <div className="flex items-center mr-auto">
                 <FormCheck.Input
                   id="remember-me"
@@ -341,7 +342,7 @@ const Login = () => {
               </div>
               <Link to="/auth/v1/forgot-password">Forgot Password?</Link>
             </div>
-            <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+            <div className="mt-5 text-center  xl:mt-8 xl:text-left">
               <Button
                 variant="primary"
                 className="w-full px-4 py-3 align-top xl:w-22 xl:mr-3"

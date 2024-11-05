@@ -38,10 +38,16 @@ function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [learningAreas, setLearningAreas] = useState([]);
-  const [academicYear, setAcademicYears] = useState([]);
-  const [terms, setTerms] = useState([]);
-  const [pdfUrl, setPdfUrl] = useState("");
+  const [academicYear, setAcademicYears] = useState<any>([]);
+  const [grade, setGrade] = useState<any>([]);
 
+  // const [terms, setTerms] = useState([]);
+  const [pdfUrl, setPdfUrl] = useState("");
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
@@ -54,13 +60,17 @@ function Main() {
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedLeaningArea, setSelectedLearningArea] = useState("");
   const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
-  const [selectedLearner, setSelectedLearner] = useState("");
+  const [selectedLearner, setSelectedLearner] = useState<any>("");
+  const [selectedLearnerObj, setSelectedLearnerObj] = useState<any>({});
+
   const [test, setTest] = useState("");
 
   const [learners, setLearners] = useState<any>([]);
   const [strand, setStrand] = useState("");
   const [learnerReport, setLearnerReport] = useState<any>([]);
   const [tests, setTests] = useState<any>([]);
+  const [yearFrom, setYearFrom] = useState(2020);
+  const [yearTo, setYearTo] = useState(2020);
 
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -120,11 +130,18 @@ function Main() {
     });
     setLearningAreas(response.data);
   };
-  const getLearningAcademicYear = async () => {
-    const response = await ApiService.getLeanerAcademicYear({
-      learner: selectedLearner,
-    });
-    setAcademicYears(response.data);
+  const generateAcademicYears = () => {
+    console.log(selectedLearnerObj);
+    const currentYear = new Date().getFullYear();
+    const yearsBack = 5;
+    const yearsForward = 7;
+    const years = [];
+
+    for (let i = Number(2020); i <= 2027; i++) {
+      years.push(`${i}-${i + 1}`);
+    }
+
+    setAcademicYears(years);
   };
   useEffect(() => {
     getLeaners();
@@ -134,41 +151,39 @@ function Main() {
 
     setLearners(response.learners);
   };
-
-  const getLearningTerm = async () => {
-    const response = await ApiService.getLeanerTerm({
-      academic_year: selectedAcademicYear,
+  const getLeanerClasses = async () => {
+    const response = await ApiService.leanerClasses({
+      learner: selectedLearner,
     });
 
-    setTerms(response.data);
+    setGrade(response.data);
   };
 
   const getTests = async () => {
     const response = await ApiService.getLeanerTests({
       learner: selectedLearner,
       term: selectedTerm,
+      session: selectedAcademicYear,
     });
 
     setTests(response.data);
   };
   useEffect(() => {
-    getLearningAcademicYear();
+    console.log(selectedLearnerObj);
+    getLeanerClasses();
   }, [selectedLearner]);
-  useEffect(() => {
-    console.log(selectedAcademicYear);
-    getLearningTerm();
-  }, [selectedAcademicYear]);
   useEffect(() => {
     getTests();
 
-    getLearningAreas();
-  }, [selectedTerm]);
+    // getLearningAreas();
+  }, [selectedTerm, selectedAcademicYear]);
   const notify = useRef<NotificationElement>();
   const generateAssessment = async () => {
     const data = {
       term: selectedTerm,
       learner: selectedLearner,
       test,
+      session: selectedAcademicYear,
     };
     isLoading(true);
     try {
@@ -237,7 +252,7 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form className="mt-5 p-5 intro-y validate-form  ">
+          <form className="mt-5 p-5  validate-form  ">
             <div className="assessment-header">
               <h2 className="text-xl flex items-center font-semibold mb-5">
                 <a
@@ -295,7 +310,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -309,13 +324,22 @@ function Main() {
                   {...register("learner")}
                   value={selectedLearner}
                   name="term"
-                  onChange={(event: any) => setSelectedLearner(event)}
+                  onChange={(event: any) => {
+                    const selectedId = event;
+                    const fullLearner = learners.find(
+                      (learner: any) => learner._id === selectedId
+                    );
+                    console.log(fullLearner);
+
+                    setSelectedLearner(selectedId); // Set the entire learner object
+                    setSelectedLearnerObj(fullLearner);
+                  }}
                 >
                   <option value={""}>Select Learner</option>
                   {learners.map((learner: any) => (
-                    <option value={learner.learner._id}>
-                      {learner.learner.adm_no}-{learner.learner.first_name}{" "}
-                      {learner.learner.surname} {learner.learner.last_name}
+                    <option value={learner._id}>
+                      {learner.adm_no}-{learner.first_name} {learner.surname}{" "}
+                      {learner.last_name}
                     </option>
                   ))}
                 </TomSelect>
@@ -330,15 +354,15 @@ function Main() {
                 {/* {JSON.stringify(academicYear)} */}
                 <FormLabel htmlFor="modal-form-6">Grade </FormLabel>
                 <TomSelect
-                  {...register("term")}
+                  {...register("grade")}
                   value={selectedAcademicYear}
-                  name="term"
+                  name="grade"
                   onChange={(event: any) => setSelectedAcademicYear(event)}
                 >
                   <option value={""}>Select Grade</option>
-                  {academicYear.map((year: any, key) => (
-                    <option key={key} value={year.academicYear._id}>
-                      {year.academicYear.name}- {year.stream.grade.name}
+                  {grade.map((grade: any, key: any) => (
+                    <option key={key} value={grade.session}>
+                      {grade.grade}-{grade.stream}
                     </option>
                   ))}
                 </TomSelect>

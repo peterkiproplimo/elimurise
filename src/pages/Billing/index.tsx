@@ -213,7 +213,7 @@ function Main() {
               </Table.Thead>
               <Table.Tbody>
                 {subscriptions.map((subscription: any, key) => (
-                  <Table.Tr key={key} className="intro-x">
+                  <Table.Tr key={key} className="">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
                         {(page - 1) * limit + key + 1}
@@ -316,7 +316,7 @@ function Main() {
           </div>
         )}
         {/* <div className="buttons flex justify-center items-center mt-10">
-          <div className=" text-center intro-x  xl:text-left">
+          <div className=" text-center   xl:text-left">
             <Button
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
@@ -333,7 +333,7 @@ function Main() {
               </Link>
             </Button>
           </div>
-          <div className=" text-center intro-x  xl:text-left">
+          <div className=" text-center   xl:text-left">
             <Button
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-32 xl:mr-3"

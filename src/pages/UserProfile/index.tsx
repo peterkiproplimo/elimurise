@@ -160,12 +160,12 @@ function Main() {
 
   return (
     <>
-      <div className="flex items-center mt-8 intro-y">
+      <div className="flex items-center mt-8 ">
         <h2 className="mr-auto text-lg font-medium"> User Profile </h2>
       </div>
       <Tab.Group>
         {/* BEGIN: Profile Info */}
-        <div className="px-5 pt-5 mt-5 intro-y box">
+        <div className="px-5 pt-5 mt-5  box">
           <div className="flex flex-col pb-5 -mx-5 border-b lg:flex-row border-slate-200/60 dark:border-darkmode-400">
             <div className="flex items-center justify-center flex-1 px-5 lg:justify-start">
               {/* <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
@@ -218,7 +218,7 @@ function Main() {
         <Tab.Panels className="mt-5">
           <Tab.Panel>
             <div className="grid grid-cols-12 gap-6 ">
-              <div className="col-span-12 intro-y box shadow-lg">
+              <div className="col-span-12  box shadow-lg">
                 <div className="flex items-center px-5 py-4 border-b border-slate-200/60 dark:border-darkmode-400">
                   <h2 className="mr-auto text-base font-medium">
                     Update Profile

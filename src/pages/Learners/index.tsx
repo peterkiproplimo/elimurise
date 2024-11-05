@@ -30,6 +30,8 @@ import Alert from "../../base-components/Alert";
 import Dropzone from "dropzone";
 import Tippy from "../../base-components/Tippy";
 import * as c from "../../utils/constants";
+import leanerImg from "../../assets/images/learner.jpeg";
+import { formatDate, is_admin } from "../../utils/helper";
 
 interface TableRow {
   no: number;
@@ -42,6 +44,9 @@ function Main() {
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
   const [grade, setGrade] = useState("");
+  const [uploadDialog, setUploadDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [exportDialog, setExportDialog] = useState(false);
 
   const [schools, setSchools] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
@@ -52,8 +57,10 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [photo, setPhoto] = useState("");
-
+  const [profile, setProfile] = useState(false);
+  const [learner, setLearner] = useState<any>({});
   const [learners, setLearners] = useState([]);
+  const [stream, setStream] = useState("");
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -77,6 +84,7 @@ function Main() {
   const [guardianIdNo, setGuardianIdNo] = useState("");
   const [guardianIdNo2, setGuardianIdNo2] = useState("");
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
 
   const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
@@ -84,6 +92,7 @@ function Main() {
       state: { data: learnerId },
     });
   };
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -157,15 +166,90 @@ function Main() {
   }, [grade]);
   useEffect(() => {
     getStudents();
-  }, [search, page, limit]);
+  }, [search, page, limit, grade, stream]);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      // Check file type
+      if (file.type !== "text/csv" && !file.name.endsWith(".csv")) {
+        alert("Please upload a CSV file.");
+        event.target.value = ""; // Clear the file input to prevent uploading
+        return;
+      }
+
+      setSelectedFile(file);
+    }
+  };
+
+  const exportTemplate = async () => {
+    console.log(selectedFile);
+
+    try {
+      if (!stream) {
+        throw Error("Select stream to download");
+      }
+      const res = await ApiService.exportLearners({
+        stream: stream,
+      });
+      setUploadDialog(false);
+      setSuccess(true);
+      setMessage(res.message);
+      notify.current?.showToast();
+
+      setDialog(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message || "An error occurred while creating the role.");
+      notify.current?.showToast();
+    }
+  };
+  const importData = async () => {
+    console.log(selectedFile);
+
+    if (!loading) {
+      if (!selectedFile) {
+        // Handle case where no file is selected
+        return;
+      }
+      isLoading(true);
+
+      try {
+        const formData = new FormData();
+        formData.append("csvFile", selectedFile);
+        formData.append("stream", "");
+
+        const res = await ApiService.importLearners(formData);
+        // await getStrands();
+        await getStudents();
+        isLoading(false);
+        setUploadDialog(false);
+        setSuccess(true);
+        setMessage(res.message);
+        notify.current?.showToast();
+
+        setDialog(false);
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(
+          error.message || "An error occurred while creating the role."
+        );
+        notify.current?.showToast();
+      }
+    }
+  };
   const getStudents = async () => {
     isLoading(true);
-    const response = await ApiService.getEnrolments(
+    const response = await ApiService.getLearners(
       {
         page,
         search,
         limit,
+        grade,
+        stream,
       },
       strandFilter
     );
@@ -196,6 +280,7 @@ function Main() {
     try {
       let res = await ApiService.deleteLearner(recordId);
       getStudents();
+      setViewMore(false);
       isLoading(false);
       // setConfirmDelete(false);
       setSuccess(true);
@@ -208,33 +293,62 @@ function Main() {
       notify.current?.showToast();
     }
   };
+  const disableRecord = async () => {
+    isLoading(true);
+    try {
+      let res = await ApiService.toggleLearnerStatus(recordId);
+      getStudents();
+      setViewMore(false);
+      isLoading(false);
+      // setConfirmDelete(false);
+      setSuccess(true);
+      setMessage("Learner status changed!");
+      notify.current?.showToast();
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+  const profileRecord = (record: any) => {
+    // setIsEditMode(true);
+    // setGroup(record?.groups);
+    // setPhoto(record?.photo);
+    // setGrade(record?.stream?.grade?._id);
+    // setGuardianIdNo(record?.guardian?.email);
+    // setGuardianIdNo2(record?.guardian2?.email);
+    setLearner(record);
+    console.log(record);
+    setProfile(true);
+  };
 
   const editRecord = (record: any) => {
     setIsEditMode(true);
-    setGroup(record.groups);
-    setPhoto(record.learner.photo);
+    setGroup(record?.groups);
+    setPhoto(record?.photo);
     setGrade(record?.stream?.grade?._id);
-    setGuardianIdNo(record?.learner?.guardian?.email);
-    setGuardianIdNo2(record?.learner?.guardian2?.email);
+    setGuardianIdNo(record?.guardian?.email);
+    setGuardianIdNo2(record?.guardian2?.email);
     reset({
-      ...record.learner,
+      ...record,
       image: "",
       stream: record?.stream?._id,
       grade: record?.stream?.grade?._id,
-      guardian_id_no: record?.learner?.guardian?.id_no,
-      guardian: record?.learner?.guardian?._id,
-      guardian_first_name: record?.learner?.guardian?.first_name,
-      guardian_email: record?.learner?.guardian?.email,
-      guardian_last_name: record?.learner?.guardian?.last_name,
-      guardian_surname: record?.learner?.guardian?.surname,
-      guardian_phone: record?.learner?.guardian?.phone,
-      guardian2_id_no: record?.learner?.guardian2?.id_no,
-      guardian2: record?.learner?.guardian2?._id,
-      guardian2_first_name: record?.learner?.guardian2?.first_name,
-      guardian2_email: record?.learner?.guardian2?.email,
-      guardian2_last_name: record?.learner?.guardian2?.last_name,
-      guardian2_surname: record?.learner?.guardian2?.surname,
-      guardian2_phone: record?.learner?.guardian2?.phone,
+      guardian_id_no: record?.guardian?.id_no,
+      guardian: record?.guardian?._id,
+      guardian_first_name: record?.guardian?.first_name,
+      guardian_email: record?.guardian?.email,
+      guardian_last_name: record?.guardian?.last_name,
+      guardian_surname: record?.guardian?.surname,
+      guardian_phone: record?.guardian?.phone,
+      guardian2_id_no: record?.guardian2?.id_no,
+      guardian2: record?.guardian2?._id,
+      guardian2_first_name: record?.guardian2?.first_name,
+      guardian2_email: record?.guardian2?.email,
+      guardian2_last_name: record?.guardian2?.last_name,
+      guardian2_surname: record?.guardian2?.surname,
+      guardian2_phone: record?.guardian2?.phone,
     });
     console.log(record);
     setDialog(true);
@@ -322,9 +436,9 @@ function Main() {
   };
   return (
     <>
-      {dialog ? (
+      {dialog && !profile ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -342,10 +456,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
             {/* {message && !success && (
               <Alert
                 variant="soft-danger"
@@ -367,7 +478,7 @@ function Main() {
                 href="#"
               ></a>
             </div>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
+            <fieldset className="mt-5 p-5  box validate-form">
               <legend className="text-lg font-semibold">Learner Details</legend>
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
@@ -530,7 +641,7 @@ function Main() {
                 </div>
               </div>
             </fieldset>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
+            <fieldset className="mt-5 p-5  box validate-form">
               <legend className="text-lg font-semibold">
                 Guardian Details
               </legend>
@@ -670,7 +781,7 @@ function Main() {
                 </div>
               </div>
             </fieldset>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
+            <fieldset className="mt-5 p-5  box validate-form">
               <legend className="text-lg font-semibold">
                 Guardian 2 Details
               </legend>
@@ -837,9 +948,9 @@ function Main() {
             </div>
           </form>
         </>
-      ) : (
+      ) : !profile && !dialog ? (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">Learners</h2>
+          <h2 className="mt-1 text-lg font-medium ">Learners</h2>
           {/* {message && success && (
             <Alert
               variant="soft-success"
@@ -861,19 +972,48 @@ function Main() {
 
           )} */}
 
-          <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
-            <Button
-              variant="primary"
-              className="mr-2 shadow-md"
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                setDialog(true);
-                setIsEditMode(false);
-              }}
-            >
-              New Learner
-            </Button>
-
+          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
+            {is_admin() && (
+              <>
+                {" "}
+                <Button
+                  variant="primary"
+                  className="mr-2 shadow-md"
+                  onClick={(event: React.MouseEvent) => {
+                    event.preventDefault();
+                    setDialog(true);
+                    setIsEditMode(false);
+                  }}
+                >
+                  New Learner
+                </Button>
+                <Menu>
+                  <Menu.Button as={Button} className="px-2 !box">
+                    <span className="flex items-center justify-center w-5 h-5">
+                      <Lucide icon="Plus" className="w-4 h-4" />
+                    </span>
+                  </Menu.Button>
+                  <Menu.Items className="w-40">
+                    <Menu.Item onClick={() => setUploadDialog(true)}>
+                      <Lucide icon="Book" className="w-4 h-4 mr-2" /> Import
+                      Data
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => {
+                        setExportDialog(true);
+                      }}
+                    >
+                      <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
+                      Template
+                    </Menu.Item>
+                    {/* <Menu.Item>
+                   <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
+                   to PDF
+                 </Menu.Item> */}
+                  </Menu.Items>
+                </Menu>
+              </>
+            )}
             <div className="hidden mx-auto md:block text-slate-500">
               Showing{" "}
               {pagination.current_page +
@@ -882,6 +1022,44 @@ function Main() {
                 " of " +
                 pagination.total}{" "}
               entries
+            </div>
+            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
+              <TomSelect
+                value={grade}
+                className="relative w-56 text-slate-500 "
+                onChange={(event: any) => {
+                  reset({ ...getValues(), grade: event });
+                  setStream("");
+                  setGrade(event);
+                }}
+              >
+                <option value={""} selected>
+                  All Grades
+                </option>
+                {grades.map((grade: any, key) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </TomSelect>
+            </div>
+            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
+              <FormSelect
+                {...register("stream")}
+                name="stream"
+                onChange={(e: any) => {
+                  setStream(e.target.value);
+                }}
+                className={errors.stream ? "border-danger" : ""}
+                disabled={isEditMode}
+              >
+                <option value={""}>Select Stream</option>
+                {streams.map((stream: any, key) => (
+                  <option key={key} value={stream._id}>
+                    {stream.name}
+                  </option>
+                ))}
+              </FormSelect>
             </div>
             <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
               <div className="relative w-56 text-slate-500">
@@ -900,7 +1078,7 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -920,20 +1098,9 @@ function Main() {
                         </Table.Th>
 
                         <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          First Name
+                          Name
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Surname
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Last Name
-                        </Table.Th>
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Last Name
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Surname
-                        </Table.Th> */}
+
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Adm No
                         </Table.Th>
@@ -946,6 +1113,13 @@ function Main() {
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Stream
                         </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                          Session
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
+                          Status
+                        </Table.Th>
+
                         {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Guardian Last Name
                         </Table.Th>
@@ -968,7 +1142,7 @@ function Main() {
                     </Table.Thead>
                     <Table.Tbody>
                       {learners.map((learner: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
+                        <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                             <span className="font-medium whitespace-nowrap">
                               {limit * (page - 1) + key + 1}
@@ -976,31 +1150,27 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <div className="flex items-center">
-                              <div className="w-9 h-9 image-fit zoom-in">
-                                <Tippy
-                                  as="img"
-                                  alt=""
-                                  className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                  src={c.IMG_URL + learner?.learner?.photo}
-                                  content={
-                                    learner?.learner?.first_name +
-                                    " " +
-                                    learner?.learner?.last_name
+                              <div className="w-9 h-9 ">
+                                <img
+                                  src={c.IMG_URL + learner?.photo}
+                                  alt="Learner"
+                                  className="w-9 h-9 rounded-lg border shadow-md"
+                                  onError={(e) =>
+                                    (e.currentTarget.src = leanerImg)
                                   }
                                 />
                               </div>
                               <div className="ml-4">
                                 <a
                                   href="#"
-                                  onClick={() => editRecord(learner)}
+                                  onClick={() => profileRecord(learner)}
                                   className="font-medium whitespace-nowrap"
                                 >
-                                  {learner?.learner?.first_name &&
-                                    learner?.learner?.first_name}
+                                  {learner?.first_name && learner?.first_name}
                                   {" " +
-                                    learner?.learner?.surname +
+                                    learner?.surname +
                                     " " +
-                                    learner?.learner?.last_name}
+                                    learner?.last_name}
                                 </a>
                                 <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                                   {learner?.stream?.grade?.name}{" "}
@@ -1009,39 +1179,20 @@ function Main() {
                               </div>
                             </div>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.surname}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.last_name}
-                            </span>
-                          </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.last_name}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-24">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.surname}
-                            </span>
-                          </Table.Td> */}
+
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.adm_no}
+                              {learner?.adm_no}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.nemis_no}
+                              {learner?.nemis_no}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.stream?.grade?.name}{" "}
+                              {learner?.grade?.name}{" "}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
@@ -1049,69 +1200,125 @@ function Main() {
                               {learner?.stream?.name}
                             </span>
                           </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.current_session}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <div
+                              className={
+                                learner?.status == "L"
+                                  ? "flex items-center text-primary"
+                                  : learner?.status == "D"
+                                  ? "flex items-center text-danger"
+                                  : "flex items-center text-success"
+                              }
+                            >
+                              {learner?.status == "L" ? "Left" : ""}
+                              {learner?.status == "G" ? "Graduated" : ""}
+                              {learner?.status == "P" ? "In Session" : ""}
+                              {learner?.status == "D" ? "Disabled" : ""}
+                            </div>
+                          </Table.Td>
                           {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.first_name}{" "}
-                              {learner?.learner?.guardian?.last_name}{" "}
-                              {learner?.learner?.guardian?.surname}
+                              {learner?.guardian?.first_name}{" "}
+                              {learner?.guardian?.last_name}{" "}
+                              {learner?.guardian?.surname}
                             </span>
                           </Table.Td> */}
                           {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.last_name}
+                              {learner?.guardian?.last_name}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.surname}
+                              {learner?.guardian?.surname}
                             </span>
                           </Table.Td> */}
                           {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.id_no}
+                              {learner?.guardian?.id_no}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.email}
+                              {learner?.guardian?.email}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
-                              {learner?.learner?.guardian?.phone}
+                              {learner?.guardian?.phone}
                             </span>
                           </Table.Td> */}
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0  before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
-                              <a
-                                className="flex items-center mr-3 text-success"
-                                href="#"
-                                onClick={() => editRecord(learner)}
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Edit
-                              </a>
-                              {/* <a
-                            className="flex items-center text-primary"
-                            onClick={(e: any) => handleNavigate(learner)}
-                        >
-                            <Lucide icon="Eye" className="w-4 h-4 mr-1" /> View More
-                        </a> */}
-
-                              {/* Uncomment the following block if you want to enable the delete action */}
-                              {/* <a
-              className="flex items-center text-danger"
-              href="#"
-              onClick={() => {
-                setRecordId(learner.learner._id),
-                setConfirmDelete(true);
-              }}
-            >
-              <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
-            </a> */}
+                              <Menu className="inline-block mb-2 mr-1 box">
+                                <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
+                                  <Lucide
+                                    icon="AlignJustify"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                </Menu.Button>
+                                <Menu.Items
+                                  className="w-40"
+                                  placement="bottom-end"
+                                >
+                                  <Menu.Item
+                                    onClick={(e: any) => {
+                                      e.preventDefault();
+                                      profileRecord(learner);
+                                    }}
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                  >
+                                    <i className="icon-eye mr-2"></i> View
+                                    Profile
+                                  </Menu.Item>
+                                  {is_admin() && (
+                                    <>
+                                      {" "}
+                                      <Menu.Item
+                                        onClick={(e: any) => {
+                                          e.preventDefault();
+                                          editRecord(learner);
+                                        }}
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                      >
+                                        <i className="icon-eye mr-2"></i> Edit
+                                        Profile
+                                      </Menu.Item>
+                                      {(learner.status === "D" ||
+                                        learner.status === "P") && (
+                                        <Menu.Item
+                                          onClick={(e: any) => {
+                                            e.preventDefault();
+                                            setRecordId(learner._id);
+                                            disableRecord(); // assuming you meant disableRecord instead of disbaleRecord
+                                          }}
+                                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                        >
+                                          <i className="icon-eye mr-2"></i>{" "}
+                                          {learner.status === "D"
+                                            ? "Enable Leaner"
+                                            : "Disable Learner"}
+                                        </Menu.Item>
+                                      )}
+                                      <Menu.Item
+                                        onClick={(e: any) => {
+                                          e.preventDefault();
+                                          setRecordId(learner._id);
+                                          setViewMore(true);
+                                        }}
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                      >
+                                        <i className="icon-eye mr-2"></i> Delete
+                                      </Menu.Item>
+                                    </>
+                                  )}
+                                </Menu.Items>
+                              </Menu>
                             </div>
                           </Table.Td>
                         </Table.Tr>
@@ -1119,8 +1326,8 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -1178,16 +1385,7 @@ function Main() {
 
             {/* END: Data List */}
           </div>
-          <Dialog
-            staticBackdrop
-            size="lg"
-            open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
-          >
-            <Dialog.Panel></Dialog.Panel>
-          </Dialog>
+
           {/* BEGIN: Delete Confirmation Modal */}
           <Dialog
             open={viewMore}
@@ -1233,7 +1431,477 @@ function Main() {
           </Dialog>
           {/* END: Delete Confirmation Modal */}
         </>
+      ) : profile ? (
+        <div className="content">
+          {/* Custom Back Button */}
+          <a
+            onClick={(event) => {
+              event.preventDefault();
+              cancel({ name: "" }); // Call the cancel function with desired parameters
+              setDialog(false); // Assuming setDialog is defined in the parent component
+              setProfile(false); // Assuming setProfile is defined in the parent component
+            }}
+            href="#"
+            className="mb-4 flex items-center text-blue-600 hover:text-blue-800"
+          >
+            <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+            Back
+          </a>
+
+          <div className="flex flex-wrap">
+            {/* Profile Picture and Name Section */}
+            <div className="w-full md:w-1/4 text-center mb-4 md:mb-0">
+              <div className="bg-white shadow-md m-4 rounded-lg overflow-hidden ">
+                <div className="p-6">
+                  {/* <div className="w-9 h-9 ">
+                                <img
+                                  src={c.IMG_URL + learner?.photo}
+                                  alt="Learner"
+                                  className="w-9 h-9 rounded-lg border shadow-md"
+                                  onError={(e) =>
+                                    (e.currentTarget.src = leanerImg)
+                                  }
+                                />
+                              </div> */}
+                  <img
+                    src={c.IMG_URL + learner?.photo}
+                    alt="photo"
+                    className="rounded-full mx-auto"
+                    style={{ width: "90%", height: "90%" }}
+                    onError={(e) => (e.currentTarget.src = leanerImg)}
+                  />
+                  <h3 className="mt-3 text-lg font-semibold">
+                    {`${learner.first_name} ${learner.surname}`}
+                  </h3>
+                </div>
+              </div>
+            </div>
+
+            {/* User Information */}
+            <div className="w-full md:w-3/4 ">
+              <div className="bg-white shadow-md rounded-lg overflow-hidden m-4">
+                <div className="p-6">
+                  <h4 className="font-bold">Learner's Information</h4>
+
+                  {/* Tabs for Basic Info and Guardians */}
+                  <ul className="flex border-b border-gray-200 mb-4">
+                    <li className="mr-2">
+                      <button
+                        className={`inline-block py-2 px-4 ${
+                          activeTab === "basicInfo"
+                            ? "text-blue-600 border-b-2 border-blue-600"
+                            : "text-gray-600 hover:text-blue-600"
+                        } font-semibold`}
+                        onClick={() => setActiveTab("basicInfo")}
+                      >
+                        Basic Info
+                      </button>
+                    </li>
+                    {is_admin() && (
+                      <>
+                        <li className="mr-2">
+                          <button
+                            className={`inline-block py-2 px-4 ${
+                              activeTab === "guardian1"
+                                ? "text-blue-600 border-b-2 border-blue-600"
+                                : "text-gray-600 hover:text-blue-600"
+                            } font-semibold`}
+                            onClick={() => setActiveTab("guardian1")}
+                          >
+                            Guardian 1
+                          </button>
+                        </li>
+                        <li className="mr-2">
+                          <button
+                            className={`inline-block py-2 px-4 ${
+                              activeTab === "guardian2"
+                                ? "text-blue-600 border-b-2 border-blue-600"
+                                : "text-gray-600 hover:text-blue-600"
+                            } font-semibold`}
+                            onClick={() => setActiveTab("guardian2")}
+                          >
+                            Guardian 2
+                          </button>
+                        </li>
+                      </>
+                    )}
+                    <li className="mr-2">
+                      <button
+                        className={`inline-block py-2 px-4 ${
+                          activeTab === "tab3"
+                            ? "text-blue-600 border-b-2 border-blue-600"
+                            : "text-gray-600 hover:text-blue-600"
+                        } font-semibold`}
+                        onClick={() => setActiveTab("tab3")}
+                      >
+                        History
+                      </button>
+                    </li>
+                  </ul>
+
+                  {/* Tab Content */}
+                  <div className="tab-content">
+                    {/* Basic Info Tab */}
+
+                    {activeTab === "basicInfo" && (
+                      <div className="tab-pane active">
+                        <h4 className="font-bold">Bascic Information</h4>
+
+                        <table className="min-w-full border border-gray-200">
+                          <tbody>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Name
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.first_name} ${learner.surname}`}</td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                ADM NO
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.adm_no}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Class
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.grade.name}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Stream
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.stream.name}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Year Admitted
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {new Date(learner?.createdAt).getFullYear()}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Email
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian?.email || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                NEMIS NO
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.nemis_no}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Current Session
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.current_session}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Status
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                <div
+                                  className={
+                                    learner?.status != "L"
+                                      ? "flex items-center text-success"
+                                      : "flex items-center text-danger"
+                                  }
+                                >
+                                  {learner?.status == "L" ? "Left" : ""}
+                                  {learner?.status == "G" ? "Graduated" : ""}
+                                  {learner?.status == "P" ? "In Session" : ""}
+                                </div>
+                              </td>
+                            </tr>
+                            {learner?.status == "G" && (
+                              <tr>
+                                <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                  Graduated On
+                                </td>
+                                <td className="px-4 py-4 border-b border-gray-200">
+                                  {formatDate(learner?.grad_date, "DD-MM-YYYY")}
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    {/* Guardian 1 Tab */}
+                    {activeTab === "guardian1" && (
+                      <div className="tab-pane">
+                        <h4 className="font-bold">Guardian 1 Information</h4>
+                        <table className="min-w-full border border-gray-200">
+                          <tbody>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Name
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian?.first_name}{" "}
+                                {learner?.guardian?.surname}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Relationship
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian?.relationship}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Contact
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian?.contact || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Email
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian?.email || "N/A"}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    {/* Guardian 2 Tab */}
+                    {activeTab === "guardian2" && (
+                      <div className="tab-pane">
+                        <h4 className="font-bold">Guardian 2 Information</h4>
+                        <table className="min-w-full border border-gray-200">
+                          <tbody>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Name
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian2?.first_name}{" "}
+                                {learner?.guardian2?.surname || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Relationship
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian2?.relationship || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Contact
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian2?.contact || "N/A"}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Email
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.guardian2?.email || "N/A"}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    {/* Tab 3 */}
+                    {activeTab === "tab3" && (
+                      <div className="tab-pane">
+                        <h4 className="font-bold">Additional Information</h4>
+                        <p>Comming soon...</p>
+                        {/* You can include more fields or tables here as needed */}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
       )}
+      <Dialog
+        staticBackdrop
+        size="lg"
+        open={exportDialog}
+        onClose={() => {
+          setDialog(false);
+        }}
+      >
+        <Dialog.Panel className="w-full max-w-screen-lg">
+          <Dialog.Title>
+            <h2 className="mr-auto text-base font-medium">
+              Download learners import Template
+            </h2>
+            <a
+              onClick={(event: React.MouseEvent) => {
+                event.preventDefault();
+                setUploadDialog(false);
+              }}
+              className="absolute top-0 right-0 mt-3 mr-3"
+              href="#"
+            >
+              <Lucide icon="X" className="w-8 h-8 text-slate-400" />
+            </a>
+          </Dialog.Title>
+          <div className="grid grid-cols-12 gap-4 gap-y-3 p-4">
+            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
+              <TomSelect
+                value={grade}
+                className=" w-full text-slate-500 "
+                onChange={(event: any) => {
+                  reset({ ...getValues(), grade: event });
+                  setStream("");
+                  setGrade(event);
+                }}
+              >
+                <option value={""} selected>
+                  All Grades
+                </option>
+                {grades.map((grade: any, key) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </TomSelect>
+            </div>
+            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
+              <FormSelect
+                // {...register("stream")}
+                // name="stream"
+                value={stream}
+                onChange={(e: any) => {
+                  setStream(e.target.value);
+                }}
+                className={errors.stream ? "border-danger" : ""}
+                disabled={isEditMode}
+              >
+                <option value={""}>Select Stream</option>
+                {streams.map((stream: any, key) => (
+                  <option key={key} value={stream._id}>
+                    {stream.name}
+                  </option>
+                ))}
+              </FormSelect>
+            </div>
+          </div>
+          <Dialog.Footer>
+            <div className=" text-right">
+              <Button
+                variant="outline-secondary"
+                type="button"
+                onClick={() => {
+                  setExportDialog(false);
+                }}
+                className="w-24 mr-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => exportTemplate()}
+                variant="primary"
+                type="button"
+                className="m-3 w-24"
+                ref={deleteButtonRef}
+              >
+                Download
+              </Button>
+            </div>
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
+      <Dialog
+        staticBackdrop
+        size="lg"
+        open={uploadDialog}
+        onClose={() => {
+          setUploadDialog(false);
+        }}
+      >
+        <Dialog.Panel className="w-full max-w-screen-lg">
+          <Dialog.Title>
+            <h2 className="mr-auto text-base font-medium">Import Strands</h2>
+            <a
+              onClick={(event: React.MouseEvent) => {
+                event.preventDefault();
+                setUploadDialog(false);
+              }}
+              className="absolute top-0 right-0 mt-3 mr-3"
+              href="#"
+            >
+              <Lucide icon="X" className="w-8 h-8 text-slate-400" />
+            </a>
+          </Dialog.Title>
+          {/* <div className="p-5 text-center">
+                <Lucide
+                  icon="XCircle"
+                  className="w-16 h-16 mx-auto mt-3 text-danger"
+                />
+              </div> */}
+          <div className="p-1">
+            Choose the file to upload. <i>Type must be csv</i>
+            <input
+              id="file_input"
+              type="file"
+              onChange={handleFileChange}
+              className="p-4 border border-gray-300 rounded-md items-center w-full rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+            />
+          </div>
+
+          <Dialog.Footer>
+            <div className=" text-right">
+              <Button
+                variant="outline-secondary"
+                type="button"
+                onClick={() => {
+                  setUploadDialog(false);
+                }}
+                className="w-24 mr-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => importData()}
+                variant="primary"
+                type="button"
+                className="m-3 w-24"
+                ref={deleteButtonRef}
+              >
+                Import
+              </Button>
+            </div>
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {

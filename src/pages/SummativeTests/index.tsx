@@ -25,7 +25,11 @@ function Main() {
   const [grades, setGrades] = useState([]);
   const [gradeId, setGradeId] = useState("");
   const [grade, setGrade] = useState("");
-
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
   const [tests, setTests] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState("");
@@ -55,6 +59,8 @@ function Main() {
   const schema = yup
     .object({
       name: yup.string().required("Name is required"),
+      type: yup.string().required("Type is required"),
+
       grading: yup.string().required("Select Performance Level Scale"),
       term: yup.string().required("Select Term"),
       grade: yup.string().required("Select Grade"),
@@ -213,7 +219,7 @@ function Main() {
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -229,10 +235,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -244,7 +247,7 @@ function Main() {
               ></a>
             </div>{" "}
             <div className="grid grid-cols-12 gap-6 ">
-              <div className="col-span-6 sm:col-span-6 py-2">
+              <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel className="modal-form-6">
                   Name<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -262,7 +265,26 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6 py-2">
+              <div className="col-span-6 sm:col-span-4 py-2">
+                <FormLabel htmlFor="modal-form-6">Type</FormLabel>
+                <FormSelect
+                  {...register("type")}
+                  name="type"
+                  // defaultValue={selectedLevel}
+                >
+                  <option value={""}>Select Type</option>
+                  <option value={"Tunner"}>Tunner</option>
+                  <option value={"Mid Term"}>Mid Term</option>
+                  <option value={"End of the Term"}>End of the Term</option>
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
@@ -286,7 +308,7 @@ function Main() {
               </div>
             </div>
             <div className="grid grid-cols-12 gap-6 ">
-              <div className="col-span-6 sm:col-span-6 py-2">
+              <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <FormSelect
                   {...register("term")}
@@ -296,7 +318,7 @@ function Main() {
                 >
                   <option value={""}>Select Academic Term</option>
 
-                  {academic_terms.map((term: any, key) => (
+                  {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
                     </option>
@@ -310,7 +332,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-6 sm:col-span-6">
+              <div className="col-span-6 sm:col-span-4">
                 <div className="col-span-4 sm:col-span-12 py-2">
                   <FormLabel className="modal-form-6">
                     Performance Level Scale
@@ -365,7 +387,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">Summative Tests</h2>
+          <h2 className="mt-1 text-lg font-medium ">Summative Tests</h2>
           {message && success && (
             <Alert
               variant="soft-success"
@@ -386,7 +408,7 @@ function Main() {
             </Alert>
           )}
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
               <Button
                 variant="primary"
                 className="mr-2 shadow-md"
@@ -422,7 +444,7 @@ function Main() {
               </div>
             </div>
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -466,7 +488,7 @@ function Main() {
                     </Table.Thead>
                     <Table.Tbody>
                       {tests.map((test: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
+                        <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {key + 1}
@@ -479,12 +501,12 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {test?.term ? "Custom" : "Hero Assessment"}
+                              {test?.type}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {test?.term?.name}
+                              {test?.term}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -547,8 +569,8 @@ function Main() {
                       ))}
                     </Table.Tbody>
                   </Table>
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}

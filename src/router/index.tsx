@@ -55,6 +55,10 @@ import IncommingTransfers from "../pages/Learners/transfers_incoming";
 import LearnersTransfers from "../pages/LearnerPortal/incoming_transfers";
 import LayoutRegister from "../layouts/register";
 import LearnerSummative from "../pages/LearnerProfiles/summative";
+import BehaviourCategory from "../pages/Behaviour/category";
+import BehaviourAssessment from "../pages/Behaviour/assessment";
+import Comment from "../pages/Behaviour/assessmentcomment";
+
 //nn
 function Router() {
   const routes = [
@@ -120,6 +124,18 @@ function Router() {
         {
           path: "enrollments",
           element: <Enrollment />,
+        },
+        {
+          path: "behaviour",
+          element: <BehaviourCategory />,
+        },
+        {
+          path: "comments",
+          element: <Comment />,
+        },
+        {
+          path: "behaviour-assessment",
+          element: <BehaviourAssessment />,
         },
 
         {

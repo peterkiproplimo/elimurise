@@ -391,7 +391,7 @@ function Main() {
       learning_area: strandFilter.learning_area,
       test: test,
       score: Number(data.score),
-      enrollment: data?.enrollment?.enrollmentId,
+      learner: data?.learner?._id,
     };
     let res = await ApiService.createSummativeTests(assessment);
     console.log(assessment);
@@ -435,10 +435,7 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form
-            className="mt-5 p-5 intro-y validate-form  "
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  validate-form  " onSubmit={onSubmit}>
             <div className="assessment-header">
               <h2 className="text-xl flex items-center font-semibold mb-5">
                 <a
@@ -480,8 +477,8 @@ function Main() {
                 </span>
               </div>
             </div>
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+              <div className="flex flex-wrap  col-span-12 mt-2  xl:flex-nowrap">
                 <div className="hidden  md:block ">
                   {/* Showing{" "}
                   {pagination.current_page +
@@ -526,12 +523,12 @@ function Main() {
                       Score
                     </Table.Th>
                     <Table.Th className="text-left border-b-1 whitespace-wrap ">
-                      DESCRIPTION
+                      DESCRIPTOR
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {enrollments?.map((enrollment: any, key) => (
+                  {enrollments?.map((assessment: any, key) => (
                     <Table.Tr key={key} className="border-b-4 border-grey">
                       <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
                         {key + 1}
@@ -539,22 +536,22 @@ function Main() {
 
                       <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
                         <span className="flex items-center">
-                          {enrollment?.learner?.adm_no}
+                          {assessment?.learner?.adm_no}
                         </span>
                       </Table.Td>
 
                       <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
                         <span className="flex items-center">
-                          {enrollment?.learner?.nemis_no}
+                          {assessment?.learner?.nemis_no}
                         </span>
                       </Table.Td>
 
                       <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
                         <div className="flex">
                           <div className="ml-4">
-                            {enrollment?.learner?.first_name}{" "}
-                            {enrollment?.learner?.last_name}{" "}
-                            {enrollment?.learner?.surname}
+                            {assessment?.learner?.first_name}{" "}
+                            {assessment?.learner?.last_name}{" "}
+                            {assessment?.learner?.surname}
                           </div>
                         </div>
                       </Table.Td>
@@ -564,36 +561,66 @@ function Main() {
                           {...register("score[" + key + "]")}
                           type="number"
                           className={`no-spinner appearance-none form-control w-[100px] ${
-                            getValues("score") ? "is-invalid" : ""
+                            getValues("score") &&
+                            parseInt(getValues("score")[key]) > 100
+                              ? "is-invalid"
+                              : ""
                           }`}
-                          defaultValue={enrollment?.assessmentDetails?.score}
+                          defaultValue={assessment?.assessmentDetails?.score}
                           max={4}
                           min={1}
                           onChange={(e) => {
                             const enteredValue = parseInt(e.target.value);
+
+                            if (enteredValue > 100) {
+                              alert("Score cannot exceed 100");
+                              e.target.value =
+                                assessment?.assessmentDetails?.score; // Clear the input if value exceeds 100
+                              return; // Exit without triggering handleInputChange
+                            }
+
                             handleInputChange({
-                              score: e.target.value,
-                              enrollment,
+                              score: enteredValue ? enteredValue : "",
+                              ...assessment,
                             });
                           }}
                         />
                       </Table.Td>
 
                       <Table.Td
-                        className={`  bg-white border-b border-grey dark:bg-darkmode-600 ${getDescriptionColor(
-                          enrollment?.assessmentDetails?.score || 0 // Fallback if score is undefined
-                        )}`}
+                        className={`  bg-white border-b border-grey dark:bg-darkmode-600 `}
                       >
-                        {enrollment?.assessmentDetails?.description ||
-                          "No description"}
+                        <span
+                          className={`${getDescriptionColor(
+                            assessment?.assessmentDetails?.grading_score || 0 // Fallback if score is undefined
+                          )}`}
+                        >
+                          <b>
+                            {assessment?.assessmentDetails?.grading_score == 4
+                              ? "Exceeding Expectation(4): "
+                              : ""}
+                            {assessment?.assessmentDetails?.grading_score == 3
+                              ? "Meeting Expectation(3): "
+                              : ""}
+                            {assessment?.assessmentDetails?.grading_score == 2
+                              ? "Approaching Expectation(2): "
+                              : ""}
+                            {assessment?.assessmentDetails?.grading_score == 1
+                              ? "Below Expectation(1): "
+                              : ""}
+                          </b>
+                          <br />
+                        </span>
+                        {assessment?.assessmentDetails?.description ||
+                          "Not assessed"}
                       </Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
               </Table>
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-              {/* <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+              {/* <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -647,7 +674,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -726,7 +753,7 @@ function Main() {
                 >
                   <option>Select Academic Term</option>
 
-                  {academic_terms.map((term: any, key) => (
+                  {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
                     </option>

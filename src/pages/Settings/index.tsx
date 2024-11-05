@@ -13,9 +13,11 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import PassportUpload from "../Learners/profilephoto";
 import { IMG_URL } from "../../utils/constants";
+import TomSelect from "../../base-components/TomSelect";
+import { Controller } from "react-hook-form";
 
 function Settings() {
-  const [academicYears, setAcademicYears] = useState([]);
+  const [academicYears, setAcademicYears] = useState<any>([]);
   const [schoolDetails, setSchoolDetails] = useState<any>({});
   const schema = yup
     .object({
@@ -28,11 +30,14 @@ function Settings() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
+  const selectRef = useRef(null);
 
   const notify = useRef<NotificationElement>();
   const {
+    control,
     register,
     trigger,
+    setValue,
     getValues,
     reset,
     formState: { errors },
@@ -51,12 +56,28 @@ function Settings() {
   }, []);
   const getAcademicYears = async () => {
     try {
-      const response = await ApiService.getAcademic({ page: 1 });
-      setAcademicYears(response.data);
+      const generateAcademicYears = () => {
+        const currentYear = new Date().getFullYear();
+        const yearsBack = 5;
+        const yearsForward = 7;
+        const years = [];
+
+        for (
+          let i = currentYear - yearsBack;
+          i <= currentYear + yearsForward;
+          i++
+        ) {
+          years.push(`${i}-${i + 1}`);
+        }
+
+        setAcademicYears(years);
+      };
+      generateAcademicYears();
     } catch (error) {
       console.error("Failed to fetch academic years", error);
     }
   };
+
   const getSchoolDetails = async () => {
     try {
       const response = await ApiService.getSchoolDetails({ page: 1 });
@@ -87,7 +108,9 @@ function Settings() {
       setLoading(true);
       try {
         const data = await getValues();
-        await ApiService.setCurrentSettings(data);
+        const response = await ApiService.setCurrentSettings(data);
+        localStorage.setItem("school", JSON.stringify(response));
+        window.location.reload();
         setLoading(false);
         setSuccess(true);
         setMessage("Settings updated successfully.");
@@ -103,14 +126,11 @@ function Settings() {
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium intro-y">Settings</h2>
+      <h2 className="mt-1 text-lg font-medium ">Settings</h2>
       <div className="grid grid-cols-12 gap-6 mt-2">
         <div className="col-span-12">
-          <div className="intro-y box p-3">
-            <form
-              className="mt-5 p-5 intro-y box validate-form"
-              onSubmit={onSubmit}
-            >
+          <div className=" box p-3">
+            <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
               <fieldset className="mb-4">
                 <legend className="font-medium text-xl text-gray-700">
                   School Details
@@ -138,19 +158,45 @@ function Settings() {
                     />
                   </div>
                   <div className="col-span-12 md:col-span-6">
-                    <FormLabel>Current Academic Year</FormLabel>
-                    <FormSelect
+                    <FormLabel>Current Session</FormLabel>
+                    {/* <FormSelect
                       // value={currentAcademicYear}
                       {...register("current_year")}
                       onChange={(e) => setCurrentAcademicYear(e.target.value)}
                     >
                       <option>Select Year</option>
                       {academicYears.map((year: any, key: any) => (
-                        <option key={key} value={year._id}>
-                          {year.name}
+                        <option key={key} value={year}>
+                          {year}
                         </option>
                       ))}
-                    </FormSelect>
+                    </FormSelect> */}
+                    <Controller
+                      control={control}
+                      name="current_session"
+                      defaultValue=""
+                      render={({ field }) => (
+                        <TomSelect
+                          {...field}
+                          // options={counties.map((county: any) => ({
+                          //   value: county.name,
+                          //   label: county.name,
+                          // }))}
+                          onChange={(value: any) => {
+                            console.log(value);
+                            field.onChange(value);
+                          }}
+                          className={errors.county ? "border-danger" : ""}
+                        >
+                          <option value={""}>Select Session</option>
+                          {academicYears.map((year: any, key: any) => (
+                            <option key={key} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </TomSelect>
+                      )}
+                    />
                   </div>
                 </div>
               </fieldset>

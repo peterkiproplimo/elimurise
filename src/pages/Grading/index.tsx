@@ -199,12 +199,9 @@ function Users() {
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium intro-y">
-        {" "}
-        Performance Level Scale
-      </h2>
+      <h2 className="mt-1 text-lg font-medium "> Performance Level Scale</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
-        <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+        <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
           <Button
             className="mr-2 shadow-md user-button"
             onClick={(event: React.MouseEvent) => {
@@ -255,7 +252,7 @@ function Users() {
             </div>
           </div>
         </div>
-        <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+        <div className="col-span-12 overflow-auto  2xl:overflow-visible">
           {loading ? (
             <div className="flex flex-col items-center mt-5">
               <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -292,7 +289,7 @@ function Users() {
               </Table.Thead>
               <Table.Tbody>
                 {grading.map((grade: any, key) => (
-                  <Table.Tr key={key} className="intro-x">
+                  <Table.Tr key={key} className="">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
                         {limit * (page - 1) + key + 1}
@@ -396,8 +393,8 @@ function Users() {
         </div>
         {/* END: Data List */}
         {/* END: Data List */}
-        <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-          <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+        <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+          <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
             <Pagination className="w-full sm:w-auto sm:mr-auto">
               <button
                 onClick={() => setPage(page > 1 ? page - 1 : 1)}

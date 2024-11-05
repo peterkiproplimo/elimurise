@@ -126,7 +126,7 @@ const Home = () => {
                   (CBC) approach. Join us in shaping the future of learning.
                 </p>
               </div>
-              <div className="  mt-8 text-center intro-x xl:mt-8 xl:text-left">
+              <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
                   className=" btn-2 w-full px-4 py-3 align-top xl:w-32 xl:mr-3"
@@ -632,14 +632,14 @@ const Home = () => {
               Subscribe to our mailing list
             </h2>
             <form className="validate-form">
-              <div className="mt-5 intro-x">
+              <div className="mt-5 ">
                 <div className="input-form">
                   <FormInput
                     id="validation-form-2"
                     type="text"
                     name="email"
                     placeholder="Name"
-                    className="block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] w-full"
+                    className="block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] w-full"
                   />
                 </div>
                 <div className="input-form mt-5">
@@ -648,12 +648,12 @@ const Home = () => {
                       id="validation-form-3"
                       name="password"
                       placeholder="Email"
-                      className="block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px] border pr-10"
+                      className="block px-4 py-3 mt-4  min-w-[250px] xl:min-w-[350px] border pr-10"
                     />
                   </div>
                 </div>
               </div>
-              <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+              <div className="mt-5 text-center  xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
                   className="w-full px-3 align-top xl:w-20 xl:float-right"

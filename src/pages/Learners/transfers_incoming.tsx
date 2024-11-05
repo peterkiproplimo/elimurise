@@ -77,6 +77,7 @@ function Main() {
   const [approveTranfer, setApproveTranfer] = useState<any>({
     transferCode: "na",
     stream: "na",
+    adm_no: "",
   });
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
@@ -99,9 +100,9 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      learnerId: yup.string().required("Learner is required"),
-      newSchoolCode: yup.string().required("School Code is required"),
-      reason: yup.string().required("Reason is required"),
+      adm_no: yup.string().required("Admission No. is required"),
+      stream: yup.string().required("Stream  is required"),
+      grade: yup.string().required("Grade is required"),
     })
     .required();
 
@@ -116,12 +117,16 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const approveTranferSubmit = async () => {
-    if (!loading) {
+  const approveTranferSubmit = async (event: any) => {
+    console.log("event");
+    event.preventDefault();
+    const result = await trigger();
+
+    if (result && !loading) {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.updateTransfers(approveTranfer);
+        await ApiService.updateTransfers(data);
         await getTransfers();
         await reset({ name: "" });
         isLoading(false);
@@ -222,55 +227,7 @@ function Main() {
     // console.log(record);
     setDialog(true);
   };
-  const handleGuardianIdNoBlur = async () => {
-    reset({
-      ...getValues(),
-      guardian_id_no: guardianIdNo,
-      guardian: "",
-      guardian_first_name: "",
-      guardian_email: "",
-      guardian_last_name: "",
-      guardian_surname: "",
-      guardian_phone: "",
-    });
-    const res = await ApiService.getOneParents({ search: guardianIdNo });
-    const response = res.data;
-    console.log(response._id);
-    reset({
-      ...getValues(),
-      guardian_id_no: guardianIdNo,
-      guardian: response._id,
-      guardian_first_name: response.first_name,
-      guardian_email: response.email,
-      guardian_last_name: response.last_name,
-      guardian_surname: response.surname,
-      guardian_phone: response.phone,
-    });
-  };
-  const handleGuardianIdNoBlur2 = async () => {
-    reset({
-      ...getValues(),
-      guardian2_id_no: guardianIdNo2,
-      guardian2: "",
-      guardian2_first_name: "",
-      guardian2_email: "",
-      guardian2_last_name: "",
-      guardian2_surname: "",
-      guardian2_phone: "",
-    });
-    const res = await ApiService.getOneParents({ search: guardianIdNo2 });
-    const response = res.data;
-    reset({
-      ...getValues(),
-      guardian2_id_no: guardianIdNo2,
-      guardian2: response._id,
-      guardian2_first_name: response.first_name,
-      guardian2_email: response.email,
-      guardian2_last_name: response.last_name,
-      guardian2_surname: response.surname,
-      guardian2_phone: response.phone,
-    });
-  };
+
   const cancel = (record: any) => {
     setGroup([""]);
     setPermission([""]);
@@ -314,7 +271,7 @@ function Main() {
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -330,7 +287,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form className="mt-5 p-5 intro-y box validate-form">
+          <form className="mt-5 p-5  box validate-form">
             {message && !success && (
               <Alert
                 variant="soft-danger"
@@ -371,7 +328,7 @@ function Main() {
                 href="#"
               ></a>
             </div>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
+            <fieldset className="mt-5 p-5  box validate-form">
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">
@@ -436,12 +393,10 @@ function Main() {
                   >
                     <option>Select Learner</option>
 
-                    {enrollments?.map((enrollment: any, key) => (
-                      <option key={key} value={enrollment?.learner?._id}>
-                        {enrollment?.learner?.first_name}{" "}
-                        {enrollment?.learner?.surname}{" "}
-                        {enrollment?.learner?.last_name} |{" "}
-                        {enrollment?.learner?.adm_no}
+                    {enrollments?.map((learner: any, key) => (
+                      <option key={key} value={learner?._id}>
+                        {learner?.first_name} {learner?.surname}{" "}
+                        {learner?.last_name} | {learner?.adm_no}
                       </option>
                     ))}
                   </FormSelect>
@@ -518,7 +473,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">Transfers</h2>
+          <h2 className="mt-1 text-lg font-medium ">Transfers</h2>
           {message && success && (
             <Alert
               variant="soft-success"
@@ -550,7 +505,7 @@ function Main() {
             // </div>
           )}
 
-          <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
             <div className="hidden mx-auto md:block text-slate-500">
               Showing{" "}
               {pagination.current_page +
@@ -577,7 +532,7 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -625,7 +580,7 @@ function Main() {
                     </Table.Thead>
                     <Table.Tbody>
                       {tranfers.map((tranfer: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
+                        <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                             <span className="font-medium whitespace-nowrap">
                               {key + 1}
@@ -746,8 +701,8 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -866,90 +821,117 @@ function Main() {
             initialFocus={approveButtonRef}
           >
             <Dialog.Panel>
-              <div className="p-5 text-center">
+              <div className="p-5">
                 {/* <Lucide
                   icon="XCircle"
                   className="w-16 h-16 mx-auto mt-3 text-danger"
                 /> */}
-                <div className="mt-5 text-center font-medium">
-                  Incoming Tranfer
-                </div>
+                <div className="mt-5  font-medium">Incoming Tranfer</div>
                 <div className="mt-2 text-slate-500">
                   Do you really approve this record?
                 </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Grade<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <TomSelect
-                    name="grade"
-                    value={grade}
-                    onChange={(event: any) => {
-                      reset({ ...getValues(), grade: event });
-                      console.log("test");
-                      setGrade(event);
-                    }}
-                    disabled={isEditMode}
-                  >
-                    <option>Select Grade</option>
-                    {grades.map((grade: any, key) => (
-                      <option key={key} value={grade._id}>
-                        {grade.name}
-                      </option>
-                    ))}
-                  </TomSelect>
-                  {errors.grade && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.grade.message === "string" &&
-                        errors.grade.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-12 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Select Stream<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormSelect
-                    {...register("stream")}
-                    name="stream"
-                    onChange={(e) =>
-                      setApproveTranfer({
-                        ...approveTranfer,
-                        stream: e.target.value,
-                      })
-                    }
-                  >
-                    <option>Select Stream</option>
+                <form onSubmit={approveTranferSubmit}>
+                  <div className="col-span-4 sm:col-span-4">
+                    <FormLabel htmlFor="grade">
+                      Grade<span className="text-danger ml-0.5">*</span>
+                    </FormLabel>
+                    <TomSelect
+                      id="grade"
+                      name="grade"
+                      value={grade}
+                      onChange={(event: any) => {
+                        reset({ ...getValues(), grade: event });
+                        console.log("test");
+                        setGrade(event);
+                      }}
+                      disabled={isEditMode}
+                    >
+                      <option value="">Select Grade</option>
+                      {grades.map((grade: any, key) => (
+                        <option key={key} value={grade._id}>
+                          {grade.name}
+                        </option>
+                      ))}
+                    </TomSelect>
+                    {errors.grade && (
+                      <div className="mt-2 text-danger">
+                        {typeof errors.grade.message === "string" &&
+                          errors.grade.message}
+                      </div>
+                    )}
+                  </div>
 
-                    {streams.map((stream: any, key) => (
-                      <option key={key} value={stream._id}>
-                        {stream.name}
-                      </option>
-                    ))}
-                  </FormSelect>
-                </div>
+                  <div className="col-span-12 sm:col-span-4 mt-2">
+                    <FormLabel htmlFor="stream">
+                      Select Stream<span className="text-danger ml-0.5">*</span>
+                    </FormLabel>
+                    <FormSelect
+                      id="stream"
+                      {...register("stream")}
+                      name="stream"
+                      onChange={(e) =>
+                        setApproveTranfer({
+                          ...approveTranfer,
+                          stream: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Select Stream</option>
+                      {streams.map((stream: any, key) => (
+                        <option key={key} value={stream._id}>
+                          {stream.name}
+                        </option>
+                      ))}
+                    </FormSelect>
+                    {errors.stream && (
+                      <div className="mt-2 text-danger">
+                        {typeof errors.stream.message === "string" &&
+                          errors.stream.message}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-span-12 sm:col-span-4 mt-2">
+                    <FormLabel htmlFor="stream">
+                      Admission Number
+                      <span className="text-danger ml-0.5">*</span>
+                    </FormLabel>
+                    <FormInput
+                      id="adm_no"
+                      {...register("adm_no")}
+                      name="adm_no"
+                    />
+                    {errors.adm_no && (
+                      <div className="mt-2 text-danger">
+                        {typeof errors.adm_no.message === "string" &&
+                          errors.adm_no.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="col-span-12 mt-4 text-right">
+                    <Button
+                      variant="outline-secondary"
+                      type="button"
+                      onClick={() => {
+                        setApproveDialog(false);
+                      }}
+                      className="w-24 mr-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      // onClick={() => approveTranferSubmit()}
+                      variant="success"
+                      type="submit"
+                      className="w-24 ml-4 text-white"
+                      ref={approveButtonRef}
+                    >
+                      Approve
+                    </Button>
+                  </div>
+                </form>
               </div>
-              <div className="px-5 pb-8 text-center">
-                <Button
-                  variant="outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    setApproveDialog(false);
-                  }}
-                  className="w-24 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => approveTranferSubmit()}
-                  variant="success"
-                  type="button"
-                  className="w-24 ml-4 text-white"
-                  ref={approveButtonRef}
-                >
-                  Approve
-                </Button>
-              </div>
+              <div className="px-5 pb-8 text-center"></div>
             </Dialog.Panel>
           </Dialog>
           {/* END: Delete Confirmation Modal */}

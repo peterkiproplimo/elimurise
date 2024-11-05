@@ -39,9 +39,13 @@ function Main() {
   const deleteButtonRef = useRef(null);
   const [learningAreas, setLearningAreas] = useState([]);
   const [academicYear, setAcademicYears] = useState([]);
-  const [terms, setTerms] = useState([]);
+  // const [terms, setTerms] = useState([]);
   const [pdfUrl, setPdfUrl] = useState("");
-
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
@@ -55,6 +59,7 @@ function Main() {
   const [selectedLeaningArea, setSelectedLearningArea] = useState("");
   const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
   const [selectedLearner, setSelectedLearner] = useState("");
+  const [grade, setGrade] = useState<any>([]);
 
   const [learners, setLearners] = useState<any>([]);
   const [strand, setStrand] = useState("");
@@ -115,15 +120,11 @@ function Main() {
     const response = await ApiService.getLeanerLeaningArea({
       term: selectedTerm,
       learner: selectedLearner,
+      session: selectedAcademicYear,
     });
     setLearningAreas(response.data);
   };
-  const getLearningAcademicYear = async () => {
-    const response = await ApiService.getLeanerAcademicYear({
-      learner: selectedLearner,
-    });
-    setAcademicYears(response.data);
-  };
+
   useEffect(() => {
     getLeaners();
   }, []);
@@ -133,19 +134,16 @@ function Main() {
     setLearners(response.learners);
   };
 
-  const getLearningTerm = async () => {
-    const response = await ApiService.getLeanerTerm({
-      academic_year: selectedAcademicYear,
+  const getLeanerClasses = async () => {
+    const response = await ApiService.leanerClasses({
+      learner: selectedLearner,
     });
-    setTerms(response.data);
+
+    setGrade(response.data);
   };
   useEffect(() => {
-    getLearningAcademicYear();
+    getLeanerClasses();
   }, [selectedLearner]);
-  useEffect(() => {
-    console.log(selectedAcademicYear);
-    getLearningTerm();
-  }, [selectedAcademicYear]);
   useEffect(() => {
     getLearningAreas();
   }, [selectedTerm]);
@@ -155,6 +153,7 @@ function Main() {
       term: selectedTerm,
       learning_area: selectedLeaningArea,
       learner: selectedLearner,
+      session: selectedAcademicYear,
     };
     console.log(data);
 
@@ -222,7 +221,7 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form className="mt-5 p-5 intro-y validate-form  ">
+          <form className="mt-5 p-5  validate-form  ">
             <div className="assessment-header">
               <h2 className="text-xl flex items-center font-semibold mb-5">
                 <a
@@ -278,7 +277,7 @@ function Main() {
             </div>
             <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
               <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
-                <div className=" overflow-hidden intro-y box">
+                <div className=" overflow-hidden  box">
                   <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
                     <div className="text-base text-slate-500lg:ml-auto lg:text-left flex">
                       <div>
@@ -370,8 +369,8 @@ function Main() {
                 </div>
               </main>
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+              <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -425,7 +424,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -443,9 +442,9 @@ function Main() {
                 >
                   <option>Select Learner</option>
                   {learners.map((learner: any) => (
-                    <option value={learner.learner._id}>
-                      {learner.learner.adm_no}-{learner.learner.first_name}{" "}
-                      {learner.learner.surname} {learner.learner.last_name}
+                    <option value={learner._id}>
+                      {learner.adm_no}-{learner.first_name} {learner.surname}{" "}
+                      {learner.last_name}
                     </option>
                   ))}
                 </TomSelect>
@@ -460,15 +459,15 @@ function Main() {
                 {/* {JSON.stringify(academicYear)} */}
                 <FormLabel htmlFor="modal-form-6">Grade </FormLabel>
                 <TomSelect
-                  {...register("term")}
+                  {...register("grade")}
                   value={selectedAcademicYear}
-                  name="term"
+                  name="grade"
                   onChange={(event: any) => setSelectedAcademicYear(event)}
                 >
-                  <option>Select Grade</option>
-                  {academicYear.map((year: any, key) => (
-                    <option key={key} value={year.academicYear._id}>
-                      {year.academicYear.name}- {year.stream.grade.name}
+                  <option value={""}>Select Grade</option>
+                  {grade.map((grade: any, key: any) => (
+                    <option key={key} value={grade.session}>
+                      {grade.grade}-{grade.stream}
                     </option>
                   ))}
                 </TomSelect>

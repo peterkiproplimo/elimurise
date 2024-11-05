@@ -148,8 +148,8 @@ function Users(props: any) {
         <div className="group relative  dark:bg-gray-800 transition h m-4 ">
           <form className="validate-form">
             <div className="  p-5  mt-10  rounded-xl">
-              <h2 className=" text-3xl font-bold intro-x">Generate A Quote</h2>
-              <h3 className=" text-2xl font-bold intro-x">
+              <h2 className=" text-3xl font-bold ">Generate A Quote</h2>
+              <h3 className=" text-2xl font-bold ">
                 You are about to subscribe to {Package.name}
               </h3>
               <p className="mt-5 text-xl">

@@ -68,7 +68,7 @@ function Policy() {
 
   return (
     <>
-      <form className="mt-5 p-5 intro-y box validate-form" onSubmit={onSubmit}>
+      <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
         <div className="grid grid-cols-12 gap-4 gap-y-3">
           <div className="col-span-12 sm:col-span-12">
             <FormLabel>Privacy Policy</FormLabel>
@@ -85,7 +85,7 @@ function Policy() {
                         <ClassicEditor value={terms_conditions} onChange={setTermsConditions} />
                     </div> */}
           <div className="col-span-12 sm:col-span-12">
-            <div className="flex items-center mt-2 intro-y">
+            <div className="flex items-center mt-2 ">
               <Button variant="primary" type="submit" className="w-20">
                 Update
                 {loading && (

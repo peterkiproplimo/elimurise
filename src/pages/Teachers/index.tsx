@@ -220,7 +220,7 @@ function Main() {
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -237,10 +237,7 @@ function Main() {
             </h2>
           </div>
 
-          <form
-            className="mt-5 p-5 intro-y  box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5   box validate-form" onSubmit={onSubmit}>
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
@@ -471,7 +468,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">Teachers</h2>
+          <h2 className="mt-1 text-lg font-medium ">Teachers</h2>
           {/* {message && success && (
             <Alert
               variant="soft-success"
@@ -492,7 +489,7 @@ function Main() {
             </Alert>
           )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
               <Button
                 variant="primary"
                 className="mr-2 shadow-md"
@@ -553,7 +550,7 @@ function Main() {
                 </Table.Thead>
                 <Table.Tbody>
                   {teachers.map((teacher: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
+                    <Table.Tr key={key} className="">
                       <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {limit * (page - 1) + key + 1}
@@ -597,7 +594,52 @@ function Main() {
                           {teacher.email}
                         </span>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0  before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                        <div className="flex items-center justify-center">
+                          <Menu className="inline-block mb-2 mr-1 box">
+                            <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
+                              <Lucide
+                                icon="AlignJustify"
+                                className="w-4 h-4 mr-1"
+                              />{" "}
+                            </Menu.Button>
+                            <Menu.Items className="w-40" placement="bottom-end">
+                              <Menu.Item
+                                onClick={() =>
+                                  navigate("/home/teacher/" + teacher?._id)
+                                }
+                              >
+                                <Lucide
+                                  icon="CheckSquare"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Manage
+                              </Menu.Item>
+                              <Menu.Item
+                                onClick={(e: any) => {
+                                  e.preventDefault();
+                                  editRecord(teacher);
+                                }}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                              >
+                                <i className="icon-eye mr-2"></i> Edit
+                              </Menu.Item>
+                              <Menu.Item
+                                onClick={() => {
+                                  setTeacher(teacher), setConfirmDelete(true);
+                                }}
+                              >
+                                <Lucide
+                                  icon="Trash2"
+                                  className="w-4 h-4 mr-1"
+                                />{" "}
+                                Delete
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Menu>
+                        </div>
+                      </Table.Td>
+                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                         <div className="flex items-center justify-center">
                           <a
                             className="flex items-center mr-3 text-success"
@@ -634,7 +676,7 @@ function Main() {
                             Delete
                           </a>
                         </div>
-                      </Table.Td>
+                      </Table.Td> */}
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
@@ -656,8 +698,8 @@ function Main() {
                 </>
               )}
               {loading === false && teachers.length > 0 && (
-                // <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                //   <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+                // <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap">
+                //   <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap">
                 //     <Pagination className="w-full sm:w-auto sm:mr-auto">
                 //       <button
                 //         onClick={() => setPage(previous_page)}
@@ -705,8 +747,8 @@ function Main() {
                 //     </div>
                 //   </div>
                 // </div>
-                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                     <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
                         onClick={() => setPage(page > 1 ? page - 1 : 1)}

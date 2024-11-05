@@ -30,6 +30,7 @@ import Alert from "../../base-components/Alert";
 import Dropzone from "dropzone";
 import Tippy from "../../base-components/Tippy";
 import * as c from "../../utils/constants";
+import leanerImg from "../../assets/images/learner.jpeg";
 
 interface TableRow {
   no: number;
@@ -198,12 +199,12 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearner(recordId);
+      let res = await ApiService.deleteTransfer(recordId);
+      setViewMore(false);
       getTransfers();
       isLoading(false);
-      // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner record deleted successfully");
+      setMessage("Transfer deleted successfully");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -279,7 +280,7 @@ function Main() {
   };
   const getStudents = async () => {
     isLoading(true);
-    const response = await ApiService.getEnrolments(
+    const response = await ApiService.getLearners(
       {
         page: 1,
         ...strandFilter,
@@ -313,7 +314,7 @@ function Main() {
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -330,10 +331,7 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form
-            className="mt-5 p-5 intro-y box validate-form"
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
             {/* {message && !success && (
               <Alert
                 variant="soft-danger"
@@ -374,7 +372,7 @@ function Main() {
                 href="#"
               ></a>
             </div>
-            <fieldset className="mt-5 p-5 intro-y box validate-form">
+            <fieldset className="mt-5 p-5  box validate-form">
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">
@@ -439,12 +437,10 @@ function Main() {
                   >
                     <option>Select Learner</option>
 
-                    {enrollments?.map((enrollment: any, key) => (
-                      <option key={key} value={enrollment?.learner?._id}>
-                        {enrollment?.learner?.first_name}{" "}
-                        {enrollment?.learner?.surname}{" "}
-                        {enrollment?.learner?.last_name} |{" "}
-                        {enrollment?.learner?.adm_no}
+                    {enrollments?.map((learner: any, key) => (
+                      <option key={key} value={learner?._id}>
+                        {learner?.first_name} {learner?.surname}{" "}
+                        {/* {learner?.last_name} | {learner?.adm_no} */}
                       </option>
                     ))}
                   </FormSelect>
@@ -522,7 +518,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y">Transfers</h2>
+          <h2 className="mt-1 text-lg font-medium ">Transfers</h2>
           {message && success && (
             <Alert
               variant="soft-success"
@@ -554,7 +550,7 @@ function Main() {
             // </div>
           )}
 
-          <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
             <Button
               variant="primary"
               className="mr-2 shadow-md"
@@ -593,7 +589,7 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -641,7 +637,7 @@ function Main() {
                     </Table.Thead>
                     <Table.Tbody>
                       {tranfers.map((tranfer: any, key) => (
-                        <Table.Tr key={key} className="intro-x">
+                        <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                             <span className="font-medium whitespace-nowrap">
                               {limit * (page - 1) + key + 1}
@@ -649,32 +645,27 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <div className="flex items-center">
-                              <div className="w-9 h-9 image-fit zoom-in">
-                                <Tippy
-                                  as="img"
-                                  alt=""
-                                  className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                              <div className="w-9 h-9 ">
+                                <img
+                                  className="w-9 h-9 rounded-lg border shadow-md"
                                   src={c.IMG_URL + tranfer?.learner?.photo}
                                   content={
                                     tranfer?.learner?.first_name +
                                     " " +
                                     tranfer?.learner?.last_name
                                   }
+                                  onError={(e) =>
+                                    (e.currentTarget.src = leanerImg)
+                                  }
                                 />
                               </div>
                               <div className="ml-4">
-                                <a
-                                  href="#"
-                                  onClick={() => editRecord(tranfer)}
-                                  className="font-medium whitespace-nowrap"
-                                >
-                                  {tranfer?.learner?.first_name &&
-                                    tranfer?.learner?.first_name}
-                                  {" " +
-                                    tranfer?.learner?.surname +
-                                    " " +
-                                    tranfer?.learner?.last_name}
-                                </a>
+                                {tranfer?.learner?.first_name &&
+                                  tranfer?.learner?.first_name}
+                                {" " +
+                                  tranfer?.learner?.surname +
+                                  " " +
+                                  tranfer?.learner?.last_name}
                                 <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
                                   {tranfer?.stream?.grade?.name}{" "}
                                   {tranfer?.stream?.name}
@@ -721,17 +712,21 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
-                              <a
-                                className="flex items-center mr-3 text-success"
-                                href="#"
-                                onClick={() => editRecord(tranfer)}
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Edit
-                              </a>
+                              {tranfer?.paymentStatus !== "Paid" && (
+                                <a
+                                  className="flex items-center mr-3 text-success"
+                                  href="#"
+                                  onClick={() => {
+                                    setRecordId(tranfer._id), setViewMore(true);
+                                  }}
+                                >
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Delete
+                                </a>
+                              )}
                               {/* <a
                             className="flex items-center text-primary"
                             onClick={(e: any) => handleNavigate(learner)}
@@ -756,8 +751,8 @@ function Main() {
                       ))}
                     </Table.Tbody>
                   </Table>
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}

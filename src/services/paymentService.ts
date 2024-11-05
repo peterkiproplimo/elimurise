@@ -1,10 +1,9 @@
-
-import axios from 'axios';
-import * as c from '../utils/constants';
+import axios from "axios";
+import * as c from "../utils/constants";
 
 const getData = async () => {
   try {
-    const user = await localStorage.getItem('user')
+    const user = await localStorage.getItem("user");
     if (user !== null) {
       // value previously stored
       let token = JSON.parse(user);
@@ -15,56 +14,20 @@ const getData = async () => {
     // error reading value
     console.log(e);
   }
-}
+};
 getData();
 
 axios.interceptors.response.use(
-  response => {
-    return response
+  (response) => {
+    return response;
   },
   function (error) {
     if (error?.response?.status === 401) {
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
-
-export async function getWallets(data: any) {
-  try {
-    let res = await axios.get(c.WALLETS);
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-}
-
-export async function getTransactions(data: any) {
-    try {
-      let res = await axios.get(c.TRANSACTIONS);
-      return res.data;
-    } catch (e) {
-      throw handler(e);
-    }
-  }
-
-  export async function deleteWallet(id: any) {
-    try {
-        let res = await axios.delete(c.WALLETS+ "/" + id); 
-        return res.data;
-    } catch (e) {
-        throw handler(e);
-    }
-  }
-
-  export async function getTransactionsByWalletId(id: any) {
-    try {
-      let res = await axios.get(c.WALLETS+ "/" + id);
-      return res.data;
-    } catch (e) {
-      throw handler(e);
-    }
-  }
+);
 
 export function handler(err: any) {
   let error = err;

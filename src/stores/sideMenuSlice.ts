@@ -76,8 +76,8 @@ const initialState: SideMenuState = {
       pathname: "/home/teachers",
     },
     {
-      icon: "FileText",
-      title: "Content",
+      icon: "GraduationCap",
+      title: "Learning Areas",
       pathname: "/home/grade",
     },
 
@@ -125,20 +125,41 @@ const initialState: SideMenuState = {
       ],
     },
     {
+      icon: "Users",
+      title: "Learner Behaviour",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/home/behaviour",
+          title: "Behaviour Category",
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/behaviour-assessment",
+          title: "Behaviour Assessment",
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/comments",
+          title: "Comments",
+        },
+      ],
+    },
+    {
       icon: "FileText",
       pathname: "/home/billing",
       title: "Billing",
     },
 
     {
-      icon: "Users",
+      icon: "Settings",
       title: "Settings",
       subMenu: [
-        {
-          icon: "FileText",
-          pathname: "/home/academic",
-          title: "Year",
-        },
+        // {
+        //   icon: "FileText",
+        //   pathname: "/home/academic",
+        //   title: "Year",
+        // },
         // {
         //   icon: "BarChart",
         //   pathname: "/home/term",

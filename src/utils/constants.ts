@@ -24,6 +24,8 @@ export const SCHOOLDASHBOARD = `${BASE_URL}portal/dashboard`;
 export const TRANSFERS = `${BASE_URL}portal/transfer-requests`;
 export const LEARNERTRANSFERS = `${BASE_URL}/learner`;
 export const PAYMENTS = `${BASE_URL}portal/payment`;
+export const BEHAVIOUR = `${BASE_URL}portal/behaviour`;
+export const COMMENTS = `${BASE_URL}portal/comment`;
 
 export const PARENTS = `${BASE_URL}portal/parents`;
 export const TEACHERS = `${BASE_URL}portal/teachers`;
@@ -46,25 +48,25 @@ const Terms = {
 };
 export const ROLES = `${BASE_URL}portal/roles`;
 
-export const FORGOT_PASSWORD = `${BASE_URL}send-password/`;
-export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
+// export const FORGOT_PASSWORD = `${BASE_URL}send-password/`;
+// export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
 
-export const CONFERENCES = `${BASE_URL}events-service/conference`;
-export const THEMES = `${BASE_URL}events-service/theme`;
-export const EVENTS = `${BASE_URL}events-service/event`;
-export const DASHBOARD = `${BASE_URL}events-service/event/dashboard`;
-export const MAKES = `${BASE_URL}vehicle/makes`;
-export const VALUERS = `${BASE_URL}vehicle/valuers`;
-export const SECURITY_FEATURES = `${BASE_URL}vehicle/security_features`;
-export const FINANCIERS = `${BASE_URL}vehicle/financiers`;
-export const Models = `${BASE_URL}vehicle/models/`;
-export const POLICY = `${BASE_URL}vehicle/users/`;
+// export const CONFERENCES = `${BASE_URL}events-service/conference`;
+// export const THEMES = `${BASE_URL}events-service/theme`;
+// export const EVENTS = `${BASE_URL}events-service/event`;
+// export const DASHBOARD = `${BASE_URL}events-service/event/dashboard`;
+// export const MAKES = `${BASE_URL}vehicle/makes`;
+// export const VALUERS = `${BASE_URL}vehicle/valuers`;
+// export const SECURITY_FEATURES = `${BASE_URL}vehicle/security_features`;
+// export const FINANCIERS = `${BASE_URL}vehicle/financiers`;
+// export const Models = `${BASE_URL}vehicle/models/`;
+// export const POLICY = `${BASE_URL}vehicle/users/`;
 
-//Simcards Endpoints
-export const SIMCARDS = `${BASE_URL}simcard-service/simcards`;
+// //Simcards Endpoints
+// export const SIMCARDS = `${BASE_URL}simcard-service/simcards`;
 
-//Payments Endpoints
-export const WALLETS = `${BASE_URL}payments-service/wallets`;
-export const TRANSACTIONS = `${BASE_URL}payments-service/transactions`;
+// //Payments Endpoints
+// export const WALLETS = `${BASE_URL}payments-service/wallets`;
+// export const TRANSACTIONS = `${BASE_URL}payments-service/transactions`;
 
 //samson devops push ss

@@ -171,7 +171,7 @@ function Main() {
     }
   };
   const getEnrollments = async () => {
-    const enrollments = await ApiService.getEnrolments({ stream: stream }, {});
+    const enrollments = await ApiService.getLearners({ stream: stream }, {});
     setEnrollments(enrollments?.data);
   };
   const getTextColor = (score: any) => {
@@ -513,13 +513,10 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form
-            className="mt-5 p-5 intro-y validate-form  "
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  validate-form  " onSubmit={onSubmit}>
             <div className="assessment-header"></div>
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <div className="flex flex-col items-center mt-8 intro-y sm:flex-row">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+              <div className="flex flex-col items-center mt-8  sm:flex-row">
                 <h2 className="mr-auto text-xl font-semibold  ml-5 flex">
                   <a
                     onClick={(event: React.MouseEvent) => {
@@ -555,8 +552,8 @@ function Main() {
                 title="PDF Viewer"
               />
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+              <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -610,7 +607,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -716,9 +713,9 @@ function Main() {
                   >
                     <option>Select Learner</option>
 
-                    {enrollments?.map((enrollment: any, key) => (
-                      <option key={key} value={enrollment?._id}>
-                        {enrollment?.learner.first_name}
+                    {enrollments?.map((learner: any, key) => (
+                      <option key={key} value={learner?._id}>
+                        {learner?.first_name}
                       </option>
                     ))}
                   </FormSelect>
@@ -740,7 +737,7 @@ function Main() {
                 >
                   <option>Select Academic Term</option>
 
-                  {academic_terms.map((term: any, key) => (
+                  {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
                     </option>

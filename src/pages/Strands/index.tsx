@@ -172,7 +172,7 @@ function Main() {
         <></>
       ) : (
         <>
-          <h2 className="mt-10 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-10 text-xl font-medium  flex flex-wrap">
             <a
               onClick={(e: any) => openLearningArea(strands)}
               className=" mr-5 "
@@ -257,7 +257,7 @@ function Main() {
               )}
             </div> */}
 
-            <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
               {/* <Button
                 variant="primary"
                 className="mr-2 shadow-md"
@@ -322,7 +322,7 @@ function Main() {
             ) : (
               <>
                 {strands.map((strand: any, key) => (
-                  <div className="col-span-12 intro-y md:col-span-6">
+                  <div className="col-span-12  md:col-span-6">
                     <div
                       className="box"
                       onClick={(e: any) => openSubStrand(strand)}
@@ -355,8 +355,8 @@ function Main() {
                     </div>
                   </div>
                 ))}
-                <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-                  <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+                <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                     <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
                         onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -409,7 +409,7 @@ function Main() {
               </>
             )}
 
-            {/* <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+            {/* <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               <Table className="border-spacing-y-[10px] border-separate -mt-2">
                 <Table.Thead>
                   <Table.Tr>
@@ -432,7 +432,7 @@ function Main() {
                 </Table.Thead>
                 <Table.Tbody>
                   {strands.map((strand: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
+                    <Table.Tr key={key} className="">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <span className="font-medium whitespace-nowrap">
                           {key + 1}

@@ -195,7 +195,7 @@ function Main() {
   };
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium intro-y">Learners</h2>
+      <h2 className="mt-1 text-lg font-medium ">Learners</h2>
 
       <Table className="border-spacing-y-[3px] border-separate mt-2">
         <Table.Thead>
@@ -225,7 +225,7 @@ function Main() {
         </Table.Thead>
         <Table.Tbody>
           {learners.map((learner: any, key) => (
-            <Table.Tr key={key} className="intro-x">
+            <Table.Tr key={key} className="">
               <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                 <span className="font-medium whitespace-nowrap">
                   {learner?.learner?.guardian_first_name}

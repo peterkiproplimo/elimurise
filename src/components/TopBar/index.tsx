@@ -20,6 +20,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
     auth.signOut();
   };
   const [user, setUser] = useState<any>({});
+  const [school, setSchool] = useState<any>({});
 
   const dispatch = useAppDispatch();
   const darkMode = useAppSelector(selectDarkMode);
@@ -37,6 +38,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   setDarkModeClass();
 
   useEffect(() => {
+    setSchool(JSON.parse(localStorage.getItem("school") ?? "{}"));
     setUser(auth.authData && auth.authData?.user);
   }, [user]);
 
@@ -56,7 +58,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           <Link
             to="/"
             className={clsx([
-              "-intro-x hidden md:fle text-primary",
+              "- hidden md:fle text-primary",
               props.layout == "side-menu" && "xl:w-[120px]",
               props.layout == "simple-menu" && "xl:w-auto",
               props.layout == "top-menu" && "w-auto",
@@ -73,7 +75,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           <Breadcrumb
             light
             className={clsx([
-              "text-primary h-[45px] md:ml-10 md:border-l border-white/[0.08] dark:border-white/[0.08] mr-auto -intro-x",
+              "text-primary h-[45px] md:ml-10 md:border-l border-white/[0.08] dark:border-white/[0.08] mr-auto -",
               props.layout != "top-menu" && "md:pl-6",
               props.layout == "top-menu" && "md:pl-10",
             ])}
@@ -83,9 +85,20 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
               Dashboard
             </Breadcrumb.Link>
           </Breadcrumb>
+          <div className="hidden md:flex justify-center mt-4 md:mt-0">
+            <a
+              href="settings"
+              className="text-gray-700 flex items-center space-x-2"
+            >
+              <i className="text-blue-500">⬇️</i>
+              <span className="font-semibold">
+                Current Session: {school?.current_session}
+              </span>
+            </a>
+          </div>
           {/* END: Breadcrumb */}
           {/* BEGIN: Search */}
-          <div className="relative mr-3 intro-x sm:mr-6">
+          {/* <div className="relative mr-3 ml-3  sm:mr-6">
             <div className="relative hidden sm:block">
               <TomSelect
                 options={{
@@ -94,10 +107,11 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
                 className="border-transparent w-56 shadow-none rounded-full bg-slate-200 pr-8 transition-[width] duration-300 ease-in-out focus:border-transparent focus:w-72 dark:bg-darkmode-400"
               ></TomSelect>
             </div>
-          </div>
+          </div> */}
+
           {/* END: Search */}
           {/* BEGIN: Notifications */}
-          <Popover className="mr-4 intro-x sm:mr-6">
+          <Popover className="mr-4 ml-4  sm:mr-6">
             <Popover.Button
               className="
               relative text-primary/70 outline-none block
@@ -141,10 +155,11 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
               ))}
             </Popover.Panel>
           </Popover>
+
           {/* END: Notifications */}
           {/* BEGIN: Account Menu */}
           <Menu>
-            <Menu.Button className="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x">
+            <Menu.Button className="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in ">
               <img alt="" src={fakerData[9].photos[0]} />
             </Menu.Button>
             <Menu.Items className="w-56 mt-px relative bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">

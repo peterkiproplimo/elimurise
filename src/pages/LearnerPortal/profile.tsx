@@ -25,6 +25,9 @@ import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useAuth } from "../../contexts/Auth";
 import { useNavigate } from "react-router-dom";
+import * as c from "../../utils/constants";
+import leanerImg from "../../assets/images/learner.jpeg";
+import { formatDate } from "../../utils/helper";
 
 interface TableRow {
   no: number;
@@ -41,10 +44,7 @@ function Main() {
   const [grades, setGrades] = useState([]);
   const [grade, setGrade] = useState("");
   const auth = useAuth();
-  const learner = auth?.authData?.user as Learner;
-  useEffect(() => {
-    reset({ ...learner });
-  }, [auth]);
+  const [learner, setLearner] = useState<any>({});
   const [schools, setSchools] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -54,6 +54,8 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [learners, setLearners] = useState([{}]);
+  const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
+
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -97,31 +99,6 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
-      isLoading(true);
-      try {
-        const data = await getValues();
-        await ApiService.createLearner(data);
-        await getStudents();
-        await reset({ name: "" });
-        isLoading(false);
-        setDialog(false);
-        setSuccess(true);
-        setMessage("Learner added successfully.");
-        notify.current?.showToast();
-      } catch (error: any) {
-        isLoading(false);
-        setSuccess(false);
-        setMessage(
-          error.message || "An error occurred while creating the learner."
-        );
-        notify.current?.showToast();
-      }
-    }
-  };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
 
@@ -130,25 +107,7 @@ function Main() {
   useEffect(() => {
     getGrades();
     const learner = JSON.parse(localStorage.getItem("learner") || "");
-    reset({
-      ...learner.learner,
-      stream: learner?.stream?._id,
-      grade: learner?.stream?.grade?._id,
-      guardian_id_no: learner?.learner?.guardian?.id_no,
-      guardian: learner?.learner?.guardian?._id,
-      guardian_first_name: learner?.learner?.guardian?.first_name,
-      guardian_email: learner?.learner?.guardian?.email,
-      guardian_last_name: learner?.learner?.guardian?.last_name,
-      guardian_surname: learner?.learner?.guardian?.surname,
-      guardian_phone: learner?.learner?.guardian?.phone,
-      guardian2_id_no: learner?.learner?.guardian2?.id_no,
-      guardian2: learner?.learner?.guardian2?._id,
-      guardian2_first_name: learner?.learner?.guardian2?.first_name,
-      guardian2_email: learner?.learner?.guardian2?.email,
-      guardian2_last_name: learner?.learner?.guardian2?.last_name,
-      guardian2_surname: learner?.learner?.guardian2?.surname,
-      guardian2_phone: learner?.learner?.guardian2?.phone,
-    });
+    setLearner(learner);
   }, []);
   useEffect(() => {
     getStreams();
@@ -187,38 +146,6 @@ function Main() {
     setAcademic(response.data);
   };
 
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteLearner(recordId);
-      getStudents();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage("Learner record deleted successfully");
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
-
-  const editRecord = (record: any) => {
-    setIsEditMode(true);
-    setGroup(record.groups);
-    reset({ ...record, stream: record?.stream?._id });
-    setDialog(true);
-  };
-
-  const cancel = (record: any) => {
-    setGroup([""]);
-    setPermission([""]);
-    reset({ name: "" });
-    setDialog(false);
-  };
-
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
@@ -234,22 +161,11 @@ function Main() {
 
   return (
     <>
-      <div className="flex items-center mt-8 intro-y">
-        <a
-          onClick={(event: React.MouseEvent) => {
-            event.preventDefault();
-            reset({ name: "" });
-            setDialog(false);
-            navigate("/parent");
-          }}
-          href="#"
-        >
-          <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-        </a>
+      <div className="flex items-center mt-8 ">
         <h2 className="mr-auto text-lg font-medium">{"Profile Details"}</h2>
       </div>
       <br />
-      <form className="mt-5 p-5 intro-y box validate-form" onSubmit={onSubmit}>
+      {/* <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
         <div>
           <a
             onClick={(event: React.MouseEvent) => {
@@ -260,7 +176,7 @@ function Main() {
             href="#"
           ></a>
         </div>
-        <fieldset className="mt-5 p-5 intro-y box validate-form">
+        <fieldset className="mt-5 p-5  box validate-form">
           <legend className="text-lg font-semibold">Learner Details</legend>
           <div className="grid grid-cols-12 gap-4 gap-y-3">
             <div className="col-span-4 sm:col-span-4">
@@ -357,7 +273,7 @@ function Main() {
             </div>
           </div>
         </fieldset>
-        <fieldset className="mt-5 p-5 intro-y box validate-form">
+        <fieldset className="mt-5 p-5  box validate-form">
           <legend className="text-lg font-semibold">Guardian Details</legend>
           <div className="grid grid-cols-12 gap-4 gap-y-3">
             <div className="col-span-4 sm:col-span-4">
@@ -473,7 +389,7 @@ function Main() {
             </div>
           </div>
         </fieldset>
-        <fieldset className="mt-5 p-5 intro-y box validate-form">
+        <fieldset className="mt-5 p-5  box validate-form">
           <legend className="text-lg font-semibold">Guardian 2 Details</legend>
           <div className="grid grid-cols-12 gap-4 gap-y-3">
             <div className="col-span-4 sm:col-span-4">
@@ -589,7 +505,316 @@ function Main() {
             </div>
           </div>
         </fieldset>
-      </form>
+      </form> */}
+      <div className="content">
+        {/* Custom Back Button */}
+        <a
+          onClick={(event) => {
+            event.preventDefault();
+            navigate("/parent");
+            // setProfile(false); // Assuming setProfile is defined in the parent component
+          }}
+          href="#"
+          className="mb-4 flex items-center text-blue-600 hover:text-blue-800"
+        >
+          <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+          Back
+        </a>
+
+        <div className="flex flex-wrap">
+          {/* Profile Picture and Name Section */}
+          <div className="w-full md:w-1/4 text-center mb-4 md:mb-0">
+            <div className="bg-white shadow-md m-4 rounded-lg overflow-hidden ">
+              <div className="p-6">
+                {/* <div className="w-9 h-9 ">
+                                <img
+                                  src={c.IMG_URL + learner?.photo}
+                                  alt="Learner"
+                                  className="w-9 h-9 rounded-lg border shadow-md"
+                                  onError={(e) =>
+                                    (e.currentTarget.src = leanerImg)
+                                  }
+                                />
+                              </div> */}
+                <img
+                  src={c.IMG_URL + learner?.photo}
+                  alt="photo"
+                  className="rounded-full mx-auto"
+                  style={{ width: "90%", height: "90%" }}
+                  onError={(e) => (e.currentTarget.src = leanerImg)}
+                />
+                <h3 className="mt-3 text-lg font-semibold">
+                  {`${learner.first_name} ${learner.surname}`}
+                </h3>
+              </div>
+            </div>
+          </div>
+
+          {/* User Information */}
+          <div className="w-full md:w-3/4 ">
+            <div className="bg-white shadow-md rounded-lg overflow-hidden m-4">
+              <div className="p-6">
+                <h4 className="font-bold">Learner's Information</h4>
+
+                {/* Tabs for Basic Info and Guardians */}
+                <ul className="flex border-b border-gray-200 mb-4">
+                  <li className="mr-2">
+                    <button
+                      className={`inline-block py-2 px-4 ${
+                        activeTab === "basicInfo"
+                          ? "text-blue-600 border-b-2 border-blue-600"
+                          : "text-gray-600 hover:text-blue-600"
+                      } font-semibold`}
+                      onClick={() => setActiveTab("basicInfo")}
+                    >
+                      Basic Info
+                    </button>
+                  </li>
+                  <li className="mr-2">
+                    <button
+                      className={`inline-block py-2 px-4 ${
+                        activeTab === "guardian1"
+                          ? "text-blue-600 border-b-2 border-blue-600"
+                          : "text-gray-600 hover:text-blue-600"
+                      } font-semibold`}
+                      onClick={() => setActiveTab("guardian1")}
+                    >
+                      Guardian 1
+                    </button>
+                  </li>
+                  <li className="mr-2">
+                    <button
+                      className={`inline-block py-2 px-4 ${
+                        activeTab === "guardian2"
+                          ? "text-blue-600 border-b-2 border-blue-600"
+                          : "text-gray-600 hover:text-blue-600"
+                      } font-semibold`}
+                      onClick={() => setActiveTab("guardian2")}
+                    >
+                      Guardian 2
+                    </button>
+                  </li>
+                  <li className="mr-2">
+                    <button
+                      className={`inline-block py-2 px-4 ${
+                        activeTab === "tab3"
+                          ? "text-blue-600 border-b-2 border-blue-600"
+                          : "text-gray-600 hover:text-blue-600"
+                      } font-semibold`}
+                      onClick={() => setActiveTab("tab3")}
+                    >
+                      History
+                    </button>
+                  </li>
+                </ul>
+
+                {/* Tab Content */}
+                <div className="tab-content">
+                  {/* Basic Info Tab */}
+
+                  {activeTab === "basicInfo" && (
+                    <div className="tab-pane active">
+                      <h4 className="font-bold">Bascic Information</h4>
+
+                      <table className="min-w-full border border-gray-200">
+                        <tbody>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Name
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">{`${learner?.first_name} ${learner.surname}`}</td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              ADM NO
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.adm_no}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Class
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.grade?.name}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Stream
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.stream?.name}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Year Admitted
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {new Date(learner?.createdAt).getFullYear()}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Email
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian?.email || "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              NEMIS NO
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.nemis_no}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Current Session
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.current_session}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Status
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              <div
+                                className={
+                                  learner?.status != "L"
+                                    ? "flex items-center text-success"
+                                    : "flex items-center text-danger"
+                                }
+                              >
+                                {learner?.status == "L" ? "Left" : ""}
+                                {learner?.status == "G" ? "Graduated" : ""}
+                                {learner?.status == "P" ? "In Session" : ""}
+                              </div>
+                            </td>
+                          </tr>
+                          {learner?.status == "G" && (
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Graduated On
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {formatDate(learner?.grad_date, "DD-MM-YYYY")}
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Guardian 1 Tab */}
+                  {activeTab === "guardian1" && (
+                    <div className="tab-pane">
+                      <h4 className="font-bold">Guardian 1 Information</h4>
+                      <table className="min-w-full border border-gray-200">
+                        <tbody>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Name
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian?.first_name}{" "}
+                              {learner?.guardian?.surname}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Relationship
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian?.relationship}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Contact
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian?.contact || "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Email
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian?.email || "N/A"}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Guardian 2 Tab */}
+                  {activeTab === "guardian2" && (
+                    <div className="tab-pane">
+                      <h4 className="font-bold">Guardian 2 Information</h4>
+                      <table className="min-w-full border border-gray-200">
+                        <tbody>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Name
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian2?.first_name}{" "}
+                              {learner?.guardian2?.surname || "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Relationship
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian2?.relationship || "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Contact
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian2?.contact || "N/A"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-4 py-4 font-bold border-b border-gray-200">
+                              Email
+                            </td>
+                            <td className="px-4 py-4 border-b border-gray-200">
+                              {learner?.guardian2?.email || "N/A"}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {/* Tab 3 */}
+                  {activeTab === "tab3" && (
+                    <div className="tab-pane">
+                      <h4 className="font-bold">Additional Information</h4>
+                      <p>Comming soon...</p>
+                      {/* You can include more fields or tables here as needed */}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

@@ -92,11 +92,11 @@ const Register = () => {
           <img alt="ACS" className="xl:w-30 md:w-10 xl:w-auto" src={logo} />
         </div>
         <h2 className="text-3xl font-bold  ">Register</h2>
-        <div className="mt-2 text-center intro-x text-slate-900 xl text-xl">
+        <div className="mt-2 text-center  text-slate-900 xl text-xl">
           register to continue.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
-          <div className="mt-8 intro-x">
+          <div className="mt-8 ">
             <div className="input-form">
               <label>First Name</label>
               <FormInput
@@ -106,8 +106,8 @@ const Register = () => {
                 name="firstname"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                 }
                 placeholder="firstname"
               />
@@ -127,8 +127,8 @@ const Register = () => {
                 name="lastname"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                 }
                 placeholder="lastname"
               />
@@ -148,8 +148,8 @@ const Register = () => {
                 name="email"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                 }
                 placeholder="Email"
               />
@@ -169,8 +169,8 @@ const Register = () => {
                 name="phone"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
                 }
                 placeholder="Phone number"
               />
@@ -191,8 +191,8 @@ const Register = () => {
                   name="password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger pr-10"
-                      : "block px-4 py-3 mt-4 intro-x min-w-[250px] xl:min-w-[350px]  border pr-10 bg-blue-100 border-blue-300"
+                      ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
+                      : "block px-4 py-3 mt-4  min-w-[250px] xl:min-w-[350px]  border pr-10 bg-blue-100 border-blue-300"
                   }
                   placeholder="Enter Password"
                 />
@@ -217,7 +217,7 @@ const Register = () => {
               {/* Eye Icon */}
             </div>
           </div>
-          {/* <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
+          {/* <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
             <div className="flex items-center mr-auto">
               <FormCheck.Input
                 id="remember-me"
@@ -233,7 +233,7 @@ const Register = () => {
             </div>
             <Link to="/auth/forgot-password">Forgot Password?</Link>
           </div> */}
-          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+          <div className="mt-5 text-center  xl:mt-8 xl:text-left">
             <Button
               variant="primary"
               className="w-full px-4 py-3 align-top xl:w-22 xl:mr-3 "

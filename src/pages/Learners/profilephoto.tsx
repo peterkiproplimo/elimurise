@@ -18,6 +18,10 @@ const PassportUpload: React.FC<PassportUploadProps> = ({
   const [previewImage, setPreviewImage] = useState<string | ArrayBuffer | null>(
     initialImageUrl ?? null
   );
+  const handleImageError = () => {
+    // Clear the preview image if it cannot be loaded
+    setPreviewImage(null);
+  };
 
   useEffect(() => {
     setPreviewImage(initialImageUrl ?? null);
@@ -58,6 +62,7 @@ const PassportUpload: React.FC<PassportUploadProps> = ({
             alt="Preview"
             width={120}
             className=" rounded-md shadow-md"
+            onError={handleImageError} // Handle image loading error
           />
         </div>
       )}

@@ -152,7 +152,7 @@ function Main() {
         <></>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium intro-y flex flex-wrap">
+          <h2 className="mt-1 text-lg font-medium  flex flex-wrap">
             <a
               onClick={(e: any) =>
                 navigate("/home/grade", {
@@ -167,7 +167,7 @@ function Main() {
             Learning Areas for({grade?.name})
           </h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="flex flex-wrap items-center col-span-12 mt-2 intro-y xl:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
                 {pagination.current_page +
@@ -237,8 +237,8 @@ function Main() {
             )}
           </div>
           {!loading && learningAreas.length > 0 && (
-            <div className="mt-2 flex flex-wrap w-100 items-center col-span-12 intro-x sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-x sm:flex-row sm:flex-nowrap">
+            <div className="mt-2 flex flex-wrap w-100 items-center col-span-12  sm:flex-row sm:flex-nowrap">
+              <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(page - 1)}

@@ -122,7 +122,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           onSubmit={onSubmit}
         >
           <p className="mt-5 text-xl">Customer details:</p>
-          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 intro-x">
+          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 ">
             <div className="input-form">
               <label>First Name</label>
               <FormInput
@@ -132,8 +132,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 name="firstname"
                 className={
                   errors.firstname
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
                 }
                 placeholder="firstname"
               />
@@ -153,8 +153,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 name="lastname"
                 className={
                   errors.lastname
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
                 }
                 placeholder="lastname"
               />
@@ -174,8 +174,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 name="email"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
                 }
                 placeholder="Email"
               />
@@ -195,8 +195,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 name="phone"
                 className={
                   errors.phone
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full    border-blue-300"
+                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
                 }
                 placeholder="Phone number"
               />
@@ -217,8 +217,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   name="password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4 intro-x min-w-[250px]   border pr-10   border-blue-300"
+                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
+                      : "block px-4 py-3 mt-4  min-w-[250px]   border pr-10   border-blue-300"
                   }
                   placeholder="Enter Password"
                 />
@@ -247,8 +247,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   name="confirm_password"
                   className={
                     errors.confirm_password
-                      ? "block px-4 py-3 mt-4 intro-x min-w-full border-danger pr-10"
-                      : "block px-4 py-3 mt-4 intro-x min-w-[250px] border pr-10 border-blue-300"
+                      ? "block px-4 py-3 mt-4  min-w-full border-danger pr-10"
+                      : "block px-4 py-3 mt-4  min-w-[250px] border pr-10 border-blue-300"
                   }
                   placeholder="Confirm Password"
                 />
@@ -273,7 +273,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
               {/* Eye Icon */}
             </div>
           </div>
-          {/* <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
+          {/* <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
             <div className="flex items-center mr-auto">
               <FormCheck.Input
                 id="remember-me"

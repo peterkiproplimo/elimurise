@@ -23,12 +23,12 @@ const Auth = () => {
             {/* BEGIN: Login Info */}
             <div className="flex-col hidden min-h-screen xl:flex">
               <div className="my-auto">
-                <div className=" text-4xl font-medium leading-tight text-white -intro-x">
+                <div className=" text-4xl font-medium leading-tight text-white -">
                   Empowering Competency <br /> Based Curriculum (CBC) <br />
                   Education In Kenya
                   {/* 3 Days */}
                 </div>
-                {/* <div className="mt-5 text-lg text-white -intro-x text-opacity-70 dark:text-slate-400">
+                {/* <div className="mt-5 text-lg text-white - text-opacity-70 dark:text-slate-400">
                   Empowering Competency-Based Curriculum (CBC) Education <br />
                   In kenya
                 </div> */}

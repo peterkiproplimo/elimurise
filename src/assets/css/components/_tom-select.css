@@ -104,10 +104,10 @@
       color: white;
       background-color: theme("colors.primary");
     }
-    [data-selectable] .highlight {
+    /* [data-selectable] .highlight {
       color: white;
-      background-color: theme("colors.danger");
-    }
+      background-color: theme("colors.primary");
+    } */
   }
 }
 

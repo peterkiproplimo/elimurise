@@ -33,7 +33,7 @@ const Auth = () => {
                 />
               </div>
               <div className="flex items-center">
-                <div className=" text-center intro-x  xl:text-left">
+                <div className=" text-center   xl:text-left">
                   <Link
                     to="/"
                     className="btn-2 w-full px-4 py-3 align-top xl:w-32 border-blue-800"

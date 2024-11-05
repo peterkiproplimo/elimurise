@@ -418,10 +418,7 @@ function Main() {
                 path: 'grade_id'
             }
         } */}
-          <form
-            className="mt-5 p-5 intro-y validate-form  "
-            onSubmit={onSubmit}
-          >
+          <form className="mt-5 p-5  validate-form  " onSubmit={onSubmit}>
             <div className="assessment-header">
               <div className="meta-info flex  h-20 bg-white rounded-xl  shadow-md">
                 <h2 className="text-xl flex items-center font-semibold ml-5">
@@ -445,8 +442,8 @@ function Main() {
                 </div>
               </div>
             </div>
-            <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-              <div className="flex flex-wrap  col-span-12 mt-2 intro-y xl:flex-nowrap">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+              <div className="flex flex-wrap  col-span-12 mt-2  xl:flex-nowrap">
                 <div className="hidden mx-auto md:block text-slate-500 mt-5">
                   Showing{" "}
                   {pagination.current_page +
@@ -496,7 +493,7 @@ function Main() {
                 </Table.Thead>
                 <Table.Tbody>
                   {enrollments.map((enrollment: any, key) => (
-                    <Table.Tr key={key} className="intro-x">
+                    <Table.Tr key={key} className="">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <FormCheck.Input type="checkbox" />
                       </Table.Td>
@@ -560,8 +557,8 @@ function Main() {
                 </Table.Tbody>
               </Table>
             </div>
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap tt">
+            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+              <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -615,7 +612,7 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
@@ -854,7 +851,7 @@ function Main() {
             </div>
           </div>
 
-          {/* <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
+          {/* <div className="col-span-12 overflow-auto  2xl:overflow-visible">
             <h2>Assessment Marks Entry Form</h2>
             <div className="mb-4">
               <span>
@@ -887,7 +884,7 @@ function Main() {
               </Table.Thead>
               <Table.Tbody>
                 {enrollments.map((enrollment: any, key) => (
-                  <Table.Tr key={key} className="intro-x">
+                  <Table.Tr key={key} className="">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <FormCheck.Input type="checkbox" />
                     </Table.Td>
@@ -935,7 +932,7 @@ function Main() {
 
         
          
-            <div className="col-span-12 intro-y md:col-span-6 cursor-pointer">
+            <div className="col-span-12  md:col-span-6 cursor-pointer">
             
                <div className="box" >
                    <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
@@ -957,7 +954,7 @@ function Main() {
            </div>
           
           </div>
-          <div className="col-span-12 intro-y md:col-span-6 cursor-pointer">
+          <div className="col-span-12  md:col-span-6 cursor-pointer">
             
             <div className="box" >
                 <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
@@ -987,8 +984,8 @@ function Main() {
 
 
 
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap">
+              <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap">
                 <Pagination className="w-full sm:w-auto sm:mr-auto">
                   <button
                     onClick={() => setPage(previous_page)}

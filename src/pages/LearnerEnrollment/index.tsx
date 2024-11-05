@@ -18,28 +18,37 @@ import * as yup from "yup";
 import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
-import * as C from "../../utils/constants";
+import * as c from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/assess.jpeg";
+import { useAuth } from "../../contexts/Auth";
+import { getNextSession, getSchool } from "../../utils/helper";
+import leanerImg from "../../assets/images/learner.jpeg";
 
 interface TableRow {
   no: number;
   strandName: string;
 }
+interface School {
+  school: Record<string, any>; // Replace `any` with specific types if known
+  // Add other properties if needed
+}
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
-
-  const [grades, setGrades] = useState([]);
+  const school = getSchool();
+  const [grades, setGrades] = useState<any>([]);
   const [levels, setLevels] = useState([]);
   const [learningAreas, setLearningAreas] = useState([]);
+  const [promotion, setPromotion] = useState<any>({});
+
   // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
@@ -77,6 +86,9 @@ function Main() {
     learning_area: learningArea?._id || "na",
     term: learningArea?._id ? 1 : "na",
   };
+  const [selectedFromGrade, setSelectedFromGrade] = useState("");
+  const [selectedToGrade, setSelectedToGrade] = useState("");
+
   // const [selectedStrand, setSelectedStrand] = useState(
   //   state_strand?._id || "na"
   // );
@@ -90,18 +102,31 @@ function Main() {
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup.object().shape({
-    year: yup.string().required("Current Academic Year is required"),
-    nextYear: yup.string().required("Next Academic Year is required"),
-    currentStream: yup.string().required("Current Stream is required"),
-    nextStream: yup.string().required("Next Stream is required"),
+    // from: yup.string().required("Current Academic Year is required"),
+    // nextYear: yup.string().required("Next Academic Year is required"),
+    // currentStream: yup.string().required("Current Stream is required"),
+    // nextStream: yup.string().required("Next Stream is required"),
   });
 
   const {
+    control,
+
     register,
     trigger,
     getValues,
     reset,
     formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schema),
+  });
+  const {
+    control: controlEnroll,
+    register: registerEnroll,
+    trigger: triggerEnroll,
+    getValues: getValuesEnroll,
+    reset: resetEnroll,
+    formState: { errors: errorsEnroll },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
@@ -120,7 +145,7 @@ function Main() {
   };
 
   const getGrades = async () => {
-    const response = await ApiService.getStream({ page: 1 });
+    const response = await ApiService.getGrades({ page: 1 });
 
     setGrades(response.data);
   };
@@ -172,35 +197,77 @@ function Main() {
     setDialog(false);
   };
 
-  const handleTransition = async () => {
-    try {
-      const data = {
-        currentAcademicYearId: year,
-        nextAcademicYearId: nextYear,
-        currentStreamId: currentStream,
-        nextStreamId: nextStream,
-      };
+  const onSubmitEnrollment = async (event: any) => {
+    event.preventDefault();
+    const result = await trigger();
+    if (result && !loading) {
+      try {
+        const data = await getValuesEnroll();
+        data.from_session = school?.current_session;
+        data.next_session = getNextSession(school?.current_session);
+        isLoading(true);
+        let res = await ApiService.leanersPromote(data);
+        // setPromotion(res.data);
+        isLoading(false);
+        if (res.success) {
+          setPromotion({}); // Clear everything inside promotion
 
-      isLoading(true);
-      let res = await ApiService.leanersPromotion(data);
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
+          setSuccess(true);
+          setMessage(res.message);
+          notify.current?.showToast();
+        } else {
+          setSuccess(true);
+          setMessage(res.message);
+          notify.current?.showToast();
+          // setPromotion({});
+        }
+
+        setConfirmDelete(false);
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(error.message);
+        notify.current?.showToast();
+      }
     }
   };
+  const onSubmit = async (event: any) => {
+    event.preventDefault();
+    const result = await trigger();
+    if (result && !loading) {
+      try {
+        const data = await getValues();
+        data.from_session = school?.current_session;
+        data.next_session = getNextSession(school?.current_session);
+        // nextAcademicYearId: nextYear,
+        // currentStreamId: currentStream,
+        // nextStreamId: nextStream,
+        // };
 
+        isLoading(true);
+        let res = await ApiService.fetchPromotion(data);
+        isLoading(false);
+
+        if (res.success) {
+          setPromotion(res.data);
+        } else {
+          setSuccess(true);
+          setMessage(res.message);
+          notify.current?.showToast();
+        }
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(error.message);
+        notify.current?.showToast();
+      }
+    }
+  };
   return (
     <>
       {dialog ? (
         <>
-          <div className="flex items-center mt-8 intro-y">
+          <div className="flex items-center mt-8 ">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -217,20 +284,49 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium intro-y flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
             {learningArea?.name}
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-            <h2 className="mr-auto text-base font-medium border-b p-2">
-              Learner Enrollment
-            </h2>
-            <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="col-span-12 sm:col-span-3">
+            {/* <h2 className="mr-auto text-base font-medium border-b p-2">
+              Student Promotion From 2019-2020 TO 2020-2021 Session
+            </h2> */}
+            <div className="flex items-center justify-between border-b pb-4">
+              <h5 className="text-xl font-bold">
+                Student Promotion From
+                <span className="text-red-500">
+                  {" "}
+                  {school?.current_session}{" "}
+                </span>
+                TO
+                <span className="text-green-500">
+                  {" "}
+                  {getNextSession(school?.current_session)}{" "}
+                </span>
+                Session
+              </h5>
+              <div className="flex space-x-2">
+                <button
+                  className="text-gray-400 hover:text-gray-600"
+                  aria-label="Collapse"
+                >
+                  <i className="fas fa-minus" />
+                </button>
+                <button
+                  className="text-gray-400 hover:text-gray-600"
+                  aria-label="Remove"
+                >
+                  <i className="fas fa-times" />
+                </button>
+              </div>
+            </div>
+
+            {/*  <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">
                   Current Academic Year
                 </FormLabel>
                 <TomSelect
-                  {...register("year")}
+                  {...register("current_session")}
                   name="year"
                   value={year}
                   onChange={(event) => setYear(event)}
@@ -248,8 +344,8 @@ function Main() {
                       errors.year.message}
                   </div>
                 )}
-              </div>
-
+              </div> */}
+            {/* 
               <div className="col-span-12 sm:col-span-3">
                 <FormLabel htmlFor="modal-form-6">Next Academic year</FormLabel>
                 <TomSelect
@@ -271,334 +367,446 @@ function Main() {
                       errors.nextYear.message}
                   </div>
                 )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Current Grade</FormLabel>
-                <TomSelect
-                  {...register("grade")}
-                  name="grade"
-                  value={currentStream}
-                  onChange={(event: any) => setCurrentStream(event)}
-                >
-                  <option>Current Stream</option>
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade?.grade?.name}
-                      {grade?.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.currentStream && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.currentStream.message === "string" &&
-                      errors.currentStream.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Next Stream </FormLabel>
-                <TomSelect
-                  {...register("learning_area")}
-                  value={nextStream}
-                  name="learning_area"
-                  onChange={(event) => setNextStream(event)}
-                >
-                  <option>Next Grade</option>
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade?.grade?.name}
-                      {grade?.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.nextStream && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.nextStream.message === "string" &&
-                      errors.nextStream.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="p-5 text-right ">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={handleReset}
-                className="w-20 ml-4"
-              >
-                Reset
-              </Button>
-              <Button
-                variant="primary"
-                type="submit"
-                className="w-20 ml-5"
-                onClick={(e: any) => handleTransition()}
-                // onClick={async () => {
-                //   const result = await trigger();
-                //   if (result) {
-                //     handleTransition();
-                //   }
-                // }}
-              >
-                Promote
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-"
+              </div> */}
+            <form className="mt-5 pl-5  box validate-form" onSubmit={onSubmit}>
+              <div className="grid grid-cols-12 gap-1">
+                {/* From Grade */}
+                <div className="col-span-12 sm:col-span-2">
+                  <FormLabel htmlFor="from-grade" className="font-bold">
+                    From Grade
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    name="from_grade"
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        className={errors.from_grade ? "border-danger" : ""}
+                        onChange={(value: any) => {
+                          field.onChange(value); // Update form state
+                          setSelectedFromGrade(value); // Update selected grade state
+                        }}
+                      >
+                        <option value="">Choose From Grade</option>
+                        {grades.map((grade: any, key: any) => (
+                          <option key={key} value={grade._id}>
+                            {grade?.name}
+                          </option>
+                        ))}
+                      </TomSelect>
+                    )}
                   />
-                )}
-              </Button>
-            </div>
-          </div>
-
-          {/* <div className="col-span-12 overflow-auto intro-y 2xl:overflow-visible">
-            <Table className="border-spacing-y-[10px] border-separate -mt-2">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    <FormCheck.Input type="checkbox" />
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    LEARNER NAME
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    ADMISSION NUMBER
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    GENDER
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    NAMEIST NO.
-                  </Table.Th>
-                  <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                    SCORE
-                  </Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {_.take(fakerData, 9).map((faker, fakerKey) => (
-                  <Table.Tr key={fakerKey} className="intro-x">
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <FormCheck.Input type="checkbox" />
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <div className="flex items-center">
-                        <div className="w-9 h-9 image-fit zoom-in">
-                          <Tippy
-                            as="img"
-                            alt="Midone - HTML Admin Template"
-                            className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                            src={faker.images[0]}
-                            content={`Uploaded at ${faker.dates[0]}`}
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <a href="" className="font-medium whitespace-nowrap">
-                            {faker.users[0].name}
-                          </a>
-                         
-                        </div>
-                      </div>
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <a
-                        className="flex items-center justify-center underline decoration-dotted"
-                        href="#"
-                      >
-                        {
-                          ["Themeforest", "Codecanyon", "Graphicriver"][
-                            _.random(0, 2)
-                          ]
-                        }
-                      </a>
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {faker.users[0].gender}
-                    </Table.Td>
-
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      {faker.totals[0]} Items
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                      <div className="flex items-center justify-center">
-                        <a className="flex items-center mr-3" href="#">
-                          <Lucide icon="CheckSquare" className="w-4 h-4 mr-1" />{" "}
-                          Edit
-                        </a>
-                        <a className="flex items-center text-danger" href="#">
-                          <Lucide icon="Trash2" className="w-4 h-4 mr-1" />{" "}
-                          Delete
-                        </a>
-                      </div>
-                    </Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
-          </div> */}
-
-          {/* <div className="grid grid-cols-12 gap-6">
-           
-
-        
-         
-            <div className="col-span-12 intro-y md:col-span-6 cursor-pointer">
-            
-               <div className="box" >
-                   <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
-                     <div className="lg:flex lg:h-12 image-fit lg:justify-start">
-                     <div> 
-                      <img alt="Midone Tailwind HTML Admin Template" className="rounded-full w-30 h-20" src={logo}/>
-                      </div>
-                    <div className="mt-3 ml-4 lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
-                        <h2 className="font-bold text-xl">Name:</h2>
-                    <div className="text  mt-0.5">Adm No: </div>
-               </div>
-             </div>
-             <div className=" mt-4 lg:mt-0 lg:justify-end justify-center">
-              <h2 className="mb-2 text-xl font-bold">Score</h2>
-
-                 <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">Assess Learner</button>
-           </div>
-             </div>
-           </div>
-          
-          </div>
-          <div className="col-span-12 intro-y md:col-span-6 cursor-pointer">
-            
-            <div className="box" >
-                <div className=" lg:flex lg:justify-between gap-4 p-5 min-h-[100px] ">
-                  <div className="lg:flex lg:h-12 image-fit lg:justify-start">
-                  <div> 
-                   <img alt="Midone Tailwind HTML Admin Template" className="rounded-full p-0 w-30 h-20" src={logo}/>
-                   </div>
-                 <div className="mt-3 ml-4 lg:ml-2 lg:mr-auto lg:text-left lg:mt-0">
-                     <h2 className="font-bold text-xl">Name:</h2>
-                 <div className="text  mt-0.5">Adm No: </div>
-            </div>
-          </div>
-          <div className="flex mt-4 lg:mt-0 lg:justify-end justify-center">
-              <button className="border items-center justify-center shadow-sm rounded-md font-medium cursor-pointer  bg-primary border-primary text-white dark:border-primary px-2 py-1 mr-2">Assess Learner</button>
-              <button className="transition duration-200 border shadow-sm inline-flex items-center justify-center rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&amp;:hover:not(:disabled)]:bg-opacity-90 [&amp;:hover:not(:disabled)]:border-opacity-90 [&amp;:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed border-secondary text-slate-500 dark:border-darkmode-100/40 dark:text-slate-300 [&amp;:hover:not(:disabled)]:bg-secondary/20 [&amp;:hover:not(:disabled)]:dark:bg-darkmode-100/10 px-5 py-1">Profile</button>
-          </div>
-          </div>
-        </div>
-       
-       </div>
-        
-           
-          
-         
-
-  
-
-
-
-            <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(previous_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
+                  {errors.from_grade && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.from_grade.message === "string" &&
+                        errors.from_grade.message}
+                    </div>
                   )}
-                  <button
-                    onClick={() => setPage(next_page)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
                 </div>
+
+                {/* From Stream */}
+                <div className="col-span-12 sm:col-span-2">
+                  <FormLabel htmlFor="from-stream" className="font-bold">
+                    From Stream
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    name="from_stream"
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        className={errors.from_stream ? "border-danger" : ""}
+                      >
+                        <option value="">Choose From Stream</option>
+                        {selectedFromGrade &&
+                          grades
+                            .find(
+                              (grade: any) => grade._id === selectedFromGrade
+                            )
+                            ?.streams.map((stream: any, key: any) => (
+                              <option key={key} value={stream._id}>
+                                {stream.name}
+                              </option>
+                            ))}
+                      </TomSelect>
+                    )}
+                  />
+                  {errors.from_stream && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.from_stream.message === "string" &&
+                        errors.from_stream.message}
+                    </div>
+                  )}
+                </div>
+
+                {/* To Grade */}
+                <div className="col-span-12 sm:col-span-2">
+                  <FormLabel htmlFor="to-grade" className="font-bold">
+                    To Grade
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    name="to_grade"
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        className={errors.to_grade ? "border-danger" : ""}
+                        onChange={(value: any) => {
+                          field.onChange(value); // Update form state
+                          setSelectedToGrade(value); // Update selected grade state
+                        }}
+                      >
+                        <option value="">Choose To Grade</option>
+                        {grades
+                          // .filter((grade) => grade._id !== selectedFromGrade)
+                          .map((grade: any, key: any) => (
+                            <option key={key} value={grade._id}>
+                              {grade?.name}
+                            </option>
+                          ))}
+                      </TomSelect>
+                    )}
+                  />
+                  {errors.to_grade && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.to_grade.message === "string" &&
+                        errors.to_grade.message}
+                    </div>
+                  )}
+                </div>
+
+                {/* To Stream */}
+                <div className="col-span-12 sm:col-span-2">
+                  <FormLabel htmlFor="to-stream" className="font-bold">
+                    To Stream
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    name="to_stream"
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        className={errors.to_stream ? "border-danger" : ""}
+                      >
+                        <option value="">Choose To Stream</option>
+                        {selectedToGrade &&
+                          grades
+                            .find((grade: any) => grade._id === selectedToGrade)
+                            ?.streams.map((stream: any, key: any) => (
+                              <option key={key} value={stream._id}>
+                                {stream.name}
+                              </option>
+                            ))}
+                      </TomSelect>
+                    )}
+                  />
+                  {errors.to_stream && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.to_stream.message === "string" &&
+                        errors.to_stream.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-12 sm:col-span-2">
+                  {/* <Button
+                      type="button"
+                      variant="outline-secondary"
+                      onClick={handleReset}
+                      className="w-20 ml-4"
+                    >
+                      Reset
+                    </Button> */}
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    className=" ml-5 mt-5"
+                    // onClick={async () => {
+                    //   const result = await trigger();
+                    //   if (result) {
+                    //     handleTransition();
+                    //   }
+                    // }}
+                  >
+                    Manage Promotion
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-4 h-4 ml-"
+                      />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </div>
+          {loading ? (
+            <div className="flex flex-col items-center mt-5">
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+            </div>
+          ) : (
+            ""
+          )}
+          {promotion?.learners?.length > 0 ? (
+            <div className="p-5 box ">
+              {" "}
+              <div className="flex flex-wrap items-center col-span-12   xl:flex-nowrap ">
+                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                  {" "}
+                  <h5 className="text-lg font-bold">
+                    Promote Learners From
+                    <span className="text-teal-500">
+                      {" "}
+                      {promotion?.from_stream?.grade?.name}{" "}
+                      {promotion?.from_stream?.name}
+                    </span>{" "}
+                    TO
+                    <span className="text-purple-500">
+                      {" "}
+                      {promotion?.to_stream?.grade?.name}{" "}
+                      {promotion?.to_stream?.name}{" "}
+                    </span>
+                  </h5>
+                </div>
+                <div className="hidden mx-auto md:block text-slate-500">
+                  Showing{" "}
+                  {pagination.current_page +
+                    " to " +
+                    pagination.total_pages +
+                    " of " +
+                    pagination.total}{" "}
+                  entries
+                </div>
+                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+                  <div className="relative w-56 text-slate-500">
+                    <FormInput
+                      type="text"
+                      className="w-56 pr-10 "
+                      placeholder="Search..."
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <Lucide
+                      icon="Search"
+                      className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-12  ">
+                <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+                  {promotion?.learners?.length === 0 ? (
+                    <div className="flex flex-col items-center mt-10 bg-white p-8">
+                      {/* <Search size={28} className="" /> */}
+                      <p className="text-xl text-slate-500 ">
+                        No records found
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <form
+                        className="space-y-4 p-2"
+                        onSubmit={onSubmitEnrollment}
+                      >
+                        <input
+                          type="text"
+                          hidden
+                          {...registerEnroll(`from_grade`)}
+                          defaultValue={promotion?.from_stream?.grade?._id}
+                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
+                        />
+                        <input
+                          type="text"
+                          hidden
+                          {...registerEnroll(`from_stream`)}
+                          defaultValue={promotion?.from_stream?._id}
+                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
+                        />
+
+                        <input
+                          type="text"
+                          hidden
+                          {...registerEnroll(`to_grade`)}
+                          defaultValue={promotion?.to_stream?.grade?._id}
+                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
+                        />
+                        <input
+                          type="text"
+                          hidden
+                          {...registerEnroll(`to_stream`)}
+                          defaultValue={promotion?.to_stream?._id}
+                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
+                        />
+                        <div className="w-100">
+                          <button className="mt-2 ml-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded flex items-center">
+                            <i className="icon-stairs-up mr-2"></i>
+                            Promote Learners
+                          </button>
+                        </div>
+                        <table className="min-w-full bg-white border border-gray-200 dark:bg-darkmode-600">
+                          <thead>
+                            <tr>
+                              <th className="px-4 py-2 text-left">#</th>
+                              <th className="px-4 py-2 text-left">
+                                Learner Name
+                              </th>
+                              <th className="px-4 py-2 text-left">Adm No</th>
+                              <th className="px-4 py-2 text-left">Nemis No</th>
+                              <th className="px-4 py-2 text-left">Grade</th>
+                              <th className="px-4 py-2 text-left">Stream</th>
+                              <th className="px-4 py-2 text-left">Action</th>
+                              {/* <th className="px-4 py-2 text-left">Actions</th> */}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {promotion?.learners?.map(
+                              (learner: any, key: any) => (
+                                <tr
+                                  key={key}
+                                  className="border-t dark:border-darkmode-400"
+                                >
+                                  <td className="px-4 py-3 text-center font-medium">
+                                    {key + 1}
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    <div className="flex items-center">
+                                      <img
+                                        src={c.IMG_URL + learner?.photo}
+                                        alt="Learner"
+                                        className="w-9 h-9 rounded-lg border shadow-md"
+                                        onError={(e) =>
+                                          (e.currentTarget.src = leanerImg)
+                                        }
+                                      />
+                                      <div className="ml-4">
+                                        <a
+                                          href="#"
+                                          onClick={() => editRecord(learner)}
+                                          className="font-medium text-primary"
+                                        >
+                                          {`${learner?.first_name} ${learner?.surname} ${learner?.last_name}`}
+                                        </a>
+                                        <div className="text-sm text-gray-500">
+                                          {learner?.stream?.grade?.name}{" "}
+                                          {learner?.stream?.name}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="px-4 py-3 font-medium">
+                                    {learner?.adm_no}
+                                  </td>
+                                  <td className="px-4 py-3 font-medium">
+                                    {learner?.nemis_no}
+                                  </td>
+                                  <td className="px-4 py-3 font-medium">
+                                    {learner?.grade?.name}
+                                  </td>
+                                  <td className="px-4 py-3 font-medium">
+                                    {learner?.stream?.name}
+                                  </td>
+                                  <td className="px-4 py-3 space-y-2">
+                                    <input
+                                      type="text"
+                                      hidden
+                                      {...registerEnroll(`learners[${key}].id`)}
+                                      defaultValue={learner?._id}
+                                      className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
+                                    />
+                                    <select
+                                      {...registerEnroll(
+                                        `learners[${key}].status`
+                                      )}
+                                      className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
+                                    >
+                                      <option value="P">Promote</option>
+                                      <option value="L">Left</option>
+                                      <option value="G">Graduated</option>
+                                    </select>
+                                  </td>
+
+                                  {/* <td className="px-4 py-3 text-center">
+                                <button
+                                  type="button"
+                                  className="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600"
+                                  onClick={() => removeLearner(learner)}
+                                >
+                                  Remove
+                                </button>
+                              </td> */}
+                                </tr>
+                              )
+                            )}
+                          </tbody>
+                        </table>
+                      </form>
+
+                      {/* <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                        <button
+                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                        </button>
+                        {_.times(pagination.total_pages).map((page, key) =>
+                          page + 1 == pagination.current_page ? (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 bg-white rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setPage(page + 1)}
+                              key={key}
+                              className="py-2 px-4 rounded-md"
+                            >
+                              {page + 1}
+                            </button>
+                          )
+                        )}
+                        <button
+                          onClick={() =>
+                            setPage(
+                              page < pagination.total_pages ? page + 1 : 1
+                            )
+                          }
+                          className="py-2 px-4 rounded-md"
+                        >
+                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                        </button>
+                      </Pagination>
+                      <div className="text-slate-500">
+                        <span className="mr-3">Total {pagination.total}</span>
+                        <FormSelect
+                          className="w-30 mt-3 !box sm:mt-0"
+                          onChange={(e) => setLimit(parseInt(e.target.value))}
+                        >
+                          <option value={10}>10/page</option>
+                          <option value={25}>25/page</option>
+                          <option value={50}>50/page</option>
+                          <option value={100}>100/page</option>
+                        </FormSelect>
+                      </div>
+                    </div>
+                  </div> */}
+                    </>
+                  )}
+                </div>
+
+                {/* END: Data List */}
               </div>
             </div>
-          </div> */}
-          <Dialog
-            staticBackdrop
-            size="lg"
-            open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
-          >
-            <Dialog.Panel></Dialog.Panel>
-          </Dialog>
-          {/* BEGIN: Delete Confirmation Modal */}
-          <Dialog
-            open={confirmDelete}
-            onClose={() => {
-              setConfirmDelete(false);
-            }}
-            initialFocus={deleteButtonRef}
-          >
-            <Dialog.Panel>
-              <div className="p-5 text-center">
-                <Lucide
-                  icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
-                />
-                <div className="mt-5 text-3xl">Are you sure?</div>
-                <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
-                  This process cannot be undone.
-                </div>
-              </div>
-              <div className="px-5 pb-8 text-center">
-                <Button
-                  variant="outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    setConfirmDelete(false);
-                  }}
-                  className="w-24 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => deleteRecord()}
-                  variant="danger"
-                  type="button"
-                  className="w-24"
-                  ref={deleteButtonRef}
-                >
-                  Delete
-                </Button>
-              </div>
-            </Dialog.Panel>
-          </Dialog>
-          {/* END: Delete Confirmation Modal */}
+          ) : (
+            ""
+          )}
         </>
       )}
       <Notification

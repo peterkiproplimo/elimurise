@@ -164,7 +164,7 @@ function Main() {
         <div className="col-span-12 2xl:col-span-9">
           <div className="grid grid-cols-12 gap-6">
             {/* BEGIN: Notification */}
-            <div className="col-span-12 mt-6 -mb-6 intro-y">
+            <div className="col-span-12 mt-6 -mb-6 ">
               {/* <Alert
                 variant="primary"
                 dismissible
@@ -197,7 +197,7 @@ function Main() {
             {/* BEGIN: General Report */}
             <div className="col-span-12 mt-2 lg:col-span-12 xl:col-span-12">
               <div>
-                <div className="flex items-center h-10 intro-y">
+                <div className="flex items-center h-10 ">
                   <h2 className="mr-5 text-lg font-medium truncate">
                     Dashboard
                   </h2>
@@ -250,8 +250,7 @@ function Main() {
                       >
                         <div className="p-4">
                           <h4 className="mt-10 mb-1 text-xl font-semibold">
-                            {learner?.learner?.first_name}{" "}
-                            {learner?.learner?.surname}
+                            {learner?.first_name} {learner?.surname}
                           </h4>
                           <p className="text-gray-500 text-sm">
                             {learner?.stream?.grade?.name}{" "}
@@ -266,12 +265,12 @@ function Main() {
             </div>
 
             <div className="col-span-12">
-              <div className="items-center block h-10 intro-y sm:flex">
+              <div className="items-center block h-10  sm:flex">
                 <h2 className="mr-5 ml-2 text-lg font-medium truncate">
                   Student Transfers
                 </h2>
               </div>
-              <div className="mt-5 overflow-auto intro-y lg:overflow-visible sm:mt-0">
+              <div className="mt-5 overflow-auto  lg:overflow-visible sm:mt-0">
                 <Table className="border-spacing-y-[10px] border-separate sm:mt-2">
                   <Table.Thead>
                     <Table.Tr>
@@ -305,7 +304,7 @@ function Main() {
                   </Table.Thead>
                   <Table.Tbody>
                     {tranfers.map((tranfer: any, key) => (
-                      <Table.Tr key={key} className="intro-x">
+                      <Table.Tr key={key} className="">
                         <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
                           <span className="font-medium whitespace-nowrap">
                             {key + 1}
@@ -393,12 +392,12 @@ function Main() {
           <div className="pb-10 -mb-10 2xl:border-l">
             <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
               <div className="col-span-12 mt-3 md:col-span-6 xl:col-span-4 2xl:col-span-12 xl:col-start-1 xl:row-start-2 2xl:col-start-auto 2xl:row-start-auto">
-                <div className="flex items-center h-10 intro-x">
+                <div className="flex items-center h-10 ">
                   <h2 className="mr-5 text-lg font-medium truncate">
                     Calendar
                   </h2>
                 </div>
-                <div className="intro-x box p-2">
+                <div className=" box p-2">
                   <div className="relative">
                     <div className="flex p-4 pb-0">
                       <h2 className="text-xl font-semibold">{displayMonth}</h2>
@@ -450,7 +449,7 @@ function Main() {
               </div>
 
               <div className="col-span-12  md:col-span-6 xl:col-span-4 2xl:col-span-12">
-                <div className=" intro-y relative before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70">
+                <div className="  relative before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70">
                   <Tab.Group className="p-5 box">
                     <Tab.Panels className="mt-6">
                       <Tab.Panel>

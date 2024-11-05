@@ -98,14 +98,14 @@ const ForgotPasswordOTP = () => {
   return (
     <>
       <div className="w-full px-5 py-8 mx-auto my-auto bg-white rounded-md shadow-md xl:ml-20 dark:bg-darkmode-600 xl:bg-transparent sm:px-8 xl:p-0 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto">
-        <h2 className="text-2xl font-bold text-center intro-x xl:text-3xl xl:text-left">
+        <h2 className="text-2xl font-bold text-center  xl:text-3xl xl:text-left">
           Verification
         </h2>
-        <div className="mt-2 text-center intro-x text-slate-400 xl:hidden">
+        <div className="mt-2 text-center  text-slate-400 xl:hidden">
           Enter the 4-digit OTP sent to your email.
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
-          <div className="mt-8 intro-x">
+          <div className="mt-8 ">
             {/* <div className="input-form flex items-center justify-center space-x-2">
               {[0, 1, 2, 3].map((index) => (
                 <FormInput
@@ -159,8 +159,8 @@ const ForgotPasswordOTP = () => {
                 defaultValue={token}
                 className={
                   errors.otp
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px]"
                 }
                 placeholder="otp"
               />
@@ -179,8 +179,8 @@ const ForgotPasswordOTP = () => {
                 name="password"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px]"
                 }
                 placeholder="New Password"
               />
@@ -200,8 +200,8 @@ const ForgotPasswordOTP = () => {
                 name="cpassword"
                 className={
                   errors.cpassword
-                    ? "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px] border-danger"
-                    : "block px-4 py-3 mt-4 intro-x min-w-full xl:min-w-[350px]"
+                    ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
+                    : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px]"
                 }
                 placeholder="Confirm Password"
               />
@@ -213,7 +213,7 @@ const ForgotPasswordOTP = () => {
               )}
             </div>
           </div>
-          <div className="mt-5 text-center intro-x xl:mt-8 xl:text-left">
+          <div className="mt-5 text-center  xl:mt-8 xl:text-left">
             <Button
               type="submit"
               variant="primary"

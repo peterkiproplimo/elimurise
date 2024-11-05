@@ -44,6 +44,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   const [Package, setPackage] = useState<any>(
     JSON.parse(localStorage.getItem("package") || "{}")
   );
+
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
@@ -152,8 +153,8 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
           onSubmit={onSubmit}
         >
           <div className="">
-            <h2 className=" text-3xl font-bold intro-x">Subscribe</h2>
-            <h3 className=" text-2xl  intro-x">
+            <h2 className=" text-3xl font-bold ">Subscribe</h2>
+            <h3 className=" text-2xl  ">
               You are about to subscribe to{" "}
               <span className="font-bold">{Package?.name} </span>Cost{" "}
               <span className="font-bold">
@@ -163,7 +164,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
             {/* <p className="mt-5 text-xl">
               Please provide the following details:
             </p> */}
-            <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 intro-x">
+            <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 ">
               <div>
                 <FormLabel htmlFor="modal-form-1" className="font-bold">
                   School Name
@@ -359,7 +360,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
             </div>
           </div>
 
-          {/* <div className="flex mt-4 text-xs intro-x text-slate-600 dark:text-slate-500 sm:text-sm">
+          {/* <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
             <div className="flex items-center mr-auto">
               <FormCheck.Input
                 id="remember-me"
