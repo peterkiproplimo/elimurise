@@ -143,31 +143,6 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
-      isLoading(true);
-      try {
-        const data = await getValues();
-        await ApiService.createStrand(data);
-        await getStrands();
-        await reset();
-        isLoading(false);
-        setDialog(false);
-        setSuccess(true);
-        setMessage("Strand created successfully.");
-        notify.current?.showToast();
-      } catch (error: any) {
-        isLoading(false);
-        setSuccess(false);
-        setMessage(
-          error.message || "An error occurred while creating the role."
-        );
-        notify.current?.showToast();
-      }
-    }
-  };
   const getEnrollments = async () => {
     // const enrollments = await ApiService.getEnrolments({ stream: stream }, {});
     // setEnrollments(enrollments?.data);
