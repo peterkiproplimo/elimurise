@@ -70,13 +70,13 @@ function Main() {
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
-    school: "na",
-    grade: "na",
-    stream: "na",
+    school: "",
+    grade: "",
+    stream: "",
   });
   const [approveTranfer, setApproveTranfer] = useState<any>({
-    transferCode: "na",
-    stream: "na",
+    transferCode: "",
+    stream: "",
     adm_no: "",
   });
   const [streams, setStreams] = useState([]);
@@ -126,6 +126,8 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
+        console.log(approveTranfer);
+        data.transferCode = approveTranfer.transferCode;
         await ApiService.updateTransfers(data);
         await getTransfers();
         await reset({ name: "" });
@@ -192,13 +194,6 @@ function Main() {
     const response = await ApiService.getStream({ grade: grade });
     setStreams(response.data);
     console.log(response);
-  };
-
-  const getAcademics = async () => {
-    const response = await ApiService.getAcademic({
-      page: 1,
-    });
-    setAcademic(response.data);
   };
 
   const deleteRecord = async () => {

@@ -41,6 +41,7 @@ function Main() {
   const deleteButtonRef = useRef(null);
   const approveButtonRef = useRef(null);
   const [approveDialog, setApproveDialog] = useState(false);
+  const [paymentUrl, setPaymentUrl] = useState("");
 
   const [grades, setGrades] = useState([]);
   const [grade, setGrade] = useState("");
@@ -121,13 +122,15 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        await ApiService.payForTransfer(approveTranfer);
+        const res = await ApiService.payForTransfer(approveTranfer);
+        setPaymentUrl(res.redirect_url);
+
         await getTransfers();
         await reset({ name: "" });
         isLoading(false);
         setApproveDialog(false);
         setSuccess(true);
-        setMessage("Transfer Approved successfully.");
+        // setMessage("Transfer Approved successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -312,212 +315,85 @@ function Main() {
   };
   return (
     <>
-      {dialog ? (
+      {paymentUrl ? (
         <>
-          <div className="flex items-center mt-8 ">
-            <a
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                reset({ name: "" });
-                setDialog(false);
-              }}
-              href="#"
-            >
-              <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-            </a>
-            <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Transfer" : "New Transfer"}
-            </h2>
+          {" "}
+          <div className="flex h-screen">
+            {/* Left Panel: Explanation */}
+            <div className="flex-none w-1/3 bg-gray-100 p-6 border-r border-gray-300">
+              <h2 className="text-2xl font-semibold text-gray-700">
+                Complete Your Learner's Transfer Payment
+              </h2>
+              <p className="mt-4 text-gray-600 text-lg">
+                This payment is required to complete the transfer of your
+                learner from their current school to a new institution. The
+                payment covers the system fee associated with processing the
+                transfer and ensuring a seamless transition. Please review the
+                details carefully and proceed with the payment securely through
+                the gateway below.
+              </p>
+            </div>
+
+            {/* Right Panel: Payment processing and iframe */}
+            <div className="flex-1 p-6 flex flex-col justify-between">
+              {/* Processing State */}
+              {loading && (
+                <div className="text-center font-semibold text-xl text-gray-700">
+                  {paymentUrl
+                    ? "Processing, Please Wait..."
+                    : "Initiating payment..."}
+                </div>
+              )}
+
+              {/* Loading Animation */}
+              {loading && !paymentUrl && (
+                <div className="flex justify-center items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 200 200"
+                    className="w-16 h-16 animate-spin text-blue-600"
+                  >
+                    <circle
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="6"
+                      r="20"
+                      cx="100"
+                      cy="100"
+                    >
+                      <animate
+                        attributeName="stroke-dasharray"
+                        values="0, 150; 150, 150; 0, 150"
+                        dur="1.5s"
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                  </svg>
+                </div>
+              )}
+
+              {/* Payment URL Iframe */}
+              {paymentUrl && !loading && (
+                <div className="flex justify-center">
+                  <iframe
+                    width="860"
+                    height="600"
+                    src={paymentUrl}
+                    className="border-none"
+                    onLoad={() => isLoading(false)}
+                    title="Payment iframe"
+                  />
+                </div>
+              )}
+
+              {/* Error or additional state (optional) */}
+              {!paymentUrl && !loading && (
+                <div className="text-center font-semibold text-lg text-gray-500">
+                  No payment URL available.
+                </div>
+              )}
+            </div>
           </div>
-          <br />
-          <form
-            className="mt-5 p-5  box validate-form"
-            // onSubmit={onSubmit}
-          >
-            {message && !success && (
-              <Alert
-                variant="soft-danger"
-                className="flex items-center mb-2"
-                dismissTimeout={9000}
-              >
-                <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
-              </Alert>
-
-              //   <div
-              //   className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
-              //   role="alert"
-              // >
-              //   <svg
-              //     className="flex-shrink-0 inline w-4 h-4 me-3"
-              //     aria-hidden="true"
-              //     xmlns="http://www.w3.org/2000/svg"
-              //     fill="currentColor"
-              //     viewBox="0 0 20 20"
-              //   >
-              //     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              //   </svg>
-              //   <span className="sr-only">Info</span>
-              //   <div>
-              //     <span className="font-medium">Success alert!</span> {message}
-              //   </div>
-              // </div>
-            )}
-            <div>
-              <a
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setPhoto("");
-                  setIsEditMode(false);
-                  setDialog(false);
-                }}
-                className="absolute top-0 right-0 mt-3 mr-3"
-                href="#"
-              ></a>
-            </div>
-            <fieldset className="mt-5 p-5  box validate-form">
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Grade<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <TomSelect
-                    name="grade"
-                    value={grade}
-                    onChange={(event: any) => {
-                      reset({ ...getValues(), grade: event });
-                      console.log("test");
-                      setGrade(event);
-                    }}
-                    disabled={isEditMode}
-                  >
-                    <option>Select Grade</option>
-                    {grades.map((grade: any, key) => (
-                      <option key={key} value={grade._id}>
-                        {grade.name}
-                      </option>
-                    ))}
-                  </TomSelect>
-                  {errors.grade && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.grade.message === "string" &&
-                        errors.grade.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-12 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">
-                    Select Stream<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormSelect
-                    {...register("stream")}
-                    name="stream"
-                    onChange={(e) =>
-                      setStrandFilter({
-                        ...strandFilter,
-                        stream: e.target.value,
-                      })
-                    }
-                  >
-                    <option>Select Stream</option>
-
-                    {streams.map((stream: any, key) => (
-                      <option key={key} value={stream._id}>
-                        {stream.name}
-                      </option>
-                    ))}
-                  </FormSelect>
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Learner<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormSelect
-                    {...register("learnerId")}
-                    name="learnerId"
-                    value={learner}
-                    onChange={(event) => setLearner(event.target.value)}
-                  >
-                    <option>Select Learner</option>
-
-                    {enrollments?.map((enrollment: any, key) => (
-                      <option key={key} value={enrollment?.learner?._id}>
-                        {enrollment?.learner?.first_name}{" "}
-                        {enrollment?.learner?.surname}{" "}
-                        {enrollment?.learner?.last_name} |{" "}
-                        {enrollment?.learner?.adm_no}
-                      </option>
-                    ))}
-                  </FormSelect>
-                  {errors.learnerId && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.learnerId.message === "string" &&
-                        errors.learnerId.message}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    School Code<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("newSchoolCode")}
-                    type="text"
-                    name="newSchoolCode"
-                    className={errors.last_name ? "border-danger" : ""}
-                    placeholder="school"
-                  />
-                  {errors.newSchoolCode && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.newSchoolCode.message === "string" &&
-                        errors.newSchoolCode.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Reason</FormLabel>
-                  <FormInput
-                    {...register("reason")}
-                    type="text"
-                    name="reason"
-                    className={errors.reason ? "border-danger" : ""}
-                    placeholder="reason"
-                  />
-                  {errors.reason && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.reason.message === "string" &&
-                        errors.reason.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </fieldset>
-
-            <div className="col-span-12 sm:col-span-12 mt-3 ml-5">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={() => {
-                  cancel({ name: "" });
-                  reset({ name: "" });
-                  setPhoto("");
-                }}
-                className="p-3 mr-1"
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit" className="p-5">
-                Save
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Button>
-            </div>
-          </form>
         </>
       ) : (
         <>
@@ -616,6 +492,9 @@ function Main() {
                           Payment Status
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Payment
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Approval Status
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
@@ -696,6 +575,11 @@ function Main() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {tranfer?.paymentStatus}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {tranfer?.payment?.confirmation_code ?? "_"}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
@@ -868,9 +752,7 @@ function Main() {
                   type="button"
                   className="w-24"
                   ref={deleteButtonRef}
-                >
-                  Delete
-                </Button>
+                ></Button>
               </div>
             </Dialog.Panel>
           </Dialog>
@@ -891,31 +773,11 @@ function Main() {
                   Incoming Tranfer
                 </div>
                 <div className="mt-2 text-slate-500">
-                  Pay for the transfer to complete
+                  You need to pay convinience fee of{" "}
+                  <FormLabel htmlFor="modal-form-6">Ksh 250</FormLabel> to
+                  Complete the process
                 </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">Phone number</FormLabel>
-                  <div className="flex">
-                    <FormInput
-                      type="text"
-                      name="name"
-                      className="w-20 border"
-                      value={"254"}
-                      onChange={(e: any) =>
-                        setApproveTranfer({
-                          ...approveTranfer,
-                          phone: e.target.value,
-                        })
-                      }
-                      disabled={true}
-                    />{" "}
-                    <FormInput
-                      type="text"
-                      name="name"
-                      placeholder="71424...."
-                    />
-                  </div>
-                </div>
+                <div className="col-span-4 sm:col-span-4"></div>
               </div>
               <div className="px-5 pb-8 text-center">
                 <Button
@@ -932,10 +794,17 @@ function Main() {
                   onClick={() => approveTranferSubmit()}
                   variant="success"
                   type="button"
-                  className="w-24 ml-4 text-white"
+                  className="w-44 ml-4 text-white"
                   ref={approveButtonRef}
                 >
-                  Approve
+                  Intiate Payment{" "}
+                  {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
+                  )}
                 </Button>
               </div>
             </Dialog.Panel>
