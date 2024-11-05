@@ -136,6 +136,24 @@ function Main() {
     }
   };
 
+  const deleteRecord = async () => {
+    isLoading(true);
+    try {
+      let res = await ApiService.deleteParents(parent._id);
+      getParents();
+      isLoading(false);
+      setConfirmDelete(false);
+      setSuccess(true);
+      setMessage(res.message);
+      notify.current?.showToast();
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
