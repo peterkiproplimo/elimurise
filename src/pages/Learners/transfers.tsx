@@ -151,6 +151,7 @@ function Main() {
     getStreams();
   }, [grade]);
   useEffect(() => {
+    setEnrollments([]);
     if (strandFilter.stream !== "") {
       getStudents();
     }
