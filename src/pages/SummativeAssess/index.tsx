@@ -111,10 +111,10 @@ function Main() {
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
-  const getTerms = async () => {
-    const response = await ApiService.getTerm({});
-    setTerms(response.data);
-  };
+  // const getTerms = async () => {
+  //   const response = await ApiService.getTerm({});
+  //   setTerms(response.data);
+  // };
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -178,7 +178,7 @@ function Main() {
 
   useEffect(() => {
     getGrades();
-    getTerms();
+    // getTerms();
     // getLevels();
     getLearningAreas();
   }, []);
@@ -190,18 +190,6 @@ function Main() {
     });
     setStreams(response.data);
   };
-  const getStrands = async () => {
-    const response = await ApiService.getStrands(
-      {
-        page: page,
-        search: search,
-        limit: limit,
-      },
-      strandFilter
-    );
-    setStrands(response.data);
-  };
-
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
 
@@ -248,24 +236,6 @@ function Main() {
     // You might want to fetch filtered data here
   };
 
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteStrand(recordId);
-      getStrands();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
-    } catch (error: any) {
-      isLoading(false);
-      setSuccess(false);
-      setMessage(error.message);
-      notify.current?.showToast();
-    }
-  };
-
   const editRecord = (record: any) => {
     setGroup(record.groups);
     reset(record);
@@ -283,11 +253,9 @@ function Main() {
   };
 
   useEffect(() => {
-    getStrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [strandFilter, search, page, limit]);
-  useEffect(() => {
-    generateAssessment();
+    if (adm_no) {
+      generateAssessment();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adm_no]);
 
@@ -299,8 +267,8 @@ function Main() {
     setStrands([]);
     setTest([]);
     await setStrandFilter({
-      learning_area: "na",
-      term: "na",
+      learning_area: "",
+      term: "1",
       grade: selectedValue,
     });
     getStreams(selectedValue);

@@ -68,7 +68,7 @@ function Main() {
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
-    school: "na",
+    // school: "na",
     grade: "na",
     stream: "na",
   });
