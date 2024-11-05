@@ -368,7 +368,7 @@ function Main() {
       throw new Error("Score must be a valid number.");
     }
 
-    if (!data.learner || !data.learner._id) {
+    if (!data.learner) {
       throw new Error("Learner information is missing or invalid.");
     }
   };
