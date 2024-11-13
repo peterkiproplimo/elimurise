@@ -242,13 +242,7 @@ function Main() {
       },
       {}
     );
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
+
     setEnrollments(response.data);
     isLoading(false);
   };
