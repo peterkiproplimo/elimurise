@@ -187,14 +187,14 @@ function Main() {
     setIsEditMode(true);
     setGroup(record.groups);
     setSelectedTerm(record?.term?._id);
-    setGradeId(record.grading._id);
-    setGrade(record.grade._id);
+    setGradeId(record?.grading?._id);
+    setGrade(record?.grade?._id);
     reset({
       ...record,
       grade: record.grade._id,
       grading: record.grading._id,
-      academicYear: record.academicYear._id,
-      term: record?.term?._id,
+      academicYear: record.session._id,
+      term: record?.term,
     });
     setDialog(true);
   };
@@ -474,6 +474,9 @@ function Main() {
                           Scale
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
+                          Session
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
                           Created At
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap text-center">
@@ -512,6 +515,11 @@ function Main() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {test?.grading?.name}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <span className="font-medium whitespace-nowrap">
+                              {test?.session}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">

@@ -177,6 +177,62 @@ export async function exportLearners(data: FieldValues) {
     throw handler(e);
   }
 }
+export async function importParents(data: FieldValues) {
+  try {
+    let res = await axios.post(c.PARENTS + "/import", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function exportParents(data: FieldValues) {
+  try {
+    let res = await axios.post(c.PARENTS + "/export", data, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(
+      new Blob([res.data], { type: "text/csv" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "parents.csv"); // Filename for download
+    document.body.appendChild(link);
+    link.click(); // Trigger the download
+    link.remove(); // Clean up the DOM
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function importTeachers(data: FieldValues) {
+  try {
+    let res = await axios.post(c.TEACHERS + "/import", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function exportTeachers(data: FieldValues) {
+  try {
+    let res = await axios.post(c.TEACHERS + "/export", data, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(
+      new Blob([res.data], { type: "text/csv" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "teachers.csv"); // Filename for download
+    document.body.appendChild(link);
+    link.click(); // Trigger the download
+    link.remove(); // Clean up the DOM
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 export async function createAcademic(data: any) {
   try {

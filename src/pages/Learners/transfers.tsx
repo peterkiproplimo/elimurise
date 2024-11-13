@@ -459,7 +459,7 @@ function Main() {
                 Cancel
               </Button>
               <Button variant="primary" type="submit" className="p-5">
-                Save
+                Initiate Transfer
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"

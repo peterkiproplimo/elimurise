@@ -152,6 +152,7 @@ function Main() {
     getGrades();
     // getTerms();
     // getLevels();
+    handleTestChange();
     getLearningAreas();
   }, []);
   const getStreams = async (selectedValue: any) => {
@@ -237,7 +238,7 @@ function Main() {
     const selectedValue = event.target.value;
     setStream("");
     setStrands([]);
-    setTests([]);
+    // setTests([]);
     await setStrandFilter({
       learning_area: "",
       term: "1",
@@ -746,7 +747,7 @@ function Main() {
                   value={selectedTerm}
                   onChange={(event: any) => {
                     setSelectedTerm(event);
-                    handleTestChange();
+                    // handleTestChange();
                   }}
                 >
                   <option>Select Academic Term</option>
@@ -802,7 +803,9 @@ function Main() {
                   <option>Select Test</option>
                   {tests
                     .filter(
-                      (test: any) => test?.grade?._id == strandFilter.grade
+                      (test: any) =>
+                        test?.grade?._id == strandFilter.grade &&
+                        test?.term == selectedTerm
                     )
                     .map((test: any, key) => (
                       <option key={key} value={test._id}>

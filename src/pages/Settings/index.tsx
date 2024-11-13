@@ -49,31 +49,24 @@ function Settings() {
     const fetchData = async () => {
       await getSchoolDetails();
     };
-
     fetchData();
   }, []);
-  const getAcademicYears = async () => {
-    try {
-      const generateAcademicYears = () => {
-        const currentYear = new Date().getFullYear();
-        const yearsBack = 5;
-        const yearsForward = 7;
-        const years = [];
 
-        for (
-          let i = currentYear - yearsBack;
-          i <= currentYear + yearsForward;
-          i++
-        ) {
-          years.push(`${i}`);
-        }
+  const generateAcademicYears = (currentYear: number) => {
+    const yearsBack = 5;
+    const yearsForward = 7;
+    const years = [];
 
-        setAcademicYears(years);
-      };
-      generateAcademicYears();
-    } catch (error) {
-      console.error("Failed to fetch academic years", error);
+    for (
+      let i = currentYear - yearsBack;
+      i <= currentYear + yearsForward;
+      i++
+    ) {
+      years.push(`${i}`);
     }
+    console.log("years", years);
+
+    setAcademicYears(years);
   };
 
   const getSchoolDetails = async () => {
@@ -83,8 +76,9 @@ function Settings() {
       reset({
         ...response.data,
         current_term: response?.data?.current_term,
-        current_year: response?.data?.current_year,
+        current_session: response?.data?.current_session,
       });
+      generateAcademicYears(Number(response?.data?.current_session));
     } catch (error) {
       console.error("Failed to fetch academic years", error);
     }

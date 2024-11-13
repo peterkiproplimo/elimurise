@@ -37,6 +37,10 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [userPermissions, setUserPermissions] = useState([]);
+  const [uploadDialog, setUploadDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [exportDialog, setExportDialog] = useState(false);
+
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -136,6 +140,73 @@ function Main() {
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      console.log("upd.............");
+      // Check file type
+      if (file.type !== "text/csv" && !file.name.endsWith(".csv")) {
+        alert("Please upload a CSV file.");
+        event.target.value = ""; // Clear the file input to prevent uploading
+        return;
+      }
+
+      setSelectedFile(file);
+    }
+  };
+
+  const exportTemplate = async () => {
+    console.log(selectedFile);
+
+    try {
+      const res = await ApiService.exportParents({});
+      setUploadDialog(false);
+      setSuccess(true);
+      setMessage(res.message);
+      notify.current?.showToast();
+
+      setDialog(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message || "An error occurred while creating the role.");
+      notify.current?.showToast();
+    }
+  };
+  const importData = async () => {
+    console.log(selectedFile);
+
+    if (!loading) {
+      if (!selectedFile) {
+        // Handle case where no file is selected
+        return;
+      }
+      isLoading(true);
+
+      try {
+        const formData = new FormData();
+        formData.append("csvFile", selectedFile);
+
+        const res = await ApiService.importParents(formData);
+        // await getStrands();
+        await getParents();
+        isLoading(false);
+        setUploadDialog(false);
+        setSuccess(true);
+        setMessage(res.message);
+        notify.current?.showToast();
+
+        setDialog(false);
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(
+          error.message || "An error occurred while creating the role."
+        );
+        notify.current?.showToast();
+      }
+    }
+  };
   const deleteRecord = async () => {
     isLoading(true);
     try {
@@ -367,6 +438,30 @@ function Main() {
               >
                 Add Parent
               </Button>
+              <Menu>
+                <Menu.Button as={Button} className="px-2 !box">
+                  <span className="flex items-center justify-center w-5 h-5">
+                    <Lucide icon="Plus" className="w-4 h-4" />
+                  </span>
+                </Menu.Button>
+                <Menu.Items className="w-40">
+                  <Menu.Item onClick={() => setUploadDialog(true)}>
+                    <Lucide icon="Book" className="w-4 h-4 mr-2" /> Import Data
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={() => {
+                      setExportDialog(true);
+                    }}
+                  >
+                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
+                    Template
+                  </Menu.Item>
+                  {/* <Menu.Item>
+                   <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
+                   to PDF
+                 </Menu.Item> */}
+                </Menu.Items>
+              </Menu>
               {/* <Menu>
                 <Menu.Button as={Button} className="px-2 !box">
                   <span className="flex items-center justify-center w-5 h-5">
@@ -634,7 +729,121 @@ function Main() {
                 </>
               )}
             </div>
+            <Dialog
+              staticBackdrop
+              size="lg"
+              open={exportDialog}
+              onClose={() => {
+                setDialog(false);
+              }}
+            >
+              <Dialog.Panel className="w-full max-w-screen-lg">
+                <Dialog.Title>
+                  <h2 className="mr-auto text-base font-medium">
+                    Download learners import Template
+                  </h2>
+                  <a
+                    onClick={(event: React.MouseEvent) => {
+                      event.preventDefault();
+                      setUploadDialog(false);
+                    }}
+                    className="absolute top-0 right-0 mt-3 mr-3"
+                    href="#"
+                  >
+                    <Lucide icon="X" className="w-8 h-8 text-slate-400" />
+                  </a>
+                </Dialog.Title>
+                <div className="grid grid-cols-12 gap-4 gap-y-3 p-4"></div>
+                <Dialog.Footer>
+                  <div className=" text-right">
+                    <Button
+                      variant="outline-secondary"
+                      type="button"
+                      onClick={() => {
+                        setExportDialog(false);
+                      }}
+                      className="w-24 mr-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => exportTemplate()}
+                      variant="primary"
+                      type="button"
+                      className="m-3 w-24"
+                      ref={deleteButtonRef}
+                    >
+                      Download
+                    </Button>
+                  </div>
+                </Dialog.Footer>
+              </Dialog.Panel>
+            </Dialog>
+            <Dialog
+              staticBackdrop
+              size="lg"
+              open={uploadDialog}
+              onClose={() => {
+                setUploadDialog(false);
+              }}
+            >
+              <Dialog.Panel className="w-full max-w-screen-lg">
+                <Dialog.Title>
+                  <h2 className="mr-auto text-base font-medium">
+                    Import Strands
+                  </h2>
+                  <a
+                    onClick={(event: React.MouseEvent) => {
+                      event.preventDefault();
+                      setUploadDialog(false);
+                    }}
+                    className="absolute top-0 right-0 mt-3 mr-3"
+                    href="#"
+                  >
+                    <Lucide icon="X" className="w-8 h-8 text-slate-400" />
+                  </a>
+                </Dialog.Title>
+                {/* <div className="p-5 text-center">
+                <Lucide
+                  icon="XCircle"
+                  className="w-16 h-16 mx-auto mt-3 text-danger"
+                />
+              </div> */}
+                <div className="p-1">
+                  Choose the file to upload. <i>Type must be csv</i>
+                  <input
+                    id="file_input"
+                    type="file"
+                    onChange={handleFileChange}
+                    className="p-4 border border-gray-300 rounded-md items-center w-full rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                  />
+                </div>
 
+                <Dialog.Footer>
+                  <div className=" text-right">
+                    <Button
+                      variant="outline-secondary"
+                      type="button"
+                      onClick={() => {
+                        setUploadDialog(false);
+                      }}
+                      className="w-24 mr-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => importData()}
+                      variant="primary"
+                      type="button"
+                      className="m-3 w-24"
+                      ref={deleteButtonRef}
+                    >
+                      Import
+                    </Button>
+                  </div>
+                </Dialog.Footer>
+              </Dialog.Panel>
+            </Dialog>
             {/* END: Pagination */}
           </div>
           <Dialog

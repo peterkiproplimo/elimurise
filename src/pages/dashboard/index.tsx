@@ -472,7 +472,7 @@ function Main() {
                     <a
                       onClick={(event) => {
                         event.preventDefault(); // Prevent the default anchor behavior
-                        navigate("/home/teachers"); // Navigate using your custom function
+                        navigate("/home/parents"); // Navigate using your custom function
                       }}
                       className="block  cursor-point w-full py-3 text-center border bg-success text-white rounded-md  border-slate-400 dark:border-darkmode-300 text-slate-500"
                     >
