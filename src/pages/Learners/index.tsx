@@ -469,7 +469,7 @@ function Main() {
     const data = {
       learning_area: selectedLeaningArea,
       term: selectedTerm,
-      learner,
+      learner: learner._id,
       type: "learner",
     };
 
