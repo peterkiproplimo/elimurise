@@ -43,6 +43,8 @@ function Main() {
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
+
+  const [learner_grades, setLearnerGrades] = useState([]);
   const [grade, setGrade] = useState("");
   const [uploadDialog, setUploadDialog] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -77,6 +79,12 @@ function Main() {
     grade: "na",
     stream: "na",
   });
+  const [pdfUrl, setPdfUrl] = useState("");
+
+  const [selectedTerm, setSelectedTerm] = useState("");
+  const [selectedLeaningArea, setSelectedLearningArea] = useState("");
+  const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
+
   const [streams, setStreams] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -85,12 +93,30 @@ function Main() {
   const [guardianIdNo2, setGuardianIdNo2] = useState("");
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
+  const [learningAreas, setLearningAreas] = useState([]);
 
   const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
       replace: true,
       state: { data: learnerId },
     });
+  };
+  const terms = [
+    { _id: 1, name: "Term 1" },
+    { _id: 2, name: "Term 2" },
+    { _id: 3, name: "Term 3" },
+  ];
+  const getLeanerClasses = async (learner: any) => {
+    const response = await ApiService.learnerHistory(learner);
+    setLearnerGrades(response.data);
+  };
+  const getLearningAreas = async () => {
+    const response = await ApiService.getLeanerLeaningAreaAdmin({
+      term: selectedTerm,
+      learner: learner._id,
+      session: selectedAcademicYear,
+    });
+    setLearningAreas(response.data);
   };
 
   // Success notification
@@ -319,6 +345,7 @@ function Main() {
     // setGuardianIdNo(record?.guardian?.email);
     // setGuardianIdNo2(record?.guardian2?.email);
     setLearner(record);
+    getLeanerClasses(record._id);
     console.log(record);
     setProfile(true);
   };
@@ -356,6 +383,9 @@ function Main() {
   useEffect(() => {
     handleGuardianIdNoBlur();
   }, [guardianIdNo]);
+  useEffect(() => {
+    getLearningAreas();
+  }, [selectedAcademicYear, selectedTerm]);
 
   useEffect(() => {
     handleGuardianIdNoBlur2();
@@ -421,7 +451,46 @@ function Main() {
     setDialog(false);
     setIsEditMode(false);
   };
+  const generateAssessment = async () => {
+    isLoading(true);
 
+    const data = {
+      learning_area: selectedLeaningArea,
+      term: selectedTerm,
+      learner,
+      type: "learner",
+    };
+
+    isLoading(true);
+    try {
+      let res = await ApiService.getReportByLearners(data);
+      const blob = new Blob([res], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const popup = window.open(
+        url,
+        // "_blank",
+        `width=${window.innerWidth},height=${window.innerHeight},scrollbars=yes`
+      );
+
+      setPdfUrl(url);
+      // setEnrollments(res);
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination?.current_page,
+      //   total: pagination?.total,
+      //   total_pages: pagination?.total_pages,
+      //   per_page: pagination?.per_page,
+      // });
+      // setDialog(true);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      console.log(error);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
@@ -1479,7 +1548,7 @@ function Main() {
 
             {/* User Information */}
             <div className="w-full md:w-3/4 ">
-              <div className="bg-white shadow-md rounded-lg overflow-hidden m-4">
+              <div className="bg-white shadow-md rounded-lg  m-4">
                 <div className="p-6">
                   <h4 className="font-bold">Learner's Information</h4>
 
@@ -1525,6 +1594,30 @@ function Main() {
                         </li>
                       </>
                     )}
+                    <li className="mr-2">
+                      <button
+                        className={`inline-block py-2 px-4 ${
+                          activeTab === "tab4"
+                            ? "text-blue-600 border-b-2 border-blue-600"
+                            : "text-gray-600 hover:text-blue-600"
+                        } font-semibold`}
+                        onClick={() => setActiveTab("tab4")}
+                      >
+                        Formartive Assessements
+                      </button>
+                    </li>
+                    <li className="mr-2">
+                      <button
+                        className={`inline-block py-2 px-4 ${
+                          activeTab === "tab5"
+                            ? "text-blue-600 border-b-2 border-blue-600"
+                            : "text-gray-600 hover:text-blue-600"
+                        } font-semibold`}
+                        onClick={() => setActiveTab("tab5")}
+                      >
+                        Summative Assessments
+                      </button>
+                    </li>
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${
@@ -1736,7 +1829,122 @@ function Main() {
                     {activeTab === "tab3" && (
                       <div className="tab-pane">
                         <h4 className="font-bold">Additional Information</h4>
-                        <p>Comming soon...</p>
+                        <p>Comming soon..3.</p>
+                        {/* You can include more fields or tables here as needed */}
+                      </div>
+                    )}
+                    {activeTab === "tab4" && (
+                      <div className="tab-pane">
+                        <h4 className="font-bold">Additional Information</h4>
+                        <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+                          <h2 className="mr-auto text-base font-medium border-b p-2">
+                            Learner Report
+                          </h2>
+                          <div className="grid grid-cols-6 gap-2 mt-10">
+                            <div className="col-span-12 sm:col-span-2">
+                              {/* {JSON.stringify(academicYear)} */}
+                              <FormLabel htmlFor="modal-form-6">
+                                Grade{" "}
+                              </FormLabel>
+                              <TomSelect
+                                {...register("grade")}
+                                value={selectedAcademicYear}
+                                name="grade"
+                                onChange={(event: any) => {
+                                  setSelectedAcademicYear(event);
+                                }}
+                              >
+                                <option value={""}>Select Grade</option>
+                                {learner_grades?.map((grade: any, key: any) => (
+                                  <option key={key} value={grade.to_session}>
+                                    {grade?.to_grade?.name}-
+                                    {grade?.to_stream?.name}- {grade.to_session}
+                                  </option>
+                                ))}
+                              </TomSelect>
+                              {errors.term && (
+                                <div className="mt-2 text-danger">
+                                  {typeof errors.term.message === "string" &&
+                                    errors.term.message}
+                                </div>
+                              )}
+                            </div>
+                            <div className="col-span-12 sm:col-span-2">
+                              <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+                              <TomSelect
+                                {...register("term")}
+                                value={selectedTerm}
+                                name="term"
+                                onChange={(event: any) =>
+                                  setSelectedTerm(event)
+                                }
+                              >
+                                <option>Select Term</option>
+                                {terms.map((term: any, key) => (
+                                  <option key={key} value={term._id}>
+                                    {term.name}
+                                  </option>
+                                ))}
+                              </TomSelect>
+                              {errors.term && (
+                                <div className="mt-2 text-danger">
+                                  {typeof errors.term.message === "string" &&
+                                    errors.term.message}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="col-span-12 sm:col-span-2">
+                              <FormLabel htmlFor="modal-form-6">
+                                Learning Area
+                              </FormLabel>
+                              <TomSelect
+                                {...register("learning_area")}
+                                value={selectedLeaningArea}
+                                name="learning_area"
+                                onChange={(event: any) =>
+                                  setSelectedLearningArea(event)
+                                }
+                              >
+                                <option>Select Learning Area</option>
+                                {learningAreas?.map(
+                                  (filteredArea: any, key) => (
+                                    <option key={key} value={filteredArea?._id}>
+                                      {filteredArea.name}
+                                    </option>
+                                  )
+                                )}
+                              </TomSelect>
+                              {errors.learning_area && (
+                                <div className="mt-2 text-danger">
+                                  {typeof errors.learning_area.message ===
+                                    "string" && errors.learning_area.message}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* {substrands.map((substrand: any, key: any) => (
+                <span>{substrand.name}</span>
+              ))} */}
+                          </div>
+                          <div className="px-5  mt-5 text-right">
+                            <Button
+                              onClick={() => generateAssessment()}
+                              variant="primary"
+                              type="button"
+                              className="w-50 text-white"
+                            >
+                              Generate Report
+                            </Button>
+                          </div>
+                        </div>
+                        {/* You can include more fields or tables here as needed */}
+                      </div>
+                    )}
+                    {activeTab === "tab5" && (
+                      <div className="tab-pane">
+                        <h4 className="font-bold">Additional Information</h4>
+                        <p>Comming soon...2</p>
                         {/* You can include more fields or tables here as needed */}
                       </div>
                     )}

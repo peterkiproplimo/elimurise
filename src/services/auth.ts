@@ -618,6 +618,14 @@ export async function leanerClasses(learner: any) {
     throw handler(e);
   }
 }
+export async function learnerHistory(learner: any) {
+  try {
+    let res = await axios.get(c.LEARNERS + "/" + learner + "/history");
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 export async function deleteParents(userId: any) {
   try {
@@ -1171,6 +1179,16 @@ export async function getLeanerTerm(data: FieldValues) {
 export async function getLeanerLeaningArea(data: FieldValues) {
   try {
     let res = await axios.get(c.PARENT + "/v1/learning-areas", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getLeanerLeaningAreaAdmin(data: FieldValues) {
+  try {
+    let res = await axios.get(c.LEARNERS + "/learning-areas", {
       params: data,
     });
     return res.data;
