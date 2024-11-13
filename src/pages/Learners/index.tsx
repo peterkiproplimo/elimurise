@@ -280,7 +280,7 @@ function Main() {
   };
   const getStudents = async () => {
     isLoading(true);
-    const response = await ApiService.getLearners(
+    const response = await ApiService.getLearnersEnroll(
       {
         page,
         search,

@@ -186,7 +186,9 @@ function Main() {
     }
   };
   useEffect(() => {
-    getEnrollments();
+    if (stream) {
+      getEnrollments();
+    }
   }, [stream]);
 
   useEffect(() => {
@@ -627,7 +629,7 @@ function Main() {
                       setStream(event.target.value);
                     }}
                   >
-                    <option>Select Stream</option>
+                    <option value={""}>Select Stream</option>
 
                     {streams.map((grade: any, key) => (
                       <option key={key} value={grade._id}>

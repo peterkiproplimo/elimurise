@@ -406,9 +406,19 @@ export async function deleteGrade(gradeId: any) {
   }
 }
 
-export const getLearners = async (data: any, filter: any) => {
+export const getLearnersEnroll = async (data: any, filter: any) => {
   try {
     let res = await axios.get(c.LEARNERS, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getLearners = async (data: any, filter: any) => {
+  try {
+    let res = await axios.get(c.LEARNERS + "/all-by-session", {
       params: data,
     });
     return res.data;
