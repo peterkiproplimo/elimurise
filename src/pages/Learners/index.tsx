@@ -395,8 +395,10 @@ function Main() {
     handleGuardianIdNoBlur();
   }, [guardianIdNo]);
   useEffect(() => {
-    getTests();
-    getLearningAreas();
+    if (selectedTerm && selectedAcademicYear) {
+      getTests();
+      getLearningAreas();
+    }
   }, [selectedAcademicYear, selectedTerm]);
 
   useEffect(() => {
@@ -1901,8 +1903,8 @@ function Main() {
                                 <option value={""}>Select Grade</option>
                                 {learner_grades?.map((grade: any, key: any) => (
                                   <option key={key} value={grade.to_session}>
-                                    {grade?.to_grade?.name}-
-                                    {grade?.to_stream?.name}- {grade.to_session}
+                                    {grade?.to_grade?.name}
+                                    {/* {grade?.to_stream?.name}- {grade.to_session} */}
                                   </option>
                                 ))}
                               </TomSelect>
@@ -2023,7 +2025,7 @@ function Main() {
                                   setSelectedTerm(event)
                                 }
                               >
-                                <option>Select Term</option>
+                                <option value={""}>Select Term</option>
                                 {terms.map((term: any, key) => (
                                   <option key={key} value={term._id}>
                                     {term.name}
