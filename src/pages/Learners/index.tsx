@@ -43,6 +43,8 @@ function Main() {
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
+  const [test, setTest] = useState("");
+  const [tests, setTests] = useState<any>([]);
 
   const [learner_grades, setLearnerGrades] = useState([]);
   const [grade, setGrade] = useState("");
@@ -177,6 +179,15 @@ function Main() {
         notify.current?.showToast();
       }
     }
+  };
+  const getTests = async () => {
+    const response = await ApiService.getLeanerTests({
+      learner: learner._id,
+      term: selectedTerm,
+      session: selectedAcademicYear,
+    });
+
+    setTests(response.data);
   };
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
@@ -384,6 +395,7 @@ function Main() {
     handleGuardianIdNoBlur();
   }, [guardianIdNo]);
   useEffect(() => {
+    getTests();
     getLearningAreas();
   }, [selectedAcademicYear, selectedTerm]);
 
@@ -503,6 +515,46 @@ function Main() {
 
     setRows([...rows, newRow]);
   };
+  const generateAssessmentSummative = async () => {
+    isLoading(true);
+    const data = {
+      test: test,
+      term: selectedTerm,
+      stream: stream,
+      learner: learner,
+      type: "learner",
+    };
+    console.log(data);
+    isLoading(true);
+    try {
+      let res = await ApiService.getSummativeByLearners(data);
+      const blob = new Blob([res], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const popup = window.open(
+        url,
+        `width=${window.innerWidth},height=${window.innerHeight},scrollbars=yes`
+      );
+
+      setPdfUrl(url);
+      // setEnrollments(res);
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination?.current_page,
+      //   total: pagination?.total,
+      //   total_pages: pagination?.total_pages,
+      //   per_page: pagination?.per_page,
+      // });
+      // setDialog(true);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      console.log(error);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+
   return (
     <>
       {dialog && !profile ? (
@@ -511,7 +563,7 @@ function Main() {
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
-                cancel({ name: "" });
+                // cancel({ name: "" });
 
                 setDialog(false);
                 setIsEditMode(false);
@@ -1609,11 +1661,11 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${
-                          activeTab === "tab5"
+                          activeTab === "tab3"
                             ? "text-blue-600 border-b-2 border-blue-600"
                             : "text-gray-600 hover:text-blue-600"
                         } font-semibold`}
-                        onClick={() => setActiveTab("tab5")}
+                        onClick={() => setActiveTab("tab3")}
                       >
                         Summative Assessments
                       </button>
@@ -1621,11 +1673,11 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${
-                          activeTab === "tab3"
+                          activeTab === "tab5"
                             ? "text-blue-600 border-b-2 border-blue-600"
                             : "text-gray-600 hover:text-blue-600"
                         } font-semibold`}
-                        onClick={() => setActiveTab("tab3")}
+                        onClick={() => setActiveTab("tab5")}
                       >
                         History
                       </button>
@@ -1828,14 +1880,106 @@ function Main() {
                     {/* Tab 3 */}
                     {activeTab === "tab3" && (
                       <div className="tab-pane">
-                        <h4 className="font-bold">Additional Information</h4>
-                        <p>Comming soon..3.</p>
+                        <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+                          <h2 className="mr-auto text-base font-medium border-b p-2">
+                            Learner Report
+                          </h2>
+                          <div className="grid grid-cols-6 gap-2 mt-10">
+                            <div className="col-span-12 sm:col-span-2">
+                              {/* {JSON.stringify(academicYear)} */}
+                              <FormLabel htmlFor="modal-form-6">
+                                Grade{" "}
+                              </FormLabel>
+                              <TomSelect
+                                {...register("grade")}
+                                value={selectedAcademicYear}
+                                name="grade"
+                                onChange={(event: any) => {
+                                  setSelectedAcademicYear(event);
+                                }}
+                              >
+                                <option value={""}>Select Grade</option>
+                                {learner_grades?.map((grade: any, key: any) => (
+                                  <option key={key} value={grade.to_session}>
+                                    {grade?.to_grade?.name}-
+                                    {grade?.to_stream?.name}- {grade.to_session}
+                                  </option>
+                                ))}
+                              </TomSelect>
+                              {errors.term && (
+                                <div className="mt-2 text-danger">
+                                  {typeof errors.term.message === "string" &&
+                                    errors.term.message}
+                                </div>
+                              )}
+                            </div>
+                            <div className="col-span-12 sm:col-span-2">
+                              <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+                              <TomSelect
+                                {...register("term")}
+                                value={selectedTerm}
+                                name="term"
+                                onChange={(event: any) =>
+                                  setSelectedTerm(event)
+                                }
+                              >
+                                <option value={""}>Select Term</option>
+                                {terms.map((term: any, key) => (
+                                  <option key={key} value={term._id}>
+                                    {term.name}
+                                  </option>
+                                ))}
+                              </TomSelect>
+                              {errors.term && (
+                                <div className="mt-2 text-danger">
+                                  {typeof errors.term.message === "string" &&
+                                    errors.term.message}
+                                </div>
+                              )}
+                            </div>
+                            <div className="col-span-12 sm:col-span-2">
+                              <FormLabel htmlFor="modal-form-6">Test</FormLabel>
+                              <TomSelect
+                                {...register("test")}
+                                value={test}
+                                name="test"
+                                onChange={(event: any) => setTest(event)}
+                              >
+                                <option value={""}>Select Test</option>
+                                {tests.map((test: any, key: any) => (
+                                  <option key={key} value={test._id}>
+                                    {test.name}
+                                  </option>
+                                ))}
+                              </TomSelect>
+                              {errors.term && (
+                                <div className="mt-2 text-danger">
+                                  {typeof errors.term.message === "string" &&
+                                    errors.term.message}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* {substrands.map((substrand: any, key: any) => (
+                <span>{substrand.name}</span>
+              ))} */}
+                          </div>
+                          <div className="p-5 mt-3  text-right">
+                            <Button
+                              onClick={() => generateAssessmentSummative()}
+                              variant="primary"
+                              type="button"
+                              className="w-50 text-white"
+                            >
+                              Generate Report
+                            </Button>
+                          </div>
+                        </div>
                         {/* You can include more fields or tables here as needed */}
                       </div>
                     )}
                     {activeTab === "tab4" && (
                       <div className="tab-pane">
-                        <h4 className="font-bold">Additional Information</h4>
                         <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
                           <h2 className="mr-auto text-base font-medium border-b p-2">
                             Learner Report

@@ -1207,6 +1207,16 @@ export async function getLeanerTests(data: FieldValues) {
     throw handler(e);
   }
 }
+export async function getLeanerTestsAdmin(data: FieldValues) {
+  try {
+    let res = await axios.get(c.LEARNERS + "/tests", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 export async function getLeanerAssessmentReport(data: FieldValues) {
   try {
     let res = await axios.get(c.PARENT + "/v1/assessment/report", {
