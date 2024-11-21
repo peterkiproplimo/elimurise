@@ -142,21 +142,21 @@ function Main() {
       }
     }
   };
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
+  // const getGrades = async () => {
+  //   const response = await ApiService.getGrades({ page: 1 });
 
-    setGrades(response.data);
-  };
-  useEffect(() => {
-    getGrades();
-    getParents();
-  }, []);
-  useEffect(() => {
-    getStreams();
-  }, [grade]);
-  useEffect(() => {
-    getStudents();
-  }, [strandFilter]);
+  //   setGrades(response.data);
+  // };
+  // useEffect(() => {
+  //   getGrades();
+  //   getParents();
+  // }, []);
+  // useEffect(() => {
+  //   getStreams();
+  // }, [grade]);
+  // useEffect(() => {
+  //   getStudents();
+  // }, [strandFilter]);
   useEffect(() => {
     getTransfers();
   }, [search, page, limit]);

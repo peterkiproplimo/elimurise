@@ -29,7 +29,7 @@ const initialState: SideMenuState = {
     // },
 
     {
-      icon: "Users",
+      icon: "GraduationCap",
       title: "Learners",
       subMenu: [
         // {
@@ -37,6 +37,11 @@ const initialState: SideMenuState = {
         //   pathname: "/home/learners",
         //   title: "Learners Details",
         // },
+        {
+          icon: "Activity",
+          pathname: "/home/stream",
+          title: "Stream",
+        },
         {
           icon: "Users",
           title: "Parents",
@@ -67,16 +72,11 @@ const initialState: SideMenuState = {
 
     {
       icon: "Users",
-      title: "Users",
-      pathname: "/home/users",
-    },
-    {
-      icon: "Users",
       title: "Teachers",
       pathname: "/home/teachers",
     },
     {
-      icon: "GraduationCap",
+      icon: "BookOpen",
       title: "Learning Areas",
       pathname: "/home/grade",
     },
@@ -86,20 +86,25 @@ const initialState: SideMenuState = {
     //   pathname: "/home/learning_areas",
     //   title: "Learning Areas",
     // },
+    {
+      icon: "Airplay",
+      title: "Formative",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/home/assessment",
+          title: " Assessment",
+        },
+        {
+          icon: "Airplay",
+          pathname: "/home/reports",
+          title: "Formative Report",
+        },
+      ],
+    },
 
     {
       icon: "Activity",
-      pathname: "/home/assessment",
-      title: " Assessment",
-    },
-    {
-      icon: "User",
-      pathname: "/home/reports",
-      title: "Formative Report",
-    },
-
-    {
-      icon: "Users",
       title: "Summative",
       subMenu: [
         {
@@ -146,7 +151,7 @@ const initialState: SideMenuState = {
       ],
     },
     {
-      icon: "FileText",
+      icon: "Wallet",
       pathname: "/home/billing",
       title: "Billing",
     },
@@ -165,11 +170,7 @@ const initialState: SideMenuState = {
         //   pathname: "/home/term",
         //   title: "Term",
         // },
-        {
-          icon: "Activity",
-          pathname: "/home/stream",
-          title: "Stream",
-        },
+
         {
           icon: "Activity",
           pathname: "/home/settings",
@@ -181,6 +182,11 @@ const initialState: SideMenuState = {
         //   title: "Learner Enrollment",
         // },
       ],
+    },
+    {
+      icon: "Users",
+      title: "Users",
+      pathname: "/home/users",
     },
     {
       icon: "FileText",
