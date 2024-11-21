@@ -145,7 +145,7 @@ function Main() {
               </div>
             ) : (
               <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-                <Table className="border-spacing-y-[3px] border-separate mt-2">
+                {/* <Table className="border-spacing-y-[3px] border-separate mt-2">
                   <Table.Thead>
                     <Table.Tr>
                       <Table.Th className="py-0 border-b-0 whitespace-nowrap">
@@ -159,54 +159,73 @@ function Main() {
                       </Table.Th>
                     </Table.Tr>
                   </Table.Thead>
-                  <Table.Tbody>
+                  <Table.Tbody> */}
+                <div className="bg-gray-100  ">
+                  <div className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-6 p-6">
+                    {" "}
                     {grades.map((grade: any, key) => (
-                      <Table.Tr key={key} className="">
-                        <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <span className="font-medium whitespace-nowrap">
-                            {limit * (page - 1) + key + 1}
-                          </span>
-                        </Table.Td>
-                        <Table.Td
-                          className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                      <>
+                        <div
+                          className="bg-white shadow-lg rounded-lg p-6 text-center cursor-pointer"
                           onClick={(e: any) => openLearningArea(grade)}
                         >
-                          <div className="flex items-center">
-                            <div className="w-9 h-9">
-                              <Tippy
-                                as="img"
-                                alt=""
-                                className=""
-                                src={avarter}
-                                content={grade.name}
-                              />
-                            </div>
-                            <div className="ml-4">
-                              <a
-                                href="#"
-                                // onClick={() =>
-                                //   navigate("/home/learning_areas/" + grade?._id)
-                                // }
-                                className="font-medium whitespace-nowrap"
-                              >
-                                {grade.name}
-                              </a>
-                              {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                              {teacher.phone}
-                            </div> */}
-                            </div>
-                          </div>
-                        </Table.Td>
-                        <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <span className="font-medium whitespace-nowrap">
-                            {grade?.level_id?.name}
-                          </span>
-                        </Table.Td>
-                      </Table.Tr>
+                          <h3 className="text-2xl font-semibold text-blue-600">
+                            {grade.name}
+                          </h3>
+                          <p className="text-gray-500 mt-2">
+                            {grade?.level_id?.name}{" "}
+                          </p>
+                        </div>
+                      </>
+
+                      // <Table.Tr key={key} className="">
+                      //   <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      //     <span className="font-medium whitespace-nowrap">
+                      //       {limit * (page - 1) + key + 1}
+                      //     </span>
+                      //   </Table.Td>
+                      //   <Table.Td
+                      //     className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                      //     onClick={(e: any) => openLearningArea(grade)}
+                      //   >
+                      //     <div className="flex items-center">
+                      //       <div className="w-9 h-9">
+                      //         <Tippy
+                      //           as="img"
+                      //           alt=""
+                      //           className=""
+                      //           src={avarter}
+                      //           content={grade.name}
+                      //         />
+                      //       </div>
+                      //       <div className="ml-4">
+                      //         <a
+                      //           href="#"
+                      //           // onClick={() =>
+                      //           //   navigate("/home/learning_areas/" + grade?._id)
+                      //           // }
+                      //           className="font-medium whitespace-nowrap"
+                      //         >
+                      //           {grade.name}
+                      //         </a>
+                      //         {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                      //         {teacher.phone}
+                      //       </div> */}
+                      //       </div>
+                      //     </div>
+                      //   </Table.Td>
+                      //   <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      //     <span className="font-medium whitespace-nowrap">
+                      //       {grade?.level_id?.name}
+                      //     </span>
+                      //   </Table.Td>
+                      // </Table.Tr>
                     ))}
-                  </Table.Tbody>
-                </Table>
-                <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                  </div>
+                </div>
+                {/* </Table.Tbody>
+                </Table> */}
+                {/* <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                   <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
                     <Pagination className="w-full sm:w-auto sm:mr-auto">
                       <button
@@ -256,7 +275,7 @@ function Main() {
                       </FormSelect>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 {loading ? (
                   <div className="flex flex-col items-center mt-5">
                     <LoadingIcon icon="spinning-circles" className="w-8 h-8" />

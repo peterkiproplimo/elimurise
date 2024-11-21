@@ -35,7 +35,7 @@ function Users() {
   const [roles, setRoles] = useState([]);
   const [userId, setUserId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [loading, isLoading] = useState(true);
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const { authData } = useAuth();
@@ -121,7 +121,7 @@ function Users() {
       isLoading(true);
       try {
         const data = await getValues();
-        // let res = await ApiService.createUsers(data);
+        let res = await ApiService.createUser(data);
         getUsers();
         await reset();
         isLoading(false);
@@ -277,7 +277,11 @@ function Users() {
                     {user.email}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user?.teacher ? "Teacher" : "School Admin"}
+                    {user?.teacher
+                      ? "Teacher"
+                      : user.school_admin
+                      ? "Super Admin"
+                      : "Admin"}
                     {/* {authData?.user?.email} */}
                   </Table.Td>
 
@@ -448,7 +452,7 @@ function Users() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-6">
+              {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Role</FormLabel>
                 <FormSelect {...register("role_id")} name="role_id">
                   {roles.map((role: any, key) => (
@@ -463,7 +467,7 @@ function Users() {
                       errors.role.message}
                   </div>
                 )}
-              </div>
+              </div> */}
               {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Country</FormLabel>
                 <FormSelect

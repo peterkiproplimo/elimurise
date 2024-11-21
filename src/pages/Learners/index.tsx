@@ -1151,8 +1151,10 @@ function Main() {
                 value={grade}
                 className="relative w-56 text-slate-500 "
                 onChange={(event: any) => {
-                  reset({ ...getValues(), grade: event });
+                  reset({ ...getValues(), grade: event, stream: "" });
                   setStream("");
+                  // reset({ ...getValues(), grade: event });
+
                   setGrade(event);
                 }}
               >

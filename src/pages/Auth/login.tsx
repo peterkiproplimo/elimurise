@@ -101,10 +101,10 @@ const Login = () => {
         setSuccess(true);
         setMessage("Authenticated successfully");
         notify.current?.showToast();
-      } catch (error) {
+      } catch (error: any) {
         isLoading(false);
         setSuccess(false);
-        setMessage("Incorrect credentials.");
+        setMessage(error.message);
         notify.current?.showToast();
       }
     }

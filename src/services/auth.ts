@@ -808,6 +808,19 @@ export async function activateorDeactivateUsers(data: FieldValues) {
     throw handler(e);
   }
 }
+export async function createUser(data: FieldValues) {
+  try {
+    if (data.id) {
+      const res = await axios.put(c.USERS + "/" + data.id, data);
+      return res.data;
+    } else {
+      const res = await axios.post(c.USERS, data);
+      return res.data;
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
 
 export const getSubstrand = async (data: any) => {
   try {
@@ -1347,21 +1360,71 @@ export async function createGradingLearningArea(id: any, data: any) {
 //     throw handler(e);
 //   }
 // };
+// export function handler(err: any) {
+//   let error = err;
+//   console.log("status code ", error?.response?.status);
+//   // Check for specific status code and perform action
+//   if (error?.response?.status == 403) {
+//     localStorage.removeItem("@AuthData");
+//     window.location.href = "/auth/login";
+//     //
+//   }
+
+//   // Handle errors with a response data that has an 'error' property
+//   if (error.response && error.response.data.hasOwnProperty("error")) {
+//     error = error.response.data;
+//     // Check if the error response contains a specific structure
+//     if (error.error) {
+//       error.message = error.error;
+//     } else if (Array.isArray(error.errors)) {
+//       // Handle custom errors with an array of errors
+//       const customErrors = error.errors;
+//       const firstError = customErrors[0]; // Assuming you want the first error message
+//       error.message = firstError.msg || "An unknown error occurred.";
+//     } else {
+//       // Fallback if error.error is not present and the structure is unknown
+//       error.message = "An unknown error occurred.";
+//     }
+//     console.log(error);
+//   }
+//   // if (error.step) {
+//   //   localStorage.clear();
+//   //   localStorage.setItem("step", error.step);
+//   //   window.location.href = "/register";
+//   // }
+//   // Handle errors without 'error' property and convert to JSON if possible
+//   else if (!err.hasOwnProperty("error")) {
+//     error = err.toJSON();
+//     error.message = error.message || "An unknown error occurred.";
+//   }
+
+//   console.log("error");
+//   console.log(error.message);
+//   return new Error(error.message);
+// }
 export function handler(err: any) {
   let error = err;
 
   // Check for specific status code and perform action
-  if (error?.response?.status == 703) {
+  if (error?.response?.status == 403) {
     localStorage.removeItem("@AuthData");
-    window.location.reload();
+    window.location.href = "/auth/login";
   }
-
   // Handle errors with a response data that has an 'error' property
-  if (error.response && error.response.data.hasOwnProperty("error")) {
+  if (
+    (error.response &&
+      (error.response.data.hasOwnProperty("errors") ||
+        error.response.data.hasOwnProperty("error"))) ||
+    error.response.data.hasOwnProperty("message")
+  ) {
     error = error.response.data;
+    console.log("firstError");
+
     // Check if the error response contains a specific structure
     if (error.error) {
       error.message = error.error;
+    } else if (error.message) {
+      error.message = error.message;
     } else if (Array.isArray(error.errors)) {
       // Handle custom errors with an array of errors
       const customErrors = error.errors;

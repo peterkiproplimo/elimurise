@@ -65,11 +65,11 @@ const initialState: SideMenuState = {
       ],
     },
 
-    // {
-    //   icon: "Users",
-    //   title: "Parents",
-    //   pathname: "/home/parents",
-    // },
+    {
+      icon: "Users",
+      title: "Users",
+      pathname: "/home/users",
+    },
     {
       icon: "Users",
       title: "Teachers",
