@@ -816,7 +816,13 @@ function Main() {
                   <option>Select Strand</option>
                   {strands.map((strand: any, key) => (
                     <option key={key} value={strand._id}>
-                      {strand.name}
+                      <div
+                        className="font-medium inline-block richtext"
+                        style={{ listStyle: "auto" }}
+                        dangerouslySetInnerHTML={{
+                          __html: strand.name,
+                        }}
+                      ></div>
                     </option>
                   ))}
                 </FormSelect>
@@ -843,7 +849,14 @@ function Main() {
                   <option>Select Substrand</option>
                   {substrands.map((substrand: any, key: any) => (
                     <option key={key} value={substrand._id}>
-                      {substrand.name}
+                      {/* {substrand.name} */}
+                      <div
+                        className="font-medium inline-block richtext"
+                        style={{ listStyle: "auto" }}
+                        dangerouslySetInnerHTML={{
+                          __html: substrand.name,
+                        }}
+                      ></div>
                     </option>
                   ))}
                 </TomSelect>
