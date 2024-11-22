@@ -22,6 +22,11 @@ const initialState: SideMenuState = {
       title: "Dashboard",
       pathname: "/home/",
     },
+    {
+      icon: "Activity",
+      pathname: "/home/stream",
+      title: "Stream",
+    },
     // {
     //   icon: "Users",
     //   title: "Parents",
@@ -37,11 +42,7 @@ const initialState: SideMenuState = {
         //   pathname: "/home/learners",
         //   title: "Learners Details",
         // },
-        {
-          icon: "Activity",
-          pathname: "/home/stream",
-          title: "Stream",
-        },
+
         {
           icon: "Users",
           title: "Parents",
