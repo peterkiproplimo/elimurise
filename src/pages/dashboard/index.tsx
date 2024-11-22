@@ -367,7 +367,8 @@ function Main() {
                             />
                             <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
                               <div className="text-2xl font-medium text-primary">
-                                {dashboards.totalLearners}
+                                {dashboards.totalLearners} /{" "}
+                                {dashboards.learners_capacity}
                               </div>
                               <div className="text-slate-500 mt-0.5 text-sm">
                                 Learners Enrolled
@@ -379,10 +380,10 @@ function Main() {
                           <div className="mx-auto mt-5 w-52 sm:w-auto">
                             <div className="flex items-center mb-2">
                               <div className="w-2 h-2 mr-3 rounded-full bg-primary"></div>
-                              <span className="text-sm font-semibold">
+                              <span className="text-sm font-semibold text-slate-600">
                                 Total Learners
                               </span>
-                              <span className="ml-auto font-medium">
+                              <span className="ml-auto font-medium text-slate-600">
                                 {dashboards.totalLearners} /{" "}
                                 {dashboards.learners_capacity}
                               </span>
@@ -405,7 +406,7 @@ function Main() {
                               </div>
                               <div className="flex h-2 mb-2 overflow-hidden mb-4 rounded-lg bg-slate-100">
                                 <div
-                                  className="flex flex-col justify-center bg-green-500 transition-all"
+                                  className="flex flex-col justify-center bg-green-500 transition-all text-primary"
                                   style={{
                                     width: `${
                                       (dashboards.totalLearners /
