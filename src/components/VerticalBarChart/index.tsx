@@ -9,6 +9,8 @@ import { useMemo } from "react";
 interface MainProps extends React.ComponentPropsWithoutRef<"canvas"> {
   width: number;
   height: number;
+  data: number[]; // Array of numbers for graph data
+  labels: string[]; // Array of strings for graph labels
 }
 
 function Main(props: MainProps) {
@@ -17,31 +19,36 @@ function Main(props: MainProps) {
 
   const data: ChartData = useMemo(() => {
     return {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+      labels: props.labels,
       datasets: [
         {
-          label: "Html Template",
+          label: "Learners Per Grade",
           barPercentage: 0.5,
-          barThickness: 6,
-          maxBarThickness: 8,
-          minBarLength: 2,
-          data: [0, 200, 250, 200, 500, 450, 850, 1050],
-          backgroundColor: colorScheme ? getColor("primary") : "",
+          barThickness: 8,
+          maxBarThickness: 10,
+          minBarLength: 3,
+          data: props.data,
+          backgroundColor: colorScheme ? "#4A90E2" : "#50E3C2", // Blue for primary, Green for secondary
+          borderColor: darkMode ? "#ffffff" : "#4A90E2", // Light borders in dark mode
+          borderWidth: 2,
         },
-        {
-          label: "VueJs Template",
-          barPercentage: 0.5,
-          barThickness: 6,
-          maxBarThickness: 8,
-          minBarLength: 2,
-          data: [0, 300, 400, 560, 320, 600, 720, 850],
-          backgroundColor: darkMode
-            ? getColor("darkmode.200")
-            : getColor("slate.300"),
-        },
+        // Optionally, add another dataset for comparison or alternative visualization
+        // {
+        //   label: "Alternative Dataset",
+        //   barPercentage: 0.5,
+        //   barThickness: 6,
+        //   maxBarThickness: 8,
+        //   minBarLength: 2,
+        //   data: props.data,
+        //   backgroundColor: darkMode
+        //     ? "#2E3B4E"
+        //     : "#FFB74D", // A soft orange for contrast
+        //   borderColor: "#FFB74D",
+        //   borderWidth: 2,
+        // },
       ],
     };
-  }, [colorScheme, darkMode]);
+  }, [colorScheme, darkMode, props]);
 
   const options: ChartOptions = useMemo(() => {
     return {
@@ -49,7 +56,10 @@ function Main(props: MainProps) {
       plugins: {
         legend: {
           labels: {
-            color: getColor("slate.500", 0.8),
+            color: darkMode ? "#f5f5f5" : "#1C1C1C", // Light legend in dark mode, dark in light mode
+            font: {
+              size: 14,
+            },
           },
         },
       },
@@ -58,8 +68,9 @@ function Main(props: MainProps) {
           ticks: {
             font: {
               size: 12,
+              weight: "bold",
             },
-            color: getColor("slate.500", 0.8),
+            color: getColor("slate.600", 0.8), // Dark color for readability
           },
           grid: {
             display: false,
@@ -68,19 +79,19 @@ function Main(props: MainProps) {
         },
         y: {
           ticks: {
+            stepSize: 1,
             font: {
               size: 12,
+              weight: "bold",
             },
-            color: getColor("slate.500", 0.8),
+            color: getColor("slate.600", 0.8), // Dark color for readability
             callback: function (value) {
-              return "$" + value;
+              return `${value}`; // Format tick labels as numbers
             },
           },
           grid: {
-            color: darkMode
-              ? getColor("slate.500", 0.3)
-              : getColor("slate.300"),
-            borderDash: [2, 2],
+            color: darkMode ? "#616161" : "#E0E0E0", // Subtle grid lines based on mode
+            borderDash: [2, 2], // Dashed grid lines for a clean look
             drawBorder: false,
           },
         },

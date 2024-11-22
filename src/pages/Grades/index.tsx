@@ -161,12 +161,12 @@ function Main() {
                   </Table.Thead>
                   <Table.Tbody> */}
                 <div className="bg-gray-100  ">
-                  <div className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-6 p-6">
+                  <div className="grid grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))] gap-6 p-6">
                     {" "}
                     {grades.map((grade: any, key) => (
                       <>
                         <div
-                          className="bg-white shadow-lg rounded-lg p-6 text-center cursor-pointer"
+                          className="bg-white  box rounded-lg p-6 text-center cursor-pointer"
                           onClick={(e: any) => openLearningArea(grade)}
                         >
                           <h3 className="text-2xl font-semibold text-blue-600">

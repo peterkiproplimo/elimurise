@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import leanerImg from "../../assets/images/learner.jpeg";
 import { is_admin } from "../../utils/helper";
 import image1 from "../../assets/images/custom.svg";
+import StackedBarChart from "../../components/VerticalBarChart";
 
 function Main() {
   interface Learner {
@@ -42,6 +43,11 @@ function Main() {
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(true);
   const [dashboards, setDashboards] = useState<any>({});
+  const [chartData, setChartData] = useState({
+    data: [],
+    labels: [],
+  });
+
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -66,7 +72,7 @@ function Main() {
       total_pages: pagination?.total_pages,
       per_page: pagination?.per_page,
     });
-    setDashboards(res.data);
+    setDashboards({ ...res.data });
     // console.log(grading);
     isLoading(false);
   };
@@ -78,8 +84,8 @@ function Main() {
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 2xl:col-span-9">
             <div className="grid  gap-6">
-              <div className="col-span-12 mt-8 xl:col-span-12">
-                <div className="flex items-center h-10 ">
+              <div className="col-span-12  xl:col-span-12">
+                <div className="flex items-center  ">
                   <h2 className="mr-5 text-lg font-medium truncate">
                     Dashboard
                   </h2>
@@ -87,10 +93,7 @@ function Main() {
                 <div className="grid grid-cols-12 gap-6 mt-5">
                   <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
                     <div
-                      className={clsx([
-                        "relative zoom-in",
-                        "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
-                      ])}
+                      className={clsx(["relative zoom-in"])}
                       onClick={(event) => {
                         event.preventDefault(); // Prevent the default anchor behavior
                         navigate("/home/learners"); // Navigate using your custom function
@@ -127,10 +130,7 @@ function Main() {
                   </div>
                   <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
                     <div
-                      className={clsx([
-                        "relative zoom-in",
-                        "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
-                      ])}
+                      className={clsx(["relative zoom-in"])}
                       onClick={(event) => {
                         event.preventDefault(); // Prevent the default anchor behavior
                         navigate("/home/teachers"); // Navigate using your custom function
@@ -166,10 +166,7 @@ function Main() {
                   </div>
                   <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
                     <div
-                      className={clsx([
-                        "relative zoom-in",
-                        "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
-                      ])}
+                      className={clsx(["relative zoom-in"])}
                       onClick={(event) => {
                         event.preventDefault(); // Prevent the default anchor behavior
                         navigate("/home/parents"); // Navigate using your custom function
@@ -206,10 +203,7 @@ function Main() {
                   </div>
                   <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
                     <div
-                      className={clsx([
-                        "relative zoom-in",
-                        "before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70",
-                      ])}
+                      className={clsx(["relative zoom-in"])}
                       onClick={(event) => {
                         event.preventDefault(); // Prevent the default anchor behavior
                         navigate("/home/tests"); // Navigate using your custom function
@@ -244,141 +238,64 @@ function Main() {
                     </div>
                   </div>
                 </div>
-                {/* <div className="mt-5 ">
-                <div className="bg-white p-6 shadow-md rounded-lg flex items-center justify-between ">
-                  <div>
-                    <div className="text-xl text-gray-500"></div>
-                    <div className="mt-2 text-4xl  text-gray-800">
-                      Welcome back, {user?.firstname}
-                    </div>
-                    <div className="text-gray-500 text-xl font-bold">
-                      Always stay updated with the current status
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <img
-                      src={studentUrl}
-                      alt="Welcome Image"
-                      className="w-64  "
-                    />
-                  </div>
-                </div>
-              </div> */}
               </div>
-              <div className="relative col-span-12 2xl:col-span-9">
-                <div className="grid grid-cols-12 gap-6">
-                  <div className="relative col-span-12 2xl:col-span-12">
-                    <div className="items-center block h-10  sm:flex">
-                      <h2 className="mr-5 text-lg font-medium truncate">
-                        Last Added Leaners
+              <div className="relative col-span-12">
+                <div className="grid grid-cols-6 gap-4">
+                  {/* Stacked Bar Chart */}
+                  <div className="relative col-span-4 box p-6">
+                    <div className="flex items-center justify-between h-10">
+                      <h2 className="text-lg font-medium truncate">
+                        Last Per Grade
                       </h2>
-                      <div className="flex items-center mt-3 sm:ml-auto sm:mt-0">
-                        {/* <Button className="flex items-center !box text-slate-600 dark:text-slate-300">
-                        <Lucide
-                          icon="FileText"
-                          className="hidden w-4 h-4 mr-2 sm:block"
-                        />
-                        Export to Excel
-                      </Button>
-                      <Button className="flex items-center ml-3 !box text-slate-600 dark:text-slate-300">
-                        <Lucide
-                          icon="FileText"
-                          className="hidden w-4 h-4 mr-2 sm:block"
-                        />
-                        Export to PDF
-                      </Button> */}
-                      </div>
                     </div>
-                    <div className="mt-8 overflow-auto  lg:overflow-visible sm:mt-0">
-                      <Table className="border-spacing-y-[10px] border-separate sm:mt-2">
-                        <Table.Thead>
-                          <Table.Tr>
-                            <Table.Th className="border-b-0 whitespace-nowrap">
-                              IMAGES
-                            </Table.Th>
-                            <Table.Th className="border-b-0 whitespace-nowrap">
-                              STUDENT NAME
-                            </Table.Th>
-                            <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                              ADM NO.
-                            </Table.Th>
-                            <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                              NEMIS NO.
-                            </Table.Th>
-                            <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                              STATUS
-                            </Table.Th>
-                            <Table.Th className="text-center border-b-0 whitespace-nowrap">
-                              CREATED AT
-                            </Table.Th>
-                          </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>
-                          {dashboards?.learners?.map(
-                            (learner: any, key: any) => (
-                              <Table.Tr key={key} className="">
-                                <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                  <div className="flex">
-                                    <div className="w-10 h-10 ">
-                                      <img
-                                        src={c.IMG_URL + learner?.photo}
-                                        alt="Learner"
-                                        className="w-9 h-9 rounded-lg border shadow-md"
-                                        onError={(e) =>
-                                          (e.currentTarget.src = leanerImg)
-                                        }
-                                      />
-                                    </div>
-                                  </div>
-                                </Table.Td>
-                                <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                  {learner?.first_name} {learner?.last_name}
-                                  {/* <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                            {learner.adm_no}
-                          </div> */}
-                                </Table.Td>
-                                <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                  {learner.adm_no}
-                                </Table.Td>
-                                <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                  {learner.nemis_no}
-                                </Table.Td>
-                                <Table.Td className="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                  <div
-                                    className={clsx([
-                                      "flex items-center justify-center",
-                                      { "text-success": learner?.status },
-                                      { "text-danger": !learner?.status },
-                                    ])}
-                                  >
-                                    <Lucide
-                                      icon="CheckSquare"
-                                      className="w-4 h-4 mr-2"
-                                    />
-                                    {learner?.status ? "Active" : "Inactive"}
-                                  </div>
-                                </Table.Td>
-                                <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                                  <div className="flex items-center justify-center">
-                                    <span className="font-medium whitespace-nowrap">
-                                      {new Date(
-                                        learner?.createdAt
-                                      ).toLocaleString("en-US", {
-                                        timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                                        year: "numeric",
-                                        month: "2-digit",
-                                        day: "2-digit",
-                                        // hour: "2-digit",
-                                        // minute: "2-digit",
-                                      })}
-                                    </span>
-                                  </div>
-                                </Table.Td>
-                              </Table.Tr>
-                            )
-                          )}
-                        </Table.Tbody>
-                      </Table>
+                    <div className="mt-8 overflow-auto lg:overflow-visible">
+                      <StackedBarChart
+                        height={325}
+                        className="mt-4 -mb-6"
+                        labels={dashboards?.learnerStreamWise?.labels}
+                        data={dashboards?.learnerStreamWise?.values}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Parents Section */}
+                  <div className="relative col-span-2 ">
+                    <div className="flex items-center h-10">
+                      <h2 className="text-lg font-medium truncate">
+                        Last Added Parents
+                      </h2>
+                    </div>
+                    <div className="mt-5">
+                      {dashboards?.parents?.map((parent: any, key: any) => (
+                        <div
+                          key={key}
+                          className="flex items-center px-5 py-3 mb-3 box zoom-in"
+                        >
+                          <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
+                            <img
+                              alt={`${parent?.first_name}'s profile`}
+                              src={image}
+                            />
+                          </div>
+                          <div className="ml-4">
+                            <div className="font-medium">
+                              {parent?.first_name} {parent?.last_name}
+                            </div>
+                            <div className="text-slate-500 text-xs mt-0.5">
+                              {parent?.email}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <a
+                        onClick={(event) => {
+                          event.preventDefault();
+                          navigate("/home/parents");
+                        }}
+                        className="block w-full py-3 text-center bg-success text-white rounded-md hover:bg-success-dark transition"
+                      >
+                        See More
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -410,14 +327,6 @@ function Main() {
                               {teacher?.email}
                             </div>
                           </div>
-                          {/* <div
-                          className={clsx({
-                            "text-success": teacher?.status,
-                            "text-danger": !teacher?.status,
-                          })}
-                        >
-                          {teacher?.status ? "Active" : "Inactive"}
-                        </div> */}
                         </div>
                       </div>
                     ))}
@@ -433,84 +342,86 @@ function Main() {
                     </a>
                   </div>
                 </div>
-
-                <div className="col-span-12 mt-2  mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
-                  <div className="flex items-center h-10 ">
-                    <h2 className="mr-5 text-lg font-medium truncate">
-                      Parents
-                    </h2>
-                  </div>
-                  <div className="mt-5">
-                    {dashboards?.parents?.map((parent: any, key: any) => (
-                      <div key={key} className="">
-                        <div className="flex items-center px-5 py-3 mb-3 box zoom-in">
-                          <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
-                            <img
-                              alt="Midone Tailwind HTML Admin Template"
-                              src={image}
+                <div className="col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-12">
+                  <div className="relative before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70">
+                    <Tab.Group className="p-5 box">
+                      <Tab.Panels className="mt-6">
+                        <Tab.Panel>
+                          <div className="relative">
+                            {/* Donut Chart with Custom Colors */}
+                            <ReportDonutChart
+                              height={208}
+                              className="mt-3"
+                              learners={[
+                                {
+                                  value:
+                                    dashboards.learners_capacity -
+                                    dashboards.totalLearners,
+                                  color: "#ff6347", // Tomato red for remaining capacity
+                                },
+                                {
+                                  value: dashboards.totalLearners,
+                                  color: "#32cd32", // Lime green for current learners
+                                },
+                              ]}
                             />
-                          </div>
-                          <div className="ml-4 mr-auto">
-                            <div className="font-medium">
-                              {parent?.first_name} {parent?.last_name}
+                            <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
+                              <div className="text-2xl font-medium text-primary">
+                                {dashboards.totalLearners}
+                              </div>
+                              <div className="text-slate-500 mt-0.5 text-sm">
+                                Learners Enrolled
+                              </div>
                             </div>
-                            <div className="text-slate-500 text-xs mt-0.5">
-                              {parent?.email}
+                          </div>
+
+                          {/* Learner Status and Capacity Information */}
+                          <div className="mx-auto mt-5 w-52 sm:w-auto">
+                            <div className="flex items-center mb-2">
+                              <div className="w-2 h-2 mr-3 rounded-full bg-primary"></div>
+                              <span className="text-sm font-semibold">
+                                Total Learners
+                              </span>
+                              <span className="ml-auto font-medium">
+                                {dashboards.totalLearners} /{" "}
+                                {dashboards.learners_capacity}
+                              </span>
+                            </div>
+
+                            {/* Progress Bar with Color Change */}
+                            <div className="relative pt-1">
+                              <div className="flex mb-2 items-center justify-between">
+                                <span className="text-sm font-semibold text-slate-600">
+                                  Progress
+                                </span>
+                                <span className="text-xs font-medium text-slate-400">
+                                  {(
+                                    (dashboards.totalLearners /
+                                      dashboards.learners_capacity) *
+                                    100
+                                  ).toFixed(2)}
+                                  %
+                                </span>
+                              </div>
+                              <div className="flex h-2 mb-2 overflow-hidden mb-4 rounded-lg bg-slate-100">
+                                <div
+                                  className="flex flex-col justify-center bg-green-500 transition-all"
+                                  style={{
+                                    width: `${
+                                      (dashboards.totalLearners /
+                                        dashboards.learners_capacity) *
+                                      100
+                                    }%`,
+                                  }}
+                                ></div>
+                              </div>
                             </div>
                           </div>
-                          {/* <div
-                          className={clsx({
-                            "text-success": parent?.status,
-                            "text-danger": !parent?.status,
-                          })}
-                        >
-                          {parent?.status ? "Active" : "Inactive"}
-                        </div> */}
-                        </div>
-                      </div>
-                    ))}
-                    <a
-                      onClick={(event) => {
-                        event.preventDefault(); // Prevent the default anchor behavior
-                        navigate("/home/parents"); // Navigate using your custom function
-                      }}
-                      className="block  cursor-point w-full py-3 text-center border bg-success text-white rounded-md  border-slate-400 dark:border-darkmode-300 text-slate-500"
-                    >
-                      See More
-                    </a>
+                        </Tab.Panel>
+                      </Tab.Panels>
+                    </Tab.Group>
                   </div>
                 </div>
-                {/* <div className="col-span-12 mr-5">
-                <div className="mt-5 before:hidden xl:before:block ">
-                  <div className="p-5 box">
-                    <div className="mt-3">
-                      <ReportDonutChart height={196} />
-                    </div>
-                    <div className="mx-auto mt-8 w-52 sm:w-auto">
-                      <div className="flex items-center">
-                        <div className="w-2 h-2 mr-3 rounded-full bg-primary"></div>
-                        <span className="truncate">Ongoing</span>
-                        <span className="ml-auto font-medium">60%</span>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="w-2 h-2 mr-3 rounded-full bg-warning"></div>
-                        <span className="truncate">Upcoming</span>
-                        <span className="ml-auto font-medium">15%</span>
-                      </div>
-                      <div className="flex items-center mt-4">
-                        <div className="w-2 h-2 mr-3 rounded-full bg-pending"></div>
-                        <span className="truncate">Completed</span>
-                        <span className="ml-auto font-medium">15%</span>
-                      </div>
-                      <div className="flex items-center mt-4">
-                        <div className="w-2 h-2 mr-3 rounded-full bg-danger"></div>
-                        <span className="truncate">Out of time</span>
-                        <span className="ml-auto font-medium">10%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
               </div>
             </div>
           </div>

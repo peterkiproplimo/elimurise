@@ -603,7 +603,7 @@ function Main() {
                   value={strandFilter.grade}
                   onChange={(event) => handleGradeChange(event)}
                 >
-                  <option>Select Grade</option>
+                  <option value={""}>Select Grade</option>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -654,7 +654,7 @@ function Main() {
                     value={learner}
                     onChange={(event) => setLearner(event.target.value)}
                   >
-                    <option>Select Learner</option>
+                    <option value={""}>Select Learner</option>
 
                     {enrollments?.map((learner: any, key) => (
                       <option key={key} value={learner?._id}>
@@ -678,7 +678,7 @@ function Main() {
                   value={selectedTerm}
                   onChange={(event: any) => setSelectedTerm(event)}
                 >
-                  <option>Select Academic Term</option>
+                  <option value={""}>Select Academic Term</option>
 
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>

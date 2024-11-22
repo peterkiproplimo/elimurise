@@ -63,7 +63,7 @@ function Layout() {
     };
   }, [dispatch]);
   return (
-    <div className="py-5 md:py-0">
+    <div className="py-5 md:py-0" style={{ backgroundColor: "#f5f5f5" }}>
       <DarkModeSwitcher />
       {/* <MainColorSwitcher /> */}
       <MobileMenu />
@@ -72,7 +72,7 @@ function Layout() {
         {/* BEGIN: Side Menu */}
         {/* w-full fixed bg-primary/90 z-[60] border-b border-white/[0.08] -mt-5 -mx-3 sm:-mx-8 mb-6 dark:bg-darkmode-800/90 md:hidden */}
         {/* <nav className="w-[105px] bg-primary/90 xl:w-[260px] px-5 pb-16 overflow-x-hidden z-50 pt-10 -mt-4 hidden md:block"> */}
-        <nav className="w-[105px] scrollbar-hidden h-full  bg-primary xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md m-2 hidden md:block fixed bg-primary z-[60] border-b border-white/[0.08]    mb-6 dark:bg-darkmode-800/90 ">
+        <nav className="w-[105px] scrollbar-hidden h-full  bg-primary xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md  hidden md:block fixed bg-primary z-[60] border-b border-white/[0.08]    mb-6 dark:bg-darkmode-800/90 ">
           <div className="mb-2">
             <img alt="ACS" className=" w-[130px] ml-5" src={logoUrl} />
           </div>
@@ -192,8 +192,9 @@ function Layout() {
         {/* END: Side Menu */}
         {/* BEGIN: Content */}
         <div
+          // style={{ backgroundColor: "#f5f5f5" }}
           className={clsx([
-            "md:ml-[150px] xl:ml-[270px] max-w-full md:max-w-none  md:rounded-none min-w-0 min-h-screen bg-slate-100 flex-1   relative dark:bg-darkmode-700",
+            "md:ml-[150px] xl:ml-[270px] max-w-full md:max-w-none  md:rounded-none min-w-0 min-h-screen  flex-1   relative dark:bg-darkmode-700",
             "before:content-[''] before:w-full  before:block",
           ])}
         >
@@ -208,8 +209,9 @@ function Layout() {
           <TopBar layout="side-menu" />
 
           <div
+            // style={{ backgroundColor: "#f5f5f5" }}
             className={clsx([
-              "max-w-full md:max-w-none rounded-[30px] md:rounded-none px-4 md:px-[22px] min-w-0 min-h-screen bg-slate-100 flex-1  pb-10  md:mt-1 relative dark:bg-darkmode-700",
+              "max-w-full md:max-w-none  md:rounded-none px-4 ] min-w-0 min-h-screen-100px  flex-1  md:mt-1 relative dark:bg-darkmode-700",
               "before:content-[''] before:w-full before:h-px before:block",
             ])}
           >

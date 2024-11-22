@@ -754,12 +754,18 @@ function Main() {
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
+                <FormLabel
+                  htmlFor="modal-form-6"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Learning Area
+                </FormLabel>
                 <FormSelect
                   {...register("learning_area")}
                   value={strandFilter.learning_area}
                   name="learning_area"
-                  onChange={(event) => handleLearningAreaChange(event)}
+                  onChange={handleLearningAreaChange}
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option>Select Learning Area</option>
                   {learningAreas
@@ -773,19 +779,26 @@ function Main() {
                     ))}
                 </FormSelect>
                 {errors.learning_area && (
-                  <div className="mt-2 text-danger">
+                  <div className="mt-2 text-sm text-red-600">
                     {typeof errors.learning_area.message === "string" &&
                       errors.learning_area.message}
                   </div>
                 )}
               </div>
+
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
+                <FormLabel
+                  htmlFor="modal-form-6"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Term
+                </FormLabel>
                 <FormSelect
                   {...register("term")}
                   value={strandFilter.term}
                   name="term"
-                  onChange={(event: any) => handleTermChange(event)}
+                  onChange={handleTermChange}
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option>Select Term</option>
                   {terms.map((term: any, key) => (
@@ -795,30 +808,32 @@ function Main() {
                   ))}
                 </FormSelect>
                 {errors.term && (
-                  <div className="mt-2 text-danger">
+                  <div className="mt-2 text-sm text-red-600">
                     {typeof errors.term.message === "string" &&
                       errors.term.message}
                   </div>
                 )}
               </div>
-              {/* {substrands.map((substrand: any, key: any) => (
-                <span>{substrand.name}</span>
-              ))} */}
 
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Strand</FormLabel>
+                <FormLabel
+                  htmlFor="modal-form-6"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Strand
+                </FormLabel>
                 <FormSelect
                   {...register("strand")}
                   name="strand"
                   value={strand}
-                  onChange={(event: any) => handleStrandChange(event)}
+                  onChange={handleStrandChange}
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option>Select Strand</option>
                   {strands.map((strand: any, key) => (
                     <option key={key} value={strand._id}>
                       <div
                         className="font-medium inline-block richtext"
-                        style={{ listStyle: "auto" }}
                         dangerouslySetInnerHTML={{
                           __html: strand.name,
                         }}
@@ -827,32 +842,32 @@ function Main() {
                   ))}
                 </FormSelect>
                 {errors.theme && (
-                  <div className="mt-2 text-danger">
+                  <div className="mt-2 text-sm text-red-600">
                     {typeof errors.theme.message === "string" &&
                       errors.theme.message}
                   </div>
                 )}
               </div>
+
               <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Substrand</FormLabel>
+                <FormLabel
+                  htmlFor="modal-form-6"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Substrand
+                </FormLabel>
                 <TomSelect
                   {...register("substrand")}
                   value={selectedSubStrand}
-                  // Assuming selectedSubStrand is the selected object
                   name="substrand"
-                  onChange={(selectedOption: any) => {
-                    // console.log(substrands);
-                    // console.log("jee");
-                    handleSubStrandChange(selectedOption);
-                  }}
+                  onChange={handleSubStrandChange}
+                  className="mt-1  w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option>Select Substrand</option>
                   {substrands.map((substrand: any, key: any) => (
                     <option key={key} value={substrand._id}>
-                      {/* {substrand.name} */}
                       <div
                         className="font-medium inline-block richtext"
-                        style={{ listStyle: "auto" }}
                         dangerouslySetInnerHTML={{
                           __html: substrand.name,
                         }}
@@ -861,7 +876,7 @@ function Main() {
                   ))}
                 </TomSelect>
                 {errors.theme && (
-                  <div className="mt-2 text-danger">
+                  <div className="mt-2 text-sm text-red-600">
                     {typeof errors.theme.message === "string" &&
                       errors.theme.message}
                   </div>
@@ -869,22 +884,21 @@ function Main() {
               </div>
             </div>
           </div>
-
-          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+          <div className="box mb-5 mt-5 p-6 border rounded-lg shadow-md bg-white dark:bg-darkmode-700 dark:border-darkmode-400">
             <div className="col-span-12 sm:col-span-4">
-              <h2 className="mr-auto text-base font-medium border-b p-2">
+              <h2 className="text-lg font-semibold border-b pb-2 mb-4 text-gray-800 dark:text-gray-100">
                 Indicator
               </h2>
-              <Table className="border-spacing-y-[10px] border-separate -mt-2">
-                <Table.Thead className="bg-dark/10">
+              <Table className="border-spacing-y-2 border-separate">
+                <Table.Thead className="bg-gray-100 dark:bg-darkmode-800">
                   <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Description
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap text-left">
+                    <Table.Th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 text-left">
                       Assessment Progress
                     </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
+                    <Table.Th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Actions
                     </Table.Th>
                   </Table.Tr>
@@ -893,18 +907,19 @@ function Main() {
                   {substrand?.indicators?.map((indicator: any, key: any) => (
                     <Table.Tr
                       key={key}
+                      className="hover:bg-gray-50 dark:hover:bg-darkmode-600 transition-colors"
                       onClick={() => setIndicator(indicator[0]?._id)}
                     >
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         {indicator[0]?.description}
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         <ProgressBar
                           total={indicator[0]?.total_learners || 0}
                           assessed={indicator[0]?.total_learners_assessed || 0}
                         />
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
+                      <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         <Button
                           onClick={() => {
                             setIndicator(indicator[0]?._id);
@@ -912,14 +927,14 @@ function Main() {
                           }}
                           variant="primary"
                           type="button"
-                          className="w-24 text-white"
+                          className="w-28 text-white bg-blue-600 hover:bg-blue-700 transition-all rounded-lg py-2"
                         >
                           Assess
                           {loading && (
                             <LoadingIcon
                               icon="spinning-circles"
                               color="white"
-                              className="w-4 h-4 ml-2"
+                              className="w-4 h-4 ml-2 animate-spin"
                             />
                           )}
                         </Button>
@@ -929,22 +944,12 @@ function Main() {
                 </Table.Tbody>
               </Table>
               {errors.theme && (
-                <div className="mt-2 text-danger">
+                <div className="mt-3 text-sm text-red-600 dark:text-red-400">
                   {typeof errors.theme.message === "string" &&
                     errors.theme.message}
                 </div>
               )}
             </div>
-            {/* <div className="px-5 pb-8 text-right">
-              <Button
-                onClick={() => generateAssessment()}
-                variant="primary"
-                type="button"
-                className="w-24 text-white"
-              >
-                Assess
-              </Button>
-            </div> */}
           </div>
 
           <Dialog
