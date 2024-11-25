@@ -235,7 +235,7 @@ function Main() {
                           </div>
                         </div>
                         <div className="mt-6 text-3xl font-medium leading-8">
-                          {dashboards.totalTeachers}
+                          {dashboards.totalTests}
                         </div>
                         <div className="mt-1 text-base text-slate-500">
                           Tests
