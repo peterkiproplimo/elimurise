@@ -25,8 +25,12 @@ import leanerImg from "../../assets/images/learner.jpeg";
 import { is_admin } from "../../utils/helper";
 import image1 from "../../assets/images/custom.svg";
 import StackedBarChart from "../../components/VerticalBarChart";
+import { useTour } from "../../TourContext";
+// import { useTour } from "./TourContext";
 
 function Main() {
+  const { setRunTour } = useTour();
+
   interface Learner {
     first_name: string;
     // Add other properties if needed
@@ -56,6 +60,8 @@ function Main() {
   });
 
   useEffect(() => {
+    setRunTour(true);
+
     getDashboard();
   }, []);
 
@@ -239,7 +245,7 @@ function Main() {
                   </div>
                 </div>
               </div>
-              <div className="relative col-span-12">
+              <div className="relative col-span-12 home-step-1">
                 <div className="grid grid-cols-6 gap-4">
                   {/* Stacked Bar Chart */}
                   <div className="relative col-span-4 box p-6">
@@ -302,7 +308,7 @@ function Main() {
               </div>
             </div>
           </div>
-          <div className="col-span-12 2xl:col-span-3 ">
+          <div className="col-span-12 2xl:col-span-3 home-step-2">
             <div className=" 2xl:border-l">
               <div className="grid grid-cols-12 2xl:pl-6 gap-x-6 2xl:gap-x-0 gap-y-6">
                 <div className="col-span-12 mt-3 mr-5 md:col-span-6 xl:col-span-4 2xl:col-span-12">
@@ -342,7 +348,7 @@ function Main() {
                     </a>
                   </div>
                 </div>
-                <div className="col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-12">
+                <div className="col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-12 home-step-3">
                   <div className="relative before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70">
                     <Tab.Group className="p-5 box">
                       <Tab.Panels className="mt-6">

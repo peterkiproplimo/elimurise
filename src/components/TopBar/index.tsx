@@ -13,6 +13,7 @@ import { useAuth } from "../../contexts/Auth";
 import * as ApiService from "../../services/auth";
 import { selectDarkMode, setDarkMode } from "../../stores/darkModeSlice";
 import { useAppDispatch, useAppSelector } from "../../stores/hooks";
+import { IMG_URL } from "../../utils/constants";
 
 function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   const auth = useAuth();
@@ -159,8 +160,8 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
           {/* END: Notifications */}
           {/* BEGIN: Account Menu */}
           <Menu>
-            <Menu.Button className="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in ">
-              <img alt="" src={fakerData[9].photos[0]} />
+            <Menu.Button className="block w-10 h-10 shadow-lg overflow-hidden rounded-full  image-fit  ">
+              <img alt="" src={IMG_URL + school?.logo} />
             </Menu.Button>
             <Menu.Items className="w-56 mt-px relative bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white">
               <Menu.Header className="font-normal">
@@ -172,7 +173,7 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
                 </div> */}
               </Menu.Header>
               <Menu.Divider className="bg-white/[0.08]" />
-              <Link to="/profile">
+              <Link to="/home/profile">
                 <Menu.Item className="hover:bg-white/5">
                   <Lucide icon="User" className="w-4 h-4 mr-2" />
                   Profile

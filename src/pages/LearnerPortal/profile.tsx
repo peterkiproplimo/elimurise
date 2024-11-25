@@ -76,7 +76,10 @@ function Main() {
   const [academic, setAcademic] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const navigate = useNavigate();
-
+  useEffect(() => {
+    const learner = JSON.parse(localStorage.getItem("learner") || "");
+    setLearner(learner);
+  }, []);
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -98,66 +101,6 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-
-    setGrades(response.data);
-  };
-  useEffect(() => {
-    getGrades();
-    const learner = JSON.parse(localStorage.getItem("learner") || "");
-    setLearner(learner);
-  }, []);
-  useEffect(() => {
-    getStreams();
-  }, [grade]);
-  useEffect(() => {
-    getStudents();
-  }, [search, page, limit]);
-
-  const getStudents = async () => {
-    const response = await ApiService.getLearners(
-      {
-        page: page,
-        limit: limit,
-      },
-      strandFilter
-    );
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    setLearners(response.data);
-  };
-
-  const getStreams = async () => {
-    const response = await ApiService.getStream({ grade: grade });
-    setStreams(response.data);
-    console.log(response);
-  };
-  const getAcademics = async () => {
-    const response = await ApiService.getAcademic({
-      page: 1,
-    });
-    setAcademic(response.data);
-  };
-
-  const [rows, setRows] = useState<TableRow[]>([
-    { no: 1, strandName: "Example Strand" },
-  ]);
-
-  const addRow = () => {
-    const newRow: TableRow = {
-      no: rows.length + 1,
-      strandName: "New Strand",
-    };
-
-    setRows([...rows, newRow]);
-  };
 
   return (
     <>

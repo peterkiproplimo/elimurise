@@ -336,12 +336,14 @@ function Main() {
                   }}
                 >
                   <option value={""}>Select Learner</option>
-                  {learners.map((learner: any) => (
-                    <option value={learner._id}>
-                      {learner.adm_no}-{learner.first_name} {learner.surname}{" "}
-                      {learner.last_name}
-                    </option>
-                  ))}
+                  {learners
+                    .filter((learner: any) => learner.status !== "D")
+                    .map((learner: any) => (
+                      <option key={learner._id} value={learner._id}>
+                        {learner.adm_no}-{learner.first_name} {learner.surname}{" "}
+                        {learner.last_name}
+                      </option>
+                    ))}
                 </TomSelect>
                 {errors.term && (
                   <div className="mt-2 text-danger">

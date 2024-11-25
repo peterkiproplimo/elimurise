@@ -307,7 +307,7 @@ function Main() {
             <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
               <Button
                 variant="primary"
-                className="mr-2 shadow-md"
+                className="mr-2 shadow-md stream-step-1"
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
                   setDialog(true);

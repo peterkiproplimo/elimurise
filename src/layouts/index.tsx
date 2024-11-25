@@ -18,10 +18,12 @@ import MobileMenu from "../../src/components/MobileMenu";
 import DarkModeSwitcher from "../../src/components/DarkModeSwitcher";
 import { useDispatch, useSelector } from "react-redux";
 import logoUrl from "../assets/images/hero.png";
+import Joyride from "react-joyride";
 
 import MainColorSwitcher from "../components/MainColorSwitcher";
 import SideMenuTooltip from "../../src/components/SideMenuTooltip";
 import { useAuth } from "../contexts/Auth";
+import { useTour } from "../TourContext";
 interface School {
   school: Record<string, any>; // Replace `any` with specific types if known
   // Add other properties if needed
@@ -29,6 +31,7 @@ interface School {
 
 function Layout() {
   const location = useLocation();
+  const { runTour, currentSteps, handleStepChange } = useTour();
   const [formattedMenu, setFormattedMenu] = useState<
     Array<FormattedMenu | "divider">
   >([]);
@@ -247,6 +250,23 @@ function Layout() {
               <b>Current Session: {user?.school?.current_session}</b>
             </div> */}
             <Outlet />
+            <Joyride
+              steps={currentSteps}
+              run={runTour}
+              continuous
+              scrollToFirstStep
+              showSkipButton
+              callback={(data) => {
+                console.log(data);
+                if (data.status === "finished" || data.action === "close") {
+                  // End the tour
+                  handleStepChange(Infinity);
+                } else if (data.action === "update") {
+                  // Navigate steps
+                  handleStepChange(data.index + 1);
+                }
+              }}
+            />
           </div>
         </div>
         {/* END: Content */}

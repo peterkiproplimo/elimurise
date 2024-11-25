@@ -204,8 +204,8 @@ function Main() {
                 </div>
                 <div
                   className={clsx([
-                    "relative zoom-in",
-                    "bg-blue-100 rounded-lg ",
+                    "relative zoom-out",
+                    "bg-blue-100 rounded-md ",
                   ])}
                 >
                   <div className="p-0 xl:p-0">
@@ -241,7 +241,7 @@ function Main() {
                           );
                           navigate("/parent/profile", {});
                         }}
-                        className="relative zoom-in bg-purple-100 min-h-[150px] rounded-lg"
+                        className="relative box cursor-pointer  bg-white-100 min-h-[150px] rounded-lg"
                         style={{
                           backgroundImage: `url(${student2})`,
                           backgroundPosition: "right bottom",
@@ -255,6 +255,15 @@ function Main() {
                           <p className="text-gray-500 text-sm">
                             {learner?.stream?.grade?.name}{" "}
                             {learner?.stream?.name}
+                          </p>
+                          <p
+                            className={
+                              learner?.status != "D"
+                                ? "flex items-center text-success"
+                                : "flex items-center text-danger"
+                            }
+                          >
+                            {learner?.status == "D" ? "Disabled" : "Active"}{" "}
                           </p>
                         </div>
                       </div>

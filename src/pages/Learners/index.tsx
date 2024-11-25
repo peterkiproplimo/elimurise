@@ -330,10 +330,10 @@ function Main() {
       notify.current?.showToast();
     }
   };
-  const disableRecord = async () => {
+  const disableRecord = async (record: any) => {
     isLoading(true);
     try {
-      let res = await ApiService.toggleLearnerStatus(recordId);
+      let res = await ApiService.toggleLearnerStatus(record);
       getStudents();
       setViewMore(false);
       isLoading(false);
@@ -1419,8 +1419,8 @@ function Main() {
                                         <Menu.Item
                                           onClick={(e: any) => {
                                             e.preventDefault();
-                                            setRecordId(learner._id);
-                                            disableRecord(); // assuming you meant disableRecord instead of disbaleRecord
+                                            disableRecord(learner._id);
+                                            // assuming you meant disableRecord instead of disbaleRecord
                                           }}
                                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                         >

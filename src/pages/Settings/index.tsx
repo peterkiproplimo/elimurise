@@ -110,7 +110,7 @@ function Settings() {
   return (
     <>
       <h2 className="mt-1 text-lg font-medium ">Settings</h2>
-      <div className="grid grid-cols-12 gap-6 mt-2">
+      <div className="grid grid-cols-12 gap-6 mt-2 setting-step-1">
         <div className="col-span-12">
           <div className=" box p-3">
             <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>

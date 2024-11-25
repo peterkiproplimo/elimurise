@@ -20,7 +20,7 @@ const initialState: SideMenuState = {
     {
       icon: "Home",
       title: "Dashboard",
-      pathname: "/home/",
+      pathname: "/home",
     },
     {
       icon: "Activity",
@@ -211,7 +211,7 @@ const teacherState: SideMenuState = {
     {
       icon: "Home",
       title: "Dashboard",
-      pathname: "/home/",
+      pathname: "/home",
     },
 
     {
