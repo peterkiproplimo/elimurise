@@ -28,6 +28,24 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as ApiService from "../../services/auth";
 import * as yup from "yup";
 import { useAuth } from "../../contexts/Auth";
+import ContentLoader from "react-content-loader";
+import isOnline from "is-online";
+
+const CardLoader = () => (
+  <ContentLoader
+    speed={2}
+    width={300}
+    height={150}
+    viewBox="0 0 300 150"
+    backgroundColor="#f3f3f3"
+    foregroundColor="#ecebeb"
+  >
+    <rect x="10" y="10" rx="4" ry="4" width="280" height="20" />
+    <rect x="10" y="40" rx="4" ry="4" width="200" height="20" />
+    <rect x="10" y="70" rx="4" ry="4" width="250" height="20" />
+    <rect x="10" y="100" rx="4" ry="4" width="300" height="20" />
+  </ContentLoader>
+);
 
 function Main() {
   const auth = useAuth();
@@ -42,6 +60,8 @@ function Main() {
   const [userId, setUserId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, isLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
+
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [profile, setProfile] = useState<any>([]);
@@ -101,8 +121,10 @@ function Main() {
   //     setUsers(res.data);
   //   };
   const getProfile = async () => {
+    setPageLoading(true);
     let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
     console.log("......");
+    setPageLoading(false);
     console.log(res.data);
     // setProfile(res.data);
     setUser(res.data);
@@ -157,131 +179,159 @@ function Main() {
   const nextNewAuthors = () => {
     newAuthorsRef.current?.tns.goTo("next");
   };
+  async function checkInternetConnectivity() {
+    const online = await isOnline();
+    if (online) {
+      console.log("Internet is available");
+    } else {
+      console.log("No internet connection");
+    }
+  }
+
+  checkInternetConnectivity();
 
   return (
     <>
-      <div className="flex items-center mt-8 ">
-        <h2 className="mr-auto text-lg font-medium"> User Profile </h2>
-      </div>
-      <Tab.Group>
-        {/* BEGIN: Profile Info */}
-        <div className="px-5 pt-5 mt-5  box">
-          <div className="flex flex-col pb-5 -mx-5 border-b lg:flex-row border-slate-200/60 dark:border-darkmode-400">
-            <div className="flex items-center justify-center flex-1 px-5 lg:justify-start">
-              {/* <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
+      {pageLoading ? (
+        <>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <CardLoader />
+            <CardLoader />
+            <CardLoader />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center mt-8 ">
+            <h2 className="mr-auto text-lg font-medium"> User Profile </h2>
+          </div>
+          <Tab.Group>
+            {/* BEGIN: Profile Info */}
+            <div className="px-5 pt-5 mt-5  box">
+              <div className="flex flex-col pb-5 -mx-5 border-b lg:flex-row border-slate-200/60 dark:border-darkmode-400">
+                <div className="flex items-center justify-center flex-1 px-5 lg:justify-start">
+                  {/* <div className="relative flex-none w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 image-fit">
                 <img
                   alt="Midone Tailwind HTML Admin Template"
                   className="rounded-full"
                   src={logo}
                 />
               </div> */}
-              <div className="ml-5">
-                <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
-                  {user?.firstname + " " + user?.lastname}
+                  <div className="ml-5">
+                    <div className="w-24 text-lg font-medium truncate sm:w-40 sm:whitespace-normal">
+                      {user?.firstname + " " + user?.lastname}
+                    </div>
+                    {/* <div className="text-slate-500">{fakerData[0].jobs[0]}</div> */}
+                  </div>
                 </div>
-                {/* <div className="text-slate-500">{fakerData[0].jobs[0]}</div> */}
-              </div>
-            </div>
-            <div className="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 border-slate-200/60 dark:border-darkmode-400 lg:border-t-0 lg:pt-0">
-              <div className="font-medium text-center lg:text-left lg:mt-3">
-                Contact Details
-              </div>
-              <div className="flex flex-col items-center justify-center mt-4 lg:items-start">
-                <div className="flex items-center truncate sm:whitespace-normal">
-                  <Lucide icon="Mail" className="w-4 h-4 mr-2" />
-                  {user?.email}
+                <div className="flex-1 px-5 pt-5 mt-6 border-t border-l border-r lg:mt-0 border-slate-200/60 dark:border-darkmode-400 lg:border-t-0 lg:pt-0">
+                  <div className="font-medium text-center lg:text-left lg:mt-3">
+                    Contact Details
+                  </div>
+                  <div className="flex flex-col items-center justify-center mt-4 lg:items-start">
+                    <div className="flex items-center truncate sm:whitespace-normal">
+                      <Lucide icon="Mail" className="w-4 h-4 mr-2" />
+                      {user?.email}
+                    </div>
+                    <div className="flex items-center mt-3 truncate sm:whitespace-normal">
+                      <Lucide icon="Instagram" className="w-4 h-4 mr-2" />
+                      {user.phone}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center mt-3 truncate sm:whitespace-normal">
-                  <Lucide icon="Instagram" className="w-4 h-4 mr-2" />
-                  {user.phone}
-                </div>
               </div>
-            </div>
-          </div>
-          <Tab.List
-            variant="link-tabs"
-            className="flex-col justify-center text-center sm:flex-row lg:justify-start"
-          >
-            <Tab fullWidth={false}>
-              <Tab.Button className="flex items-center py-4 cursor-pointer">
-                <Lucide icon="User" className="w-4 h-4 mr-2" /> Profile
-              </Tab.Button>
-            </Tab>
-            {/* <Tab fullWidth={false}>
+              <Tab.List
+                variant="link-tabs"
+                className="flex-col justify-center text-center sm:flex-row lg:justify-start"
+              >
+                <Tab fullWidth={false}>
+                  <Tab.Button className="flex items-center py-4 cursor-pointer">
+                    <Lucide icon="User" className="w-4 h-4 mr-2" /> Profile
+                  </Tab.Button>
+                </Tab>
+                {/* <Tab fullWidth={false}>
               <Tab.Button className="flex items-center py-4 cursor-pointer">
                 <Lucide icon="Lock" className="w-4 h-4 mr-2" /> Change Password
               </Tab.Button>
             </Tab> */}
-          </Tab.List>
-        </div>
-        {/* END: Profile Info */}
-        <Tab.Panels className="mt-5">
-          <Tab.Panel>
-            <div className="grid grid-cols-12 gap-6 ">
-              <div className="col-span-12  box shadow-lg">
-                <div className="flex items-center px-5 py-4 border-b border-slate-200/60 dark:border-darkmode-400">
-                  <h2 className="mr-auto text-base font-medium">
-                    Update Profile
-                  </h2>
-                </div>
-                <div id="new-authors" className="py-5 tiny-slider">
-                  <form className="validate-form" onSubmit={onSubmit}>
-                    <div className=" p-5   grid grid-cols-12 gap-4 gap-y-3 rounded-xl">
-                      <div className="col-span-12 sm:col-span-6">
-                        <FormLabel htmlFor="modal-form-1">Full Name </FormLabel>
-                        <FormInput
-                          type="text"
-                          value={user?.firstname + " " + user?.lastname}
-                          readOnly={true}
-                          placeholder="+254 712 345 6789"
-                        />
-                      </div>
-                      <div className="col-span-12 sm:col-span-6">
-                        <FormLabel htmlFor="modal-form-1">First Name</FormLabel>
-                        <FormInput
-                          {...register("firstname")}
-                          type="text"
-                          name="firstname"
-                          className={errors.firstName ? "border-danger" : ""}
-                          placeholder="John"
-                        />
-                        {errors.firstName && (
-                          <div className="mt-2 text-danger">
-                            {typeof errors.firstName.message === "string" &&
-                              errors.firstName.message}
+              </Tab.List>
+            </div>
+            {/* END: Profile Info */}
+            <Tab.Panels className="mt-5">
+              <Tab.Panel>
+                <div className="grid grid-cols-12 gap-6 ">
+                  <div className="col-span-12  box ">
+                    <div className="flex items-center px-5 py-4 border-b border-slate-200/60 dark:border-darkmode-400">
+                      <h2 className="mr-auto text-base font-medium">
+                        Update Profile
+                      </h2>
+                    </div>
+                    <div id="new-authors" className="py-5 tiny-slider">
+                      <form className="validate-form" onSubmit={onSubmit}>
+                        <div className=" p-5   grid grid-cols-12 gap-4 gap-y-3 rounded-xl">
+                          <div className="col-span-12 sm:col-span-6">
+                            <FormLabel htmlFor="modal-form-1">
+                              Full Name{" "}
+                            </FormLabel>
+                            <FormInput
+                              type="text"
+                              value={user?.firstname + " " + user?.lastname}
+                              readOnly={true}
+                              placeholder="+254 712 345 6789"
+                            />
                           </div>
-                        )}
-                      </div>
-                      <div className="col-span-12 sm:col-span-6">
-                        <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
-                        <FormInput
-                          {...register("lastname")}
-                          type="text"
-                          name="lastname"
-                          className={errors.lastName ? "border-danger" : ""}
-                          placeholder="Doe"
-                        />
-                        {errors.lastName && (
-                          <div className="mt-2 text-danger">
-                            {typeof errors.lastName.message === "string" &&
-                              errors.lastName.message}
+                          <div className="col-span-12 sm:col-span-6">
+                            <FormLabel htmlFor="modal-form-1">
+                              First Name
+                            </FormLabel>
+                            <FormInput
+                              {...register("firstname")}
+                              type="text"
+                              name="firstname"
+                              className={
+                                errors.firstName ? "border-danger" : ""
+                              }
+                              placeholder="John"
+                            />
+                            {errors.firstName && (
+                              <div className="mt-2 text-danger">
+                                {typeof errors.firstName.message === "string" &&
+                                  errors.firstName.message}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
+                          <div className="col-span-12 sm:col-span-6">
+                            <FormLabel htmlFor="modal-form-1">
+                              Last Name
+                            </FormLabel>
+                            <FormInput
+                              {...register("lastname")}
+                              type="text"
+                              name="lastname"
+                              className={errors.lastName ? "border-danger" : ""}
+                              placeholder="Doe"
+                            />
+                            {errors.lastName && (
+                              <div className="mt-2 text-danger">
+                                {typeof errors.lastName.message === "string" &&
+                                  errors.lastName.message}
+                              </div>
+                            )}
+                          </div>
 
-                      <div className="col-span-12 sm:col-span-6">
-                        <FormLabel htmlFor="modal-form-1">
-                          Phone Number
-                        </FormLabel>
-                        <FormInput
-                          {...register("phone")}
-                          type="text"
-                          name="phone"
-                          placeholder="+254 712 345 6789"
-                        />
-                      </div>
+                          <div className="col-span-12 sm:col-span-6">
+                            <FormLabel htmlFor="modal-form-1">
+                              Phone Number
+                            </FormLabel>
+                            <FormInput
+                              {...register("phone")}
+                              type="text"
+                              name="phone"
+                              placeholder="+254 712 345 6789"
+                            />
+                          </div>
 
-                      {/* <Button
+                          {/* <Button
                             type="button"
                             variant="outline-secondary"
                             onClick={() => {
@@ -291,29 +341,31 @@ function Main() {
                           >
                             Cancel
                           </Button> */}
-                      <Button
-                        variant="primary"
-                        type="submit"
-                        className="w-20 h-10 mt-7"
-                      >
-                        Save
-                        {loading && (
-                          <LoadingIcon
-                            icon="spinning-circles"
-                            color="white"
-                            className="w-4 h-4 ml-2"
-                          />
-                        )}
-                      </Button>
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            className="w-20 h-10 mt-7"
+                          >
+                            Save
+                            {loading && (
+                              <LoadingIcon
+                                icon="spinning-circles"
+                                color="white"
+                                className="w-4 h-4 ml-2"
+                              />
+                            )}
+                          </Button>
+                        </div>
+                      </form>
                     </div>
-                  </form>
+                  </div>
+                  {/* END: New Authors */}
                 </div>
-              </div>
-              {/* END: New Authors */}
-            </div>
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
+        </>
+      )}
     </>
   );
 }

@@ -19,7 +19,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#152259",
+        // primary: "#152259",
+        primary: "rgb(var(--color-primary))",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
         success: "rgb(var(--color-success) / <alpha-value>)",
         info: "rgb(var(--color-info) / <alpha-value>)",
@@ -110,9 +111,14 @@ module.exports = {
       addBase({
         // Default colors
         ":root": {
-          "--color-primary": toRGB(colors.red["700"]),
-          //"--color-secondary": toRGB(colors.slate["200"]),
-          "--color-success": toRGB(colors.blue["600"]),
+          "--color-primary": "21, 34, 89",
+          "--color-secondary": "0 122 204",
+          // "--color-success": toRGB(colors.blue["600"]),
+
+          // "--color-primary": "237 28 121", // Matches the pink in the logo
+          // "--color-secondary": "245 245 245", // Neutral tone
+          "--color-success": "0 122 204", // Vibrant blue
+
           "--color-info": toRGB(colors.cyan["500"]),
           "--color-warning": toRGB(colors.yellow["400"]),
           "--color-pending": toRGB(colors.amber["500"]),

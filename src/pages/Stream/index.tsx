@@ -30,7 +30,7 @@ function Main() {
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
   const [dialog, setDialog] = useState(false);
-  const [grade, setGrade] = useState(false);
+  const [grade, setGrade] = useState("");
   const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
@@ -332,6 +332,8 @@ function Main() {
                   onChange={(e: any) => setGrade(e.target.value)}
                   // defaultValue={selectedLevel}
                 >
+                  <option value={""}>{"All Grades"}</option>
+
                   {grades.map((grade: any, key: any) => (
                     <option key={key} value={grade._id}>
                       {grade.name}

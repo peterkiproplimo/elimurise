@@ -15,6 +15,7 @@ import PassportUpload from "../Learners/profilephoto";
 import { IMG_URL } from "../../utils/constants";
 import TomSelect from "../../base-components/TomSelect";
 import { Controller } from "react-hook-form";
+import CardLoader from "../UserProfile/loader";
 
 function Settings() {
   const [academicYears, setAcademicYears] = useState<any>([]);
@@ -28,6 +29,8 @@ function Settings() {
   const [currentAcademicYear, setCurrentAcademicYear] = useState("");
   const [currentTerm, setCurrentTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
+
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const selectRef = useRef(null);
@@ -71,6 +74,7 @@ function Settings() {
 
   const getSchoolDetails = async () => {
     try {
+      setPageLoading(true);
       const response = await ApiService.getSchoolDetails({ page: 1 });
       setSchoolDetails(response?.data);
       reset({
@@ -78,6 +82,8 @@ function Settings() {
         current_term: response?.data?.current_term,
         current_session: response?.data?.current_session,
       });
+      setPageLoading(false);
+
       generateAcademicYears(Number(response?.data?.current_session));
     } catch (error) {
       console.error("Failed to fetch academic years", error);
@@ -110,39 +116,44 @@ function Settings() {
   return (
     <>
       <h2 className="mt-1 text-lg font-medium ">Settings</h2>
-      <div className="grid grid-cols-12 gap-6 mt-2 setting-step-1">
-        <div className="col-span-12">
-          <div className=" box p-3">
-            <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
-              <fieldset className="mb-4">
-                <legend className="font-medium text-xl text-gray-700">
-                  School Details
-                </legend>
-                <div className="grid grid-cols-12 gap-4 gap-y-3 mt-3">
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>Name</FormLabel>
-                    <FormInput
-                      {...register("name")}
-                      type="text"
-                      name="name"
-                      className={errors.name ? "border-danger" : ""}
-                      placeholder="School Name"
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>School Code</FormLabel>
-                    <FormInput
-                      {...register("schoolCode")}
-                      type="text"
-                      name="schoolCode"
-                      disabled
-                      className={errors.name ? "border-danger" : ""}
-                      placeholder="School Name"
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>Current Session</FormLabel>
-                    {/* <FormSelect
+      {pageLoading ? (
+        <>
+          <CardLoader />
+        </>
+      ) : (
+        <div className="grid grid-cols-12 gap-6 mt-2 setting-step-1">
+          <div className="col-span-12">
+            <div className="  p-3">
+              <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
+                <fieldset className="mb-4">
+                  <legend className="font-medium text-xl text-gray-700">
+                    School Details
+                  </legend>
+                  <div className="grid grid-cols-12 gap-4 gap-y-3 mt-3">
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>Name</FormLabel>
+                      <FormInput
+                        {...register("name")}
+                        type="text"
+                        name="name"
+                        className={errors.name ? "border-danger" : ""}
+                        placeholder="School Name"
+                      />
+                    </div>
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>School Code</FormLabel>
+                      <FormInput
+                        {...register("schoolCode")}
+                        type="text"
+                        name="schoolCode"
+                        disabled
+                        className={errors.name ? "border-danger" : ""}
+                        placeholder="School Name"
+                      />
+                    </div>
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>Current Session</FormLabel>
+                      {/* <FormSelect
                       // value={currentAcademicYear}
                       {...register("current_year")}
                       onChange={(e) => setCurrentAcademicYear(e.target.value)}
@@ -154,38 +165,38 @@ function Settings() {
                         </option>
                       ))}
                     </FormSelect> */}
-                    <Controller
-                      control={control}
-                      name="current_session"
-                      defaultValue=""
-                      render={({ field }) => (
-                        <TomSelect
-                          {...field}
-                          // options={counties.map((county: any) => ({
-                          //   value: county.name,
-                          //   label: county.name,
-                          // }))}
-                          onChange={(value: any) => {
-                            console.log(value);
-                            field.onChange(value);
-                          }}
-                          className={errors.county ? "border-danger" : ""}
-                        >
-                          <option value={""}>Select Session</option>
-                          {academicYears.map((year: any, key: any) => (
-                            <option key={key} value={year}>
-                              {year}
-                            </option>
-                          ))}
-                        </TomSelect>
-                      )}
-                    />
+                      <Controller
+                        control={control}
+                        name="current_session"
+                        defaultValue=""
+                        render={({ field }) => (
+                          <TomSelect
+                            {...field}
+                            // options={counties.map((county: any) => ({
+                            //   value: county.name,
+                            //   label: county.name,
+                            // }))}
+                            onChange={(value: any) => {
+                              console.log(value);
+                              field.onChange(value);
+                            }}
+                            className={errors.county ? "border-danger" : ""}
+                          >
+                            <option value={""}>Select Session</option>
+                            {academicYears.map((year: any, key: any) => (
+                              <option key={key} value={year}>
+                                {year}
+                              </option>
+                            ))}
+                          </TomSelect>
+                        )}
+                      />
+                    </div>
                   </div>
-                </div>
-              </fieldset>
+                </fieldset>
 
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
-                {/* <div className="col-span-12 md:col-span-6">
+                <div className="grid grid-cols-12 gap-4 gap-y-3">
+                  {/* <div className="col-span-12 md:col-span-6">
                   <FormLabel>Current Term</FormLabel>
                   <FormSelect
                     {...register("current_term")}
@@ -200,49 +211,50 @@ function Settings() {
                     ))}
                   </FormSelect>
                 </div> */}
-                <div className="col-span-12 md:col-span-6">
-                  <FormLabel>Address</FormLabel>
-                  <FormInput
-                    {...register("address")}
-                    type="text"
-                    name="address"
-                    className={errors.name ? "border-danger" : ""}
-                    placeholder="Address"
-                  />
-                </div>
-                <div className="col-span-12 md:col-span-6">
-                  <FormLabel>Logo</FormLabel>
-                  <PassportUpload
-                    name={"logo"}
-                    register={register}
-                    errors={errors}
-                    initialImageUrl={IMG_URL + schoolDetails.logo}
-                  />
-                </div>
-              </div>
-
-              {/* Additional fieldsets can be added here in a similar manner */}
-              <div className="col-span-12 mt-3">
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className="w-20"
-                  disabled={loading}
-                >
-                  Save
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
+                  <div className="col-span-12 md:col-span-6">
+                    <FormLabel>Address</FormLabel>
+                    <FormInput
+                      {...register("address")}
+                      type="text"
+                      name="address"
+                      className={errors.name ? "border-danger" : ""}
+                      placeholder="Address"
                     />
-                  )}
-                </Button>
-              </div>
-            </form>
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
+                    <FormLabel>Logo</FormLabel>
+                    <PassportUpload
+                      name={"logo"}
+                      register={register}
+                      errors={errors}
+                      initialImageUrl={IMG_URL + schoolDetails.logo}
+                    />
+                  </div>
+                </div>
+
+                {/* Additional fieldsets can be added here in a similar manner */}
+                <div className="col-span-12 mt-3">
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    className="w-20"
+                    disabled={loading}
+                  >
+                    Save
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {

@@ -263,7 +263,7 @@ function Main() {
                                 : "flex items-center text-danger"
                             }
                           >
-                            {learner?.status == "D" ? "Disabled" : "Active"}{" "}
+                            {learner?.status == "D" ? "Deactivated" : "Active"}{" "}
                           </p>
                         </div>
                       </div>

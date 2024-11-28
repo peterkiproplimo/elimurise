@@ -783,67 +783,96 @@ function Main() {
               staticBackdrop
               size="lg"
               open={uploadDialog}
-              onClose={() => {
-                setUploadDialog(false);
-              }}
+              onClose={() => setUploadDialog(false)}
             >
-              <Dialog.Panel className="w-full max-w-screen-lg">
-                <Dialog.Title>
-                  <h2 className="mr-auto text-base font-medium">
-                    Import Strands
+              <Dialog.Panel className="w-full max-w-screen-lg bg-white rounded-lg shadow-lg overflow-hidden">
+                <Dialog.Title className="flex items-center justify-between px-6 py-1 bg-gray-100 border-b border-gray-300">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Import Parents
                   </h2>
-                  <a
+                  <button
                     onClick={(event: React.MouseEvent) => {
                       event.preventDefault();
                       setUploadDialog(false);
                     }}
-                    className="absolute top-0 right-0 mt-3 mr-3"
-                    href="#"
+                    className="text-gray-400 hover:text-gray-600 transition"
+                    aria-label="Close"
                   >
-                    <Lucide icon="X" className="w-8 h-8 text-slate-400" />
-                  </a>
+                    <Lucide icon="X" className="w-6 h-6" />
+                  </button>
                 </Dialog.Title>
-                {/* <div className="p-5 text-center">
-                <Lucide
-                  icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
-                />
-              </div> */}
-                <div className="p-1">
-                  Choose the file to upload. <i>Type must be csv</i>
+
+                <div className="px-6 py-4">
+                  <p className="mb-4 text-sm text-gray-600">
+                    Choose the file to upload. <i>Type must be CSV</i>. Ensure
+                    the file follows the required format for successful
+                    processing. Each row should represent one parent, and the
+                    following fields are mandatory:
+                  </p>
+                  <ul className="mb-4 text-sm text-gray-600 list-disc list-inside">
+                    <li>
+                      <b>Parent Name</b>: Full name of the parent.
+                    </li>
+                    <li>
+                      <b>Contact Information</b>: A valid email address or phone
+                      number.
+                    </li>
+                    <li>
+                      <b>Student ID</b>: The unique identifier for the student
+                      associated with the parent.
+                    </li>
+                  </ul>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm text-gray-600">
+                      If you need a sample file to guide your data entry,
+                      download the template below.
+                    </p>
+                    <Button
+                      onClick={() => exportTemplate()}
+                      variant="primary"
+                      type="button"
+                      className="px-1 py-1 w-300 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition"
+                      ref={deleteButtonRef}
+                    >
+                      Download Template
+                    </Button>
+                  </div>
+                  <p className="mb-4 text-sm text-gray-600">
+                    After selecting a file, click "Import" to upload and process
+                    the data. You can click "Cancel" at any time to close this
+                    dialog without making changes.
+                  </p>
+
                   <input
                     id="file_input"
                     type="file"
                     onChange={handleFileChange}
-                    className="p-4 border border-gray-300 rounded-md items-center w-full rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    className="block w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                   />
                 </div>
 
-                <Dialog.Footer>
-                  <div className=" text-right">
-                    <Button
-                      variant="outline-secondary"
-                      type="button"
-                      onClick={() => {
-                        setUploadDialog(false);
-                      }}
-                      className="w-24 mr-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={() => importData()}
-                      variant="primary"
-                      type="button"
-                      className="m-3 w-24"
-                      ref={deleteButtonRef}
-                    >
-                      Import
-                    </Button>
-                  </div>
+                <Dialog.Footer className="flex justify-end px-6 py-4 bg-gray-100 border-t border-gray-300">
+                  <Button
+                    variant="outline-secondary"
+                    type="button"
+                    onClick={() => setUploadDialog(false)}
+                    className="px-6 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-200 transition"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => importData()}
+                    variant="primary"
+                    type="button"
+                    className="ml-3 px-6 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition"
+                    ref={deleteButtonRef}
+                  >
+                    Import
+                  </Button>
                 </Dialog.Footer>
               </Dialog.Panel>
             </Dialog>
+
             {/* END: Pagination */}
           </div>
           <Dialog

@@ -9,7 +9,7 @@ const colorSchemes = [
   "theme-4",
 ] as const;
 
-export type ColorSchemes = typeof colorSchemes[number];
+export type ColorSchemes = (typeof colorSchemes)[number];
 
 interface ColorSchemeState {
   value: ColorSchemes;

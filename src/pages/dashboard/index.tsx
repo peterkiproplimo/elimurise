@@ -27,9 +27,12 @@ import image1 from "../../assets/images/custom.svg";
 import StackedBarChart from "../../components/VerticalBarChart";
 import { useTour } from "../../TourContext";
 // import { useTour } from "./TourContext";
+import ContentLoader from "react-content-loader";
+import CardLoader from "../UserProfile/loader";
 
 function Main() {
   const { setRunTour } = useTour();
+  const [pageLoading, setPageLoading] = useState(false);
 
   interface Learner {
     first_name: string;
@@ -86,7 +89,11 @@ function Main() {
 
   return (
     <>
-      {is_admin() ? (
+      {loading ? (
+        <>
+          <CardLoader />
+        </>
+      ) : is_admin() ? (
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 2xl:col-span-9">
             <div className="grid  gap-6">
