@@ -1427,7 +1427,7 @@ function Main() {
                                           <i className="icon-eye mr-2"></i>{" "}
                                           {learner.status === "D"
                                             ? "Enable Leaner"
-                                            : "Disable Learner"}
+                                            : "Deactivate Learner"}
                                         </Menu.Item>
                                       )}
                                       <Menu.Item
