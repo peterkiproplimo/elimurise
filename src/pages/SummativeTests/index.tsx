@@ -30,6 +30,7 @@ function Main() {
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
+  const [type, setType] = useState("");
   const [tests, setTests] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState("");
@@ -107,7 +108,7 @@ function Main() {
   };
   useEffect(() => {
     getTests();
-  }, []);
+  }, [grade, selectedTerm, type]);
   useEffect(() => {
     fetchGrading();
   }, [search, limit, page]);
@@ -122,7 +123,13 @@ function Main() {
 
   const getTests = async () => {
     isLoading(true);
-    const response = await ApiService.getTests({ page: 1 });
+    const response = await ApiService.getTests({
+      page: 1,
+      type,
+      search,
+      term: selectedTerm,
+      grade,
+    });
     setTests(response.data);
     isLoading(false);
   };
@@ -423,6 +430,7 @@ function Main() {
                   pagination.total}{" "}
                 entries
               </div>
+
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
                 <div className="relative w-56 text-slate-500">
                   <FormInput
@@ -438,6 +446,62 @@ function Main() {
                 </div>
               </div>
             </div>
+            <div className="flex flex-wrap items-center justify-end col-span-12 mt-2 xl:flex-nowrap ">
+              <TomSelect
+                className="w-56 box mr-3"
+                value={grade}
+                onChange={(event: any) => {
+                  setGrade(event);
+                  setSelectedTerm("");
+                  setType("");
+                }}
+              >
+                <option value={""}>Filter By Grade</option>
+                {grades.map((grade: any, key: any) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </TomSelect>
+              <TomSelect
+                className="w-56 box mr-3"
+                name="stream"
+                value={selectedTerm}
+                onChange={(event: any) => {
+                  setSelectedTerm(event);
+                  setType("");
+                  // handleTestChange();
+                }}
+              >
+                <option value={""} selected>
+                  Filter By Term
+                </option>
+
+                {terms.map((term: any, key) => (
+                  <option key={key} value={term._id}>
+                    {term.name}
+                  </option>
+                ))}
+              </TomSelect>
+              <TomSelect
+                className="w-56 box"
+                name="type"
+                value={type}
+                onChange={(event: any) => {
+                  setType(event);
+                  // handleTestChange();
+                }}
+              >
+                <option value={""} selected>
+                  Filter By Type
+                </option>
+
+                <option value={"Tunner"}>Tunner-Up</option>
+                <option value={"Mid Term"}>Miderm</option>
+                <option value={"End of the Term"}>End of the Term</option>
+              </TomSelect>
+            </div>
+
             {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
@@ -638,6 +702,7 @@ function Main() {
             </div>
             {/* END: Data List */}
           </div>
+
           <Dialog
             staticBackdrop
             size="lg"

@@ -281,6 +281,9 @@ function Main() {
                     <div className="mt-5">
                       {dashboards?.parents?.map((parent: any, key: any) => (
                         <div
+                          onClick={(e: any) => {
+                            navigate("/home/parents/" + parent._id); // Navigate using your custom function
+                          }}
                           key={key}
                           className="flex items-center px-5 py-3 mb-3 box zoom-in"
                         >

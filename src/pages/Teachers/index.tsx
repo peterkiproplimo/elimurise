@@ -714,10 +714,13 @@ function Main() {
                                   e.preventDefault();
                                   editRecord(teacher);
                                 }}
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                className="  text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                               >
-                                <i className="icon-eye mr-2"></i> Edit Teacher
-                                Profile
+                                <Lucide
+                                  icon="CheckSquare"
+                                  className="w-4 h-4 mr-1"
+                                />
+                                Edit Profile
                               </Menu.Item>
                               <Menu.Item
                                 onClick={() => {

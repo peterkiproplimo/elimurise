@@ -651,7 +651,7 @@ function Main() {
               Summary Report
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Type</FormLabel>
                 <FormSelect
                   value={type}
@@ -683,7 +683,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
@@ -709,7 +709,7 @@ function Main() {
                 type == "learner" ||
                 type == "learner-comparison" ||
                 type == "analysis-stream") && (
-                <div className="col-span-12 sm:col-span-2">
+                <div className="col-span-12 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
                   <FormSelect
                     {...register("stream")}
@@ -738,7 +738,7 @@ function Main() {
               )}
 
               {(type == "learner" || type == "learner-comparison") && (
-                <div className="col-span-12 sm:col-span-2">
+                <div className="col-span-12 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">Learners</FormLabel>
                   <FormSelect
                     {...register("learner")}
@@ -763,7 +763,7 @@ function Main() {
                 </div>
               )}
 
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <TomSelect
                   name="stream"
@@ -787,7 +787,7 @@ function Main() {
               </div>
 
               {type != "learner-comparison" && (
-                <div className="col-span-12 sm:col-span-2">
+                <div className="col-span-12 sm:col-span-4">
                   <FormLabel htmlFor="modal-form-6">Tests</FormLabel>
                   <FormSelect
                     {...register("test")}

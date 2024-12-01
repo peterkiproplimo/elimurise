@@ -20,11 +20,14 @@ import { Search } from "lucide-react";
 import { formatDate } from "../../utils/helper";
 import Tippy from "../../base-components/Tippy";
 import avarter from "../../assets/images/parent.jpeg";
+import * as c from "../../utils/constants";
+import { useNavigate } from "react-router-dom";
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const navigate = useNavigate();
 
   const [parents, setParents] = useState([]);
   const [academic, setAcademic] = useState([]);
@@ -554,7 +557,12 @@ function Main() {
                                 {limit * (page - 1) + key + 1}
                               </span>
                             </Table.Td>
-                            <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <Table.Td
+                              onClick={() =>
+                                navigate("/home/parents/" + parent._id)
+                              }
+                              className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                            >
                               <div className="flex items-center">
                                 <div className="w-9 h-9 image-fit zoom-in">
                                   <Tippy
@@ -570,7 +578,7 @@ function Main() {
                                 <div className="ml-4">
                                   <a
                                     href="#"
-                                    onClick={() => editRecord(parent)}
+                                    onClick={(e: any) => e.preventDefault()}
                                     className="font-medium whitespace-nowrap"
                                   >
                                     {parent.first_name && parent.first_name}
@@ -831,7 +839,7 @@ function Main() {
                       onClick={() => exportTemplate()}
                       variant="primary"
                       type="button"
-                      className="px-1 py-1 w-300 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition"
+                      className="px-1 py-1  text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition"
                       ref={deleteButtonRef}
                     >
                       Download Template

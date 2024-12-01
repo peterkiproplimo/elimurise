@@ -3,7 +3,11 @@ import Layout from "../layouts";
 import Auth from "../layouts/auth";
 import Billing from "../pages/Billing";
 import Parents from "../pages/Parents";
+
+import ParentsProfile from "../pages/Parents/parent_details";
 import Teachers from "../pages/Teachers";
+import TeacherProfile from "../pages/Teachers/teacher_profile";
+
 import Strands from "../pages/Strands";
 import Enrollment from "../pages/Enrolments";
 import Reports from "../pages/Reports";
@@ -86,6 +90,11 @@ function Router() {
           path: "parents",
           element: <Parents />,
         },
+        {
+          path: "parents/:id",
+          element: <ParentsProfile />,
+        },
+
         {
           path: "profile",
           element: <UserProfile />,
@@ -199,7 +208,9 @@ function Router() {
         },
         {
           path: "teacher/:id",
-          element: <GradeUserAssignment />,
+          element: <TeacherProfile />,
+
+          // element: <GradeUserAssignment />,
         },
         {
           path: "subscription",

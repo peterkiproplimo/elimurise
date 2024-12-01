@@ -681,7 +681,7 @@ function Main() {
               Summative Assessment
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel
                   htmlFor="modal-form-6"
                   onClick={(e) => {
@@ -716,7 +716,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
                 <FormSelect
                   {...register("stream")}
@@ -740,7 +740,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12  sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <TomSelect
                   name="stream"
@@ -766,7 +766,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
                 <FormSelect
                   {...register("learning_area")}
@@ -792,7 +792,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Tests</FormLabel>
                 <FormSelect
                   {...register("test")}

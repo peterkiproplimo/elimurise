@@ -6,8 +6,11 @@ const config = { headers: { "Content-Type": "multipart/form-data" } };
 export async function login(data: FieldValues) {
   try {
     let res = await axios.post(c.LOGIN, data);
-    return res.data;
+    console.log("hellll");
+    return res?.data;
   } catch (e) {
+    console.log("hellllerror");
+
     throw handler(e);
   }
 }
@@ -587,6 +590,14 @@ export const getParents = async (data: any) => {
     throw handler(e);
   }
 };
+export const getParentsById = async (id: any) => {
+  try {
+    let res = await axios.get(c.PARENTS + "/" + id);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const getOneParents = async (data: any) => {
   try {
     let res = await axios.post(`${c.PARENTS}/search`, data);
@@ -650,6 +661,14 @@ export async function deleteParents(userId: any) {
 export const getTeachers = async (data: any) => {
   try {
     let res = await axios.get(c.TEACHERS, { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getTeacher = async (data: any) => {
+  try {
+    let res = await axios.get(c.TEACHERS + "/" + data);
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -1404,7 +1423,12 @@ export async function createGradingLearningArea(id: any, data: any) {
 // }
 export function handler(err: any) {
   let error = err;
+  console.log(error);
+  if (error.code === "ERR_NETWORK") {
+    error.message = "Network error occurred.";
 
+    return new Error(error.message);
+  }
   // Check for specific status code and perform action
   if (error?.response?.status == 403) {
     localStorage.removeItem("@AuthData");
@@ -1418,7 +1442,6 @@ export function handler(err: any) {
     error.response.data.hasOwnProperty("message")
   ) {
     error = error.response.data;
-    console.log("firstError");
 
     // Check if the error response contains a specific structure
     if (error.error) {
@@ -1434,7 +1457,6 @@ export function handler(err: any) {
       // Fallback if error.error is not present and the structure is unknown
       error.message = "An unknown error occurred.";
     }
-    console.log(error);
   }
   // if (error.step) {
   //   localStorage.clear();
