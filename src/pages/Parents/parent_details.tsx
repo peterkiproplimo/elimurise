@@ -332,7 +332,7 @@ function Main() {
                                       <div className="ml-4">
                                         <a
                                           href="#"
-                                          onClick={() => profileRecord(learner)}
+                                          // onClick={() => profileRecord(learner)}
                                           className="font-medium whitespace-nowrap"
                                         >
                                           {learner?.first_name &&
