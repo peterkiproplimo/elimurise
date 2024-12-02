@@ -331,7 +331,7 @@ function Main() {
                         key={key}
                         className=""
                         onClick={
-                          () => navigate("/home/teachers/" + teacher._id) // Navigate using your custom function
+                          () => navigate("/home/teacher/" + teacher._id) // Navigate using your custom function
                         }
                       >
                         <div className="flex items-center px-5 py-3 mb-3 box zoom-in">
