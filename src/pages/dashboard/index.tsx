@@ -327,7 +327,13 @@ function Main() {
                   </div>
                   <div className="mt-2">
                     {dashboards?.teachers?.map((teacher: any, key: any) => (
-                      <div key={key} className="">
+                      <div
+                        key={key}
+                        className=""
+                        onClick={
+                          () => navigate("/home/teachers/" + teacher._id) // Navigate using your custom function
+                        }
+                      >
                         <div className="flex items-center px-5 py-3 mb-3 box zoom-in">
                           <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
                             <img
