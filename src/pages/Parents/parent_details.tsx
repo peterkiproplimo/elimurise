@@ -79,20 +79,6 @@ function Main() {
     }
   };
 
-  const editRecord = (record: any) => {
-    setIsEditMode(true);
-    setGroup(record.groups);
-    reset(record);
-    setDialog(true);
-  };
-
-  const cancel = (record: any) => {
-    setGroup([""]);
-    setPermission([""]);
-    reset(record);
-    setDialog(false);
-  };
-
   return (
     <>
       {dialog ? (
