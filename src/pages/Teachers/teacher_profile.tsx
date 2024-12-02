@@ -434,7 +434,6 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium ">Teachers</h2>
-          <h2 className="mt-1 text-lg font-medium ">teachers</h2>
           <div className="content">
             {/* Custom Back Button */}
             <a
