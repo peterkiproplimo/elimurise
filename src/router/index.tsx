@@ -208,9 +208,9 @@ function Router() {
         },
         {
           path: "teacher/:id",
-          element: <TeacherProfile />,
+          // element: <TeacherProfile />,
 
-          // element: <GradeUserAssignment />,
+          element: <GradeUserAssignment />,
         },
         {
           path: "subscription",
