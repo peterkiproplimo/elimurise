@@ -87,13 +87,13 @@ function Main() {
       try {
         const data = await getValues();
         console.log(data);
-        await ApiService.createTests(data);
+        const res = await ApiService.createTests(data);
         await getTests();
         cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Test created successfully.");
+        setMessage(res.message);
         notify.current?.showToast();
       } catch (error: any) {
         console.log(error.message);
@@ -276,7 +276,7 @@ function Main() {
                 >
                   <option value={""}>Select Type</option>
                   <option value={"Tunner"}>Tunner-Up</option>
-                  <option value={"Mid Term"}>Mid Term</option>
+                  <option value={"Mid Term"}>Miderm</option>
                   <option value={"End of the Term"}>End of the Term</option>
                 </FormSelect>
                 {errors.grade && (
@@ -479,7 +479,7 @@ function Main() {
                 </option>
 
                 <option value={"Tunner"}>Tunner-Up</option>
-                <option value={"Mid Term"}>Mid Term</option>
+                <option value={"Mid Term"}>Miderm</option>
                 <option value={"End of the Term"}>End of the Term</option>
               </TomSelect>
             </div>

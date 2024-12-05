@@ -21,7 +21,7 @@ import Notification, {
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
@@ -96,6 +96,7 @@ function Main() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
   const [learningAreas, setLearningAreas] = useState([]);
+  const location = useLocation();
 
   const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
@@ -360,7 +361,12 @@ function Main() {
     console.log(record);
     setProfile(true);
   };
-
+  const learner_state = location.state; // The object passed in `state`
+  useEffect(() => {
+    if (learner_state) {
+      profileRecord(learner_state);
+    }
+  }, [learner_state]);
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record?.groups);
@@ -1424,10 +1430,10 @@ function Main() {
                                           }}
                                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                         >
-                                          <i className="icon-eye mr-2"></i>{" "}
+                                          <i className="icon-eye mr-2"></i>
                                           {learner.status === "D"
-                                            ? "Enable Leaner"
-                                            : "Deactivate Learner"}
+                                            ? "Enable "
+                                            : "Deactivate "}
                                         </Menu.Item>
                                       )}
                                       <Menu.Item
