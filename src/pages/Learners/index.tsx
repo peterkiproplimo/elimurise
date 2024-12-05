@@ -1731,7 +1731,7 @@ function Main() {
                                 Stream
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.stream.name}
+                                {learner?.stream?.name}
                               </td>
                             </tr>
                             <tr>
