@@ -19,8 +19,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // primary: "#152259",
-        primary: "rgb(var(--color-primary))",
+        primary: "#152259",
+        // primary: "rgb(var(--color-primary))",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
         success: "rgb(var(--color-success) / <alpha-value>)",
         info: "rgb(var(--color-info) / <alpha-value>)",

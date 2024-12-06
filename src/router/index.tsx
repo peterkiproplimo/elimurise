@@ -57,6 +57,7 @@ import GradingLeaningAreas from "../pages/GradingLeaningAreas";
 import Transfers from "../pages/Learners/transfers";
 import IncommingTransfers from "../pages/Learners/transfers_incoming";
 import LearnersTransfers from "../pages/LearnerPortal/incoming_transfers";
+import Contact from "../pages/Contact";
 import LayoutRegister from "../layouts/register";
 import LearnerSummative from "../pages/LearnerProfiles/summative";
 import BehaviourCategory from "../pages/Behaviour/category";
@@ -315,6 +316,12 @@ function Router() {
           element: <CreateNewPassword />,
         },
       ],
+    },
+    {
+      path: "/contact",
+      element: (
+          <Contact />
+      ),
     },
     {
       path: "/register",

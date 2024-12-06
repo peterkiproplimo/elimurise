@@ -141,7 +141,7 @@ const Login = () => {
           <FormLabel className="mr-5">
             <input
               type="radio"
-              value="form2"
+              value="form2" 
               className="p-3 m-3"
               checked={selectedForm === "form2"}
               onChange={handleFormChange}
