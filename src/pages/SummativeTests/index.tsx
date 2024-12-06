@@ -87,13 +87,13 @@ function Main() {
       try {
         const data = await getValues();
         console.log(data);
-        await ApiService.createTests(data);
+        const res = await ApiService.createTests(data);
         await getTests();
         cancel({ name: "" });
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        setMessage("Test created successfully.");
+        setMessage(res.message);
         notify.current?.showToast();
       } catch (error: any) {
         console.log(error.message);
@@ -390,25 +390,7 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium ">Summative Tests</h2>
-          {message && success && (
-            <Alert
-              variant="soft-success"
-              className="flex items-center mb-2"
-              dismissTimeout={3000}
-              role="alert"
-            >
-              <svg
-                className="flex-shrink-0 inline w-4 h-4 me-3"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              </svg>
-              {message}
-            </Alert>
-          )}
+
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
               <Button
@@ -759,7 +741,7 @@ function Main() {
           {/* END: Delete Confirmation Modal */}
         </>
       )}
-      {/* <Notification
+      <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {
           notify.current = el;
@@ -774,7 +756,7 @@ function Main() {
           <div className="font-medium">{success ? " Success" : "Failed"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
-      </Notification> */}
+      </Notification>
     </>
   );
 }

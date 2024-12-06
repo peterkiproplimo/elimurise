@@ -332,7 +332,11 @@ function Main() {
                                       <div className="ml-4">
                                         <a
                                           href="#"
-                                          // onClick={() => profileRecord(learner)}
+                                          onClick={() =>
+                                            navigate("/home/learners", {
+                                              state: learner,
+                                            })
+                                          }
                                           className="font-medium whitespace-nowrap"
                                         >
                                           {learner?.first_name &&
@@ -383,7 +387,9 @@ function Main() {
                                       {learner?.status == "P"
                                         ? "In Session"
                                         : ""}
-                                      {learner?.status == "D" ? "Disabled" : ""}
+                                      {learner?.status == "D"
+                                        ? "Deactivated"
+                                        : ""}
                                     </div>
                                   </Table.Td>
                                 </Table.Tr>

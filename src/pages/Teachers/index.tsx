@@ -666,9 +666,10 @@ function Main() {
                           <div className="ml-4">
                             <a
                               href="#"
-                              onClick={() =>
-                                navigate("/home/teacher/" + teacher?._id)
-                              }
+                              onClick={(e: any) => {
+                                e.preventDefault();
+                                navigate("/home/teacher/" + teacher?._id);
+                              }}
                               className="font-medium whitespace-nowrap"
                             >
                               {teacher.firstname && teacher.firstname}

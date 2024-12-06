@@ -25,7 +25,7 @@ import { Search } from "lucide-react";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import Dropzone from "../../base-components/Dropzone";
 import TomSelect from "../../base-components/TomSelect";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 function Users() {
   const data = useParams();
   const userId = data?.id;
@@ -53,6 +53,8 @@ function Users() {
     total_pages: 1,
     per_page: 0,
   });
+  const navigate = useNavigate();
+
   const [streams, setStreams] = useState([]);
   const [stream, setStream] = useState("");
   const [assignments, setAssignments] = useState([]);
@@ -252,7 +254,20 @@ function Users() {
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium ">Learning Area Assignment</h2>
+      <h2 className="mt-1 text-lg font-medium ">
+        <a
+          onClick={(event) => {
+            event.preventDefault();
+            navigate(-1); // Navigate to the previous page
+          }}
+          href="#"
+          className="mb-4 flex items-center text-blue-600 hover:text-blue-800"
+        >
+          <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+          Back
+        </a>
+        Learning Area Assignment
+      </h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
           <Button
