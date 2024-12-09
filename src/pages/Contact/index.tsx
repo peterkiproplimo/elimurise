@@ -194,7 +194,7 @@ const Contact = () => {
               <div className="mt-2">
                 <p className="xl:text-lg sm:text-3l text-[#808080]">
                 For media inquiries, please<Link
-  to="/register"
+  to="/"
   className="ml-2 font-medium text-primary underline"
 >
 email our communications team here.
@@ -257,7 +257,7 @@ email our communications team here.
         />
         <label className="cursor-pointer select-none text-[#808080]" htmlFor="remember-me">
         You agree to our friendly<Link
-  to="/register"
+  to="/policy"
   className="font-medium ml-2 text-primary underline"
 >
 privacy policy

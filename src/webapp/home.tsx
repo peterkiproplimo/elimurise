@@ -23,10 +23,13 @@ import pic2 from "../assets/images/Rectangle 8.png";
 import pic3 from "../assets/images/Rectangle.png";
 import users from "../assets/images/Users_Group.png";
 import check from "../assets/images/Checkbox_Check.png";
+import vector from "../assets/images/Vector.png";
+import user from "../assets/images/User.png";
 import servicepic from "../assets/images/parental-control 1.png";
 import servicepic2 from "../assets/images/parental-control.png";
 import servicepic3 from "../assets/images/teacher-showing-on-whiteboard 1.png";
-import jane from "../assets/images/Rectangle 6545.png";
+import lock from "../assets/images/Lock.png";
+import contact4 from  "../assets/images/contact2.png";
 import email from "../assets/images/social.png";
 import phone from "../assets/images/social (1).png";
 import pin from "../assets/images/mingcute_location-line.png";
@@ -105,34 +108,56 @@ const Home = () => {
         </div>
         <div className="border-b border-primary/50 w-full mt-8"></div>
         <div className=" ">
-          <p className="p-2 text-primary text-xl">
+          <p className="p-2 text-primary font-bold text-xl">
             For Business
           </p>
-          <Link to="/register" className="block pl-2 text-lg  text-primary ">
-          <div className="secondArea  xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
-  <img
-    alt="ACS"
-    className="w-10 md:w-full xl:w-auto w-full object-contain"
+          <Link to="/demo" className="block pl-2 text-lg text-primary flex items-center">
+  <img 
     src={check}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
   />
- 
-</div>
-            Register
-          </Link>
-          <Link to="/auth/login" className="block pl-2 text-lg text-primary">
-            Sign in
-          </Link>
+  Request Demo
+</Link>
+
+          <p className="block pl-2 text-lg text-primary flex items-center">
+  <img 
+    src={vector}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  />   Call Us: (+254) 712-345678
+          </p>
         </div>
         <div className="border-b border-primary/50 w-full p-2"></div>
         <div className=" mb-4 ">
-          <p className="p-2 text-primary text-xl">
-            For Business
+          <p className="p-2 text-primary  font-bold text-xl">
+          For School & Adminstrators
           </p>
-          <Link to="/register" className="block pl-2 text-lg  text-primary ">
-            Register
+          <Link  to="/auth/login"  className="block pl-2 text-lg text-primary flex items-center">
+  <img 
+    src={lock}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  />  Login
           </Link>
-          <Link to="/auth/login" className="block pl-2 text-lg text-primary">
-            Sign in
+          <Link to="/register"  className="block pl-2 text-lg text-primary flex items-center">
+  <img 
+    src={user}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  /> Create Account
+          </Link>
+          <Link to="/contact" className="block pl-2 text-lg text-primary flex items-center">
+  <img 
+    src={contact4}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  />   Contact Us
           </Link>
         </div>
       </div>
