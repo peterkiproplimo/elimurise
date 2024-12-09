@@ -110,13 +110,10 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
   return (
     <>
       <div className="bg-white-200">
-        {/* <Alert
-          variant="soft-danger"
-          className="flex items-center mb-2"
-          dismissTimeout={1000}
-        >
-          <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
-        </Alert> */}
+        <h1 className="text-primary">
+          
+        </h1>
+      
         <form
           className="validate-form bg-white p-10 m-5 rounded-lg border border-gray-300"
           onSubmit={onSubmit}
@@ -252,15 +249,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   }
                   placeholder="Confirm Password"
                 />
-                {/* <div
-                  className="flex items-center cursor-pointer eye-icon"
-                  onClick={togglePasswordVisibility}
-                >
-                  <FontAwesomeIcon
-                    icon={showPassword ? faEyeSlash : faEye}
-                    className="text-grey-800"
-                  />
-                </div> */}
+             
               </div>
 
               {errors.password && (
@@ -270,43 +259,11 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                 </div>
               )}
 
-              {/* Eye Icon */}
             </div>
           </div>
-          {/* <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
-            <div className="flex items-center mr-auto">
-              <FormCheck.Input
-                id="remember-me"
-                type="checkbox"
-                className="mr-2 border "
-              />
-              <label
-                className="cursor-pointer select-none"
-                htmlFor="remember-me"
-              >
-                Remember me
-              </label>
-            </div>
-            <Link to="/auth/forgot-password">Forgot Password?</Link>
-          </div> */}
+      
           <div className="mt-5 flex justify-end xl:mt-8 xl:text-left">
-            {/* <Button
-              onClick={() => {
-                register({ name: "" });
-                setCurrentStep(1);
-              }}
-              variant="secondary"
-              className="w-[200px] px-4 py-3 align-top xl:w-22 xl:mr-3 "
-            >
-              Back
-              {loading && (
-                <LoadingIcon
-                  icon="spinning-circles"
-                  color="white"
-                  className="w-2 h-4 ml-2"
-                />
-              )}
-            </Button> */}
+            
             {!registered && (
               <Button
                 variant="primary"

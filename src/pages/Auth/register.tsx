@@ -6,7 +6,7 @@ const Register = () => {
     <>
       <div className="bg-white-900   h-screen">
         <div className="m-auto">
-          <h1 className="text-center text-3xl p-3 font-bold">
+          <h1 className="text-center text-primary text-5xl p-4 font-bold">
             Account Creation
           </h1>
         </div>

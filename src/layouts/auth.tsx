@@ -12,7 +12,25 @@ const Auth = () => {
   }, []);
   return (
     <>
-      <div
+ <div className=" ">
+          <div className="grid  bg-white overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
+            <div className="group w-500 h-screen dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <img 
+    src={image}
+    alt="Demo Icon" 
+    className="w-full h-full mr-2" 
+
+  />
+            </div>
+            <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 flex justify-center ">
+            <Outlet />
+</div>
+
+
+          </div>
+        </div>
+
+      {/* <div
         className={clsx([
           "-m-3 sm:-mx-8 p-3 sm:px-8 relative h-screen lg:overflow-hidden bg-white xl:bg-white dark:bg-darkmode-800 xl:dark:bg-darkmode-600",
           "before:hidden before:xl:block before:content-[''] before:w-[57%] before:-mt-[28%] before:-mb-[16%] before:-ml-[13%] before:absolute before:inset-y-0 before:left-0 before:transform before:rotate-[-4.5deg] before:bg-primary/20 before:rounded-[100%] before:dark:bg-darkmode-400",
@@ -21,7 +39,7 @@ const Auth = () => {
       >
         <div className="container relative z-10 sm:px-10">
           <div className="block grid-cols-2 gap-4 xl:grid">
-            {/* BEGIN: Login Info */}
+        
             <div className="flex-col hidden min-h-screen xl:flex">
               <div className="my-auto">
               <img 
@@ -32,15 +50,14 @@ const Auth = () => {
   />
               </div>
             </div>
-            {/* END: Login Info */}
-            {/* BEGIN: Login Form */}
+         
             <div className="flex h-screen py-5 my-10 xl:p-10 xl:h-auto xl:py-0 xl:my-0">
               <Outlet />
             </div>
-            {/* END: Login Form */}
+         
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

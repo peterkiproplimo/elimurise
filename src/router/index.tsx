@@ -31,7 +31,7 @@ import Stream from "../pages/Stream";
 import Learners from "../pages/Learners";
 import LearningAreas from "../pages/LearningAreas";
 import Home from "../webapp/home";
-import Register from "../pages/Auth/register";
+import Register from "../pages/Register";
 import AssessLearner from "../pages/AssessLearner";
 import LearnerEnrollment from "../pages/LearnerEnrollment";
 import ForgotPasswordOTPParent from "../pages/Auth/forgot-passOTP-parent";
@@ -345,21 +345,26 @@ function Router() {
           <Policy/>
       ),
     },
+    // {
+    //   path: "/register",
+    //   element: (
+    //     <GuestGuard>
+    //       <LayoutRegister />
+    //     </GuestGuard>
+    //   ),
+    //   children: [
+    //     {
+    //       path: "",
+    //       element: <Register />,
+    //     },
+    //   ],
+    // },
+
+
     {
       path: "/register",
-      element: (
-        <GuestGuard>
-          <LayoutRegister />
-        </GuestGuard>
-      ),
-      children: [
-        {
-          path: "",
-          element: <Register />,
-        },
-      ],
+      element: <Register/>,
     },
-
     {
       path: "/error-page",
       element: <ErrorPage />,

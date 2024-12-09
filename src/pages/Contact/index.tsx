@@ -209,8 +209,8 @@ email our communications team here.
       <div className="input-form p-2">
         <FormInput
           id="validation-form-2"
-          type="email"
-          name="email"
+          type="text"
+          name="text"
           placeholder="Full Name *"
           className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
         />
@@ -219,8 +219,8 @@ email our communications team here.
       
         <FormInput
           id="validation-form-2"
-          type="text"
-          name="code"
+          type="email"
+          name="email"
           placeholder="Email Address *"
           className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
         />
