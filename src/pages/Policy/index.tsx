@@ -2,8 +2,10 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../base-components/Button";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import { FormInput, FormCheck } from "../../base-components/Form";
+import { FormInput, FormCheck , FormSelect} from "../../base-components/Form";
 import * as yup from "yup";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 
 import { Link } from "react-router-dom";
 
@@ -23,7 +25,7 @@ import { Menu, X } from "lucide-react";
 
 
 
-const Contact = () => {
+const Policy = () => {
   const schema = yup
     .object({
       email: yup.string().required().email(),
@@ -137,164 +139,59 @@ const Contact = () => {
         </div>
 
         <div className="xl:p-10  p-5">
-        <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
-        Get in touch with Hero Learning
+        <h1 className="xl:text-3xl text-2xl  text-center font-semibold   w-full">
+      PRIVACY POLICY
               </h1>
-          <div className="grid xl:mt-10 xl:ml-10 xl:mr-10 overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
-            <div className="group p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <h1 className="xl:text-3xl text-xl font-semibold mt-5 text-primary w-full">
-              Are you a School Administrator? 
+        <h1 className="xl:text-5xl text-2xl mt-5 text-center font-semibold  text-primary w-full">
+        Hero Learning
               </h1>
-              <div className="mt-2">
-                <p className="xl:text-lg sm:text-3l text-[#808080]">
-                  We revolutionize education
-                  through our innovative digital Competency Based <br/> Curriculum
-                  (CBC) approach. Join us in shaping the future of learning.
-                </p>
-              </div>
-              <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
-                <Button
-                  variant="primary"
-                  className="text-primary bg-transparent border-primary text-md w-[192px] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
->              info@herolearning.co.ke
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
-              <h1 className="xl:text-3xl text-xl font-semibold mt-5 text-primary w-full">
-              Are you an existing Partner?
-              </h1>
-              <div className="mt-2">
-                <p className="xl:text-lg sm:text-3l text-[#808080]">
-                We'd love to hear more about your school's goals and share with you how hundreds of schools are using Hero Learning today.
-                </p>
-              </div>
-
-              <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
-                <Button
-                  variant="primary"
-                  className="text-primary bg-transparent border-primary text-md w-[102px] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
->             Get Support
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
-              <h1 className="xl:text-3xl text-xl font-semibold mt-5 text-primary w-full">
-              Additional Contacts              </h1>
-              <div className="mt-2">
-                <p className="xl:text-lg sm:text-3l text-[#808080]">
-                For media inquiries, please<Link
-  to="/register"
-  className="ml-2 font-medium text-primary underline"
->
-email our communications team here.
-</Link>
-            </p>
-              </div>
-              
-            </div>
-            <div className="group relative dark:bg-gray-800 p-2 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 m-0 w-full flex">
-  <form className="validate-form w-full shadow-md p-8 border">
-    <div className="mt-5">
-      <div className="input-form p-2">
-        <FormInput
-          id="validation-form-2"
-          type="email"
-          name="email"
-          placeholder="Full Name *"
-          className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-        />
-      </div>
-      <div className="input-form p-2">
-      
-        <FormInput
-          id="validation-form-2"
-          type="text"
-          name="code"
-          placeholder="Email Address *"
-          className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-        />
-      </div>
-      <div className="input-form p-2">
-    
-          <FormInput
-            id="validation-form-3"
-            type={"password"}
-            name="password"
-            placeholder="School Name *"
-            className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-          />
+           
+                 <div className="xl:p-10  p-5">
         
-      </div>
-      <div className="input-form p-2">
-    
-      <textarea
-          id="message"
-          name="message"
-        
-          placeholder="Comment: Let us know how we can help you"
-          className="mt-1 block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-        ></textarea>
-  
-</div>
-    </div>
-    <div className="flex mt-4 text-xs text-slate-600 dark:text-slate-500 sm:text-sm">
-      <div className="flex items-center mr-auto ml-2">
-        <FormCheck.Input
-          id="remember-me"
-          type="checkbox"
-          className="mr-2 border-blue-300"
-        />
-        <label className="cursor-pointer select-none text-[#808080]" htmlFor="remember-me">
-        You agree to our friendly<Link
-  to="/register"
-  className="font-medium ml-2 text-primary underline"
->
-privacy policy
-</Link>
-        </label>
-      </div>
-    </div>
-    <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
-                <Button
-                  variant="primary"
-                  className="text-md w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
-
-                >
-           Send Message       <div className="icon mr-2">
-            <img alt="ACS" className="xl:w-35  xl:w-auto" src={icon} />
-          </div>
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
+              <h1 className="xl:text-3xl text-xl font-semibold text-primary w-full">
+              1.Introduction
+              </h1>
+              <div className="mt-2  xl:text-2xl">
+            <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, ex nec venenatis condimentum, lacus libero viverra purus, a interdum lacus mauris ac eros. 
+                Nulla ac semper ligula, sed fringilla lacus. Vivamus hendrerit felis a lacus vestibulum, non euismod enim faucibus</p>
+             
               </div>
-  </form>
-</div>
-
-
-
-          </div>
+            
+           
+           
+        
+        <h1 className="xl:text-3xl mt-8 text-xl font-semibold text-primary w-full">
+        2. Acceptance of Terms
+        </h1>
+        <div className="mt-2 xl:text-2xl">
+      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, ex nec venenatis condimentum, lacus libero viverra purus, a interdum lacus mauris ac eros. 
+          Nulla ac semper ligula, sed fringilla lacus. Vivamus hendrerit felis a lacus vestibulum, non euismod enim faucibus</p>
         </div>
+      </div>
+  
+      <div className="xl:p-10  p-2">
+        
+        <h1 className="xl:text-3xl text-xl font-semibold text-primary w-full">
+        3. Registration and Account Security
+        </h1>
+        <div className="mt-2 xl:text-2xl">
+      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, ex nec venenatis condimentum, lacus libero viverra purus, a interdum lacus mauris ac eros. 
+          Nulla ac semper ligula, sed fringilla lacus. Vivamus hendrerit felis a lacus vestibulum, non euismod enim faucibus</p>
+        </div>
+      
+      </div>
+
+
+
+
+        
+        </div>
+        
        
 
 
         <div className=" bg-primary ">
-          <div className="grid mt-10  overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
+          <div className="grid  overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <h1 className="xl:text-3xl text-2xl font-semibold mt-5 text-white w-full">
                 Hero Learning
@@ -304,7 +201,7 @@ privacy policy
             <Link to="/" className="xl:px-3 xl:py-3  xl:text-lg ">
               Privacy Policy
               </Link>
-              <Link to="/" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/terms" className="xl:px-3 xl:py-3  xl:text-lg ">
                Terms of Use
               </Link>
               <Link to="/contact" className="xl:px-3 xl:py-3  xl:text-lg ">
@@ -407,4 +304,4 @@ privacy policy
   );
 };
 
-export default Contact;
+export default Policy;

@@ -63,6 +63,9 @@ import LearnerSummative from "../pages/LearnerProfiles/summative";
 import BehaviourCategory from "../pages/Behaviour/category";
 import BehaviourAssessment from "../pages/Behaviour/assessment";
 import Comment from "../pages/Behaviour/assessmentcomment";
+import Demo from "../pages/Demo";
+import Terms from "../pages/Terms";
+import Policy from "../pages/Policy";
 
 //nn
 function Router() {
@@ -317,10 +320,29 @@ function Router() {
         },
       ],
     },
+
     {
       path: "/contact",
       element: (
           <Contact />
+      ),
+    },
+    {
+      path: "/demo",
+      element: (
+          <Demo />
+      ),
+    },
+    {
+      path: "/terms",
+      element: (
+          <Terms/>
+      ),
+    },
+    {
+      path: "/policy",
+      element: (
+          <Policy/>
       ),
     },
     {

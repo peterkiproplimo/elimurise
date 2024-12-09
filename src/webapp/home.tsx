@@ -56,14 +56,14 @@ const Home = () => {
            
            
             <div className="hidden xl:flex gap-10  p-5">
-            <Link to="/register" className=" mr-5 font-medium text-lg">
+            <Link to="/" className=" mr-5 font-medium text-lg">
             Support
               </Link>
               <div className="flex">
               <div className="icon ">
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={users} />
           </div>
-              <Link to="/register" className=" ml-2 font-medium text-lg ">
+              <Link to="/" className=" ml-2 font-medium text-lg ">
             
               For Teachers & Administrators
               </Link>
@@ -109,16 +109,16 @@ const Home = () => {
 
             {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5  ">
-            <Link to="/register" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+            <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
               Why Us
               </Link>
-              <Link to="/register" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+              <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
                Pricing
               </Link>
               <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
                Contact Us
               </Link>
-              <Link to="/register" className="xl:w-32 xl:mr-8">
+              <Link to="/demo" className="xl:w-32 xl:mr-8">
                 <Button
                   className="text-md w-[192px] p-2 h-[50px] bg-[#FF3B30] text-white rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px]"
                 >
@@ -801,6 +801,7 @@ PREMIUM PLAN
     </p>
   </div>
   <div>
+  <Link to="/demo" className="xl:w-32 xl:mr-8">
     <Button className="xl:text-xl w-[192px] p-2 h-[50px] bg-[#FF3B30] font-bold text-white">
       Request A Demo
       {loading && (
@@ -811,6 +812,7 @@ PREMIUM PLAN
         />
       )}
     </Button>
+    </Link>
   </div>
 </div>
 
@@ -825,13 +827,13 @@ PREMIUM PLAN
               </h1>
               
               <div className=" text-white flex gap-5  xl:mt-8">
-            <Link to="/register" className="xl:px-3 xl:py-3  xl:text-lg ">
+            <Link to="/policy" className="xl:px-3 xl:py-3  xl:text-lg ">
               Privacy Policy
               </Link>
-              <Link to="/register" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/terms" className="xl:px-3 xl:py-3  xl:text-lg ">
                Terms of Use
               </Link>
-              <Link to="/register" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/contact" className="xl:px-3 xl:py-3  xl:text-lg ">
                Contact Us
               </Link>
               </div>
