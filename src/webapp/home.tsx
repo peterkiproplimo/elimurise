@@ -22,6 +22,7 @@ import pic from "../assets/images/Rectangle.jpg";
 import pic2 from "../assets/images/Rectangle 8.png";
 import pic3 from "../assets/images/Rectangle.png";
 import users from "../assets/images/Users_Group.png";
+import check from "../assets/images/Checkbox_Check.png";
 import servicepic from "../assets/images/parental-control 1.png";
 import servicepic2 from "../assets/images/parental-control.png";
 import servicepic3 from "../assets/images/teacher-showing-on-whiteboard 1.png";
@@ -56,7 +57,7 @@ const Home = () => {
            
            
             <div className="hidden xl:flex gap-10  p-5">
-            <Link to="/" className=" mr-5 font-medium text-lg">
+            <Link to="/contact" className=" mr-5 font-medium text-lg">
             Support
               </Link>
               <div className="flex">
@@ -78,43 +79,74 @@ const Home = () => {
           </div>
           <div className="buttons">
             {/* Hamburger Menu Icon for small screens */}
-            <div className="block xl:hidden ">
-              <button
-                onClick={() => setShowMenu(!showMenu)}
-                className="text-blue-800 focus:outline-none mt-5"
-              >
-                {showMenu ? (
-                  <X className="w-8 h-8" /> // X icon to close menu
-                ) : (
-                  <Menu className="w-8 h-8" /> // Three-line icon to open menu
-                )}
-              </button>
-            </div>
+            <div className="block xl:hidden">
+    <button
+      onClick={() => setShowMenu(!showMenu)}
+      className="text-blue-800 focus:outline-none mt-5"
+    >
+      {showMenu ? (
+        <Menu className="w-8 h-8" /> // X icon to close menu
+      ) : (
+        <Menu className="w-8 h-8" /> // Three-line icon to open menu
+      )}
+    </button>
+  </div>
 
-            {/* Links as Dropdown (for small screens) */}
-            {showMenu && (
-              <div className="absolute z-10  bg-white shadow-lg rounded-md p-3 w-50 -ml-10  ">
-                <div className=" text-center">
-                  <Link to="/register" className="block mb-3 text-blue-800">
-                    Register
-                  </Link>
-                </div>
-                <div className="text-center">
-                  <Link to="/auth/login" className="block text-blue-800">
-                    Sign in
-                  </Link>
-                </div>
-              </div>
-            )}
+  {showMenu && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-20">
+      <div className="fixed left-0 top-0 bottom-0 bg-white shadow-lg w-80 p-5 transform transition-all duration-300 ease-in-out z-30">
+        <div className="text-right mb-4">
+          <button
+            onClick={() => setShowMenu(false)}
+            className="bg-primary text-white  p-2 focus:outline-none"
+            >
+            <X className="w-8 h-8" />
+          </button>
+        </div>
+        <div className="border-b border-primary/50 w-full mt-8"></div>
+        <div className=" ">
+          <p className="p-2 text-primary text-xl">
+            For Business
+          </p>
+          <Link to="/register" className="block pl-2 text-lg  text-primary ">
+          <div className="secondArea  xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
+  <img
+    alt="ACS"
+    className="w-10 md:w-full xl:w-auto w-full object-contain"
+    src={check}
+  />
+ 
+</div>
+            Register
+          </Link>
+          <Link to="/auth/login" className="block pl-2 text-lg text-primary">
+            Sign in
+          </Link>
+        </div>
+        <div className="border-b border-primary/50 w-full p-2"></div>
+        <div className=" mb-4 ">
+          <p className="p-2 text-primary text-xl">
+            For Business
+          </p>
+          <Link to="/register" className="block pl-2 text-lg  text-primary ">
+            Register
+          </Link>
+          <Link to="/auth/login" className="block pl-2 text-lg text-primary">
+            Sign in
+          </Link>
+        </div>
+      </div>
+    </div>
+  )}
 
             {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5  ">
-            <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+            <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
               Why Us
-              </Link>
-              <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+              </a>
+              <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
                Pricing
-              </Link>
+              </a>
               <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
                Contact Us
               </Link>
@@ -333,7 +365,7 @@ const Home = () => {
 
      
         <div className=" xl:flex gap-10 space-x-8 items-center justify-center">
-  <div className="flex flex-col items-center text-center xl:p-4 p-2">
+  <div id = "about" className="flex flex-col items-center text-center xl:p-4 p-2">
     <h1 className="text-3xl md:text-3xl xl:text-5xl font-bold text-primary xl:mb-2">
       Why Choose Hero Learning?
     </h1>
@@ -480,7 +512,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="aboutContainer mt-10">
+        <div id = "pricing" className="aboutContainer mt-10">
         <h1 className="xl:text-5xl text-2xl text-center text-primary font-medium">
            Pricing Plan
           </h1>

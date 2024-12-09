@@ -43,14 +43,14 @@ const Contact = () => {
            
            
             <div className="hidden xl:flex gap-10  p-5">
-            <Link to="/register" className=" mr-5 font-medium text-lg">
+            <Link to="/contact" className=" mr-5 font-medium text-lg">
             Support
               </Link>
               <div className="flex">
               <div className="icon ">
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={users} />
           </div>
-              <Link to="/register" className=" ml-2 font-medium text-lg ">
+              <Link to="/" className=" ml-2 font-medium text-lg ">
             
               For Teachers & Administrators
               </Link>
@@ -301,10 +301,10 @@ privacy policy
               </h1>
               
               <div className=" text-white flex gap-5  xl:mt-8">
-            <Link to="/" className="xl:px-3 xl:py-3  xl:text-lg ">
+            <Link to="/policy" className="xl:px-3 xl:py-3  xl:text-lg ">
               Privacy Policy
               </Link>
-              <Link to="/" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/terms" className="xl:px-3 xl:py-3  xl:text-lg ">
                Terms of Use
               </Link>
               <Link to="/contact" className="xl:px-3 xl:py-3  xl:text-lg ">

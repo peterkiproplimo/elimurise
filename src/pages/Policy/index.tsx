@@ -45,14 +45,14 @@ const Policy = () => {
            
            
             <div className="hidden xl:flex gap-10  p-5">
-            <Link to="/register" className=" mr-5 font-medium text-lg">
+            <Link to="/contact" className=" mr-5 font-medium text-lg">
             Support
               </Link>
               <div className="flex">
               <div className="icon ">
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={users} />
           </div>
-              <Link to="/register" className=" ml-2 font-medium text-lg ">
+              <Link to="/" className=" ml-2 font-medium text-lg ">
             
               For Teachers & Administrators
               </Link>
