@@ -236,10 +236,9 @@ const Register = () => {
           className="validate-form bg-white p-10 m-5 shadow-lg border border-gray-300"
           onSubmit={onSubmit}
         >
-          <p className="mt-5 text-xl">Personal Information:</p>
-          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 ">
+          <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">Personal Information:</p>
+          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5  ">
             <div className="input-form">
-              <label>First Name</label>
               <FormInput
                 {...register("firstname")}
                 id="validation-form-2"
@@ -248,9 +247,9 @@ const Register = () => {
                 className={
                   errors.firstname
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
                 }
-                placeholder="firstname"
+                placeholder="First Name*"
               />
               {errors.firstname && (
                 <div className="mt-2 text-danger">
@@ -260,7 +259,6 @@ const Register = () => {
               )}
             </div>
             <div className="input-form">
-              <label>Last Name</label>
               <FormInput
                 {...register("lastname")}
                 id="validation-form-2"
@@ -269,9 +267,9 @@ const Register = () => {
                 className={
                   errors.lastname
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
                 }
-                placeholder="lastname"
+                placeholder="Last Name*"
               />
               {errors.lastname && (
                 <div className="mt-2 text-danger">
@@ -281,7 +279,6 @@ const Register = () => {
               )}
             </div>
             <div className="input-form">
-              <label>Email</label>
               <FormInput
                 {...register("email")}
                 id="validation-form-2"
@@ -290,9 +287,9 @@ const Register = () => {
                 className={
                   errors.email
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
                 }
-                placeholder="Email"
+                placeholder="Email Address *"
               />
               {errors.email && (
                 <div className="mt-2 text-danger">
@@ -302,7 +299,6 @@ const Register = () => {
               )}
             </div>
             <div className="input-form">
-              <label>Phone</label>
               <FormInput
                 {...register("phone")}
                 id="validation-form-2"
@@ -311,9 +307,9 @@ const Register = () => {
                 className={
                   errors.phone
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
                 }
-                placeholder="Phone number"
+                placeholder="Phone Number *"
               />
               {errors.phone && (
                 <div className="mt-2 text-danger">
@@ -323,7 +319,6 @@ const Register = () => {
               )}
             </div>
             <div className="input-form">
-              <label>Password</label>
               <div className="flex items-center">
                 <FormInput
                   {...register("password")}
@@ -333,9 +328,9 @@ const Register = () => {
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-[250px]   border pr-10   border-blue-300"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
                   }
-                  placeholder="Enter Password"
+                  placeholder="Password*"
                 />
               </div>
 
@@ -349,7 +344,7 @@ const Register = () => {
               {/* Eye Icon */}
             </div>
             <div className="input-form">
-              <label>Confirm Password</label>
+            
               <div className="flex items-center">
                 <FormInput
                   {...register("confirm_password", {
@@ -359,8 +354,13 @@ const Register = () => {
                   id="validation-form-3"
                   type="password"
                   name="confirm_password"
+                  className={
+                    errors.password
+                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                  }
                  
-                  placeholder="Confirm Password"
+                  placeholder="Confirm Password*"
                 />
              
               </div>
@@ -370,7 +370,7 @@ const Register = () => {
             </div>
           </div>
       
-          <div className="mt-5 flex justify-end xl:mt-8 xl:text-left">
+          <div className="mt-5 flex  xl:mt-8 xl:text-left">
    
               <Button
                 variant="primary"
@@ -392,7 +392,7 @@ const Register = () => {
 
 
        <div className="xl:p-10 xl:m-5  p-5 shadow-lg border border-gray-300">
-        <h1 className="text-primary xl:text-xl  font-medium p-2"> Choose Plan:</h1>
+        <h1 className="mt-5 xl:text-2xl text-xl text-primary font-bold"> Choose Plan:</h1>
         <form className="  grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3">
             
             <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
@@ -552,7 +552,6 @@ PREMIUM PLAN
           <p className="mt-2 xl:text-2xl text-primary font-bold">You have Chosen Hero System.</p>
           <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 ">
             <div className="input-form">
-              <label>School Name</label>
               <FormInput
                 {...register("firstname")}
                 id="validation-form-2"
@@ -561,9 +560,9 @@ PREMIUM PLAN
                 className={
                   errors.firstname
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
+                    : "block px-4 py-3 mt-4 min-w-full p-4 border rounded-none"
                 }
-                placeholder="firstname"
+                placeholder=" School Name"
               />
               {errors.firstname && (
                 <div className="mt-2 text-danger">
@@ -573,19 +572,20 @@ PREMIUM PLAN
               )}
             </div>
             <div className="input-form">
-              <label>Select County</label>
-              <FormInput
-                {...register("lastname")}
-                id="validation-form-2"
-                type="text"
-                name="lastname"
-                className={
-                  errors.lastname
-                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
-                }
-                placeholder="lastname"
-              />
+            
+              <FormSelect
+  id="validation-form-2"
+  name="county"
+  className="block px-4 py-4  mt-4 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+  defaultValue=""
+>
+  <option value="" className="text-primary" disabled>
+  Select County*
+  </option>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
+  <option value="option3">Option 3</option>
+</FormSelect>
               {errors.lastname && (
                 <div className="mt-2 text-danger">
                   {typeof errors.lastname.message === "string" &&
@@ -594,19 +594,19 @@ PREMIUM PLAN
               )}
             </div>
             <div className="input-form">
-              <label>Select SubCounty</label>
-              <FormInput
-                {...register("email")}
-                id="validation-form-2"
-                type="email"
-                name="email"
-                className={
-                  errors.email
-                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
-                }
-                placeholder="Email"
-              />
+            <FormSelect
+  id="validation-form-2"
+  name="county"
+  className="block px-4 py-4  mt-4 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+  defaultValue=""
+>
+  <option value="" className="text-primary" disabled>
+  Select SubCounty*
+  </option>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
+  <option value="option3">Option 3</option>
+</FormSelect>
               {errors.email && (
                 <div className="mt-2 text-danger">
                   {typeof errors.email.message === "string" &&
@@ -615,16 +615,15 @@ PREMIUM PLAN
               )}
             </div>
             <div className="input-form">
-              <label>Contact</label>
               <FormInput
                 {...register("phone")}
                 id="validation-form-2"
                 type="text"
-                name="phone"
+                name="Contact"
                 className={
                   errors.phone
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full    border-blue-300"
+                    : "block px-4 py-3 mt-4 min-w-full p-4 border rounded-none"
                 }
                 placeholder="Phone number"
               />
@@ -636,7 +635,6 @@ PREMIUM PLAN
               )}
             </div>
             <div className="input-form">
-              <label>Password</label>
               <div className="flex items-center">
                 <FormInput
                   {...register("password")}
@@ -646,9 +644,9 @@ PREMIUM PLAN
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-[250px]   border pr-10   border-blue-300"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
                   }
-                  placeholder="Enter Password"
+                  placeholder="Current Academic Year*"
                 />
               </div>
 
@@ -658,11 +656,8 @@ PREMIUM PLAN
                     errors.password.message}
                 </div>
               )}
-
-              {/* Eye Icon */}
             </div>
             <div className="input-form">
-              <label>Confirm Password</label>
               <div className="flex items-center">
                 <FormInput
                   {...register("confirm_password", {
@@ -672,14 +667,52 @@ PREMIUM PLAN
                   id="validation-form-3"
                   type="password"
                   name="confirm_password"
+                  className={
+                    errors.password
+                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                  }
                  
-                  placeholder="Confirm Password"
+                  placeholder="Number Of Learners*"
                 />
-             
               </div>
-
-             
-
+            </div>
+            <div className="input-form">
+              <div className="flex items-center">
+              <FormSelect
+  id="validation-form-2"
+  name="county"
+  className="block px-4 py-4  mt-4 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+  defaultValue=""
+>
+  <option value="" className="text-primary" disabled>
+  Choose A period*
+  </option>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
+  <option value="option3">Option 3</option>
+</FormSelect>
+              </div>
+            </div>
+            <div className="input-form">
+              <div className="flex items-center">
+                <FormInput
+                  {...register("confirm_password", {
+                    required: "Confirm Password is required",
+                   
+                  })}
+                  id="validation-form-3"
+                  type="password"
+                  name="confirm_password"
+                  className={
+                    errors.password
+                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                  }
+                 
+                  placeholder="Total Bill.VAT Inclusive"
+                />
+              </div>
             </div>
           </div>
       
