@@ -914,8 +914,8 @@ PREMIUM PLAN
                 </div>
                 <div className="text-center ">
                 <Button
-                  className="w-full bg-white xl:min-w-[150px] rounded-none text-lg"
-                >
+                 className="w-full bg-white  h-[45px] xl:min-w-[150px] rounded-none text-lg"
+                 >
                   Subscribe
                   {loading && (
                     <LoadingIcon

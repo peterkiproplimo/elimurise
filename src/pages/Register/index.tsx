@@ -717,7 +717,7 @@ PREMIUM PLAN
           </div>
       
           <div className="mt-5  xl:mt-8 xl:text-left">
-   
+          <Link to="/payment" className="xl:w-32 xl:mr-8">
               <Button
                 variant="primary"
                 className="text-lg xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
@@ -731,7 +731,7 @@ PREMIUM PLAN
                   />
                 )}
               </Button>
-          
+          </Link>
           </div>
         </form>
         </div>
@@ -778,7 +778,7 @@ PREMIUM PLAN
                 </div>
                 <div className="text-center ">
                 <Button
-                  className="w-full bg-white xl:min-w-[150px] rounded-none text-lg"
+                  className="w-full bg-white  h-[45px] xl:min-w-[150px] rounded-none text-lg"
                 >
                   Subscribe
                   {loading && (

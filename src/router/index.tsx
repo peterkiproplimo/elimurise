@@ -66,6 +66,7 @@ import Comment from "../pages/Behaviour/assessmentcomment";
 import Demo from "../pages/Demo";
 import Terms from "../pages/Terms";
 import Policy from "../pages/Policy";
+import Payment from "../pages/Payment";
 
 //nn
 function Router() {
@@ -337,6 +338,12 @@ function Router() {
       path: "/terms",
       element: (
           <Terms/>
+      ),
+    },
+    {
+      path: "/payment",
+      element: (
+          <Payment/>
       ),
     },
     {
