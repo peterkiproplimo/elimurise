@@ -247,7 +247,7 @@ const Register = () => {
                 className={
                   errors.firstname
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
                 }
                 placeholder="First Name*"
               />
@@ -267,7 +267,7 @@ const Register = () => {
                 className={
                   errors.lastname
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Last Name*"
               />
@@ -287,7 +287,7 @@ const Register = () => {
                 className={
                   errors.email
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Email Address *"
               />
@@ -307,7 +307,7 @@ const Register = () => {
                 className={
                   errors.phone
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border rounded-none"
+                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Phone Number *"
               />
@@ -328,7 +328,7 @@ const Register = () => {
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
                   }
                   placeholder="Password*"
                 />
@@ -357,7 +357,7 @@ const Register = () => {
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
                   }
                  
                   placeholder="Confirm Password*"
@@ -374,9 +374,9 @@ const Register = () => {
    
               <Button
                 variant="primary"
-                className="w-[200px] px-4 py-3 align-top xl:w-22 xl:mr-3 "
-              >
-                Submit
+                className="text-lg xl:text-lg w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                >
+                Save
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"
@@ -416,7 +416,7 @@ const Register = () => {
   You get access to hard copy assessment tool books for all grades. Charges per book:</p>
   <Button
                   variant="primary"
-                  className="text-md w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+                  className="text-lg xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
 
                 >
             Add to Cart
@@ -474,7 +474,7 @@ const Register = () => {
 
               </div>  <Button
                   variant="primary"
-                  className="text-md w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+                  className="text-lg xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
 
                 >
              Add To Cart
@@ -522,7 +522,7 @@ PREMIUM PLAN
 
           </div>  <Button
               variant="primary"
-              className="text-md w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+              className="text-lg xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
 
             >
          Add To Cart
@@ -560,7 +560,7 @@ PREMIUM PLAN
                 className={
                   errors.firstname
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 min-w-full p-4 border rounded-none"
+                    : "block px-4 py-3 mt-4 min-w-full p-4 border-gray-300 rounded-none"
                 }
                 placeholder=" School Name"
               />
@@ -623,7 +623,7 @@ PREMIUM PLAN
                 className={
                   errors.phone
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 min-w-full p-4 border rounded-none"
+                    : "block px-4 py-3 mt-4 min-w-full p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Phone number"
               />
@@ -644,7 +644,7 @@ PREMIUM PLAN
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
                   }
                   placeholder="Current Academic Year*"
                 />
@@ -670,7 +670,7 @@ PREMIUM PLAN
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
                   }
                  
                   placeholder="Number Of Learners*"
@@ -707,7 +707,7 @@ PREMIUM PLAN
                   className={
                     errors.password
                       ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border rounded-none"
+                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
                   }
                  
                   placeholder="Total Bill.VAT Inclusive"
@@ -720,8 +720,8 @@ PREMIUM PLAN
    
               <Button
                 variant="primary"
-                className="w-[200px] px-4 py-3 align-top xl:w-22 xl:mr-3 "
-              >
+                className="text-lg xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                >
                Proceed to Make Payment
                 {loading && (
                   <LoadingIcon
