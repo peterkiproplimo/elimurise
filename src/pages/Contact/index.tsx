@@ -12,6 +12,11 @@ import logo from "../../assets/images/heros.png";
 import icon from "../../assets/images/Arrow_Right_MD.png"
 
 import users from "../../assets/images/Users_Group.png";
+import user from "../../assets/images/User.png";
+import contact4 from  "../../assets/images/contact2.png";
+import check from "../../assets/images/Checkbox_Check.png";
+import vector from "../../assets/images/Vector.png";
+import lock from "../../assets/images/Lock.png";
 
 import email from "../../assets/images/social.png";
 import phone from "../../assets/images/social (1).png";
@@ -35,7 +40,7 @@ const Contact = () => {
 
   return (
     <>
-      <div className="homeContainer sm:p-5 xl:p-0">
+      <div className="homeContainer  xl:p-0">
       <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           
           <div className="buttons">
@@ -64,44 +69,96 @@ const Contact = () => {
             <img alt="ACS" className="xl:w-35 ml-10  xl:w-auto" src={logo} />
           </div>
           <div className="buttons">
-            {/* Hamburger Menu Icon for small screens */}
-            <div className="block xl:hidden ">
-              <button
-                onClick={() => setShowMenu(!showMenu)}
-                className="text-blue-800 focus:outline-none mt-5"
-              >
-                {showMenu ? (
-                  <X className="w-8 h-8" /> // X icon to close menu
-                ) : (
-                  <Menu className="w-8 h-8" /> // Three-line icon to open menu
-                )}
-              </button>
-            </div>
+            <div className="block xl:hidden">
+    <button
+      onClick={() => setShowMenu(!showMenu)}
+      className="text-blue-800 focus:outline-none mt-5"
+    >
+      {showMenu ? (
+        <Menu className="w-8 h-8" />
+      ) : (
+        <Menu className="w-8 h-8" /> 
+      )}
+    </button>
+  </div>
 
-            {/* Links as Dropdown (for small screens) */}
-            {showMenu && (
-              <div className="absolute z-10  bg-white shadow-lg rounded-md p-3 w-50 -ml-10  ">
-                <div className=" text-center">
-                  <Link to="/register" className="block mb-3 text-blue-800 hover:text-blue-800 hover:scale-105">
-                    Register
-                  </Link>
-                </div>
-                <div className="text-center">
-                  <Link to="/auth/login" className="block text-blue-800 hover:text-blue-800 hover:scale-105">
-                    Sign in
-                  </Link>
-                </div>
-              </div>
-            )}
+  {showMenu && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-20">
+      <div className="fixed left-0 top-0 bottom-0 bg-white shadow-lg w-80 p-5 transform transition-all duration-300 ease-in-out z-30">
+        <div className="text-right mb-4">
+          <button
+            onClick={() => setShowMenu(false)}
+            className="bg-primary text-white  p-2 focus:outline-none"
+            >
+            <X className="w-8 h-8" />
+          </button>
+        </div>
+        <div className="border-b border-primary/50 w-full mt-8"></div>
+        <div className=" ">
+          <p className="p-2 text-primary font-bold text-xl">
+            For Business
+          </p>
+          <Link to="/demo" className="block pl-2 text-lg text-primary flex items-center hover:text-blue-800 hover:scale-105">
+  <img 
+    src={check}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  />
+  Request Demo
+</Link>
+
+          <p className="block pl-2 text-lg text-primary flex items-center hover:text-blue-800 hover:scale-105">
+  <img 
+    src={vector}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  />   Call Us: (+254) 712-345678
+          </p>
+        </div>
+        <div className="border-b border-primary/50 w-full p-2"></div>
+        <div className=" mb-4 ">
+          <p className="p-2 text-primary  font-bold text-xl">
+          For School & Adminstrators
+          </p>
+          <Link  to="/auth/login"  className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
+  <img 
+    src={lock}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  />  Login
+          </Link>
+          <Link to="/register"  className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
+  <img 
+    src={user}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  /> Create Account
+          </Link>
+          <Link to="/contact" className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
+  <img 
+    src={contact4}
+    alt="Demo Icon" 
+    className="w-6 h-6 mr-2" 
+
+  />   Contact Us
+          </Link>
+        </div>
+      </div>
+    </div>
+  )}
 
             {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5  ">
-            <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
+            <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
               Why Us
-              </Link>
-              <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
+              </a>
+              <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Pricing
-              </Link>
+              </a>
               <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Contact Us
               </Link>
@@ -155,6 +212,10 @@ const Contact = () => {
               <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
+                  as="a"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=info@herolearning.co.ke"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-primary bg-transparent border-primary text-md w-[192px] hover:bg-[#D1D9F9] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
 >              info@herolearning.co.ke
                   {loading && (
@@ -193,18 +254,22 @@ const Contact = () => {
               Additional Contacts              </h1>
               <div className="mt-2">
                 <p className="xl:text-lg sm:text-3l text-[#808080]">
-                For media inquiries, please<Link
-  to="/"
-  className="ml-2 font-medium text-primary underline"
+                For media inquiries, please
+                <a
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=info@herolearning.co.ke"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="ml-2 font-medium text-primary underline transition duration-300 ease-in-out hover:text-blue-800"
 >
-email our communications team here.
-</Link>
+  email our communications team here.
+</a>
+
             </p>
               </div>
               
             </div>
             <div className="group relative dark:bg-gray-800 p-2 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 m-0 w-full flex">
-  <form className="validate-form w-full shadow-md p-8 border">
+  <form className="validate-form w-full box p-8 border ">
     <div className="mt-5">
       <div className="input-form p-2">
         <FormInput

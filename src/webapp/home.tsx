@@ -81,16 +81,15 @@ const Home = () => {
             <img alt="ACS" className="xl:w-35 ml-10  xl:w-auto" src={logo} />
           </div>
           <div className="buttons">
-            {/* Hamburger Menu Icon for small screens */}
             <div className="block xl:hidden">
     <button
       onClick={() => setShowMenu(!showMenu)}
       className="text-blue-800 focus:outline-none mt-5"
     >
       {showMenu ? (
-        <Menu className="w-8 h-8" /> // X icon to close menu
+        <Menu className="w-8 h-8" />
       ) : (
-        <Menu className="w-8 h-8" /> // Three-line icon to open menu
+        <Menu className="w-8 h-8" /> 
       )}
     </button>
   </div>
@@ -263,7 +262,7 @@ const Home = () => {
           </h1>
           <div className="grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 xl:p-10 p-5 xl:grid-cols-4">
             <div className="group relative bg-[#5F2FA81A]  rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-            <div className="secondArea bg-primary w-14 h-14 rounded-lg flex items-center justify-center">
+            <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
   <img
     alt="ACS"
     className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
@@ -271,57 +270,57 @@ const Home = () => {
   />
 </div>
 
-              <div className="contents">
-                <h2 className="xl:text-2xl text-xl font-bold mt-2 ">
+              <div className="contents ">
+                <h2 className="xl:text-2xl text-xl font-bold p-2 ">
                   Excellence
                 </h2>
                 <div className="border-b border-primary w-full mt-8"></div>
-                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
                 Providing highest quality and standards in education.
               </p>
               </div>
             </div>
             <div className="group  bg-[#5F2FA81A] relative p-4  rounded-3xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-            <div className="secondArea bg-primary  w-14 h-14 rounded-lg flex items-center justify-center">
+            <div className="secondArea bg-primary  w-14 h-14 m-2 rounded-lg flex items-center justify-center">
   <img
     alt="ACS"
     className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
     src={aboutpic2}
   />
 </div>
-              <h2 className="xl:text-2xl text-xl font-bold mt-2 ">
+              <h2 className="xl:text-2xl text-xl font-bold p-2 ">
                Inclusivity
               </h2>
               <div className="border-b border-primary w-full mt-8"></div>
-              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
               Providing an all inclusive learning environment.
               </p>
             </div>
             <div className="group relative bg-[#5F2FA81A] p-4  rounded-3xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-            <div className="secondArea bg-primary w-14 h-14 rounded-lg flex items-center justify-center">
+            <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
   <img
     alt="ACS"
     className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
     src={aboutpic3}
   />
 </div>
-              <h2 className="xl:text-2xl text-xl font-bold mt-2 ">Community</h2>
+              <h2 className="xl:text-2xl text-xl font-bold mt-2 p-2 ">Community</h2>
               <div className="border-b border-primary w-full mt-8"></div>
-              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg  pl-2 text-primary">
               Strong partnerships with teachers, learners and parents.
               </p>
             </div>
             <div className="group relative p-4 bg-[#5F2FA81A]  rounded-3xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-            <div className="secondArea bg-primary w-14 h-14 rounded-lg flex items-center justify-center">
+            <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
   <img
     alt="ACS"
     className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
     src={aboutpic4}
   />
 </div>
-              <h2 className="xl:text-2xl text-xl mt-2 font-bold ">Innovation</h2>
+              <h2 className="xl:text-2xl text-xl mt-2 font-bold p-2 ">Innovation</h2>
               <div className="border-b border-primary w-full mt-8"></div>
-              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg  pl-2 text-primary">
               Tapping creativity and using technology make learning fun.
               </p>
             </div>

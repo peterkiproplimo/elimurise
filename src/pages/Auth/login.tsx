@@ -124,7 +124,7 @@ const Login = () => {
           <img alt="ACS" className="xl:w-10 p-5  md:w-8 xl:w-auto" src={logo} />
         </div>
         <div className="p-10">
-        <h2 className="xl:text-5xl text-3xl font-bold  mt-5  ml-10 ">Login</h2>
+        <h2 className="xl:text-5xl text-3xl font-bold  xl:mt-5  ml-10 ">Login</h2>
         <div className="mt-2 text-slate-900 ml-10 xl text-xl">
         Login with the data you entered during your registration.
         </div>
