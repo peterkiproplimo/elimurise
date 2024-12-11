@@ -43,14 +43,14 @@ const Contact = () => {
            
            
             <div className="hidden xl:flex gap-10  p-5">
-            <Link to="/contact" className=" mr-5 font-medium text-lg">
+            <Link to="/contact" className=" mr-5 font-medium text-lg hover:text-blue-800 hover:scale-105">
             Support
               </Link>
               <div className="flex">
               <div className="icon ">
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={users} />
           </div>
-              <Link to="/" className=" ml-2 font-medium text-lg ">
+              <Link to="/" className=" ml-2 font-medium text-lg hover:text-blue-800 hover:scale-105 ">
             
               For Teachers & Administrators
               </Link>
@@ -82,12 +82,12 @@ const Contact = () => {
             {showMenu && (
               <div className="absolute z-10  bg-white shadow-lg rounded-md p-3 w-50 -ml-10  ">
                 <div className=" text-center">
-                  <Link to="/register" className="block mb-3 text-blue-800">
+                  <Link to="/register" className="block mb-3 text-blue-800 hover:text-blue-800 hover:scale-105">
                     Register
                   </Link>
                 </div>
                 <div className="text-center">
-                  <Link to="/auth/login" className="block text-blue-800">
+                  <Link to="/auth/login" className="block text-blue-800 hover:text-blue-800 hover:scale-105">
                     Sign in
                   </Link>
                 </div>
@@ -96,13 +96,13 @@ const Contact = () => {
 
             {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5  ">
-            <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+            <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
               Why Us
               </Link>
-              <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+              <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
                Pricing
               </Link>
-              <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+              <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Contact Us
               </Link>
               <Link to="/demo" className="xl:w-32 xl:mr-8">
@@ -155,7 +155,7 @@ const Contact = () => {
               <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
-                  className="text-primary bg-transparent border-primary text-md w-[192px] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
+                  className="text-primary bg-transparent border-primary text-md w-[192px] hover:bg-[#D1D9F9] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
 >              info@herolearning.co.ke
                   {loading && (
                     <LoadingIcon
@@ -178,7 +178,7 @@ const Contact = () => {
               <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
-                  className="text-primary bg-transparent border-primary text-md w-[102px] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
+                  className="text-primary bg-transparent border-primary text-md w-[102px] p-2 h-[40px] hover:bg-[#D1D9F9] mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
 >             Get Support
                   {loading && (
                     <LoadingIcon
@@ -301,13 +301,13 @@ privacy policy
               </h1>
               
               <div className=" text-white flex gap-5  xl:mt-8">
-            <Link to="/policy" className="xl:px-3 xl:py-3  xl:text-lg ">
+            <Link to="/policy" className="xl:px-3 xl:py-3  xl:text-lg hover:text-blue-800 hover:scale-105 ">
               Privacy Policy
               </Link>
-              <Link to="/terms" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/terms" className="xl:px-3 xl:py-3  xl:text-lg hover:text-blue-800 hover:scale-105 ">
                Terms of Use
               </Link>
-              <Link to="/contact" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/contact" className="xl:px-3 xl:py-3  xl:text-lg hover:text-blue-800 hover:scale-105">
                Contact Us
               </Link>
               </div>

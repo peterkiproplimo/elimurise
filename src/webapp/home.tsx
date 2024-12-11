@@ -60,14 +60,14 @@ const Home = () => {
            
            
             <div className="hidden xl:flex gap-10  p-5">
-            <Link to="/contact" className=" mr-5 font-medium text-lg">
+            <Link to="/contact" className=" mr-5 font-medium text-lg hover:text-blue-800 hover:scale-105">
             Support
               </Link>
               <div className="flex">
               <div className="icon ">
             <img alt="ACS" className="xl:w-35  xl:w-auto" src={users} />
           </div>
-              <Link to="/" className=" ml-2 font-medium text-lg ">
+              <Link to="/" className=" ml-2 font-medium text-lg hover:text-blue-800 hover:scale-105 ">
             
               For Teachers & Administrators
               </Link>
@@ -135,7 +135,7 @@ const Home = () => {
           <p className="p-2 text-primary  font-bold text-xl">
           For School & Adminstrators
           </p>
-          <Link  to="/auth/login"  className="block pl-2 text-lg text-primary flex items-center">
+          <Link  to="/auth/login"  className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
   <img 
     src={lock}
     alt="Demo Icon" 
@@ -143,7 +143,7 @@ const Home = () => {
 
   />  Login
           </Link>
-          <Link to="/register"  className="block pl-2 text-lg text-primary flex items-center">
+          <Link to="/register"  className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
   <img 
     src={user}
     alt="Demo Icon" 
@@ -151,7 +151,7 @@ const Home = () => {
 
   /> Create Account
           </Link>
-          <Link to="/contact" className="block pl-2 text-lg text-primary flex items-center">
+          <Link to="/contact" className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
   <img 
     src={contact4}
     alt="Demo Icon" 
@@ -166,13 +166,13 @@ const Home = () => {
 
             {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5  ">
-            <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+            <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
               Why Us
               </a>
-              <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+              <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Pricing
               </a>
-              <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg text-primary">
+              <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Contact Us
               </Link>
               <Link to="/demo" className="xl:w-32 xl:mr-8">
@@ -884,13 +884,13 @@ PREMIUM PLAN
               </h1>
               
               <div className=" text-white flex gap-5  xl:mt-8">
-            <Link to="/policy" className="xl:px-3 xl:py-3  xl:text-lg ">
+            <Link to="/policy" className="xl:px-3 xl:py-3   hover:text-blue-800 hover:scale-105  xl:text-lg ">
               Privacy Policy
               </Link>
-              <Link to="/terms" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/terms" className="xl:px-3 xl:py-3  hover:text-blue-800 hover:scale-105 xl:text-lg ">
                Terms of Use
               </Link>
-              <Link to="/contact" className="xl:px-3 xl:py-3  xl:text-lg ">
+              <Link to="/contact" className="xl:px-3 xl:py-3  hover:text-blue-800 hover:scale-105 xl:text-lg ">
                Contact Us
               </Link>
               </div>

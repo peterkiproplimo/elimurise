@@ -253,7 +253,7 @@ const Login = () => {
           <div className=" text-center ml-5 ">
           <Link to="/register">
               <Button
-                className="w-full px-4 py-3 align-top  bg-[#E8EDFF] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3"
+                className="w-full px-4 py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3"
               >
                Create Account
                 {loading && (
