@@ -12,23 +12,28 @@ const Auth = () => {
   }, []);
   return (
     <>
- <div className=" ">
-          <div className="grid  bg-white overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
-            <div className="group w-500 h-screen dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-            <img 
-    src={image}
-    alt="Demo Icon" 
-    className="w-full h-full mr-2" 
+ 
+<div className="grid bg-white overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-[2fr_3fr] xl:grid-cols-[2fr_3fr]">
+  {/* Slimmer Image Section */}
+  <div className="group w-full dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex items-center justify-center">
+    <div className="relative w-full xl:h-[100vh]">
+      <img 
+        src={image}
+        alt="Demo Icon" 
+        className="w-full h-full object-cover object-top" 
+      />
+    </div>
+  </div>
 
-  />
-            </div>
-            <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 flex justify-center ">
-            <Outlet />
+  {/* Wider Form Section */}
+  <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 ">
+    <Outlet />
+  </div>
 </div>
 
 
-          </div>
-        </div>
+
+        
 
       {/* <div
         className={clsx([

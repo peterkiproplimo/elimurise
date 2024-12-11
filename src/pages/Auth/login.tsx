@@ -119,15 +119,16 @@ const Login = () => {
 
   return (
     <>
-      <div className="form-container">
-        <div className="icon flex justify-center items-center  ">
-          <img alt="ACS" className="xl:w-20 md:w-8 xl:w-auto" src={logo} />
+      <div className="form-container mt-5 ">
+        <div className=" mt-5  ml-5">
+          <img alt="ACS" className="xl:w-10 p-5  md:w-8 xl:w-auto" src={logo} />
         </div>
-        <h2 className="text-3xl font-bold  ">Login</h2>
-        <div className="mt-2 text-center  text-slate-900 xl text-xl">
-          Please log in to continue.
+        <div className="p-10">
+        <h2 className="xl:text-5xl text-3xl font-bold  mt-5  ml-10 ">Login</h2>
+        <div className="mt-2 text-slate-900 ml-10 xl text-xl">
+        Login with the data you entered during your registration.
         </div>
-        <div>
+        <div className="ml-8">
           <FormLabel className="mr-5">
             <input
               type="radio"
@@ -151,10 +152,11 @@ const Login = () => {
         </div>
 
         {selectedForm === "form1" ? (
-          <form className="validate-form" onSubmit={onSubmit}>
-            <div className="mt-5 ">
+          <>
+          <form className="validate-form pl-10 pr-10" onSubmit={onSubmit}>
+            <div className=" ">
               <div className="input-form">
-                <label>Email</label>
+                <label className="" >Email</label>
                 <FormInput
                   {...register("email")}
                   id="validation-form-2"
@@ -163,7 +165,7 @@ const Login = () => {
                   className={
                     errors.email
                       ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
-                      : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                      : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-500 rounded-none"
                   }
                   placeholder="Email"
                 />
@@ -174,8 +176,8 @@ const Login = () => {
                   </div>
                 )}
               </div>
-              <div className="input-form">
-                <label>Password</label>
+              <div className="input-form pt-2">
+                <label className=" ">Password</label>
                 <div className="flex items-center">
                   <FormInput
                     {...register("password")}
@@ -185,19 +187,19 @@ const Login = () => {
                     className={
                       errors.password
                         ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
-                        : "block px-4 py-3 mt-4  min-w-[250px] xl:min-w-[350px] border pr-10 bg-blue-100 border-blue-300"
+                        : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-500 rounded-none"
                     }
                     placeholder="Enter Password"
                   />
-                  <div
-                    className="flex items-center cursor-pointer eye-icon"
+                  {/* <div
+                    className="flex items-center cursor-pointer eye-icon mt-5"
                     onClick={togglePasswordVisibility}
                   >
                     <FontAwesomeIcon
                       icon={showPassword ? faEyeSlash : faEye}
                       className="text-grey-800"
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 {errors.password && (
@@ -210,26 +212,11 @@ const Login = () => {
                 {/* Eye Icon */}
               </div>
             </div>
-            <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
-              <div className="flex items-center mr-auto">
-                <FormCheck.Input
-                  id="remember-me"
-                  type="checkbox"
-                  className="mr-2 border-blue-300"
-                />
-                <label
-                  className="cursor-pointer select-none"
-                  htmlFor="remember-me"
-                >
-                  Remember me
-                </label>
-              </div>
-              <Link to="/auth/forgot-password">Forgot Password?</Link>
-            </div>
-            <div className="mt-5 text-center  xl:mt-8 xl:text-left">
+          
+            <div className="mt-5 text-center  xl:mt-8 ">
               <Button
                 variant="primary"
-                className="w-full px-4 py-3 align-top xl:w-22 xl:mr-3"
+                className="w-full px-4 py-3 align-top  text-lg xl:text-lg xl:w-22 xl:mr-3"
               >
                 Login
                 {loading && (
@@ -241,10 +228,46 @@ const Login = () => {
                 )}
               </Button>
             </div>
-            <p className="mt-2">
-              Dont have an account? <Link to="/register">Sign Up</Link>
-            </p>
+            <div className="flex mt-4 text-md xl:text-md justify-end  text-slate-600 dark:text-slate-500 ">
+              {/* <div className="flex items-center mr-auto">
+                <FormCheck.Input
+                  id="remember-me"
+                  type="checkbox"
+                  className="mr-2 border-blue-300"
+                />
+                <label
+                  className="cursor-pointer select-none"
+                  htmlFor="remember-me"
+                >
+                  Remember me
+                </label>
+              </div> */}
+              <Link to="/auth/forgot-password"> Did You Forget Password?</Link>
+            </div>
+          
           </form>
+          <div className="border m-10 p-5 border-gray-300">
+            <p className="mt-2 pb-2 ml-5 text-xl xl:text-2xl font-bold" >
+            Dont have an account?
+          </p>
+          <div className=" text-center ml-5 ">
+          <Link to="/register">
+              <Button
+                className="w-full px-4 py-3 align-top  bg-[#E8EDFF] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3"
+              >
+               Create Account
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-2 h-4 ml-2"
+                  />
+                )}
+              </Button>
+              </Link>
+            </div>
+          </div>
+          </>
         ) : (
           <form className="validate-form" onSubmit={onSubmit}>
             <div className="mt-5 ">
@@ -359,6 +382,7 @@ const Login = () => {
             </div>
           </form>
         )}
+        </div>
       </div>
       <Notification
         getRef={(el) => {
