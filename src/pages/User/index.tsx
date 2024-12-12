@@ -436,6 +436,30 @@ function Users() {
                 )}
               </div>
               <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">User Type</FormLabel>
+
+                {/* <FormLabel htmlFor="modal-form-1">User Type</FormLabel> */}
+                <FormSelect
+                // className="w-30 mt-3 !box sm:mt-0"
+                // onChange={(e) => setLimit(parseInt(e.target.value))}
+                >
+                  <option value={10}>Select Type</option>
+
+                  <option value={10}>Class Manager</option>
+                  <option value={25}>H/Teacher</option>
+                  <option value={50}>Subject Lead</option>
+                  <option value={100}>C Coodinator</option>
+                  <option value={100}>D/H Teacher</option>
+                  <option value={100}>D/Head Teacher</option>
+                </FormSelect>
+                {errors.firstname && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.firstname.message === "string" &&
+                      errors.firstname.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
                 <FormInput
                   {...register("lastname")}
