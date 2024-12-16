@@ -92,7 +92,7 @@ const Register = () => {
 
   return (
     <>
-      <div className="homeContainer sm:p-5 xl:p-0">
+      <div className="homeContainer">
       <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           
           <div className="buttons">
@@ -116,9 +116,9 @@ const Register = () => {
       
           </div>
         </div>
-        <div className="flex justify-between items-center w-full px-4 lg:px-10 shadow-lg p-2">
+        <div className="flex justify-between items-center w-full px-4 lg:px-10 box p-2">
           <div className="icon ">
-            <img alt="ACS" className="xl:w-35 ml-10  xl:w-auto" src={logo} />
+            <img alt="ACS" className="xl:w-35 xl:ml-10  xl:w-auto" src={logo} />
           </div>
           <div className="buttons">
             <div className="block xl:hidden">
@@ -145,7 +145,7 @@ const Register = () => {
             <X className="w-8 h-8" />
           </button>
         </div>
-        <div className="border-b border-primary/50 w-full mt-8"></div>
+        <div className="border-b border-primary/50 w-full mt-2"></div>
         <div className=" ">
           <p className="p-2 text-primary font-bold text-xl">
             For Business
@@ -245,32 +245,32 @@ const Register = () => {
           </div>
         </div>
 
-        <div className="xl:p-10  p-5">
+        <div className="xl:p-10  p-2">
         <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
        Account Creation
               </h1>
-              <p className="text-primary text-center xl:text-2xl  p-4">
+              <p className="text-primary text-center text-md xl:text-2xl  p-4">
               Subscription types grant access to all of Hero Learning's platform features, including:</p> 
               <div className="grid xl:mt-10 xl:ml-10 xl:mr-10 overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
   {/* First List Item */}
-  <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white rounded-lg shadow-md">
+  <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
     <FontAwesomeIcon
       icon={faCircleCheck}
-      className="text-primary xl:w-10 xl:h-10 mr-2"
+      className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
     />
  <div>
-    <h1 className="text-primary">Analytics & Data</h1>
+    <h1 className="text-primary font-bold ">Analytics & Data</h1>
     <p>To monitor student progress in assignments and reading.</p>
     </div> </div>
 
   {/* Second List Item */}
-  <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white rounded-lg shadow-md">
+  <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
     <FontAwesomeIcon
       icon={faCircleCheck}
-      className="text-primary xl:w-10 xl:h-10 mr-2"
+      className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
     />
     <div>
-    <h1 className="text-primary">Unlimited Teacher Accounts </h1>
+    <h1 className="text-primary font-bold">Unlimited Teacher Accounts </h1>
     <p>For seamless collaboration and resource sharing.</p>
     </div>
   </div>
@@ -279,10 +279,10 @@ const Register = () => {
   <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white rounded-lg shadow-md">
     <FontAwesomeIcon
       icon={faCircleCheck}
-      className="text-primary xl:w-10 xl:h-10 mr-2"
+      className="text-primary w-8 h-8  xl:w-10 xl:h-10 mr-2"
     />
      <div>
-    <h1 className="text-primary"> Dedicated Account Manager  </h1>
+    <h1 className="text-primary font-bold"> Dedicated Account Manager  </h1>
     <p> For consistent support and guidance.</p>
     </div>
   
@@ -290,7 +290,7 @@ const Register = () => {
 </div>
 <div>
 <form
-          className="validate-form bg-white p-10 m-5 box border border-gray-300"
+          className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
           onSubmit={onSubmit}
         >
           <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">Personal Information:</p>
@@ -304,7 +304,7 @@ const Register = () => {
                 className={
                   errors.firstname
                     ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
+                    : "block px-4 py-3 mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
                 }
                 placeholder="First Name*"
               />
@@ -323,8 +323,8 @@ const Register = () => {
                 name="lastname"
                 className={
                   errors.lastname
-                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
+                    ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger"
+                    : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Last Name*"
               />
@@ -343,8 +343,8 @@ const Register = () => {
                 name="email"
                 className={
                   errors.email
-                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
+                    ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger"
+                    : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Email Address *"
               />
@@ -363,8 +363,8 @@ const Register = () => {
                 name="phone"
                 className={
                   errors.phone
-                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-300 rounded-none"
+                    ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger"
+                    : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Phone Number *"
               />
@@ -384,8 +384,8 @@ const Register = () => {
                   name="password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
+                      ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger pr-10"
+                      : "block px-4 py-3 xl:mt-4  min-w-full xl:p-4 border-gray-300 rounded-none"
                   }
                   placeholder="Password*"
                 />
@@ -413,8 +413,8 @@ const Register = () => {
                   name="confirm_password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
+                      ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger xl:pr-10"
+                      : "block px-4 py-3 xl:mt-4  min-w-full xl:p-4 border-gray-300 rounded-none"
                   }
                  
                   placeholder="Confirm Password*"
@@ -431,7 +431,7 @@ const Register = () => {
    
               <Button
                 variant="primary"
-                className="text-lg xl:text-lg w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                className="text-md w-[92px] xl:text-lg xl:w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
                 >
                 Save
                 {loading && (
@@ -448,8 +448,8 @@ const Register = () => {
         </div>
 
 
-       <div className="xl:p-10 xl:m-5  p-5 box border border-gray-300">
-        <h1 className="mt-5 xl:text-2xl text-xl text-primary font-bold"> Choose Plan:</h1>
+       <div className="xl:p-10 xl:m-5  p-5 xl:box xl:border xl:border-gray-300">
+        <h1 className="mt-5 xl:text-2xl text-xl text-primary p-2 font-bold"> Choose a Plan:</h1>
         <form className="  grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3">
             
             <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
@@ -473,7 +473,7 @@ const Register = () => {
   You get access to hard copy assessment tool books for all grades. Charges per book:</p>
   <Button
                   variant="primary"
-                  className="text-lg xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+                  className="text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
 
                 >
             Add to Cart
@@ -531,10 +531,10 @@ const Register = () => {
 
               </div>  <Button
                   variant="primary"
-                  className="text-lg xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+                  className="text-md xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
 
                 >
-             Add To Cart
+             Add to Cart
                   {loading && (
                     <LoadingIcon
                       icon="spinning-circles"
@@ -579,10 +579,10 @@ PREMIUM PLAN
 
           </div>  <Button
               variant="primary"
-              className="text-lg xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+              className="text-md xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
 
             >
-         Add To Cart
+         Add to Cart
               {loading && (
                 <LoadingIcon
                   icon="spinning-circles"
@@ -602,12 +602,12 @@ PREMIUM PLAN
 
           <div>
 <form
-          className="validate-form bg-white p-10 m-5 box border border-gray-300"
+          className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
           onSubmit={onSubmit}
         >
-          <p className="mt-5 xl:text-2xl text-primary font-bold">Subscribe :</p>
-          <p className="mt-2 xl:text-2xl text-primary font-bold">You have Chosen Hero System.</p>
-          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2 mt-8 ">
+          <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">Subscribe :</p>
+          <p className="mt-2 xl:text-2xl text-lg text-primary font-bold">You have Chosen Hero System.</p>
+          <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2  xl:mt-8 ">
             <div className="input-form">
               <FormInput
                 {...register("firstname")}
@@ -616,8 +616,8 @@ PREMIUM PLAN
                 name="firstname"
                 className={
                   errors.firstname
-                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 min-w-full p-4 border-gray-300 rounded-none"
+                    ? "block px-4 xl:py-3 py-2 xl:mt-4  min-w-full  border-danger"
+                    : "block px-4 xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
                 }
                 placeholder=" School Name"
               />
@@ -633,7 +633,7 @@ PREMIUM PLAN
               <FormSelect
   id="validation-form-2"
   name="county"
-  className="block px-4 py-4  mt-4 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+  className="block px-4 xl:py-4 py-2 xl:mt-4 mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
   defaultValue=""
 >
   <option value="" className="text-primary" disabled>
@@ -654,7 +654,7 @@ PREMIUM PLAN
             <FormSelect
   id="validation-form-2"
   name="county"
-  className="block px-4 py-4  mt-4 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+  className="block px-4  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
   defaultValue=""
 >
   <option value="" className="text-primary" disabled>
@@ -679,8 +679,8 @@ PREMIUM PLAN
                 name="Contact"
                 className={
                   errors.phone
-                    ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                    : "block px-4 py-3 mt-4 min-w-full p-4 border-gray-300 rounded-none"
+                    ? "block px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
+                    : "block  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
                 }
                 placeholder="Phone number"
               />
@@ -700,9 +700,9 @@ PREMIUM PLAN
                   name="password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
-                  }
+                    ? "block px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
+                    : "block  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
+                }
                   placeholder="Current Academic Year*"
                 />
               </div>
@@ -726,8 +726,8 @@ PREMIUM PLAN
                   name="confirm_password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
+                      ? "block px-4 xl:py-3 py-2 xl:mt-4   min-w-full  border-danger pr-10"
+                      : "block px-4  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
                   }
                  
                   placeholder="Number Of Learners*"
@@ -739,7 +739,7 @@ PREMIUM PLAN
               <FormSelect
   id="validation-form-2"
   name="county"
-  className="block px-4 py-4  mt-4 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+  className="block px-4 xl:py-4 py-2 xl:mt-4  mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
   defaultValue=""
 >
   <option value="" className="text-primary" disabled>
@@ -763,9 +763,9 @@ PREMIUM PLAN
                   name="confirm_password"
                   className={
                     errors.password
-                      ? "block px-4 py-3 mt-4  min-w-full  border-danger pr-10"
-                      : "block px-4 py-3 mt-4  min-w-full p-4 border-gray-300 rounded-none"
-                  }
+                    ? "block px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
+                    : "block  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
+                 }
                  
                   placeholder="Total Bill.VAT Inclusive"
                 />
@@ -777,7 +777,7 @@ PREMIUM PLAN
           <Link to="/payment" className="xl:w-32 xl:mr-8">
               <Button
                 variant="primary"
-                className="text-lg xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                className="text-md xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
                 >
                Proceed to Make Payment
                 {loading && (
@@ -799,12 +799,12 @@ PREMIUM PLAN
 
         <div className=" bg-primary ">
           <div className="grid  overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
-            <div className="group p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <div className="group xl:p-10  p-5 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <h1 className="xl:text-3xl text-2xl font-semibold mt-5 text-white w-full">
                 Hero Learning
               </h1>
               
-              <div className=" text-white flex gap-5  xl:mt-8">
+              <div className=" text-white flex gap-5 mt-10 xl:mt-8">
             <Link to="/policy" className="xl:px-3 xl:py-3  xl:text-lg ">
               Privacy Policy
               </Link>
@@ -818,24 +818,24 @@ PREMIUM PLAN
             
             </div>
             <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 justify-center align-center ">
-            <h1 className="xl:text-2xl font-medium  xl:p-10 text-white w-full">
+            <h1 className="xl:text-2xl xl:font-medium  xl:p-10 text-white w-full">
             Subscribe to stay tuned for new web design and  latest updates. Let's do it!
               </h1>
            
               <form className="validate-form mt-5">
-              <div className="flex gap-5 xl:pl-10">
+              <div className="flex xl:gap-5 gap-2 xl:pl-10">
                 <div className="input-form">
                   <FormInput
                     id="validation-form-2"
                     type="text"
                     name="email"
                     placeholder="Enter Your Email Address"
-                    className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none"
+                    className="block px-4 xl:py-3 py-2 min-w-full xl:min-w-[350px] w-full xl:rounded-none"
                   />
                 </div>
                 <div className="text-center ">
                 <Button
-                  className="w-full bg-white  h-[45px] xl:min-w-[150px] rounded-none text-lg"
+                  className="w-full bg-white h-[38px] xl:h-[45px] xl:min-w-[150px] xl:rounded-none xl:text-lg text-md"
                 >
                   Subscribe
                   {loading && (
@@ -856,9 +856,9 @@ PREMIUM PLAN
 
             </div>
                 
-            <div className="border-b border-white w-full mt-8" ></div>
+            <div className="border-b border-white w-full xl:mt-8 mt-5" ></div>
             <div className="flex justify-between">
-            <div className="m-5 text-white">
+            <div className="m-5 text-white text-xs xl:text-md">
               <p>© 2024 All Rights Reserved </p></div>
             <div className=" text-white flex p-2  ">
             <Link to="/register" className="xl:px-3 xl:py-3 px-2 py-2 font-medium text-lg ">

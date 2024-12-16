@@ -318,7 +318,7 @@ const Contact = () => {
         <FormCheck.Input
           id="remember-me"
           type="checkbox"
-          className="mr-2 border-blue-300"
+          className="mr-2 border-gray-300"
         />
         <label className="cursor-pointer select-none text-[#808080]" htmlFor="remember-me">
         You agree to our friendly<Link

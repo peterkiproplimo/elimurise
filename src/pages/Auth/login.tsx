@@ -119,20 +119,25 @@ const Login = () => {
 
   return (
     <>
-      <div className="form-container mt-5 ">
-        <div className=" mt-5  ml-5">
-          <img alt="ACS" className="xl:w-10 p-5  md:w-8 xl:w-auto" src={logo} />
-        </div>
-        <div className="p-10">
-        <h2 className="xl:text-5xl text-3xl font-bold  xl:mt-5  ml-10 ">Login</h2>
-        <div className="mt-2 text-slate-900 ml-10 xl text-xl">
+      <div className="form-container mt-5 p-5 ">
+      <div className=" xl:ml-5">
+  <img
+    alt="ACS"
+    className="w-20 sm:w-16 md:w-12 xl:w-10 xl:p-5"
+    src={logo}
+  />
+</div>
+
+        <div className="xl:p-10 p-2">
+        <h2 className="xl:text-5xl text-3xl font-bold  xl:mt-5  xl:ml-10 ">Login</h2>
+        <div className="mt-2 text-slate-900 xl:ml-10 xl:text-xl text-md">
         Login with the data you entered during your registration.
         </div>
-        <div className="ml-8">
+        <div className="xl:ml-8">
           <FormLabel className="mr-5">
             <input
               type="radio"
-              className="p-3 m-3"
+              className="xl:p-3 m-3"
               value="form1"
               checked={selectedForm === "form1"}
               onChange={handleFormChange}
@@ -143,7 +148,7 @@ const Login = () => {
             <input
               type="radio"
               value="form2" 
-              className="p-3 m-3"
+              className="xl:p-3 m-3"
               checked={selectedForm === "form2"}
               onChange={handleFormChange}
             />
@@ -153,7 +158,7 @@ const Login = () => {
 
         {selectedForm === "form1" ? (
           <>
-          <form className="validate-form pl-10 pr-10" onSubmit={onSubmit}>
+          <form className="validate-form xl:pl-10 xl:pr-10" onSubmit={onSubmit}>
             <div className=" ">
               <div className="input-form">
                 <label className="" >Email</label>
@@ -164,8 +169,8 @@ const Login = () => {
                   name="email"
                   className={
                     errors.email
-                      ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
-                      : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-500 rounded-none"
+                      ? "block px-4 py-3 xl:mt-4  min-w-full xl:min-w-[350px] border-danger"
+                      : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-500 "
                   }
                   placeholder="Email"
                 />
@@ -186,8 +191,8 @@ const Login = () => {
                     name="password"
                     className={
                       errors.password
-                        ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
-                        : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-500 rounded-none"
+                        ? "block px-4 py-3 xl:mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
+                        : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-500 "
                     }
                     placeholder="Enter Password"
                   />
@@ -208,15 +213,13 @@ const Login = () => {
                       errors.password.message}
                   </div>
                 )}
-
-                {/* Eye Icon */}
               </div>
             </div>
           
             <div className="mt-5 text-center  xl:mt-8 ">
               <Button
                 variant="primary"
-                className="w-full px-4 py-3 align-top  text-lg xl:text-lg xl:w-22 xl:mr-3"
+                className="w-full px-4 py-3 align-top  text-md xl:text-lg xl:w-22 xl:mr-3"
               >
                 Login
                 {loading && (
@@ -242,18 +245,18 @@ const Login = () => {
                   Remember me
                 </label>
               </div> */}
-              <Link to="/auth/forgot-password"> Did You Forget Password?</Link>
+              <Link to="/auth/forgot-password"> Did you forget your password?</Link>
             </div>
           
           </form>
-          <div className="border m-10 p-5 border-gray-300">
-            <p className="mt-2 pb-2 ml-5 text-xl xl:text-2xl font-bold" >
+          <div className="border xl:m-10 mt-5 p-5 border-gray-300 rounded-md">
+            <p className="xl:mt-2 pb-2 xl:ml-5 text-lg xl:text-2xl font-bold" >
             Dont have an account?
           </p>
-          <div className=" text-center ml-5 ">
+          <div className=" text-center xl:ml-5 ">
           <Link to="/register">
               <Button
-                className="w-full px-4 py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3"
+                className="w-full px-4 py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] border-gray-500 border-none text-md xl:text-lg xl:w-22 xl:mr-3"
               >
                Create Account
                 {loading && (
@@ -345,8 +348,6 @@ const Login = () => {
                       errors.password.message}
                   </div>
                 )}
-
-                {/* Eye Icon */}
               </div>
             </div>
             <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">

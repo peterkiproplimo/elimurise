@@ -76,7 +76,7 @@ const Home = () => {
       
           </div>
         </div>
-        <div className="flex justify-between items-center w-full px-4 lg:px-10 shadow-lg p-2">
+        <div className="flex justify-between items-center w-full px-4 lg:px-10 box p-2">
           <div className="icon ">
             <img alt="ACS" className="xl:w-35 ml-10  xl:w-auto" src={logo} />
           </div>
