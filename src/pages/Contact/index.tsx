@@ -199,7 +199,7 @@ const Contact = () => {
               </h1>
           <div className="grid xl:mt-10 xl:ml-10 xl:mr-10 overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <h1 className="xl:text-3xl text-xl font-semibold mt-5 text-primary w-full">
+              <h1 className="xl:text-3xl text-xl font-semibold xl:mt-5 text-primary w-full">
               Are you a School Administrator? 
               </h1>
               <div className="mt-2">
@@ -209,7 +209,7 @@ const Contact = () => {
                   (CBC) approach. Join us in shaping the future of learning.
                 </p>
               </div>
-              <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
+              <div className=" mt-3 xl:mt-8  xl:text-left">
                 <Button
                   variant="primary"
                   as="a"
@@ -236,7 +236,7 @@ const Contact = () => {
                 </p>
               </div>
 
-              <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
+              <div className=" mt-3 xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
                   className="text-primary bg-transparent border-primary text-md w-[102px] p-2 h-[40px] hover:bg-[#D1D9F9] mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
@@ -268,7 +268,7 @@ const Contact = () => {
               </div>
               
             </div>
-            <div className="group relative dark:bg-gray-800 p-2 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 m-0 w-full flex">
+            <div className="group relative dark:bg-gray-800 p-2  m-0 w-full flex">
   <form className="validate-form w-full box p-8 border ">
     <div className="mt-5">
       <div className="input-form p-2">
@@ -330,10 +330,10 @@ privacy policy
         </label>
       </div>
     </div>
-    <div className="  mt-8 text-center  xl:mt-8 xl:text-left">
+    <div className=" mt-5   xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
-                  className="text-md w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                  className="text-md w-[182px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
 
                 >
            Send Message       <div className="icon mr-2">
