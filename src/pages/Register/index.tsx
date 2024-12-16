@@ -203,12 +203,11 @@ const Register = () => {
     </div>
   )}
 
-            {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5  ">
-            <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
+            <a href="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
               Why Us
               </a>
-              <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
+              <a href="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Pricing
               </a>
               <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
@@ -279,7 +278,7 @@ const Register = () => {
   <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white rounded-lg shadow-md">
     <FontAwesomeIcon
       icon={faCircleCheck}
-      className="text-primary w-8 h-8  xl:w-10 xl:h-10 mr-2"
+      className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
     />
      <div>
     <h1 className="text-primary font-bold"> Dedicated Account Manager  </h1>
@@ -819,7 +818,10 @@ PREMIUM PLAN
             </div>
             <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 justify-center align-center ">
             <h1 className="xl:text-2xl xl:font-medium  xl:p-10 text-white w-full">
-            Subscribe to stay tuned for new web design and  latest updates. Let's do it!
+            Subscribe to stay tuned for new web design and  latest updates. 
+            <span className="hidden xl:inline">
+    <br />
+  </span> Let's do it!
               </h1>
            
               <form className="validate-form mt-5">

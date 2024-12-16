@@ -897,7 +897,10 @@ PREMIUM PLAN
             </div>
             <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 justify-center align-center ">
             <h1 className="xl:text-2xl font-medium  xl:p-10 text-white w-full">
-            Subscribe to stay tuned for new web design and  latest updates. Let's do it!
+            Subscribe to stay tuned for new web design and latest updates. 
+            <span className="hidden xl:inline">
+    <br />
+  </span> Let's do it!
               </h1>
            
               <form className="validate-form mt-5">
