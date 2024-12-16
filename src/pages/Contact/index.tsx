@@ -198,7 +198,7 @@ const Contact = () => {
         Get in touch with Hero Learning
               </h1>
           <div className="grid xl:mt-10 xl:ml-10 xl:mr-10 overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
-            <div className="group p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <div className="group p-5 xl:p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <h1 className="xl:text-3xl text-xl font-semibold xl:mt-5 text-primary w-full">
               Are you a School Administrator? 
               </h1>
@@ -259,7 +259,7 @@ const Contact = () => {
   href="https://mail.google.com/mail/?view=cm&fs=1&to=info@herolearning.co.ke"
   target="_blank"
   rel="noopener noreferrer"
-  className="ml-2 font-medium text-primary underline transition duration-300 ease-in-out hover:text-blue-800"
+  className="ml-1.5 font-medium text-primary transition duration-300 ease-in-out hover:text-blue-800"
 >
   email our communications team here.
 </a>
@@ -308,7 +308,7 @@ const Contact = () => {
           name="message"
         
           placeholder="Comment: Let us know how we can help you"
-          className="mt-1 block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+          className="mt-1 block px-4 py-3  min-w-full xl:min-w-[350px] h-[150px] w-full rounded-none  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
         ></textarea>
   
 </div>
@@ -323,7 +323,7 @@ const Contact = () => {
         <label className="cursor-pointer select-none text-[#808080]" htmlFor="remember-me">
         You agree to our friendly<Link
   to="/policy"
-  className="font-medium ml-2 text-primary underline"
+  className="font-medium ml-1.5 text-primary "
 >
 privacy policy
 </Link>
@@ -333,7 +333,7 @@ privacy policy
     <div className=" mt-5   xl:mt-8 xl:text-left">
                 <Button
                   variant="primary"
-                  className="text-md w-[182px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                  className="text-md w-[162px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
 
                 >
            Send Message       <div className="icon mr-2">
@@ -360,7 +360,7 @@ privacy policy
 
         <div className=" bg-primary ">
           <div className="grid mt-10  overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
-            <div className="group p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <div className="group p-5 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <h1 className="xl:text-3xl text-2xl font-semibold mt-5 text-white w-full">
                 Hero Learning
               </h1>
@@ -379,25 +379,25 @@ privacy policy
             
             </div>
             <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 justify-center align-center ">
-            <h1 className="xl:text-2xl font-medium  xl:p-10 text-white w-full">
+            <h1 className="xl:text-2xl xl:font-medium  xl:p-10 text-white w-full">
             Subscribe to stay tuned for new web design and  latest updates. Let's do it!
               </h1>
            
               <form className="validate-form mt-5">
-              <div className="flex gap-5 xl:pl-10">
+              <div className="flex xl:gap-5 gap-2 xl:pl-10">
                 <div className="input-form">
                   <FormInput
                     id="validation-form-2"
                     type="text"
                     name="email"
                     placeholder="Enter Your Email Address"
-                    className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none"
+                    className="block px-4 xl:py-3 py-2 min-w-full xl:min-w-[350px] w-full xl:rounded-none"
                   />
                 </div>
                 <div className="text-center ">
                 <Button
-                 className="w-full bg-white  h-[45px] xl:min-w-[150px] rounded-none text-lg"
-                 >
+                  className="w-full bg-white h-[38px] xl:h-[45px] xl:min-w-[150px] xl:rounded-none xl:text-lg text-md"
+                >
                   Subscribe
                   {loading && (
                     <LoadingIcon
