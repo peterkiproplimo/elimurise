@@ -19,6 +19,7 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+   
     /* padding-left: theme("spacing.3");
     padding-right: theme("spacing.3"); */
     font-family: theme("fontFamily.roboto");

@@ -32,9 +32,7 @@ import { Menu, X } from "lucide-react";
 
 
 
-const Payment: React.FC<{ setCurrentStep: (step: number) => void }> = ({
-    setCurrentStep,
-  }) => {
+const Payment = () => {
     const auth = useAuth();
     const [loading, isLoading] = useState(false);
     const [success, setSuccess] = useState(true);
