@@ -19,13 +19,13 @@ const FooterComponent = () => {
   return (
     <div className="bg-primary">
       <div className="grid mt-10 xl:mx-auto xl:w-[80%] overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
-        <div className="group p-10 xl:ml-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+        <div className="group p-10  pl-0 xl:ml-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
           <h1 className="xl:text-3xl text-2xl font-semibold mt-5 text-white w-full">
             Hero Learning
           </h1>
 
           <div className="text-white flex gap-5 xl:mt-8">
-            <Link to="/policy" className="xl:px-3 xl:py-3 hover:text-blue-800 hover:scale-105 xl:text-lg">
+            <Link to="/policy" className=" xl:py-3 hover:text-blue-800 hover:scale-105 xl:text-lg">
               Privacy Policy
             </Link>
             <Link to="/terms" className="xl:px-3 xl:py-3 hover:text-blue-800 hover:scale-105 xl:text-lg">
