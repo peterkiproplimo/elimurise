@@ -1,27 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import Button from "../../base-components/Button";
-import LoadingIcon from "../../base-components/LoadingIcon";
-import { FormInput, FormCheck , FormSelect} from "../../base-components/Form";
 import * as yup from "yup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-
-import { Link } from "react-router-dom";
-
-import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/heros.png";
-import icon from "../../assets/images/Arrow_Right_MD.png"
-
-import users from "../../assets/images/Users_Group.png";
-
-import email from "../../assets/images/social.png";
-import phone from "../../assets/images/social (1).png";
-
-import youtube from "../../assets/images/instagram.png";
-import linked from "../../assets/images/linkedin.png";
-import facebook from "../../assets/images/Vector (1).png";
-import { Menu, X } from "lucide-react";
 import FooterComponent from "../../webapp/footer";
 import NavbarMenu from "../../webapp/NavBarMenu";
 

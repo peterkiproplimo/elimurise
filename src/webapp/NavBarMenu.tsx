@@ -130,12 +130,17 @@ const NavbarMenu = () => {
 
             {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5 mr-10 ">
-            <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
+            <a href="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
               Why Us
               </a>
-              <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
-               Pricing
-              </a>
+              <Link
+        to="/"
+       
+        
+        className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg hover:text-blue-800 hover:scale-105 text-primary cursor-pointer"
+      >
+        Pricing
+      </Link>
               <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Contact Us
               </Link>
