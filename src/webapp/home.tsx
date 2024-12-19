@@ -398,9 +398,9 @@ const Home = () => {
         <div className=" xl:flex gap-10 space-x-8 xl:mx-auto  max-w-[1500px] items-center justify-center">
           <div
             id="about"
-            className="flex flex-col items-center text-center xl:p-4 p-2"
+            className="flex flex-col items-center  xl:p-4 p-2"
           >
-            <h1 className="text-3xl md:text-3xl xl:text-5xl font-bold text-primary xl:mb-2">
+            <h1 className="text-3xl md:text-3xl  xl:text-5xl font-bold text-primary xl:mb-2">
               Why Choose Hero Learning?
             </h1>
           </div>
@@ -411,12 +411,12 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="grid overflow-hidden xl:mx-auto  max-w-[1500px] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 m-5  xl:grid-cols-3 gap-5">
+        <div className="grid overflow-hidden xl:mx-auto  max-w-[1500px] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 m-5  xl:grid-cols-3 gap-10">
           <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between h-full">
             <div className="secondArea">
               <img
                 alt="ACS"
-                className="xl:w-[400px] md:w-[300px] w-full max-w-[100%]"
+                className="xl:w-full md:w-[300px] w-full max-w-[100%]"
                 src={pic}
               />
             </div>
@@ -434,7 +434,7 @@ const Home = () => {
             <div className="secondArea">
               <img
                 alt="ACS"
-                className="xl:w-[400px] md:w-[300px] w-full max-w-[100%]"
+                className="xl:w-full md:w-[300px] w-full max-w-[100%]"
                 src={pic2}
               />
             </div>
@@ -452,7 +452,7 @@ const Home = () => {
             <div className="secondArea">
               <img
                 alt="ACS"
-                className="xl:w-[400px] md:w-[300px] w-full max-w-[100%]"
+                className="xl:w-full md:w-[300px] w-full max-w-[100%]"
                 src={pic3}
               />
             </div>
@@ -468,7 +468,7 @@ const Home = () => {
         </div>
 
         <div className="service  mt-10 bg-primary ">
-          <h1 className="xl:text-5xl text-2xl p-4 text-center text-white font-medium">
+          <h1 className=" text-center xl:text-5xl text-2xl p-4  text-white font-medium">
             CBC Made Easy
           </h1>
 
