@@ -24,16 +24,16 @@ const NavbarMenu = () => {
      
      
       <div className="hidden xl:flex gap-10  p-5">
-      <Link to="/contact" className=" mr-5 font-medium text-lg hover:text-blue-800 hover:scale-105">
-      Support
+      <Link to="/auth/login" className=" mr-5 font-medium text-lg hover:text-blue-800 hover:scale-105">
+    Sign in
         </Link>
         <div className="flex">
         <div className="icon ">
       <img alt="ACS" className="xl:w-35  xl:w-auto" src={users} />
     </div>
-        <Link to="/" className=" ml-2 font-medium text-lg hover:text-blue-800 hover:scale-105 ">
+        <Link to="/register" className=" ml-2 font-medium text-lg hover:text-blue-800 hover:scale-105 ">
       
-        For Teachers & Administrators
+      Register
         </Link>
         </div>
       </div>
