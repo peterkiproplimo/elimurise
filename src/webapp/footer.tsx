@@ -18,7 +18,7 @@ const FooterComponent = () => {
 
   return (
     <div className="bg-primary">
-      <div className="grid mt-10 xl:mx-auto xl:w-[80%] overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
+      <div className="grid mt-10 xl:mx-auto  max-w-[1500px] overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
         <div className="group p-10  pl-0 xl:ml-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
           <h1 className="xl:text-3xl text-2xl font-semibold mt-5 text-white w-full">
             Hero Learning
@@ -70,9 +70,9 @@ const FooterComponent = () => {
         </div>
       </div>
 
-      <div className="border-b border-white xl:mx-auto xl:w-[80%] w-full mt-8"></div>
+      <div className="border-b border-white xl:mx-auto max-w-[1500px] w-full mt-8"></div>
       
-      <div className="xl:mx-auto xl:w-[80%] flex justify-between">
+      <div className="xl:mx-auto  max-w-[1500px] flex justify-between">
         <div className="m-5 text-white">
           <p>© 2024 All Rights Reserved</p>
         </div>
