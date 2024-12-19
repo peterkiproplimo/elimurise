@@ -74,7 +74,7 @@ const Home = () => {
           </div>
         </div>
         <div className='box'>
-        <div className="flex xl:mx-auto xl:w-[80%] justify-between items-center w-full px-4 lg:px-10  p-2">
+        <div className="flex xl:mx-auto  max-w-[1500px] justify-between items-center w-full px-4 lg:px-10  p-2">
                 <div className="icon ">
                   <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
                 </div>
@@ -204,8 +204,8 @@ const Home = () => {
               </div>
               </div>
 
-        <div className="hidden lg:flex justify-center items-center">
-          <div className="xl:p-10 mt-5 p-5 lg:w-[80%]">
+        <div className="lg:flex justify-center items-center">
+          <div className="xl:p-10 mt-5 p-5 max-w-[1500px] ">
             <div className="grid bg-[#BAB4D7] overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
               {/* Left Side Content */}
               <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
@@ -244,7 +244,7 @@ const Home = () => {
               <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 flex justify-center">
                 <img
                   alt="ACS"
-                  className="xl:w-30 md:w-full xl:w-auto w-full"
+                  className="xl:w-30 md:w-full xl:w-auto max-h-[400px] w-full"
                   src={homepic}
                 />
                 <img
@@ -257,7 +257,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="aboutContainer mt-10 xl:mx-auto xl:w-[80%]">
+        <div className="aboutContainer mt-10 xl:mx-auto max-w-[1500px]">
           <p className="xl:text-lg text-lg text-center text-primary">
             Why choose us
           </p>
@@ -334,7 +334,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className=" xl:mx-auto xl:w-[80%] p-5">
+        <div className=" xl:mx-auto  max-w-[1500px] p-5">
           <Button
             variant="primary"
             className="text-primary bg-transparent border-primary text-md w-[92px] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
@@ -395,7 +395,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className=" xl:flex gap-10 space-x-8 xl:mx-auto xl:w-[80%] items-center justify-center">
+        <div className=" xl:flex gap-10 space-x-8 xl:mx-auto  max-w-[1500px] items-center justify-center">
           <div
             id="about"
             className="flex flex-col items-center text-center xl:p-4 p-2"
@@ -411,7 +411,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="grid overflow-hidden xl:mx-auto xl:w-[80%] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 m-5  xl:grid-cols-3 gap-5">
+        <div className="grid overflow-hidden xl:mx-auto  max-w-[1500px] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 m-5  xl:grid-cols-3 gap-5">
           <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between h-full">
             <div className="secondArea">
               <img
@@ -472,7 +472,7 @@ const Home = () => {
             CBC Made Easy
           </h1>
 
-          <div className="mx-auto xl:w-[80%] grid overflow-hidden rounded-3xl gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10 p-5 xl:grid-cols-3">
+          <div className="mx-auto  max-w-[1500px] grid overflow-hidden rounded-3xl gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10 p-5 xl:grid-cols-3">
             <div className="group relative bg-[#51608A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="flex gap-2">
                 <div className="secondArea xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
@@ -548,7 +548,7 @@ const Home = () => {
             Choose the perfect plan for your business needs
           </p>
 
-          <div className=" xl:mx-auto xl:w-[80%] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10  p-5 xl:grid-cols-3">
+          <div className=" xl:mx-auto max-w-[1500px] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10  p-5 xl:grid-cols-3">
             <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="contents">
                 <Button
@@ -831,27 +831,28 @@ const Home = () => {
           <h1 className="xl:text-5xl text-2xl text-center text-primary font-bold">
             Get started with our demo
           </h1>
-          <div className="mt-5 p-4 border-4 border-primary rounded-xl xl:flex items-center justify-center gap-10 mx-5 xl:mx-80 px-5">
+          <div className="mt-5 p-4 border-4 border-primary rounded-xl xl:flex items-center justify-center gap-10  xl:mx-auto max-w-[1200px] px-5">
             <div>
               <p className="xl:text-xl p-5 text-lg text-center text-primary">
                 Get started with our demo and see the Hero Learning system in
                 action!
               </p>
             </div>
-            <div>
-              <Link to="/demo" className="xl:w-32 xl:mr-8">
-                <Button className="xl:text-xl w-[192px] p-2 h-[50px] bg-[#FF3B30] font-bold text-white">
-                  Request A Demo
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </Link>
-            </div>
+            <div className="flex justify-center xl:justify-start">
+  <Link to="/demo" className="xl:w-32 xl:mr-8">
+    <Button className="xl:text-xl w-[192px] p-2 h-[50px] bg-[#FF3B30] font-bold text-white">
+      Request A Demo
+      {loading && (
+        <LoadingIcon
+          icon="spinning-circles"
+          color="white"
+          className="w-4 h-4 ml-2"
+        />
+      )}
+    </Button>
+  </Link>
+</div>
+
           </div>
         </div>
 

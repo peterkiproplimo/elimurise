@@ -43,7 +43,7 @@ const Contact = () => {
       <div className="homeContainer  xl:p-0">
       <NavbarMenu/>
 
-        <div className="xl:mx-auto xl:w-[80%]  p-5">
+        <div className="xl:mx-auto  max-w-[1500px] p-5">
           <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
             Get in touch with Hero Learning
           </h1>
