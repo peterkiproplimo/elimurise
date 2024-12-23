@@ -246,12 +246,12 @@ function Roles() {
 
   // Function to toggle permissions
   const handlePermissionChange = (module: string, action: string) => {
-    setRole((prev) => {
+    setRole((prev: any) => {
       const updatedPermissions = { ...prev.permissions };
       if (updatedPermissions[module]?.includes(action)) {
         // Remove action
         updatedPermissions[module] = updatedPermissions[module].filter(
-          (a) => a !== action
+          (a: any) => a !== action
         );
       } else {
         // Add action
@@ -333,7 +333,7 @@ function Roles() {
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {roles?.map((role: any, key) => (
+              {roles?.map((role: any, key: any) => (
                 <Table.Tr key={key} className="">
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <span className="font-medium whitespace-nowrap">

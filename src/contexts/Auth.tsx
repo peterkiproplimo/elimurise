@@ -2,6 +2,13 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { AuthData, authService } from "../services/authService";
 import * as ApiService from "../services/auth";
 import { useNavigate } from "react-router-dom";
+type AuthData = {
+  user?: {
+    role?: {
+      permissions?: Record<string, any>;
+    };
+  };
+};
 
 type AuthContextData = {
   authData?: AuthData;
@@ -53,7 +60,8 @@ const AuthProvider = (props: ContainerProps) => {
   };
 
   // Permissions logic
-  const permissions = authData?.user?.role?.permissions || {};
+  const permissions: Record<string, any> =
+    authData?.user?.role?.permissions || {};
 
   const hasPermission = (module: string, action: string): boolean => {
     if (!permissions[module]) return false;
