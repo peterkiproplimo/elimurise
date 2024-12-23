@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 //     role?: {
 //       permissions?: Record<string, any>;
 //     };
-//   };
+//   };k
 // };
 
 type AuthContextData = {
