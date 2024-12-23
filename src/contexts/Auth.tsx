@@ -36,13 +36,13 @@ const AuthProvider = (props: ContainerProps) => {
 
   async function loadStorageData(): Promise<void> {
     try {
-      const authDataSerialized = await localStorage.getItem("@AuthData");
+      const authDataSerialized = localStorage.getItem("@AuthData");
       if (authDataSerialized) {
         const _authData: AuthData = JSON.parse(authDataSerialized);
         setAuthData(_authData);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Failed to load authentication data from storage:", error);
     } finally {
       setLoading(false);
     }
