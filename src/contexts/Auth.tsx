@@ -2,13 +2,13 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { AuthData, authService } from "../services/authService";
 import * as ApiService from "../services/auth";
 import { useNavigate } from "react-router-dom";
-type AuthData = {
-  user?: {
-    role?: {
-      permissions?: Record<string, any>;
-    };
-  };
-};
+// type AuthData = {
+//   user?: {
+//     role?: {
+//       permissions?: Record<string, any>;
+//     };
+//   };
+// };
 
 type AuthContextData = {
   authData?: AuthData;
