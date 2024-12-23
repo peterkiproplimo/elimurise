@@ -745,14 +745,14 @@ function Main() {
               </div>
 
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Type</FormLabel>
+                <FormLabel htmlFor="modal-form-6">User</FormLabel>
                 <FormSelect
                   {...register("type")}
                   name="type"
                   value={test}
                   onChange={(event: any) => setTest(event.target.value)}
                 >
-                  <option>Select Test</option>
+                  <option>Select User</option>
                   <option value={"teacher"}>Class Teacher</option>
                   <option value={"head"}>H/Teacher</option>
                 </FormSelect>

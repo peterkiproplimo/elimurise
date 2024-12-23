@@ -33,7 +33,7 @@ import CardLoader from "../UserProfile/loader";
 function Main() {
   const { setRunTour } = useTour();
   const [pageLoading, setPageLoading] = useState(false);
-
+  const { hasPermission } = useAuth();
   interface Learner {
     first_name: string;
     // Add other properties if needed
@@ -103,154 +103,156 @@ function Main() {
                     Dashboard
                   </h2>
                 </div>
-                <div className="grid grid-cols-12 gap-6 mt-5">
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
-                    <div
-                      className={clsx(["relative zoom-in"])}
-                      onClick={(event) => {
-                        event.preventDefault(); // Prevent the default anchor behavior
-                        navigate("/home/learners"); // Navigate using your custom function
-                      }}
-                    >
-                      <div className="p-5 box">
-                        <div className="flex">
-                          <Lucide
-                            icon="Monitor"
-                            className="w-[28px] h-[28px] text-warning"
-                          />
-                          <div className="ml-auto">
-                            <Tippy
-                              as="div"
-                              className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                              content="12% Higher than last month"
-                            >
-                              12%{" "}
-                              <Lucide
-                                icon="ChevronUp"
-                                className="w-4 h-4 ml-0.5"
-                              />
-                            </Tippy>
+                {hasPermission("dashboard", "view-stats") && (
+                  <div className="grid grid-cols-12 gap-6 mt-5">
+                    <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
+                      <div
+                        className={clsx(["relative zoom-in"])}
+                        onClick={(event) => {
+                          event.preventDefault(); // Prevent the default anchor behavior
+                          navigate("/home/learners"); // Navigate using your custom function
+                        }}
+                      >
+                        <div className="p-5 box">
+                          <div className="flex">
+                            <Lucide
+                              icon="Monitor"
+                              className="w-[28px] h-[28px] text-warning"
+                            />
+                            <div className="ml-auto">
+                              <Tippy
+                                as="div"
+                                className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                                content="12% Higher than last month"
+                              >
+                                12%{" "}
+                                <Lucide
+                                  icon="ChevronUp"
+                                  className="w-4 h-4 ml-0.5"
+                                />
+                              </Tippy>
+                            </div>
+                          </div>
+                          <div className="mt-6 text-3xl font-medium leading-8">
+                            {dashboards.totalLearners}
+                          </div>
+                          <div className="mt-1 text-base text-slate-500">
+                            Learners
                           </div>
                         </div>
-                        <div className="mt-6 text-3xl font-medium leading-8">
-                          {dashboards.totalLearners}
+                      </div>
+                    </div>
+                    <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
+                      <div
+                        className={clsx(["relative zoom-in"])}
+                        onClick={(event) => {
+                          event.preventDefault(); // Prevent the default anchor behavior
+                          navigate("/home/teachers"); // Navigate using your custom function
+                        }}
+                      >
+                        <div className="p-5 box">
+                          <div className="flex">
+                            <Lucide
+                              icon="ShoppingCart"
+                              className="w-[28px] h-[28px] text-primary"
+                            />
+                            <div className="ml-auto">
+                              <Tippy
+                                as="div"
+                                className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                                content="Total Teachers"
+                              >
+                                <Lucide
+                                  icon="ChevronUp"
+                                  className="w-4 h-4 ml-0.5"
+                                />
+                              </Tippy>
+                            </div>
+                          </div>
+                          <div className="mt-6 text-3xl font-medium leading-8">
+                            {dashboards.totalTeachers}
+                          </div>
+                          <div className="mt-1 text-base text-slate-500">
+                            Teachers
+                          </div>
                         </div>
-                        <div className="mt-1 text-base text-slate-500">
-                          Learners
+                      </div>
+                    </div>
+                    <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
+                      <div
+                        className={clsx(["relative zoom-in"])}
+                        onClick={(event) => {
+                          event.preventDefault(); // Prevent the default anchor behavior
+                          navigate("/home/parents"); // Navigate using your custom function
+                        }}
+                      >
+                        <div className="p-5 box">
+                          <div className="flex">
+                            <Lucide
+                              icon="CreditCard"
+                              className="w-[28px] h-[28px] text-pending"
+                            />
+                            <div className="ml-auto">
+                              <Tippy
+                                as="div"
+                                className="cursor-pointer bg-danger py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                                content="2% Lower than last month"
+                              >
+                                2%
+                                <Lucide
+                                  icon="ChevronDown"
+                                  className="w-4 h-4 ml-0.5"
+                                />
+                              </Tippy>
+                            </div>
+                          </div>
+                          <div className="mt-6 text-3xl font-medium leading-8">
+                            {dashboards.totalParents}
+                          </div>
+                          <div className="mt-1 text-base text-slate-500">
+                            Parents
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
+                      <div
+                        className={clsx(["relative zoom-in"])}
+                        onClick={(event) => {
+                          event.preventDefault(); // Prevent the default anchor behavior
+                          navigate("/home/tests"); // Navigate using your custom function
+                        }}
+                      >
+                        <div className="p-5 box">
+                          <div className="flex">
+                            <Lucide
+                              icon="ShoppingCart"
+                              className="w-[28px] h-[28px] text-primary"
+                            />
+                            <div className="ml-auto">
+                              <Tippy
+                                as="div"
+                                className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
+                                content="Total Teachers"
+                              >
+                                <Lucide
+                                  icon="ChevronUp"
+                                  className="w-4 h-4 ml-0.5"
+                                />
+                              </Tippy>
+                            </div>
+                          </div>
+                          <div className="mt-6 text-3xl font-medium leading-8">
+                            {dashboards.totalTests}
+                          </div>
+                          <div className="mt-1 text-base text-slate-500">
+                            Tests
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
-                    <div
-                      className={clsx(["relative zoom-in"])}
-                      onClick={(event) => {
-                        event.preventDefault(); // Prevent the default anchor behavior
-                        navigate("/home/teachers"); // Navigate using your custom function
-                      }}
-                    >
-                      <div className="p-5 box">
-                        <div className="flex">
-                          <Lucide
-                            icon="ShoppingCart"
-                            className="w-[28px] h-[28px] text-primary"
-                          />
-                          <div className="ml-auto">
-                            <Tippy
-                              as="div"
-                              className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                              content="Total Teachers"
-                            >
-                              <Lucide
-                                icon="ChevronUp"
-                                className="w-4 h-4 ml-0.5"
-                              />
-                            </Tippy>
-                          </div>
-                        </div>
-                        <div className="mt-6 text-3xl font-medium leading-8">
-                          {dashboards.totalTeachers}
-                        </div>
-                        <div className="mt-1 text-base text-slate-500">
-                          Teachers
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
-                    <div
-                      className={clsx(["relative zoom-in"])}
-                      onClick={(event) => {
-                        event.preventDefault(); // Prevent the default anchor behavior
-                        navigate("/home/parents"); // Navigate using your custom function
-                      }}
-                    >
-                      <div className="p-5 box">
-                        <div className="flex">
-                          <Lucide
-                            icon="CreditCard"
-                            className="w-[28px] h-[28px] text-pending"
-                          />
-                          <div className="ml-auto">
-                            <Tippy
-                              as="div"
-                              className="cursor-pointer bg-danger py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                              content="2% Lower than last month"
-                            >
-                              2%
-                              <Lucide
-                                icon="ChevronDown"
-                                className="w-4 h-4 ml-0.5"
-                              />
-                            </Tippy>
-                          </div>
-                        </div>
-                        <div className="mt-6 text-3xl font-medium leading-8">
-                          {dashboards.totalParents}
-                        </div>
-                        <div className="mt-1 text-base text-slate-500">
-                          Parents
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-3 ">
-                    <div
-                      className={clsx(["relative zoom-in"])}
-                      onClick={(event) => {
-                        event.preventDefault(); // Prevent the default anchor behavior
-                        navigate("/home/tests"); // Navigate using your custom function
-                      }}
-                    >
-                      <div className="p-5 box">
-                        <div className="flex">
-                          <Lucide
-                            icon="ShoppingCart"
-                            className="w-[28px] h-[28px] text-primary"
-                          />
-                          <div className="ml-auto">
-                            <Tippy
-                              as="div"
-                              className="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                              content="Total Teachers"
-                            >
-                              <Lucide
-                                icon="ChevronUp"
-                                className="w-4 h-4 ml-0.5"
-                              />
-                            </Tippy>
-                          </div>
-                        </div>
-                        <div className="mt-6 text-3xl font-medium leading-8">
-                          {dashboards.totalTests}
-                        </div>
-                        <div className="mt-1 text-base text-slate-500">
-                          Tests
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
               <div className="relative col-span-12 home-step-1">
                 <div className="grid grid-cols-6 gap-4">

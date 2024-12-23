@@ -1,93 +1,155 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../base-components/Button";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import { FormInput, FormCheck, FormSelect } from "../../base-components/Form";
+import {
+  FormInput,
+  FormCheck,
+  FormSelect,
+  FormLabel,
+} from "../../base-components/Form";
 import * as yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../contexts/Auth";
 import * as ApiService from "../../services/auth";
 import { Link } from "react-router-dom";
+import TomSelect from "../../base-components/TomSelect";
 
-import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/heros.png";
-import icon from "../../assets/images/Arrow_Right_MD.png";
-
-import users from "../../assets/images/Users_Group.png";
-import user from "../../assets/images/User.png";
-import contact4 from "../../assets/images/contact2.png";
-import check from "../../assets/images/Checkbox_Check.png";
-import vector from "../../assets/images/Vector.png";
-import lock from "../../assets/images/Lock.png";
-
-import email from "../../assets/images/social.png";
-import phone from "../../assets/images/social (1).png";
-
-import youtube from "../../assets/images/instagram.png";
-import linked from "../../assets/images/linkedin.png";
-import facebook from "../../assets/images/Vector (1).png";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { Menu, X } from "lucide-react";
 import NavbarMenu from "../../webapp/NavBarMenu";
 import FooterComponent from "../../webapp/footer";
-
+import { Controller } from "react-hook-form";
+import { NotificationElement } from "../../base-components/Notification";
+interface County {
+  name: string;
+  capital: string;
+  code: number;
+  sub_counties: string[];
+}
 const Register = () => {
+  const auth = useAuth();
+  const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [numberOfLearners, setNumberOfLearners] = useState("");
-  const [registered, setRegistered] = useState(false);
+  const [selectedCounty, setSelectedCounty] = useState<any>({});
+  const [subCounties, setSubCounties] = useState([]);
+  const [counties, setCounties] = useState<County[]>([]); // List<County>
+  let county_list: County[] = [];
+  const navigate = useNavigate();
+  const [Package, setPackage] = useState<any>(
+    JSON.parse(localStorage.getItem("package") || "{}")
+  );
+  const [packages, setPackages] = useState([]);
+  const [selectedPackages, setSelectedPackages] = React.useState([]);
 
+  const getDashboard = async () => {
+    isLoading(true);
+    try {
+      let res = await ApiService.getPackages({});
+      setPackages(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+    isLoading(false);
+    // setFeeds(res.feeds);
+    // setEvents(res.events);
+    // setQuestions(res.questions);
+  };
+  useEffect(() => {
+    getDashboard();
+  }, []);
+  const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(4),
+      name: yup.string().required("School Name is required"),
+      county: yup.string().required("County is required"),
+      subcounty: yup.string().required("Sub County is required"),
+      address: yup.string().required("Address is required"),
+      // email: yup.string().required().email(),
+      // password: yup.string().required().min(4),
     })
     .required();
-  const [loading, isLoading] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
 
   const {
+    control,
     register,
     trigger,
     getValues,
-    watch,
     formState: { errors },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+  useEffect(() => {
+    const getCounties = async () => {
+      const counties = await ApiService.getCounties({});
+      const data = await counties.data;
+      setCounties(data);
+      localStorage.setItem("counties", JSON.stringify(data));
+    };
+
+    getCounties();
+    console.log(county_list);
+  }, []);
+  const handleCountyChange = (countyName: any) => {
+    setSelectedCounty(countyName);
+    const counties = localStorage.getItem("counties") || "{}";
+    const county_list = JSON.parse(counties);
+    // Find the selected county in the counties array
+    const selected = county_list.find(
+      (county: any) => county.name === countyName
+    );
+
+    console.log("updated", selected);
+
+    // Update subCounties based on the selected county
+    if (selected) {
+      setSubCounties(selected.sub_counties);
+    } else {
+      setSubCounties([]);
+    }
+  };
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
 
-    // if (result && !loading) {
-    //   isLoading(true);
-    //   try {
-    //     const data = await getValues();
-    //     let res = await ApiService.signup(data);
-    //     auth.signIn(res);
-    //     let token = res.token;
-    //     await auth.signIn({ ...res.user, token });
-    //     setRegistered(true);
-    //     // localStorage.setItem("user_id", res.data.user._id);
-    //     isLoading(false);
-    //     // setCurrentStep();
-    //     // setSuccess(true);
-    //     // setMessage("Account Created successfully");
-    //     // notify.current?.showToast();
+    if (result && !loading) {
+      isLoading(false);
+      try {
+        const data = await getValues();
+        data.numberOfLearners = numberOfLearners;
+        data.packageId = Package._id;
 
-    //     // navigate("/");
-    //   } catch (error: any) {
-    //     console.log(error);
-    //     isLoading(false);
-    //     setSuccess(false);
-    //     setMessage(error.message);
-    //     notify.current?.showToast();
-    //   }
-    // }
+        console.log(data);
+        // return;
+        let res = await ApiService.createSubscription(data);
+        // localStorage.setItem("billing", numberOfLearners);
+        // localStorage.setItem("user_id", res.data.user._id);
+        isLoading(false);
+
+        setSuccess(true);
+        setMessage("Authenticated successfully");
+        notify.current?.showToast();
+        // navigate("/");
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(error.message);
+        notify.current?.showToast();
+      }
+    }
+  };
+
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const togglePasswordVisibility = () => {
+    console.log("Button clicked");
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -145,11 +207,11 @@ const Register = () => {
               </div>
             </div>
           </div>
-          <div>
-            <form
-              className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
-              onSubmit={onSubmit}
-            >
+          <form
+            className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
+            onSubmit={onSubmit}
+          >
+            <div>
               <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">
                 Personal Information:
               </p>
@@ -294,15 +356,8 @@ const Register = () => {
                   )}
                 </Button>
               </div>
-            </form>
-          </div>
-
-          <div className="xl:p-10 xl:m-5  p-5 xl:box xl:border xl:border-gray-300">
-            <h1 className="mt-5 xl:text-2xl text-xl text-primary p-2 font-bold">
-              {" "}
-              Choose a Plan:
-            </h1>
-            <form className="  grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3">
+            </div>
+            <div className="grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3">
               <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
                 <div className="contents">
                   <Button
@@ -345,98 +400,58 @@ const Register = () => {
                   <h1 className="xl:text-5xl text-2xl font-medium">KES 250</h1>
                 </div>
               </div>
-              <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                <div className="contents">
-                  <Button
-                    variant="primary"
-                    className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                  >
-                    BASIC PLAN
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                  <div>
-                    <div className="border-b border-primary/50 w-full mt-8"></div>
+              {packages.map((Package: any, key: any) => (
+                <>
+                  <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+                    <div className="contents">
+                      <Button
+                        variant="primary"
+                        className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
+                      >
+                        BASIC PLAN
+                        {loading && (
+                          <LoadingIcon
+                            icon="spinning-circles"
+                            color="white"
+                            className="w-4 h-4 ml-2"
+                          />
+                        )}
+                      </Button>
+                      <div>
+                        <div className="border-b border-primary/50 w-full mt-8"></div>
 
-                    <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
-                      KES 150
-                    </h1>
-                    <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
-                      Per Learner, per Month
-                    </p>
+                        <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
+                          KES {Package.pricePerLearner}
+                        </h1>
+                        <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
+                          Per Learner, per Month
+                        </p>
 
-                    <div className="border-b border-primary/50 w-full mt-8"></div>
-                  </div>{" "}
-                  <Button
-                    variant="primary"
-                    className="text-md xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
-                  >
-                    Add to Cart
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </div>
-              </div>
-              <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                <div className="contents">
-                  <Button
-                    variant="primary"
-                    className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                  >
-                    PREMIUM PLAN
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                  <div>
-                    <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                    <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
-                      KES 300
-                    </h1>
-                    <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
-                      Per Learner, per Month
-                    </p>
-
-                    <div className="border-b border-primary/50 w-full mt-8"></div>
-                  </div>{" "}
-                  <Button
-                    variant="primary"
-                    className="text-md xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
-                  >
-                    Add to Cart
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </div>
-
-          <div>
-            <form
+                        <div className="border-b border-primary/50 w-full mt-8"></div>
+                      </div>{" "}
+                      <Button
+                        variant="primary"
+                        className="text-md xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+                      >
+                        Add to Cart
+                        {loading && (
+                          <LoadingIcon
+                            icon="spinning-circles"
+                            color="white"
+                            className="w-4 h-4 ml-2"
+                          />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              ))}
+            </div>
+            <div>
+              {/* <form
               className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
               onSubmit={onSubmit}
-            >
+            > */}
               <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">
                 Subscribe :
               </p>
@@ -452,8 +467,8 @@ const Register = () => {
                     name="firstname"
                     className={
                       errors.firstname
-                        ? "block px-4 xl:py-3 py-2 xl:mt-4  min-w-full  border-danger"
-                        : "block px-4 xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
+                        ? " px-4 xl:py-2 xl:mt-4  min-w-full  border-danger"
+                        : " px-4 xl:py-2  xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 "
                     }
                     placeholder=" School Name"
                   />
@@ -464,45 +479,81 @@ const Register = () => {
                     </div>
                   )}
                 </div>
-                <div className="input-form">
-                  <FormSelect
-                    id="validation-form-2"
+
+                <div>
+                  <Controller
+                    control={control}
                     name="county"
-                    className="block px-4 xl:py-4 py-2 xl:mt-4 mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
                     defaultValue=""
-                  >
-                    <option value="" className="text-primary" disabled>
-                      Select County*
-                    </option>
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                    <option value="option3">Option 3</option>
-                  </FormSelect>
-                  {errors.lastname && (
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        onChange={(value: any) => {
+                          console.log(value);
+                          field.onChange(value);
+                          handleCountyChange(value);
+                        }}
+                        className={
+                          errors.county
+                            ? "px-4 xl:mt-4 py-2 min-w-full  border-danger"
+                            : "xl:py-2  xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300"
+                        }
+                      >
+                        <option value={""}>Select County</option>
+
+                        {counties.map((county: any) => (
+                          <option key={county.code} value={county.name}>
+                            {county.name}
+                          </option>
+                        ))}
+                      </TomSelect>
+                    )}
+                  />
+
+                  {errors.county && (
                     <div className="mt-2 text-danger">
-                      {typeof errors.lastname.message === "string" &&
-                        errors.lastname.message}
+                      {typeof errors.county.message === "string" &&
+                        errors.county.message}
                     </div>
                   )}
                 </div>
-                <div className="input-form">
-                  <FormSelect
-                    id="validation-form-2"
-                    name="county"
-                    className="block px-4  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+
+                {/* Sub County Selection */}
+                <div>
+                  {/* <FormLabel htmlFor="subcounty" className="font-bold">
+                    Sub County
+                  </FormLabel> */}
+                  <Controller
+                    control={control}
+                    name="subcounty"
                     defaultValue=""
-                  >
-                    <option value="" className="text-primary" disabled>
-                      Select SubCounty*
-                    </option>
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                    <option value="option3">Option 3</option>
-                  </FormSelect>
-                  {errors.email && (
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        // options={subCounties.map((subcounty: any) => ({
+                        //   value: subcounty,
+                        //   label: subcounty,
+                        // }))}
+                        className={
+                          errors.subcounty
+                            ? "px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
+                            : "xl:py-2  xl:mt-4 mt-2 min-w-full  border-gray-300"
+                        }
+                      >
+                        <option value={""}>Select Subcounty</option>
+                        {subCounties.map((subcounty: any, key: any) => (
+                          <option key={key} value={subcounty}>
+                            {subcounty}
+                          </option>
+                        ))}
+                      </TomSelect>
+                    )}
+                  />
+
+                  {errors.subcounty && (
                     <div className="mt-2 text-danger">
-                      {typeof errors.email.message === "string" &&
-                        errors.email.message}
+                      {typeof errors.subcounty.message === "string" &&
+                        errors.subcounty.message}
                     </div>
                   )}
                 </div>
@@ -514,8 +565,8 @@ const Register = () => {
                     name="Contact"
                     className={
                       errors.phone
-                        ? "block px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
-                        : "block  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
+                        ? "px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
+                        : "xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300"
                     }
                     placeholder="Phone number"
                   />
@@ -526,29 +577,7 @@ const Register = () => {
                     </div>
                   )}
                 </div>
-                <div className="input-form">
-                  <div className="flex items-center">
-                    <FormInput
-                      {...register("password")}
-                      id="validation-form-3"
-                      type={"password"}
-                      name="password"
-                      className={
-                        errors.password
-                          ? "block px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
-                          : "block  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
-                      }
-                      placeholder="Current Academic Year*"
-                    />
-                  </div>
 
-                  {errors.password && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.password.message === "string" &&
-                        errors.password.message}
-                    </div>
-                  )}
-                </div>
                 <div className="input-form">
                   <div className="flex items-center">
                     <FormInput
@@ -578,9 +607,9 @@ const Register = () => {
                       <option value="" className="text-primary" disabled>
                         Choose A period*
                       </option>
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
+                      <option value="termly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                      {/* <option value="option3">Option 3</option> */}
                     </FormSelect>
                   </div>
                 </div>
@@ -605,27 +634,26 @@ const Register = () => {
               </div>
 
               <div className="mt-5  xl:mt-8 xl:text-left">
-                <Link to="/payment" className="xl:w-32 xl:mr-8">
-                  <Button
-                    variant="primary"
-                    className="text-md xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
-                  >
-                    Proceed to Make Payment
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-2 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </Link>
+                {/* <Link to="/payment" className="xl:w-32 xl:mr-8"> */}
+                <Button
+                  variant="primary"
+                  className="text-md xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                >
+                  Proceed to Make Payment
+                  {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-2 h-4 ml-2"
+                    />
+                  )}
+                </Button>
+                {/* </Link> */}
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
+          <FooterComponent />
         </div>
-
-        <FooterComponent />
       </div>
     </>
   );

@@ -43,10 +43,12 @@ function Layout() {
 
   useEffect(() => {
     setFormattedMenu(sideMenu());
-  }, [sideMenuStore, location.pathname]);
+  }, [sideMenuStore, location.pathname, auth]);
   useEffect(() => {
     const handleStorageChange = () => {
       const type = localStorage.getItem("type");
+      console.log("new user logged in....", type);
+
       if (type === "parent") {
         dispatch(setMenuState(parentState));
       } else if (type === "teacher") {
@@ -64,7 +66,7 @@ function Layout() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, [dispatch]);
+  }, [dispatch, auth]);
   return (
     <div className="py-5 md:py-0" style={{ backgroundColor: "#f5f5f5" }}>
       <DarkModeSwitcher />
@@ -81,114 +83,135 @@ function Layout() {
           </div>
           <hr className="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent"></hr>
           <ul className="pt-10">
-            {/* BEGIN: First Child */}
-            {formattedMenu.map((menu, menuKey) =>
-              menu == "divider" ? (
-                <Divider
-                  type="li"
-                  className={clsx([
-                    "my-6",
-                    // Animation
-                    `opacity-0 animate-[0.4s_ease-in-out_0.1s_intro-divider] animate-fill-mode-forwards animate-delay-${
-                      (menuKey + 1) * 10
-                    }`,
-                  ])}
-                  key={menuKey}
-                ></Divider>
-              ) : (
-                <li key={menuKey}>
-                  <Menu
-                    className={clsx({
-                      // Animation
-                      [`opacity-0 text-white translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
-                        (menuKey + 1) * 10
-                      }`]: !menu.active,
-                    })}
-                    menu={menu}
-                    formattedMenuState={[formattedMenu, setFormattedMenu]}
-                    level="first"
-                  ></Menu>
-                  {/* BEGIN: Second Child */}
-                  {menu.subMenu && (
-                    <Transition
-                      in={menu.activeDropdown}
-                      onEnter={enter}
-                      onExit={leave}
-                      timeout={300}
-                    >
-                      <ul
-                        className={clsx([
-                          "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
-                          "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
-                          { block: menu.activeDropdown },
-                          { hidden: !menu.activeDropdown },
-                        ])}
-                      >
-                        {menu.subMenu.map((subMenu, subMenuKey) => (
-                          <li key={subMenuKey}>
-                            <Menu
-                              className={clsx({
-                                // Animation
-                                [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
-                                  (subMenuKey + 1) * 10
-                                }`]: !subMenu.active,
-                              })}
-                              menu={subMenu}
-                              formattedMenuState={[
-                                formattedMenu,
-                                setFormattedMenu,
-                              ]}
-                              level="second"
-                            ></Menu>
-                            {/* BEGIN: Third Child */}
-                            {subMenu.subMenu && (
-                              <Transition
-                                in={subMenu.activeDropdown}
-                                onEnter={enter}
-                                onExit={leave}
-                                timeout={300}
-                              >
-                                <ul
-                                  className={clsx([
-                                    "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
-                                    "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
-                                    { block: subMenu.activeDropdown },
-                                    { hidden: !subMenu.activeDropdown },
-                                  ])}
-                                >
-                                  {subMenu.subMenu.map(
-                                    (lastSubMenu, lastSubMenuKey) => (
-                                      <li key={lastSubMenuKey}>
-                                        <Menu
-                                          className={clsx({
-                                            // Animation
-                                            [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
-                                              (lastSubMenuKey + 1) * 10
-                                            }`]: !lastSubMenu.active,
-                                          })}
-                                          menu={lastSubMenu}
-                                          formattedMenuState={[
-                                            formattedMenu,
-                                            setFormattedMenu,
-                                          ]}
-                                          level="third"
-                                        ></Menu>
-                                      </li>
-                                    )
-                                  )}
-                                </ul>
-                              </Transition>
-                            )}
-                            {/* END: Third Child */}
-                          </li>
-                        ))}
-                      </ul>
-                    </Transition>
-                  )}
-                  {/* END: Second Child */}
-                </li>
+            {/* {JSON.stringify(
+              formattedMenu.filter(
+                (menuDetails: any) =>
+                  !menuDetails.ignore ||
+                  (menuDetails.subMenu && menuDetails.subMenu.length > 0)
               )
-            )}
+            )} */}
+            {/* BEGIN: First Child */}
+            {formattedMenu
+              .filter(
+                (menuDetails: any) =>
+                  (menuDetails.subMenu &&
+                    menuDetails.subMenu.filter(
+                      (menuDetails: any) => !menuDetails.ignore
+                    ).length > 0) ||
+                  (!menuDetails.subMenu && !menuDetails.ignore)
+              )
+
+              // .filter((menuDetails: any) => !menuDetails.ignore)
+
+              .map((menu, menuKey) =>
+                menu == "divider" ? (
+                  <Divider
+                    type="li"
+                    className={clsx([
+                      "my-6",
+                      // Animation
+                      `opacity-0 animate-[0.4s_ease-in-out_0.1s_intro-divider] animate-fill-mode-forwards animate-delay-${
+                        (menuKey + 1) * 10
+                      }`,
+                    ])}
+                    key={menuKey}
+                  ></Divider>
+                ) : (
+                  <li key={menuKey}>
+                    <Menu
+                      className={clsx({
+                        // Animation
+                        [`opacity-0 text-white translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
+                          (menuKey + 1) * 10
+                        }`]: !menu.active,
+                      })}
+                      menu={menu}
+                      formattedMenuState={[formattedMenu, setFormattedMenu]}
+                      level="first"
+                    ></Menu>
+                    {/* BEGIN: Second Child */}
+                    {menu.subMenu && (
+                      <Transition
+                        in={menu.activeDropdown}
+                        onEnter={enter}
+                        onExit={leave}
+                        timeout={300}
+                      >
+                        <ul
+                          className={clsx([
+                            "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
+                            "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
+                            { block: menu.activeDropdown },
+                            { hidden: !menu.activeDropdown },
+                          ])}
+                        >
+                          {menu.subMenu
+                            .filter((menuDetails: any) => !menuDetails.ignore)
+                            .map((subMenu, subMenuKey) => (
+                              <li key={subMenuKey}>
+                                <Menu
+                                  className={clsx({
+                                    // Animation
+                                    [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
+                                      (subMenuKey + 1) * 10
+                                    }`]: !subMenu.active,
+                                  })}
+                                  menu={subMenu}
+                                  formattedMenuState={[
+                                    formattedMenu,
+                                    setFormattedMenu,
+                                  ]}
+                                  level="second"
+                                ></Menu>
+                                {/* BEGIN: Third Child */}
+                                {subMenu.subMenu && (
+                                  <Transition
+                                    in={subMenu.activeDropdown}
+                                    onEnter={enter}
+                                    onExit={leave}
+                                    timeout={300}
+                                  >
+                                    <ul
+                                      className={clsx([
+                                        "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
+                                        "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
+                                        { block: subMenu.activeDropdown },
+                                        { hidden: !subMenu.activeDropdown },
+                                      ])}
+                                    >
+                                      {subMenu.subMenu.map(
+                                        (lastSubMenu, lastSubMenuKey) => (
+                                          <li key={lastSubMenuKey}>
+                                            <Menu
+                                              className={clsx({
+                                                // Animation
+                                                [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
+                                                  (lastSubMenuKey + 1) * 10
+                                                }`]: !lastSubMenu.active,
+                                              })}
+                                              menu={lastSubMenu}
+                                              formattedMenuState={[
+                                                formattedMenu,
+                                                setFormattedMenu,
+                                              ]}
+                                              level="third"
+                                            ></Menu>
+                                          </li>
+                                        )
+                                      )}
+                                    </ul>
+                                  </Transition>
+                                )}
+                                {/* END: Third Child */}
+                              </li>
+                            ))}
+                        </ul>
+                      </Transition>
+                    )}
+                    {/* END: Second Child */}
+                  </li>
+                )
+              )}
             {/* END: First Child */}
           </ul>
         </nav>

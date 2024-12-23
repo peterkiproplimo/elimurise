@@ -199,6 +199,7 @@ const getSchool = (): School | null => {
   const schoolData = localStorage.getItem("school");
   return schoolData ? (JSON.parse(schoolData) as School) : null;
 };
+
 const is_admin = (): boolean | null => {
   const type = localStorage.getItem("type");
   return type && type == "school" ? true : false;

@@ -8,25 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 
 import { Link } from "react-router-dom";
-
-import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/heros.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
-
-import users from "../../assets/images/Users_Group.png";
-
-import email from "../../assets/images/social.png";
-import phone from "../../assets/images/social (1).png";
-import user from "../../assets/images/User.png";
-import contact4 from "../../assets/images/contact2.png";
-import check from "../../assets/images/Checkbox_Check.png";
-import vector from "../../assets/images/Vector.png";
-import lock from "../../assets/images/Lock.png";
-
-import youtube from "../../assets/images/instagram.png";
-import linked from "../../assets/images/linkedin.png";
-import facebook from "../../assets/images/Vector (1).png";
-import { Menu, X } from "lucide-react";
 import FooterComponent from "../../webapp/footer";
 import NavbarMenu from "../../webapp/NavBarMenu";
 
@@ -43,7 +25,7 @@ const Demo = () => {
   return (
     <>
       <div className="homeContainer sm:p-5 xl:p-0">
-      <NavbarMenu/>
+        <NavbarMenu />
 
         <div className="xl:mx-auto max-w-[1500px] p-5">
           <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">

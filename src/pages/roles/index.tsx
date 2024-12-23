@@ -20,17 +20,101 @@ import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import Pagination from "../../base-components/Pagination";
+// Define module-specific actions
+type ModuleConfig = {
+  [moduleName: string]: string[]; // Actions are defined as strings
+};
 
+// Configuration for modules and their actions
+const MODULE_CONFIG: ModuleConfig = {
+  // meta: ["read", "create", "update", "delete"],
+  behaviour: ["read", "create", "update", "delete", "assess"],
+  "grading-scale": ["read", "create", "update", "delete"],
+  // auth: ["read", "create", "update", "delete"],
+  subscription: ["read", "create", "update", "delete"],
+  teachers: ["read", "create", "update", "delete", "bulky-import"],
+  learners: [
+    "read",
+    "create",
+    "update",
+    "delete",
+    "history",
+    "bulk-import",
+    "change-status",
+  ],
+  streams: ["read", "create", "update", "delete"],
+  enrollment: ["read", "create", "update", "promote"],
+  parents: ["read", "create", "update", "delete", "bulk-import"],
+  assessment: [
+    "read",
+    // "create",
+    "assess",
+    // "publish",
+    "learners-report",
+    "analysis-report",
+  ],
+  "learning-areas": ["read", "create", "update", "delete"],
+
+  users: [
+    "read",
+    "create",
+    "update",
+    "delete",
+    "update-profile",
+    "deactivate",
+    "activate",
+  ],
+  roles: ["read", "create", "update", "delete"],
+  school: ["read", "create", "update", "delete"],
+  "grade-teacher-assignment": ["read", "create", "update", "delete"],
+  tests: ["read", "create", "update", "delete", "learner-report", "assess"],
+  "grading-system": ["read", "create", "update", "delete"],
+  summative: ["read", "create", "update", "delete"],
+  grades: ["read", "create", "update", "delete"],
+  dashboard: ["read", "view-stats"],
+  "transfer-requests": ["read", "create", "update", "delete", "approve"],
+  payments: ["read", "create", "process", "delete"],
+  comment: ["read", "create"],
+};
+
+// Define role structure
+type Permissions = Record<string, string[]>;
+
+interface Role {
+  _id: string;
+  name: string;
+  permissions: Permissions;
+}
+
+interface RolePermissionsScreenProps {
+  initialData: Role;
+}
 function Roles() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [newRole, setNewRole] = useState(false);
-  const [roles, setRoles] = useState([]);
+  const [roles, setRoles] = useState<any>([]);
   const [modules, setModules] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [role, setRole] = useState<any>({});
+
+  const allActions = [
+    "read",
+    "create",
+    "update",
+    "delete",
+    "assess",
+    "publish",
+    "history",
+    "bulk-import",
+    "change-status",
+    "view-stats",
+    "approve",
+    "process",
+  ];
 
   // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
-  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
+  const [permissions, setPermissions] = useState<any>([]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
@@ -73,7 +157,7 @@ function Roles() {
   });
 
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    console.log(1234);
+    console.log(role);
     event.preventDefault();
     const result = await trigger();
     if (result && !loading) {
@@ -81,7 +165,7 @@ function Roles() {
       try {
         const data = await getValues();
         console.log(data);
-        await ApiService.createRole(data);
+        await ApiService.createRole(role);
         await getRoles();
         await reset();
         isLoading(false);
@@ -112,14 +196,16 @@ function Roles() {
       limit: limit,
     });
     const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
+    // setPagination({
+    //   current_page: pagination.current_page,
+    //   total: pagination.total,
+    //   total_pages: pagination.total_pages,
+    //   per_page: pagination.per_page,
+    // });
     setModule(response?.data?.module);
-    setRoles(response?.data?.roles);
+    setRoles(response?.data);
+    isLoading(false);
+    console.log(response?.data);
   };
 
   const deleteRecord = async () => {
@@ -144,6 +230,9 @@ function Roles() {
     setNewRole(true);
     setIsEditMode(true);
     setGroup(record.groups);
+    setRole(record);
+    setPermissions(record.permissions);
+    console.log("loggiing role", role);
     reset(record);
     setNewRole(true);
   };
@@ -153,6 +242,32 @@ function Roles() {
     setPermission([""]);
     reset(record);
     setNewRole(false);
+  };
+
+  // Function to toggle permissions
+  const handlePermissionChange = (module: string, action: string) => {
+    setRole((prev) => {
+      const updatedPermissions = { ...prev.permissions };
+      if (updatedPermissions[module]?.includes(action)) {
+        // Remove action
+        updatedPermissions[module] = updatedPermissions[module].filter(
+          (a) => a !== action
+        );
+      } else {
+        // Add action
+        updatedPermissions[module] = [
+          ...(updatedPermissions[module] || []),
+          action,
+        ];
+      }
+      return { ...prev, permissions: updatedPermissions };
+    });
+  };
+
+  // Save Role Permissions
+  const handleSave = () => {
+    console.log("Updated Role:", role);
+    // Send updated role to API
   };
 
   return (
@@ -206,19 +321,19 @@ function Roles() {
                   Name
                 </Table.Th>
 
-                <Table.Th className="border-b-0 whitespace-nowrap">
+                {/* <Table.Th className="border-b-0 whitespace-nowrap">
                   Created AT
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   Updated At
-                </Table.Th>
+                </Table.Th> */}
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   ACTIONS
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {roles.map((role: any, key) => (
+              {roles?.map((role: any, key) => (
                 <Table.Tr key={key} className="">
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <span className="font-medium whitespace-nowrap">
@@ -230,7 +345,7 @@ function Roles() {
                       {role.name}
                     </span>
                   </Table.Td>
-
+                  {/* 
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <span className="font-medium whitespace-nowrap">
                       {new Date(role.createdAt).toLocaleString("en-US", {
@@ -254,7 +369,7 @@ function Roles() {
                         minute: "2-digit",
                       })}
                     </span>
-                  </Table.Td>
+                  </Table.Td> */}
 
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                     <div className="flex items-center justify-center">
@@ -375,8 +490,8 @@ function Roles() {
                   <Lucide icon="X" className="w-8 h-8 text-slate-400" />
                 </a>
               </Dialog.Title>
-              <Dialog.Description className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-12 sm:col-span-6">
+              <Dialog.Description className="grid grid-cols-1 gap-4 gap-y-3">
+                {/* <div className="col-span-12 sm:col-span-6">
                   <FormLabel htmlFor="modal-form-1">Role Name</FormLabel>
                   <FormInput
                     {...register("name")}
@@ -391,92 +506,92 @@ function Roles() {
                         errors.name.message}
                     </div>
                   )}
+                </div> */}
+                <div className="mb-1">
+                  <label className="block text-sm font-medium">Role Name</label>
+                  <FormInput
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    value={role.name}
+                    onChange={(e) => setRole({ ...role, name: e.target.value })}
+                  />
                 </div>
-              </Dialog.Description>
-              <Dialog.Description className="grid grid-cols-1">
-                <Table className=" ">
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th className="border-b-0 whitespace-nowrap">
-                        Module
-                      </Table.Th>
-                      <Table.Th className="border-b-0 whitespace-nowrap">
-                        Create
-                      </Table.Th>
+                <div className="bg-white shadow rounded ">
+                  <h2 className="text-lg font-semibold mb-2">Permissions</h2>
+                  {Object.entries(MODULE_CONFIG)
+                    .sort(([moduleA], [moduleB]) =>
+                      moduleA.localeCompare(moduleB)
+                    ) // Sort by module name
 
-                      <Table.Th className="border-b-0 whitespace-nowrap">
-                        Read
-                      </Table.Th>
-                      <Table.Th className="border-b-0 whitespace-nowrap">
-                        Update
-                      </Table.Th>
-                      <Table.Th className="border-b-0 whitespace-nowrap">
-                        Delete
-                      </Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {module.map((mod: any, key) => (
-                      <Table.Tr key={key} className="">
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <span className="font-medium whitespace-nowrap">
-                            {mod.description}
-                            <FormInput
-                              type="hidden"
-                              {...register(`permissions[${key}].module`)}
-                              name={`permissions[${key}].module`}
-                              value={mod._id}
-                              className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                            />
-                          </span>
-                        </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <span className="font-medium whitespace-nowrap">
-                            <FormInput
-                              type="checkbox"
-                              {...register(`permissions[${key}].write`)}
-                              name={`permissions[${key}].write`}
-                              className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                            />
-                          </span>
-                        </Table.Td>
-
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <span className="font-medium whitespace-nowrap">
-                            <FormInput
-                              type="checkbox"
-                              {...register(`permissions[${key}].read`)}
-                              name={`permissions[${key}].read`}
-                              className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                            />
-                          </span>
-                        </Table.Td>
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <span className="font-medium whitespace-nowrap">
-                            <FormInput
-                              type="checkbox"
-                              {...register(`permissions[${key}].update`)}
-                              name={`permissions[${key}].update`}
-                              className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                            />
-                          </span>
-                        </Table.Td>
-
-                        <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                          <span className="font-medium whitespace-nowrap">
-                            <FormInput
-                              type="checkbox"
-                              {...register(`permissions[${key}].delete`)}
-                              name={`permissions[${key}].delete`}
-                              className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                            />
-                          </span>
-                        </Table.Td>
-                      </Table.Tr>
+                    .map(([module, actions]) => (
+                      <div key={module} className="mb-4">
+                        <h3 className="text-md font-medium capitalize">
+                          {module.replaceAll("-", " ")}
+                        </h3>
+                        <div className="flex gap-4 flex-wrap">
+                          {actions.map((action) => (
+                            <label
+                              key={action}
+                              className="flex items-center gap-2"
+                            >
+                              <FormInput
+                                type="checkbox"
+                                defaultChecked={
+                                  permissions[module]?.includes(action) || false
+                                }
+                                className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                                onChange={() =>
+                                  handlePermissionChange(module, action)
+                                }
+                              />
+                              <span className="capitalize">
+                                {action.replaceAll("-", " ")}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
                     ))}
-                  </Table.Tbody>
-                </Table>
+                </div>
+                {/* Permissions */}
+                {/* <div className="mb-4">
+                  <h2 className="text-lg font-semibold mb-2">Permissions</h2>
+                  <div className="space-y-4">
+                    {Object.keys(permissions)?.map((category) => (
+                      <div key={category} className="p-4 border rounded">
+                        <h3 className="text-md font-medium capitalize">
+                          {category.replaceAll("-", " ")}
+                        </h3>
+
+                        <div className="flex flex-wrap gap-2">
+                          {allActions.map((action) => (
+                            <label
+                              key={action}
+                              className="flex items-center space-x-2"
+                            >
+                              <input
+                                type="checkbox"
+                                className="rounded focus:ring-blue-500"
+                                checked={
+                                  role.permissions[category]?.includes(
+                                    action
+                                  ) || false
+                                }
+                            
+                              />
+                             
+                              <h3 className="text-md font-medium capitalize">
+                                {action.replaceAll("-", " ")}
+                              </h3>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div> */}
               </Dialog.Description>
+
               <Dialog.Footer>
                 <Button
                   type="button"
