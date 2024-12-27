@@ -50,6 +50,7 @@ function Users() {
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
+  const { hasPermission } = useAuth();
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -102,7 +103,8 @@ function Users() {
   };
   const getRole = async () => {
     let res = await ApiService.getRole({ page: "", search: "", limit: "" });
-    setRoles(res.data?.roles);
+    console.log(res);
+    setRoles(res.data);
   };
 
   const activateUser = async (data: any) => {
@@ -121,6 +123,7 @@ function Users() {
       isLoading(true);
       try {
         const data = await getValues();
+        console.log(data);
         let res = await ApiService.createUser(data);
         getUsers();
         await reset();
@@ -141,7 +144,7 @@ function Users() {
     setIsEditMode(true);
     setGroup(record.groups);
     console.log(record);
-    reset({ ...record, role_id: record?.role_id?._id });
+    reset({ ...record, role: record?.role?._id });
 
     setDialog(true);
   };
@@ -173,61 +176,63 @@ function Users() {
     <>
       <h2 className="mt-1 text-lg font-medium ">Users</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
-        <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-          <Button
-            className="mr-2 shadow-md user-button"
-            onClick={(event: React.MouseEvent) => {
-              event.preventDefault();
-              cancel({ name: "" });
-              setDialog(true);
-            }}
-          >
-            New User
-          </Button>
-          <Menu>
-            <Menu.Button as={Button} className="px-2 !box">
-              <span className="flex items-center justify-center w-5 h-5">
-                <Lucide icon="Plus" className="w-4 h-4" />
-              </span>
-            </Menu.Button>
-            <Menu.Items className="w-40">
-              <Menu.Item>
-                <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                Excel
-              </Menu.Item>
-              <Menu.Item>
-                <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
-                PDF
-              </Menu.Item>
-            </Menu.Items>
-          </Menu>
-          <div className="hidden mx-auto md:block text-slate-500">
-            Showing{" "}
-            {pagination.current_page +
-              " to " +
-              pagination.total_pages +
-              " of " +
-              pagination.total}{" "}
-            entries
-          </div>
-          <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-            <div className="relative w-56 text-slate-500">
-              <FormInput
-                type="text"
-                className="w-56 pr-10 !box"
-                placeholder="Search..."
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <Lucide
-                icon="Search"
-                className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-              />
+        {hasPermission("users", "create") && (
+          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
+            <Button
+              className="mr-2 shadow-md user-button"
+              onClick={(event: React.MouseEvent) => {
+                event.preventDefault();
+                cancel({ name: "" });
+                setDialog(true);
+              }}
+            >
+              New User
+            </Button>
+            <Menu>
+              <Menu.Button as={Button} className="px-2 !box">
+                <span className="flex items-center justify-center w-5 h-5">
+                  <Lucide icon="Plus" className="w-4 h-4" />
+                </span>
+              </Menu.Button>
+              <Menu.Items className="w-40">
+                <Menu.Item>
+                  <Lucide icon="Printer" className="w-4 h-4 mr-2" /> Print
+                </Menu.Item>
+                <Menu.Item>
+                  <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
+                  Excel
+                </Menu.Item>
+                <Menu.Item>
+                  <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export to
+                  PDF
+                </Menu.Item>
+              </Menu.Items>
+            </Menu>
+            <div className="hidden mx-auto md:block text-slate-500">
+              Showing{" "}
+              {pagination.current_page +
+                " to " +
+                pagination.total_pages +
+                " of " +
+                pagination.total}{" "}
+              entries
+            </div>
+            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+              <div className="relative w-56 text-slate-500">
+                <FormInput
+                  type="text"
+                  className="w-56 pr-10 !box"
+                  placeholder="Search..."
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <Lucide
+                  icon="Search"
+                  className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
         <div className="col-span-12 overflow-auto  2xl:overflow-visible">
           <Table className="border-spacing-y-[10px] border-separate -mt-2">
             <Table.Thead>
@@ -248,7 +253,7 @@ function Users() {
                   Email
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
-                  Role
+                  Title
                 </Table.Th>
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   Status
@@ -277,11 +282,7 @@ function Users() {
                     {user.email}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    {user?.teacher
-                      ? "Teacher"
-                      : user.school_admin
-                      ? "Super Admin"
-                      : "Admin"}
+                    {user?.role?.name}
                     {/* {authData?.user?.email} */}
                   </Table.Td>
 
@@ -307,20 +308,24 @@ function Users() {
                             </span>
                           </Menu.Button>
                           <Menu.Items className="w-40">
-                            <Menu.Item onClick={() => editRecord(user)}>
-                              <Lucide icon="Edit" className="w-4 h-4 mr-2" />{" "}
-                              Edit
-                            </Menu.Item>
-                            <Menu.Item
-                              onClick={() => {
-                                // active(user)
-                                setUser(user);
-                                setConfirmDelete(true);
-                              }}
-                            >
-                              <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
-                              {user.status !== 1 ? "Activate" : "Deactivate"}
-                            </Menu.Item>
+                            {hasPermission("users", "update") && (
+                              <Menu.Item onClick={() => editRecord(user)}>
+                                <Lucide icon="Edit" className="w-4 h-4 mr-2" />{" "}
+                                Edit
+                              </Menu.Item>
+                            )}
+                            {hasPermission("users", "update") && (
+                              <Menu.Item
+                                onClick={() => {
+                                  // active(user)
+                                  setUser(user);
+                                  setConfirmDelete(true);
+                                }}
+                              >
+                                <Lucide icon="Trash" className="w-4 h-4 mr-2" />{" "}
+                                {user.status !== 1 ? "Activate" : "Deactivate"}
+                              </Menu.Item>
+                            )}
 
                             {/* <Menu.Item>
                             <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
@@ -435,6 +440,37 @@ function Users() {
                   </div>
                 )}
               </div>
+
+              {/* <FormLabel htmlFor="modal-form-1">User Type</FormLabel> */}
+              {/* <FormSelect
+                // className="w-30 mt-3 !box sm:mt-0"
+                // onChange={(e) => setLimit(parseInt(e.target.value))}
+                >
+                  <option value={10}>Select Type</option>
+
+                  <option value={10}>Class Manager</option>
+                  <option value={25}>H/Teacher</option>
+                  <option value={50}>Subject Lead</option>
+                  <option value={100}>C Coodinator</option>
+                  <option value={100}>D/H Teacher</option>
+                  <option value={100}>D/Head Teacher</option>
+                </FormSelect> */}
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Role</FormLabel>
+                <FormSelect {...register("role")} name="role">
+                  {roles?.map((role: any, key) => (
+                    <option key={key} value={role._id}>
+                      {role.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
               <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
                 <FormInput
@@ -454,7 +490,7 @@ function Users() {
 
               {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Role</FormLabel>
-                <FormSelect {...register("role_id")} name="role_id">
+                <FormSelect {...register("role")} name="role">
                   {roles.map((role: any, key) => (
                     <option key={key} value={role._id}>
                       {role.name}

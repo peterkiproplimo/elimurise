@@ -9,23 +9,35 @@ export interface Menu {
   pathname?: string;
   subMenu?: Menu[];
   ignore?: boolean;
+  // permission?
 }
 
 export interface SideMenuState {
   menu: Array<Menu | "divider">;
 }
+const authDataSerialized = await localStorage.getItem("@AuthData");
+const _authData: any = JSON.parse(authDataSerialized || "{}");
 
+const permissions = _authData?.user?.role?.permissions || {};
+
+const hasPermission = (module: string, action: string): boolean => {
+  console.log("confirming");
+  if (!permissions[module]) return false;
+  return permissions[module].includes(action);
+};
 const initialState: SideMenuState = {
   menu: [
     {
       icon: "Home",
       title: "Dashboard",
       pathname: "/home",
+      // ignore: !hasPermission("dashboard", "read"),
     },
     {
       icon: "Activity",
       pathname: "/home/stream",
       title: "Stream",
+      ignore: !hasPermission("stream", "read"),
     },
     // {
     //   icon: "Users",
@@ -47,26 +59,31 @@ const initialState: SideMenuState = {
           icon: "Users",
           title: "Parents",
           pathname: "/home/parents",
+          ignore: !hasPermission("parents", "read"),
         },
         {
           icon: "Users",
           pathname: "/home/learners",
           title: "Learners Details",
+          ignore: !hasPermission("learners", "read"),
         },
         {
           icon: "Users",
           pathname: "/home/enrollment",
           title: "Promotion",
+          ignore: !hasPermission("enrollment", "read"),
         },
         {
           icon: "User",
           pathname: "/home/transfers",
           title: "Transfers",
+          ignore: !hasPermission("transfer-requests", "read"),
         },
         {
           icon: "User",
           pathname: "/home/incoming-transfers",
           title: "Incoming Transfers",
+          ignore: !hasPermission("transfer-requests", "read"),
         },
       ],
     },
@@ -75,6 +92,7 @@ const initialState: SideMenuState = {
       icon: "Users",
       title: "Teachers",
       pathname: "/home/teachers",
+      ignore: !hasPermission("transfer-requests", "read"),
     },
     {
       icon: "BookOpen",
@@ -95,11 +113,13 @@ const initialState: SideMenuState = {
           icon: "Activity",
           pathname: "/home/assessment",
           title: " Assessment",
+          ignore: !hasPermission("assessment", "read"),
         },
         {
           icon: "Airplay",
           pathname: "/home/reports",
           title: "Formative Report",
+          ignore: !hasPermission("assessment", "report"),
         },
       ],
     },
@@ -112,16 +132,19 @@ const initialState: SideMenuState = {
           icon: "Activity",
           pathname: "/home/grading",
           title: "Performance Level Scale",
+          ignore: !hasPermission("grading-system", "read"),
         },
         {
           icon: "Activity",
           pathname: "/home/tests",
           title: "Summative Tests ",
+          ignore: !hasPermission("summative", "read"),
         },
         {
           icon: "User",
           pathname: "/home/assess",
           title: "Summative Assessment",
+          ignore: !hasPermission("summative", "read"),
         },
         {
           icon: "User",
@@ -188,6 +211,7 @@ const initialState: SideMenuState = {
       icon: "Users",
       title: "Users",
       pathname: "/home/users",
+      ignore: !hasPermission("users", "read"),
     },
     {
       icon: "FileText",
@@ -199,11 +223,11 @@ const initialState: SideMenuState = {
     //   pathname: "/home/users",
     //   title: "Users",
     // },
-    // {
-    //   icon: "File",
-    //   pathname: "/home/roles",
-    //   title: "Roles",
-    // },
+    {
+      icon: "File",
+      pathname: "/home/roles",
+      title: "Roles",
+    },
   ],
 };
 const teacherState: SideMenuState = {

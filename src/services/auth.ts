@@ -45,7 +45,6 @@ getData();
 axios.interceptors.request.use(
   async (config) => {
     try {
-      console.log("Calling ...........");
       const user = await getData();
 
       // Assuming `getData()` returns an object with a token or some user info
@@ -829,8 +828,8 @@ export async function activateorDeactivateUsers(data: FieldValues) {
 }
 export async function createUser(data: FieldValues) {
   try {
-    if (data.id) {
-      const res = await axios.put(c.USERS + "/" + data.id, data);
+    if (data._id) {
+      const res = await axios.put(c.USERS + "/" + data._id, data);
       return res.data;
     } else {
       const res = await axios.post(c.USERS, data);
@@ -1430,10 +1429,10 @@ export function handler(err: any) {
     return new Error(error.message);
   }
   // Check for specific status code and perform action
-  if (error?.response?.status == 403) {
-    localStorage.removeItem("@AuthData");
-    window.location.href = "/auth/login";
-  }
+  // if (error?.response?.status == 403) {
+  //   localStorage.removeItem("@AuthData");
+  //   window.location.href = "/auth/login";
+  // }
   // Handle errors with a response data that has an 'error' property
   if (
     (error.response &&
