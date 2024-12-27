@@ -47,7 +47,7 @@ const Contact = () => {
           <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
             Get in touch with Hero Learning
           </h1>
-          <div className="grid xl:mt-10 xl:ml-10 xl:mr-10 overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
+          <div className="grid xl:mt-10 bg-white xl:ml-10 xl:mr-10 overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group p-5 xl:p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <h1 className="xl:text-3xl text-xl font-semibold xl:mt-5 text-primary w-full">
                 Are you a School Administrator?
@@ -132,7 +132,7 @@ const Contact = () => {
                       type="text"
                       name="text"
                       placeholder="Full Name *"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
+                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-md   border-gray-300"
                     />
                   </div>
                   <div className="input-form p-2">
@@ -141,7 +141,7 @@ const Contact = () => {
                       type="email"
                       name="email"
                       placeholder="Email Address *"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
+                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-md  border-gray-300"
                     />
                   </div>
                   <div className="input-form p-2">
@@ -150,7 +150,7 @@ const Contact = () => {
                       type={"password"}
                       name="password"
                       placeholder="School Name *"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
+                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-md   border-gray-300"
                     />
                   </div>
                   <div className="input-form p-2">
@@ -158,7 +158,7 @@ const Contact = () => {
                       id="message"
                       name="message"
                       placeholder="Comment: Let us know how we can help you"
-                      className="mt-1 block px-4 py-3  min-w-full xl:min-w-[350px] h-[150px] w-full rounded-none  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
+                      className="mt-1 block px-4 py-3  min-w-full xl:min-w-[350px] h-[150px] w-full rounded-md   border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
                     ></textarea>
                   </div>
                 </div>

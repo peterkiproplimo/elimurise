@@ -42,9 +42,11 @@ const NavbarMenu = () => {
   </div>
   <div className='box'>
   <div className="flex xl:mx-auto xl:w-[80%] justify-between items-center w-full px-4 lg:px-10  p-2">
-          <div className="icon ">
-            <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
-          </div>
+  <Link to="/">
+  <div className="icon">
+    <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
+  </div>
+</Link>
           <div className="buttons">
             <div className="block xl:hidden">
     <button
@@ -130,6 +132,9 @@ const NavbarMenu = () => {
 
             {/* Buttons for large screens (xl and above) */}
             <div className="hidden xl:flex gap-5 mr-10 ">
+            <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
+              Home
+              </Link>
             <a href="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
               Why Us
               </a>
@@ -143,6 +148,9 @@ const NavbarMenu = () => {
       </Link>
               <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                Contact Us
+              </Link>
+              <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
+               About Us
               </Link>
               <Link to="/demo" className="xl:w-32 xl:mr-8">
                 <Button

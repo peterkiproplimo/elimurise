@@ -49,7 +49,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="homeContainer sm:p-5 xl:p-0 p-0">
+      <div className="homeContainer sm:p-5 xl:p-0 p-0 font-lexend">
       <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           
           <div className="buttons">
@@ -163,7 +163,10 @@ const Home = () => {
       
                   {/* Buttons for large screens (xl and above) */}
                   <div className="hidden xl:flex gap-5 mr-10 ">
-                  <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
+                  <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
+                    Home
+                    </Link>
+                  <a href="#services" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
                     Why Us
                     </a>
                     <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
@@ -172,6 +175,9 @@ const Home = () => {
                     <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
                      Contact Us
                     </Link>
+                    <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
+                    About Us
+                    </a>
                     <Link to="/demo" className="xl:w-32 xl:mr-8">
                       <Button
                         className="text-md w-[192px] p-2 h-[50px] bg-[#FF3B30] text-white rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px]"
@@ -205,11 +211,11 @@ const Home = () => {
               </div>
 
         <div className="lg:flex justify-center items-center">
-          <div className="xl:p-10 mt-5 p-5 max-w-[1500px] ">
+          <div className="xl:p-10 mt-5 p-5 max-w-[1600px] ">
             <div className="grid bg-[#BAB4D7] overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
               {/* Left Side Content */}
               <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                <h1 className="xl:text-5xl text-2xl font-semibold mt-5 text-primary w-full">
+                <h1 className="xl:text-6xl text-2xl font-semibold mt-5 text-primary w-full">
                   Empowering Competency <br /> Based Curriculum <br /> Education
                   In Kenya
                 </h1>
@@ -257,7 +263,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="aboutContainer mt-10 xl:mx-auto max-w-[1500px]">
+        <div className="aboutContainer mt-10 xl:mx-auto max-w-[1600px]">
           <p className="xl:text-lg text-lg text-center text-primary">
             Why choose us
           </p>
@@ -334,7 +340,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className=" xl:mx-auto  max-w-[1500px] p-5">
+        <div id="about" className=" xl:mx-auto  max-w-[1500px] p-5">
           <Button
             variant="primary"
             className="text-primary bg-transparent border-primary text-md w-[92px] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
@@ -395,9 +401,9 @@ const Home = () => {
           </div>
         </div>
 
-        <div className=" xl:flex gap-10 space-x-8 xl:mx-auto  max-w-[1500px] items-center justify-center">
+        <div className=" xl:flex gap-10 space-x-8  xl:mx-auto max-w-[1500px] items-center justify-center">
           <div
-            id="about"
+            id="services"
             className="flex flex-col items-center  xl:p-4 p-2"
           >
             <h1 className="text-3xl md:text-3xl  xl:text-5xl font-bold text-primary xl:mb-2">
@@ -411,7 +417,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="grid overflow-hidden xl:mx-auto  max-w-[1500px] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 m-5  xl:grid-cols-3 gap-10">
+        <div className="grid overflow-hidden xl:mx-auto max-w-[1500px] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 m-5  xl:grid-cols-3 gap-20">
           <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between h-full">
             <div className="secondArea">
               <img
@@ -467,12 +473,13 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="service  mt-10 bg-primary ">
-          <h1 className=" text-center xl:text-5xl text-2xl p-4  text-white font-medium">
-            CBC Made Easy
-          </h1>
+        <div className="service  xl:mt-20 mt-10 bg-primary  xl:h-[35vh] ">
+        <h1 className="text-center xl:text-5xl text-2xl pt-10 text-white font-bold mt-10">
+  CBC Made Easy
+</h1>
 
-          <div className="mx-auto  max-w-[1500px] grid overflow-hidden rounded-3xl gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10 p-5 xl:grid-cols-3">
+
+          <div className="mx-auto  max-w-[1500px] grid overflow-hidden rounded-3xl gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 p-5 xl:grid-cols-3">
             <div className="group relative bg-[#51608A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <div className="flex gap-2">
                 <div className="secondArea xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
@@ -540,8 +547,8 @@ const Home = () => {
           </div>
         </div>
 
-        <div id="pricing" className="aboutContainer mt-10">
-          <h1 className="xl:text-5xl text-2xl text-center text-primary font-medium">
+        <div id="pricing" className="aboutContainer mt-10 xl:mt-20">
+          <h1 className="xl:text-5xl text-2xl text-center text-primary font-bold">
             Pricing Plan
           </h1>
           <p className="xl:text-2xl text-lg text-center text-primary">
