@@ -37,7 +37,7 @@ const initialState: SideMenuState = {
       icon: "Activity",
       pathname: "/home/stream",
       title: "Stream",
-      ignore: !hasPermission("stream", "read"),
+      ignore: !hasPermission("streams", "read"),
     },
     // {
     //   icon: "Users",
