@@ -69,7 +69,7 @@ axios.interceptors.request.use(
 export const getPackages = async (data: any) => {
   try {
     await getData();
-    let res = await axios.get(c.SUBSCRIPTION + "/packages", {
+    let res = await axios.get(c.PACKAGE + "/", {
       params: data,
     });
     return res.data;
@@ -81,7 +81,7 @@ export const getPackages = async (data: any) => {
 export const getSubscriptions = async (data: any) => {
   try {
     await getData();
-    let res = await axios.get(c.SUBSCRIPTION + "/trasactions", {
+    let res = await axios.get(c.SUBSCRIPTION + "/invoices", {
       params: data,
     });
     return res.data;
@@ -104,7 +104,7 @@ export const getPrintSubscription = async (data: any) => {
 
 export async function createSubscription(data: FieldValues) {
   try {
-    let res = await axios.post(c.SUBSCRIPTION, data);
+    let res = await axios.post(c.REGISTER, data);
     return res.data;
   } catch (e) {
     throw handler(e);

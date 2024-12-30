@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../base-components/Button";
 import LoadingIcon from "../../base-components/LoadingIcon";
@@ -22,13 +22,25 @@ import { Menu, X } from "lucide-react";
 import NavbarMenu from "../../webapp/NavBarMenu";
 import FooterComponent from "../../webapp/footer";
 import { Controller } from "react-hook-form";
-import { NotificationElement } from "../../base-components/Notification";
+import Notification, {
+  NotificationElement,
+} from "../../base-components/Notification";
+import Lucide from "../../base-components/Lucide";
+import ScaleLoader from "react-spinners/ScaleLoader";
+
 interface County {
   name: string;
   capital: string;
   code: number;
   sub_counties: string[];
 }
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "red",
+};
+
 const Register = () => {
   const auth = useAuth();
   const [loading, isLoading] = useState(false);
@@ -38,7 +50,17 @@ const Register = () => {
   const [selectedCounty, setSelectedCounty] = useState<any>({});
   const [subCounties, setSubCounties] = useState([]);
   const [counties, setCounties] = useState<County[]>([]); // List<County>
+  const [accountReg, setAccountReg] = useState(false); // List<County>
+
   let county_list: County[] = [];
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(null); // State to track selected package
+
+  const handleSelectPlan = (selectedPackageId: string) => {
+    setValue("plan", selectedPackageId);
+
+    setSelectedPackage(selectedPackageId); // Update the selected package
+  };
+
   const navigate = useNavigate();
   const [Package, setPackage] = useState<any>(
     JSON.parse(localStorage.getItem("package") || "{}")
@@ -65,18 +87,25 @@ const Register = () => {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("School Name is required"),
+      firstname: yup.string().required("First name is required"),
+      lastname: yup.string().required("Last name is required"),
+      phone: yup.string().required("Phone is required"),
+      email: yup.string().required("Email is required").email(),
+      password: yup.string().required("Password is required").min(4),
+      school_name: yup.string().required("School Name is required"),
+      plan: yup.string().required("Plan is required"),
+      total_learners: yup
+        .string()
+        .required("Total number of learners is required"),
       county: yup.string().required("County is required"),
-      subcounty: yup.string().required("Sub County is required"),
-      address: yup.string().required("Address is required"),
-      // email: yup.string().required().email(),
-      // password: yup.string().required().min(4),
+      subcounty: yup.string().required("Subcounty is required"),
     })
     .required();
 
   const {
     control,
     register,
+    setValue,
     trigger,
     getValues,
     formState: { errors },
@@ -119,11 +148,10 @@ const Register = () => {
     const result = await trigger();
 
     if (result && !loading) {
-      isLoading(false);
+      isLoading(true);
       try {
         const data = await getValues();
-        data.numberOfLearners = numberOfLearners;
-        data.packageId = Package._id;
+        data.packageId = selectedPackage;
 
         console.log(data);
         // return;
@@ -133,8 +161,10 @@ const Register = () => {
         isLoading(false);
 
         setSuccess(true);
-        setMessage("Authenticated successfully");
+        setMessage("Registration successfully");
         notify.current?.showToast();
+        navigate("/payment");
+
         // navigate("/");
       } catch (error: any) {
         isLoading(false);
@@ -151,9 +181,25 @@ const Register = () => {
     console.log("Button clicked");
     setShowPassword(!showPassword);
   };
+  let [color, setColor] = useState("rgb(21 34 89 / var(--tw-bg-opacity))");
 
   return (
     <>
+      {loading ? (
+        <div className="fixed inset-0 bg-black bg-opacity-5 flex justify-center items-center z-50">
+          <ScaleLoader
+            color={color}
+            loading={loading}
+            width={20}
+            height={100}
+            radius={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      ) : (
+        ""
+      )}
       <div className="homeContainer">
         <NavbarMenu />
 
@@ -213,9 +259,19 @@ const Register = () => {
           >
             <div>
               <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">
-                Personal Information:
+                <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
+                  />
+                  <div>
+                    <h1 className="text-primary font-bold ">
+                      Personal Information:
+                    </h1>
+                  </div>{" "}
+                </div>
               </p>
-              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5  ">
+              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5  m-5 ">
                 <div className="input-form">
                   <FormInput
                     {...register("firstname")}
@@ -224,8 +280,8 @@ const Register = () => {
                     name="firstname"
                     className={
                       errors.firstname
-                        ? "block px-4 py-3 mt-4  min-w-full  border-danger"
-                        : "block px-4 py-3 mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
+                        ? "px-4 py-3 xl:mt-4  min-w-full  border-danger"
+                        : "py-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                     }
                     placeholder="First Name*"
                   />
@@ -244,8 +300,8 @@ const Register = () => {
                     name="lastname"
                     className={
                       errors.lastname
-                        ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger"
-                        : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
+                        ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                        : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                     }
                     placeholder="Last Name*"
                   />
@@ -264,8 +320,8 @@ const Register = () => {
                     name="email"
                     className={
                       errors.email
-                        ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger"
-                        : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
+                        ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                        : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                     }
                     placeholder="Email Address *"
                   />
@@ -280,15 +336,16 @@ const Register = () => {
                   <FormInput
                     {...register("phone")}
                     id="validation-form-2"
-                    type="text"
+                    type="tel"
                     name="phone"
                     className={
                       errors.phone
-                        ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger"
-                        : "block px-4 py-3 xl:mt-4  min-w-full  xl:p-4 border-gray-300 rounded-none"
+                        ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                        : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                     }
                     placeholder="Phone Number *"
                   />
+
                   {errors.phone && (
                     <div className="mt-2 text-danger">
                       {typeof errors.phone.message === "string" &&
@@ -305,8 +362,8 @@ const Register = () => {
                       name="password"
                       className={
                         errors.password
-                          ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger pr-10"
-                          : "block px-4 py-3 xl:mt-4  min-w-full xl:p-4 border-gray-300 rounded-none"
+                          ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                          : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                       }
                       placeholder="Password*"
                     />
@@ -332,32 +389,48 @@ const Register = () => {
                       name="confirm_password"
                       className={
                         errors.password
-                          ? "block px-4 py-3 xl:mt-4  min-w-full  border-danger xl:pr-10"
-                          : "block px-4 py-3 xl:mt-4  min-w-full xl:p-4 border-gray-300 rounded-none"
+                          ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                          : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                       }
                       placeholder="Confirm Password*"
                     />
                   </div>
                 </div>
               </div>
-
-              <div className="mt-5 flex  xl:mt-8 xl:text-left">
-                <Button
-                  variant="primary"
-                  className="text-md w-[92px] xl:text-lg xl:w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
-                >
-                  Save
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-2 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
+              {/* 
+                      <div className="mt-5 flex  xl:mt-8 xl:text-left">
+                        <Button
+                          variant="primary"
+                          className="text-md w-[92px] xl:text-lg xl:w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                        >
+                          Save
+                          {loading && (
+                            <LoadingIcon
+                              icon="spinning-circles"
+                              color="white"
+                              className="w-2 h-4 ml-2"
+                            />
+                          )}
+                        </Button>
+                      </div> */}
             </div>
-            <div className="grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3">
+
+            <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
+              <FontAwesomeIcon
+                icon={faCircleCheck}
+                className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
+              />
+              <div>
+                <h1 className="text-primary font-bold ">Choose a plan</h1>
+                {errors.plan && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.plan.message === "string" &&
+                      errors.plan.message}
+                  </div>
+                )}
+              </div>{" "}
+            </div>
+            <div className="grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3 m-5">
               <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
                 <div className="contents">
                   <Button
@@ -430,10 +503,22 @@ const Register = () => {
                         <div className="border-b border-primary/50 w-full mt-8"></div>
                       </div>{" "}
                       <Button
-                        variant="primary"
-                        className="text-md xl:text-lg  w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+                        type="button"
+                        variant={
+                          selectedPackage === Package._id
+                            ? "success"
+                            : "primary"
+                        }
+                        className={`text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2 border ${
+                          selectedPackage === Package._id
+                            ? "bg-green-500 text-white"
+                            : ""
+                        }`}
+                        onClick={() => handleSelectPlan(Package._id)}
                       >
-                        Add to Cart
+                        {selectedPackage === Package._id
+                          ? "Plan Selected"
+                          : "Choose Plan"}
                         {loading && (
                           <LoadingIcon
                             icon="spinning-circles"
@@ -447,30 +532,38 @@ const Register = () => {
                 </>
               ))}
             </div>
+
             <div>
               {/* <form
-              className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
-              onSubmit={onSubmit}
-            > */}
-              <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">
-                Subscribe :
-              </p>
-              <p className="mt-2 xl:text-2xl text-lg text-primary font-bold">
-                You have Chosen Hero System.
-              </p>
-              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2  xl:mt-8 ">
+                      className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
+                      onSubmit={onSubmit}
+                    > */}
+              <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
+                <FontAwesomeIcon
+                  icon={faCircleCheck}
+                  className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
+                />
+                <div>
+                  <h1 className="text-primary font-bold ">Subscribe:</h1>
+                  <p className="mt-2 xl:text-2xl text-lg text-primary font-bold">
+                    You have Chosen Hero System.
+                  </p>
+                </div>{" "}
+              </div>
+
+              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2  xl:mt-8 m-5 ">
                 <div className="input-form">
                   <FormInput
-                    {...register("firstname")}
+                    {...register("school_name")}
                     id="validation-form-2"
                     type="text"
-                    name="firstname"
+                    name="school_name"
                     className={
                       errors.firstname
-                        ? " px-4 xl:py-2 xl:mt-4  min-w-full  border-danger"
-                        : " px-4 xl:py-2  xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 "
+                        ? " px-4 p-3 xl:mt-4  min-w-full  border-danger"
+                        : " px-4 p-3  xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 "
                     }
-                    placeholder=" School Name"
+                    placeholder="School Name"
                   />
                   {errors.firstname && (
                     <div className="mt-2 text-danger">
@@ -495,8 +588,8 @@ const Register = () => {
                         }}
                         className={
                           errors.county
-                            ? "px-4 xl:mt-4 py-2 min-w-full  border-danger"
-                            : "xl:py-2  xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300"
+                            ? " px-4 p-3 xl:mt-4  min-w-full  border-danger"
+                            : " px-4 p-3  xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 "
                         }
                       >
                         <option value={""}>Select County</option>
@@ -521,8 +614,8 @@ const Register = () => {
                 {/* Sub County Selection */}
                 <div>
                   {/* <FormLabel htmlFor="subcounty" className="font-bold">
-                    Sub County
-                  </FormLabel> */}
+                            Sub County
+                          </FormLabel> */}
                   <Controller
                     control={control}
                     name="subcounty"
@@ -536,8 +629,8 @@ const Register = () => {
                         // }))}
                         className={
                           errors.subcounty
-                            ? "px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
-                            : "xl:py-2  xl:mt-4 mt-2 min-w-full  border-gray-300"
+                            ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                            : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                         }
                       >
                         <option value={""}>Select Subcounty</option>
@@ -557,40 +650,20 @@ const Register = () => {
                     </div>
                   )}
                 </div>
-                <div className="input-form">
-                  <FormInput
-                    {...register("phone")}
-                    id="validation-form-2"
-                    type="text"
-                    name="Contact"
-                    className={
-                      errors.phone
-                        ? "px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
-                        : "xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300"
-                    }
-                    placeholder="Phone number"
-                  />
-                  {errors.phone && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.phone.message === "string" &&
-                        errors.phone.message}
-                    </div>
-                  )}
-                </div>
 
                 <div className="input-form">
                   <div className="flex items-center">
                     <FormInput
-                      {...register("confirm_password", {
-                        required: "Confirm Password is required",
+                      {...register("total_learners", {
+                        required: "Total number of learners is required",
                       })}
                       id="validation-form-3"
-                      type="password"
-                      name="confirm_password"
+                      type="number"
+                      name="total_learners"
                       className={
                         errors.password
-                          ? "block px-4 xl:py-3 py-2 xl:mt-4   min-w-full  border-danger pr-10"
-                          : "block px-4  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
+                          ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                          : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
                       }
                       placeholder="Number Of Learners*"
                     />
@@ -600,46 +673,48 @@ const Register = () => {
                   <div className="flex items-center">
                     <FormSelect
                       id="validation-form-2"
+                      {...register("county", {
+                        required: "County is required",
+                      })}
                       name="county"
                       className="block px-4 xl:py-4 py-2 xl:mt-4  mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
                       defaultValue=""
                     >
-                      <option value="" className="text-primary" disabled>
-                        Choose A period*
+                      <option value="" className="text-primary">
+                        Choose A period *
                       </option>
-                      <option value="termly">Monthly</option>
+                      <option value="termly">Termly</option>
                       <option value="yearly">Yearly</option>
                       {/* <option value="option3">Option 3</option> */}
                     </FormSelect>
                   </div>
                 </div>
-                <div className="input-form">
-                  <div className="flex items-center">
-                    <FormInput
-                      {...register("confirm_password", {
-                        required: "Confirm Password is required",
-                      })}
-                      id="validation-form-3"
-                      type="password"
-                      name="confirm_password"
-                      className={
-                        errors.password
-                          ? "block px-4 xl:py-3 xl:mt-4 py-2 min-w-full  border-danger"
-                          : "block  xl:py-3  py-2 xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 rounded-none"
-                      }
-                      placeholder="Total Bill.VAT Inclusive"
-                    />
-                  </div>
-                </div>
+                {/* <div className="input-form">
+                    <div className="flex items-center">
+                      <FormInput
+                        {...register("total_bill")}
+                        id="validation-form-3"
+                        type="text"
+                        name="total_bill"
+                        className={
+                          errors.password
+                            ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                            : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
+                        }
+                        placeholder="Total Bill.VAT Inclusive"
+                      />
+                    </div>
+                  </div> */}
               </div>
 
               <div className="mt-5  xl:mt-8 xl:text-left">
                 {/* <Link to="/payment" className="xl:w-32 xl:mr-8"> */}
                 <Button
                   variant="primary"
+                  type="submit"
                   className="text-md xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
                 >
-                  Proceed to Make Payment
+                  Proceed
                   {loading && (
                     <LoadingIcon
                       icon="spinning-circles"
@@ -655,6 +730,23 @@ const Register = () => {
           <FooterComponent />
         </div>
       </div>
+
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed "}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification>
     </>
   );
 };

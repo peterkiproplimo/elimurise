@@ -23,6 +23,7 @@
     .box {
       background-color: theme("backgroundColor.darkmode.600");
       border-color: transparent;
+      
     }
   }
 }

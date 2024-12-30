@@ -36,7 +36,7 @@ function Main() {
 
   const [questions, setQuestions] = useState([]);
   const [events, setEvents] = useState([]);
-  const [subscriptions, setSubscription] = useState([]);
+  const [invoices, setSubscription] = useState([]);
   const [stats, setSats] = useState({
     houseLose: 0,
     houseLosses: 0,
@@ -76,7 +76,7 @@ function Main() {
     isLoading(true);
     try {
       let res = await ApiService.getSubscriptions({});
-      setSubscription(res.data);
+      setSubscription(res.invoices);
     } catch (error) {
       console.log(error);
     }
@@ -164,55 +164,47 @@ function Main() {
     <>
       <div className="price mt-5 ">
         <h2 className="text xl:text-xl sm:text-xl md:text-3xl text-left ml-5 ">
-          Plans
+          Invoices
         </h2>
         {loading ? (
           <div className="flex flex-col items-center mt-5">
             <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
           </div>
-        ) : subscriptions.length > 0 ? (
+        ) : invoices?.length > 0 ? (
           <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-            <Table className="border-spacing-y-[5px]  border-separate -mt-2">
+            <Table className="border-spacing-y-[3px] border-separate mt-2 ">
               <Table.Thead>
-                <Table.Tr className="bg-primary text-white shadow-[20px_3px_20px_#0000000b]">
+                <Table.Tr>
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     No.
                   </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Invoice ID
+                  </Table.Th>
 
                   <Table.Th className="border-b-0 whitespace-nowrap">
-                    Package
+                    Invoice Period
+                  </Table.Th>
+
+                  <Table.Th className="border-b-0 whitespace-nowrap">
+                    Invoice Amount
                   </Table.Th>
                   <Table.Th className="border-b-0 whitespace-nowrap">
-                    Price Per Learner
+                    Outstanding Amount
                   </Table.Th>
                   <Table.Th className="border-b-0 whitespace-nowrap">
-                    Learners(Paid For)
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Duration
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Total Cost
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Payment Method
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Payment Ref
-                  </Table.Th>
-                  <Table.Th className="border-b-0 whitespace-nowrap">
-                    Amount Paid
+                    Invoice Due Date
                   </Table.Th>
                   <Table.Th className="border-b-0 whitespace-nowrap">
                     Status
                   </Table.Th>
                   <Table.Th className="border-b-0 whitespace-nowrap">
-                    ACTIONS
+                    Actions
                   </Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {subscriptions.map((subscription: any, key) => (
+                {invoices.map((invoice: any, key) => (
                   <Table.Tr key={key} className="">
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
@@ -222,84 +214,69 @@ function Main() {
 
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
-                        {subscription.packageId.name}
+                        {invoice.erpnext_invoice_id}
                       </span>
                     </Table.Td>
+
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
-                        {subscription.packageId.pricePerLearner}
+                        {new Date(
+                          invoice.invoice_period_start_date
+                        ).toLocaleDateString()}{" "}
+                        -{" "}
+                        {new Date(
+                          invoice.invoice_period_end_date
+                        ).toLocaleDateString()}
                       </span>
                     </Table.Td>
+
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
-                        {subscription.numberOfLearners}
+                        KES{" "}
+                        {formatCurrency(invoice.invoice_amount.$numberDecimal)}
                       </span>
                     </Table.Td>
+
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
-                        {subscription.packageId.duration}
+                        KES{" "}
+                        {formatCurrency(
+                          invoice.outstanding_amount.$numberDecimal
+                        )}
                       </span>
                     </Table.Td>
+
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <span className="font-medium whitespace-nowrap">
-                        KES {formatCurrency(subscription.totalCost)}
+                        {new Date(invoice.invoice_due_ts).toLocaleDateString()}
                       </span>
                     </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <span className="font-medium whitespace-nowrap">
-                        {subscription.payment.payment_method}
-                      </span>
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <span className="font-medium whitespace-nowrap">
-                        {subscription.payment.confirmation_code}
-                      </span>
-                    </Table.Td>
-                    <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                      <span className="font-medium whitespace-nowrap">
-                        KES {formatCurrency(subscription.payment.amount)}
-                      </span>
-                    </Table.Td>
+
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       <div
                         className={
-                          subscription.status == "active"
+                          invoice.outstanding_amount.$numberDecimal === "0" // Assuming paid invoices have outstanding amount 0
                             ? "flex items-center text-success"
                             : "flex items-center text-danger"
                         }
                       >
-                        {subscription.status == "active" ? "Paid" : "Pending"}
+                        {invoice.outstanding_amount.$numberDecimal === "0"
+                          ? "Paid"
+                          : "Un Paid"}
                       </div>
                     </Table.Td>
+
                     <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                       <div className="flex items-center justify-center">
                         <Menu className="flex items-center justify-center">
                           <Menu.Item
-                            onClick={() => generateInvoicePrint(subscription)}
+                            onClick={() => generateInvoicePrint(invoice)}
                           >
                             <Lucide icon="Printer" className="w-4 h-4 mr-2" />{" "}
                           </Menu.Item>
-                          <Menu.Item
-                            onClick={() => generateInvoice(subscription)}
-                          >
+                          <Menu.Item onClick={() => generateInvoice(invoice)}>
                             <Lucide icon="Download" className="w-4 h-4 mr-2" />{" "}
                           </Menu.Item>
-                          {/* <Menu.Item onClick={() => {}}>
-                              <Lucide icon="Printer" className="w-4 h-4 mr-2" />{" "}
-                              Print
-                            </Menu.Item> */}
-                          {/* <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(school._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>*/}
                         </Menu>
                       </div>
                     </Table.Td>
@@ -311,7 +288,7 @@ function Main() {
         ) : (
           <div className="p-4 mt-5 bg-white dark:bg-gray-800 rounded-xl shadow-md">
             <p className="text-lg text-gray-700 dark:text-gray-300 ">
-              No packages available
+              No Invoices available
             </p>
           </div>
         )}
