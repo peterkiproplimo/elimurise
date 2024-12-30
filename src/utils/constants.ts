@@ -26,6 +26,7 @@ export const LEARNERTRANSFERS = `${BASE_URL}/learner`;
 export const PAYMENTS = `${BASE_URL}portal/payment`;
 export const BEHAVIOUR = `${BASE_URL}portal/behaviour`;
 export const COMMENTS = `${BASE_URL}portal/comment`;
+export const PACKAGE = `${BASE_URL}portal/package`;
 
 export const PARENTS = `${BASE_URL}portal/parents`;
 export const TEACHERS = `${BASE_URL}portal/teachers`;

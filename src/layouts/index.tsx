@@ -1,5 +1,11 @@
 import { Transition } from "react-transition-group";
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import {
+  useState,
+  useEffect,
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   setMenuState,
@@ -8,6 +14,12 @@ import {
   teacherState,
   parentState,
 } from "../../src/stores/sideMenuSlice";
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "red",
+};
 
 import { useAppSelector } from "../../src/stores/hooks";
 import { FormattedMenu, linkTo, nestedMenu, enter, leave } from "./side-menu";
@@ -19,6 +31,7 @@ import DarkModeSwitcher from "../../src/components/DarkModeSwitcher";
 import { useDispatch, useSelector } from "react-redux";
 import logoUrl from "../assets/images/hero.png";
 import Joyride from "react-joyride";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 import MainColorSwitcher from "../components/MainColorSwitcher";
 import SideMenuTooltip from "../../src/components/SideMenuTooltip";
@@ -31,6 +44,9 @@ interface School {
 
 function Layout() {
   const location = useLocation();
+  let [loading, setLoading] = useState(true);
+  let [color, setColor] = useState("#000000");
+
   const { runTour, currentSteps, handleStepChange } = useTour();
   const [formattedMenu, setFormattedMenu] = useState<
     Array<FormattedMenu | "divider">
@@ -47,7 +63,6 @@ function Layout() {
   useEffect(() => {
     const handleStorageChange = () => {
       const type = localStorage.getItem("type");
-      console.log("new user logged in....", type);
 
       if (type === "parent") {
         dispatch(setMenuState(parentState));
@@ -274,7 +289,24 @@ function Layout() {
             {/* <div className="text-right">
               <b>Current Session: {user?.school?.current_session}</b>
             </div> */}
+            {/* <div className="sweet-loading">
+              {loading ? (
+                <div className="fixed inset-0 bg-black bg-opacity-20 flex justify-center items-center z-50">
+                  <ScaleLoader
+                    color={color}
+                    loading={loading}
+                    width={20}
+                    height={100}
+                    radius={150}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                </div>
+              ) : ( */}
             <Outlet />
+            {/* )} */}
+            {/* </div> */}
+
             <Joyride
               steps={currentSteps}
               run={runTour}
