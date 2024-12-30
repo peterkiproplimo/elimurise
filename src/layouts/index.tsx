@@ -31,7 +31,6 @@ import DarkModeSwitcher from "../../src/components/DarkModeSwitcher";
 import { useDispatch, useSelector } from "react-redux";
 import logoUrl from "../assets/images/hero.png";
 import Joyride from "react-joyride";
-import ScaleLoader from "react-spinners/ScaleLoader";
 
 import MainColorSwitcher from "../components/MainColorSwitcher";
 import SideMenuTooltip from "../../src/components/SideMenuTooltip";
