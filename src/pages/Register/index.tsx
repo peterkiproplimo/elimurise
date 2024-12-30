@@ -157,7 +157,7 @@ const Register = () => {
       <div className="homeContainer">
         <NavbarMenu />
 
-        <div className="xl:mx-auto  max-w-[1500px] bg-white p-2">
+        <div className="xl:mx-auto mt-2 max-w-[1500px] bg-white p-2">
           <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
             Account Creation
           </h1>
