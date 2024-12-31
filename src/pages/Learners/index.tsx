@@ -483,6 +483,13 @@ function Main() {
 
     isLoading(true);
     try {
+      if (data.learner == "") {
+        throw Error("Select learner to continue");
+      } else if (data.term == "") {
+        throw Error("Select term to continue");
+      } else if (data.learning_area == "") {
+        throw Error("Select learning area to continue");
+      }
       let res = await ApiService.getReportByLearners(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
@@ -529,12 +536,19 @@ function Main() {
       test: test,
       term: selectedTerm,
       stream: stream,
-      learner: learner,
+      learner: learner._id,
       type: "learner",
     };
     console.log(data);
     isLoading(true);
     try {
+      if (learner == "") {
+        throw Error("Select learner to continue");
+      } else if (selectedTerm == "") {
+        throw Error("Select term to continue");
+      } else if (test == "") {
+        throw Error("Select test to continue");
+      }
       let res = await ApiService.getSummativeByLearners(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
@@ -1982,6 +1996,13 @@ function Main() {
                               className="w-50 text-white"
                             >
                               Generate Report
+                              {loading && (
+                                <LoadingIcon
+                                  icon="spinning-circles"
+                                  color="white"
+                                  className="w-4 h-4 ml-2"
+                                />
+                              )}
                             </Button>
                           </div>
                         </div>
@@ -2089,6 +2110,13 @@ function Main() {
                               className="w-50 text-white"
                             >
                               Generate Report
+                              {loading && (
+                                <LoadingIcon
+                                  icon="spinning-circles"
+                                  color="white"
+                                  className="w-4 h-4 ml-2"
+                                />
+                              )}
                             </Button>
                           </div>
                         </div>

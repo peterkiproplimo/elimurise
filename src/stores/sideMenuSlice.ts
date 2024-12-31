@@ -119,7 +119,7 @@ const initialState: SideMenuState = {
           icon: "Airplay",
           pathname: "/home/reports",
           title: "Formative Report",
-          ignore: !hasPermission("assessment", "report"),
+          ignore: !hasPermission("assessment", "learners-report"),
         },
       ],
     },
