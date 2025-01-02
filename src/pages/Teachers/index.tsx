@@ -37,6 +37,15 @@ function Main() {
   const [learningAreas, setLearningAreas] = useState([]);
   const [filteredLearningAreas, setFilteredLearningAreas] = useState([]);
   const [grades, setGrades] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const getRole = async () => {
+    let res = await ApiService.getRole({ page: "", search: "", limit: "" });
+    console.log(res);
+    setRoles(res.data);
+  };
+  useEffect(() => {
+    getRole();
+  }, []);
   const initialState = {
     grade: "",
     learning_area: "",
@@ -410,6 +419,38 @@ function Main() {
                   <div className="mt-2 text-danger">
                     {typeof errors.email.message === "string" &&
                       errors.email.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Role</FormLabel>
+                <FormSelect {...register("role")} name="role">
+                  {roles?.map((role: any, key) => (
+                    <option key={key} value={role._id}>
+                      {role.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+                <FormInput
+                  {...register("lastname")}
+                  type="text"
+                  name="lastname"
+                  className={errors.lastname ? "border-danger" : ""}
+                  placeholder="Doe"
+                />
+                {errors.lastname && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.lastname.message === "string" &&
+                      errors.lastname.message}
                   </div>
                 )}
               </div>
