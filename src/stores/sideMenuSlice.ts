@@ -138,13 +138,13 @@ const initialState: SideMenuState = {
           icon: "Activity",
           pathname: "/home/tests",
           title: "Summative Tests ",
-          ignore: !hasPermission("summative", "read"),
+          ignore: !hasPermission("tests", "read"),
         },
         {
           icon: "User",
           pathname: "/home/assess",
           title: "Summative Assessment",
-          ignore: !hasPermission("summative", "read"),
+          ignore: !hasPermission("tests", "read"),
         },
         {
           icon: "User",
