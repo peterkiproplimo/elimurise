@@ -246,7 +246,7 @@ const teacherState: SideMenuState = {
 
     {
       icon: "FileText",
-      title: "Content",
+      title: "Learning Area",
       pathname: "/home/grade",
     },
 
