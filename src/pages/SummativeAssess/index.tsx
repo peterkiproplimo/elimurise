@@ -28,6 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
+import debounce from "lodash.debounce"; // Ensure lodash.debounce is installed
 
 interface TableRow {
   no: number;
@@ -567,23 +568,24 @@ function Main() {
                             : ""
                         }`}
                         defaultValue={assessment?.assessmentDetails?.score}
-                        max={4}
+                        max={100}
                         min={1}
-                        onChange={(e) => {
+                        onChange={debounce((e) => {
                           const enteredValue = parseInt(e.target.value);
 
                           if (enteredValue > 100) {
                             alert("Score cannot exceed 100");
                             e.target.value =
-                              assessment?.assessmentDetails?.score; // Clear the input if value exceeds 100
-                            return; // Exit without triggering handleInputChange
+                              assessment?.assessmentDetails?.score; // Reset input value
+                            return; // Prevent further processing
                           }
 
+                          // Call handleInputChange with debounced value
                           handleInputChange({
                             score: enteredValue ? enteredValue : "",
                             ...assessment,
                           });
-                        }}
+                        }, 300)}
                       />
                     </Table.Td>
 
