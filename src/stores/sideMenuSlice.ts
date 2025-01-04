@@ -92,7 +92,7 @@ const initialState: SideMenuState = {
       icon: "Users",
       title: "Teachers",
       pathname: "/home/teachers",
-      ignore: !hasPermission("transfer-requests", "read"),
+      ignore: !hasPermission("teachers", "read"),
     },
     {
       icon: "BookOpen",
@@ -150,34 +150,36 @@ const initialState: SideMenuState = {
           icon: "User",
           pathname: "/home/summativereports",
           title: "Summative Report",
-        },
-      ],
-    },
-    {
-      icon: "Users",
-      title: "Learner Behaviour",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/home/behaviour",
-          title: "Behaviour Category",
-        },
-        {
-          icon: "Activity",
-          pathname: "/home/behaviour-assessment",
-          title: "Behaviour Assessment",
+          ignore: !hasPermission("tests", "learners-report"),
         },
         {
           icon: "Activity",
           pathname: "/home/comments",
-          title: "Comments",
+          title: "Termly Comments",
         },
       ],
     },
+    // {
+    //   icon: "Users",
+    //   title: "Learner Behaviour",
+    //   subMenu: [
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/home/behaviour",
+    //       title: "Behaviour Category",
+    //     },
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/home/behaviour-assessment",
+    //       title: "Behaviour Assessment",
+    //     },
+    //   ],
+    // },
     {
       icon: "Wallet",
       pathname: "/home/billing",
       title: "Billing",
+      ignore: !hasPermission("comment", "read"),
     },
 
     {
@@ -199,6 +201,7 @@ const initialState: SideMenuState = {
           icon: "Activity",
           pathname: "/home/settings",
           title: "System Settings",
+          ignore: !hasPermission("school", "read"),
         },
         // {
         //   icon: "User",
@@ -208,25 +211,28 @@ const initialState: SideMenuState = {
       ],
     },
     {
+      icon: "File",
+      pathname: "/home/roles",
+      title: "Roles",
+      ignore: !hasPermission("roles", "read"),
+    },
+    {
       icon: "Users",
       title: "Users",
       pathname: "/home/users",
       ignore: !hasPermission("users", "read"),
     },
-    {
-      icon: "FileText",
-      pathname: "/home/profile",
-      title: "Profile",
-    },
+
     // {
     //   icon: "User",
     //   pathname: "/home/users",
     //   title: "Users",
     // },
+
     {
-      icon: "File",
-      pathname: "/home/roles",
-      title: "Roles",
+      icon: "FileText",
+      pathname: "/home/profile",
+      title: "Profile",
     },
   ],
 };

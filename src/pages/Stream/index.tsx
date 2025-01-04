@@ -18,6 +18,7 @@ import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
+import { useAuth } from "../../contexts/Auth";
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -182,6 +183,7 @@ function Main() {
 
     setDialog(false);
   };
+  const { hasPermission } = useAuth();
 
   return (
     <>
@@ -305,17 +307,19 @@ function Main() {
           )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-              <Button
-                variant="primary"
-                className="mr-2 shadow-md stream-step-1"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                  setIsEditMode(false);
-                }}
-              >
-                New Stream
-              </Button>
+              {hasPermission("streams", "create") && (
+                <Button
+                  variant="primary"
+                  className="mr-2 shadow-md stream-step-1"
+                  onClick={(event: React.MouseEvent) => {
+                    event.preventDefault();
+                    setDialog(true);
+                    setIsEditMode(false);
+                  }}
+                >
+                  New Stream
+                </Button>
+              )}
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
                 {pagination.current_page +
@@ -425,31 +429,35 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
-                              <a
-                                className="flex items-center mr-3 text-success"
-                                href="#"
-                                onClick={() => editRecord(stream)}
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1 "
-                                />{" "}
-                                Edit
-                              </a>
-                              <a
-                                className="flex items-center text-danger"
-                                href="#"
-                                onClick={() => {
-                                  setRecordId(stream._id),
-                                    setConfirmDelete(true);
-                                }}
-                              >
-                                <Lucide
-                                  icon="Trash2"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Delete
-                              </a>
+                              {hasPermission("streams", "update") && (
+                                <a
+                                  className="flex items-center mr-3 text-success"
+                                  href="#"
+                                  onClick={() => editRecord(stream)}
+                                >
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1 "
+                                  />{" "}
+                                  Edit
+                                </a>
+                              )}
+                              {hasPermission("streams", "delete") && (
+                                <a
+                                  className="flex items-center text-danger"
+                                  href="#"
+                                  onClick={() => {
+                                    setRecordId(stream._id),
+                                      setConfirmDelete(true);
+                                  }}
+                                >
+                                  <Lucide
+                                    icon="Trash2"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Delete
+                                </a>
+                              )}
                             </div>
                           </Table.Td>
                         </Table.Tr>

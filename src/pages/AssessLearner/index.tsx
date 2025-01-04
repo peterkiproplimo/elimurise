@@ -486,7 +486,13 @@ function Main() {
                     Substrand:
                   </label>
                   <span className="text-md text-gray-800 ml-2">
-                    {substrand?.name}
+                    {/* {substrand?.name} */}
+                    <div
+                      className="font-medium inline-block richtext"
+                      dangerouslySetInnerHTML={{
+                        __html: substrand.name,
+                      }}
+                    ></div>
                   </span>
                 </div>
                 <div className="meta-row flex items-center mb-2">

@@ -30,31 +30,32 @@ export const TourProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
 
   const steps = [
-    {
-      path: "/home",
-      steps: [
-        { target: ".home-step-1", content: "Welcome to the Home Page!" },
-        {
-          target: ".home-step-2",
-          content: "Here you can view recent activity.",
-        },
-      ],
-    },
-    {
-      path: "/home/stream",
-      steps: [
-        {
-          target: ".stream-step-1",
-          content: "This is the streams creation page.",
-        },
-      ],
-    },
-    {
-      path: "/home/settings",
-      steps: [
-        { target: ".setting-step-1", content: "Welcome to the settings page!" },
-      ],
-    },
+    {},
+    // {
+    //   path: "/home",
+    //   steps: [
+    //     { target: ".home-step-1", content: "Welcome to the Home Page!" },
+    //     {
+    //       target: ".home-step-2",
+    //       content: "Here you can view recent activity.",
+    //     },
+    //   ],
+    // },
+    // {
+    //   path: "/home/stream",
+    //   steps: [
+    //     {
+    //       target: ".stream-step-1",
+    //       content: "This is the streams creation page.",
+    //     },
+    //   ],
+    // },
+    // {
+    //   path: "/home/settings",
+    //   steps: [
+    //     { target: ".setting-step-1", content: "Welcome to the settings page!" },
+    //   ],
+    // },
   ];
 
   const handleStepChange = (stepIndex: number) => {
