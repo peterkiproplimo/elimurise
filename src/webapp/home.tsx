@@ -9,7 +9,7 @@ import * as yup from "yup";
 import "./home.css";
 import { Link } from "react-router-dom";
 import lock from "../assets/images/Lock.png";
-import contact4 from  "../assets/images/contact2.png";
+import contact4 from "../assets/images/contact2.png";
 
 import logoUrl from "../assets/images/Untitled-1.png";
 import logo from "../assets/images/heros.png";
@@ -46,199 +46,211 @@ const Home = () => {
     .required();
   const [loading, isLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-    const [showLinks, setShowLinks] = useState(false);
-  
-    const handleClick = () => {
-      setShowLinks(!showLinks);
-    };
-  
+  const [showLinks, setShowLinks] = useState(false);
+
+  const handleClick = () => {
+    setShowLinks(!showLinks);
+  };
 
   return (
     <>
       <div className="homeContainer sm:p-5 xl:p-0 p-0 font-lexend">
-      <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
-          
+        <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           <div className="buttons">
-           
-          <div className="relative flex flex-col gap-5 w-[310px]">
-            {/* Toggleable Text */}
-            <div
-              onClick={handleClick}
-              className={`font-bold flex text-center text-lg p-4 text-primary cursor-pointer transition duration-300 ${
-                showLinks ? "bg-red-500 text-white" : "text-white"
-              }`}
-            >
-              <div className="icon mr-2 ">
-                <img alt="ACS" className="w-7 h-7" src={users} />
+            <div className="relative flex flex-col gap-5 w-[310px]">
+              {/* Toggleable Text */}
+              <div
+                onClick={handleClick}
+                className={`font-bold flex text-center text-lg p-4 text-primary cursor-pointer transition duration-300 ${
+                  showLinks ? "bg-red-500 text-white" : "text-white"
+                }`}
+              >
+                <div className="icon mr-2 ">
+                  <img alt="ACS" className="w-7 h-7" src={users} />
+                </div>
+
+                {showLinks
+                  ? "For Teachers & Administrators"
+                  : "Log in or register for free"}
               </div>
 
-              {showLinks
-                ? "For Teachers & Administrators"
-                : "Log in or register for free"}
+              {/* Links to display when clicked */}
+              {showLinks && (
+                <div className="absolute top-full left-0 w-full  bg-white shadow-lg  rounded">
+                  <div className="flex flex-col gap-4 ">
+                    <Link
+                      to="/auth/login"
+                      className="font-bold   items-center text-lg text-primary w-full mt-4 ml-4"
+                    >
+                      <div className=" flex w-[240px]">
+                        Log in
+                        <div className="icon ml-auto mt-2">
+                          <img alt="ACS" className="xl:w-35 " src={icon} />
+                        </div>
+                      </div>
+                    </Link>
+                    <div className="border-b border-primary/50 w-full m-0 p-0"></div>
+                    <Link
+                      to="/register"
+                      className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
+                    >
+                      <div className=" flex w-[240px]">
+                        Register
+                        <div className="icon ml-auto mt-2">
+                          <img alt="ACS" className="xl:w-35 " src={icon} />
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Links to display when clicked */}
-            {showLinks && (
-              <div className="absolute top-full left-0 w-full  bg-white shadow-lg  rounded">
-                <div className="flex flex-col gap-4 ">
-                  <Link
-                    to="/auth/login"
-                    className="font-bold   items-center text-lg text-primary w-full mt-4 ml-4"
-                  >
-                    <div className=" flex w-[240px]">
-                    Log in
-                    <div className="icon ml-auto mt-2">
-                      <img
-                        alt="ACS"
-                        className="xl:w-35 "
-                        src={icon}
-                      />
-                    </div>
-                    </div>
-                  </Link>
-                  <div className="border-b border-primary/50 w-full m-0 p-0"></div>
-                  <Link
-                    to="/register"
-                    className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
-                  >
-                  <div className=" flex w-[240px]">
-                    Register
-                    <div className="icon ml-auto mt-2">
-                      <img
-                        alt="ACS"
-                        className="xl:w-35 "
-                        src={icon}
-                      />
-                     </div>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-      
           </div>
         </div>
-        <div className='box'>
-        <div className="flex xl:mx-auto  max-w-[1500px] justify-between items-center w-full px-4 lg:px-10  p-2">
-                <div className="icon ">
-                  <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
-                </div>
-                <div className="buttons">
-                  <div className="block xl:hidden">
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="text-blue-800 focus:outline-none mt-5"
-          >
-            {showMenu ? (
-              <Menu className="w-8 h-8" />
-            ) : (
-              <Menu className="w-8 h-8" /> 
-            )}
-          </button>
-        </div>
-      
-        {showMenu && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-20">
-            <div className="fixed left-0 top-0 bottom-0 bg-white shadow-lg w-80 p-5 transform transition-all duration-300 ease-in-out z-30">
-              <div className="text-right mb-4">
+        <div className="box">
+          <div className="flex xl:mx-auto  max-w-[1500px] justify-between items-center w-full px-4 lg:px-10  p-2">
+            <div className="icon ">
+              <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
+            </div>
+            <div className="buttons">
+              <div className="block xl:hidden">
                 <button
-                  onClick={() => setShowMenu(false)}
-                  className="bg-primary text-white  p-2 focus:outline-none"
-                  >
-                  <X className="w-8 h-8" />
+                  onClick={() => setShowMenu(!showMenu)}
+                  className="text-blue-800 focus:outline-none mt-5"
+                >
+                  {showMenu ? (
+                    <Menu className="w-8 h-8" />
+                  ) : (
+                    <Menu className="w-8 h-8" />
+                  )}
                 </button>
               </div>
-              <div className="border-b border-primary/50 w-full mt-8"></div>
-              <div className=" ">
-                <p className="p-2 text-primary font-bold text-xl">
-                  For Business
-                </p>
-                <Link to="/demo" className="block pl-2 text-lg text-primary flex items-center">
-        <img 
-          src={check}
-          alt="Demo Icon" 
-          className="w-6 h-6 mr-2" 
-      
-        />
-        Request Demo
-      </Link>
-      
-                <p className="block pl-2 text-lg text-primary flex items-center">
-        <img 
-          src={vector}
-          alt="Demo Icon" 
-          className="w-6 h-6 mr-2" 
-      
-        />   Call Us: (+254) 712-345678
-                </p>
-              </div>
-              <div className="border-b border-primary/50 w-full p-2"></div>
-              <div className=" mb-4 ">
-                <p className="p-2 text-primary  font-bold text-xl">
-                For School & Adminstrators
-                </p>
-                <Link  to="/auth/login"  className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
-        <img 
-          src={lock}
-          alt="Demo Icon" 
-          className="w-6 h-6 mr-2" 
-      
-        />  Login
-                </Link>
-                <Link to="/register"  className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
-        <img 
-          src={user}
-          alt="Demo Icon" 
-          className="w-6 h-6 mr-2" 
-      
-        /> Create Account
-                </Link>
-                <Link to="/contact" className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center">
-        <img 
-          src={contact4}
-          alt="Demo Icon" 
-          className="w-6 h-6 mr-2" 
-      
-        />   Contact Us
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-      
-                  {/* Buttons for large screens (xl and above) */}
-                  <div className="hidden xl:flex gap-5 mr-10 ">
-                  <Link to="/" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
-                    Home
-                    </Link>
-                  <a href="#services" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
-                    Why Us
-                    </a>
-                    <a href="#pricing" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
-               Pricing
-              </a>
-                    <Link to="/contact" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary">
-                     Contact Us
-                    </Link>
-                    <a href="#about" className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary">
-                    About Us
-                    </a>
-                    <Link to="/demo" className="xl:w-32 xl:mr-8">
-                      <Button
-                        className="text-md w-[192px] p-2 h-[50px] bg-[#FF3B30] text-white rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px]"
+
+              {showMenu && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-20">
+                  <div className="fixed left-0 top-0 bottom-0 bg-white shadow-lg w-80 p-5 transform transition-all duration-300 ease-in-out z-30">
+                    <div className="text-right mb-4">
+                      <button
+                        onClick={() => setShowMenu(false)}
+                        className="bg-primary text-white  p-2 focus:outline-none"
                       >
-                       REQUEST DEMO
-                        {loading && (
-                          <LoadingIcon
-                            icon="spinning-circles"
-                            color="white"
-                            className="w-4 h-4 ml-2"
-                          />
-                        )}
-                      </Button>
-                    </Link>
-                    {/* <Link to="/auth/login" className="xl:w-32 xl:mr-3">
+                        <X className="w-8 h-8" />
+                      </button>
+                    </div>
+                    <div className="border-b border-primary/50 w-full mt-8"></div>
+                    <div className=" ">
+                      <p className="p-2 text-primary font-bold text-xl">
+                        For Business
+                      </p>
+                      <Link
+                        to="/demo"
+                        className="block pl-2 text-lg text-primary flex items-center"
+                      >
+                        <img
+                          src={check}
+                          alt="Demo Icon"
+                          className="w-6 h-6 mr-2"
+                        />
+                        Request Demo
+                      </Link>
+
+                      <p className="block pl-2 text-lg text-primary flex items-center">
+                        <img
+                          src={vector}
+                          alt="Demo Icon"
+                          className="w-6 h-6 mr-2"
+                        />{" "}
+                        Call Us: (+254) 712-345678
+                      </p>
+                    </div>
+                    <div className="border-b border-primary/50 w-full p-2"></div>
+                    <div className=" mb-4 ">
+                      <p className="p-2 text-primary  font-bold text-xl">
+                        For School & Adminstrators
+                      </p>
+                      <Link
+                        to="/auth/login"
+                        className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center"
+                      >
+                        <img
+                          src={lock}
+                          alt="Demo Icon"
+                          className="w-6 h-6 mr-2"
+                        />{" "}
+                        Login
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center"
+                      >
+                        <img
+                          src={user}
+                          alt="Demo Icon"
+                          className="w-6 h-6 mr-2"
+                        />{" "}
+                        Create Account
+                      </Link>
+                      <Link
+                        to="/contact"
+                        className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center"
+                      >
+                        <img
+                          src={contact4}
+                          alt="Demo Icon"
+                          className="w-6 h-6 mr-2"
+                        />{" "}
+                        Contact Us
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Buttons for large screens (xl and above) */}
+              <div className="hidden xl:flex gap-5 mr-10 ">
+                <Link
+                  to="/"
+                  className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary"
+                >
+                  Home
+                </Link>
+                <a
+                  href="#services"
+                  className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary"
+                >
+                  Why Us
+                </a>
+                <a
+                  href="#pricing"
+                  className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary"
+                >
+                  Pricing
+                </a>
+                <Link
+                  to="/contact"
+                  className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary"
+                >
+                  Contact Us
+                </Link>
+                <a
+                  href="#about"
+                  className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary"
+                >
+                  About Us
+                </a>
+                <Link to="/demo" className="xl:w-32 xl:mr-8">
+                  <Button className="text-md w-[192px] p-2 h-[50px] bg-[#FF3B30] text-white rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px]">
+                    REQUEST DEMO
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
+                  </Button>
+                </Link>
+                {/* <Link to="/auth/login" className="xl:w-32 xl:mr-3">
                       <Button className="w-full xl:px-4 xl:py-3 px-2 py-2 border-blue-800">
                         Sign in
                         {loading && (
@@ -250,64 +262,69 @@ const Home = () => {
                         )}
                       </Button>
                     </Link> */}
-                  </div>
-            
-                </div>
-              </div>
-              </div>
-
-        <div className="lg:flex justify-center items-center">
-          <div className="xl:p-10 mt-5 p-5 max-w-[1600px] ">
-            <div className="grid bg-[#BAB4D7] overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
-              {/* Left Side Content */}
-              <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                <h1 className="xl:text-6xl text-2xl font-semibold mt-5 text-primary w-full">
-                  Empowering Competency <br /> Based Curriculum <br /> Education
-                  In Kenya
-                </h1>
-                <div className="mt-2">
-                  <p className="xl:text-lg sm:text-3l text-primary">
-                    We revolutionize education through our innovative digital
-                    Competency Based <br /> Curriculum (CBC) approach. Join us
-                    in shaping the future of learning.
-                  </p>
-                </div>
-                <div className="mt-8 text-center xl:mt-8 xl:text-left">
-                  <Button
-                    variant="primary"
-                    className="text-md w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
-                  >
-                    <div className="icon mr-2">
-                      <img alt="ACS" className="xl:w-35 xl:w-auto" src={icon} />
-                    </div>
-                    See How It Works
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Right Side Content */}
-              <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 -m-5 flex justify-center">
-                <img
-                  alt="ACS"
-                  className="xl:w-30 md:w-full xl:w-auto max-h-[400px] w-full"
-                  src={homepic}
-                />
-                <img
-                  alt="Child"
-                  className="absolute top-2 xl:w-35"
-                  src={child}
-                />
               </div>
             </div>
           </div>
         </div>
+
+        <div className="lg:flex justify-center items-center overflow-visible">
+  <div className="xl:p-10 mt-5 p-5 max-w-[1600px] overflow-visible">
+    <div className="grid bg-[#BAB4D7] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
+      {/* Left Side Content */}
+      <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+        <h1 className="xl:text-6xl text-2xl font-semibold mt-5 text-primary w-full">
+          Empowering Competency <br /> Based Curriculum <br /> Education
+          In Kenya
+        </h1>
+        <div className="mt-2">
+          <p className="xl:text-lg sm:text-3l text-primary">
+            We revolutionize education through our innovative digital
+            Competency Based <br /> Curriculum (CBC) approach. Join us
+            in shaping the future of learning.
+          </p>
+        </div>
+        <div className="mt-8 text-center xl:mt-8 xl:text-left">
+          <Button
+            variant="primary"
+            className="text-md w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
+          >
+            <div className="icon mr-2">
+              <img alt="ACS" className="xl:w-35 xl:w-auto" src={icon} />
+            </div>
+            See How It Works
+            {loading && (
+              <LoadingIcon
+                icon="spinning-circles"
+                color="white"
+                className="w-4 h-4 ml-2"
+              />
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Right Side Content */}
+      <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex justify-center">
+        <img
+          alt="ACS"
+          className="xl:w-30 md:w-full xl:w-auto max-h-[600px] w-full"
+          src={homepic}
+        />
+         <img
+          alt="Child"
+          className="absolute xl:top-[-50px] xl:left-[100px] xl:w-35 xl:h-[500px] h-full"
+          style={{
+            zIndex: "1",
+          }}
+          src={child}
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
         <div className="aboutContainer mt-10 xl:mx-auto max-w-[1600px]">
           <p className="xl:text-lg text-lg text-center text-primary">
@@ -448,10 +465,7 @@ const Home = () => {
         </div>
 
         <div className=" xl:flex gap-10 space-x-8  xl:mx-auto max-w-[1500px] items-center justify-center">
-          <div
-            id="services"
-            className="flex flex-col items-center  xl:p-4 p-2"
-          >
+          <div id="services" className="flex flex-col items-center  xl:p-4 p-2">
             <h1 className="text-3xl md:text-3xl  xl:text-5xl font-bold text-primary xl:mb-2">
               Why Choose Hero Learning?
             </h1>
@@ -520,10 +534,9 @@ const Home = () => {
         </div>
 
         <div className="service  xl:mt-20 mt-10 bg-primary  xl:h-[35vh] ">
-        <h1 className="text-center xl:text-5xl text-2xl pt-10 text-white font-bold mt-10">
-  CBC Made Easy
-</h1>
-
+          <h1 className="text-center xl:text-5xl text-2xl pt-10 text-white font-bold mt-10">
+            CBC Made Easy
+          </h1>
 
           <div className="mx-auto  max-w-[1500px] grid overflow-hidden rounded-3xl gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 p-5 xl:grid-cols-3">
             <div className="group relative bg-[#51608A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
@@ -892,26 +905,24 @@ const Home = () => {
               </p>
             </div>
             <div className="flex justify-center xl:justify-start">
-  <Link to="/demo" className="xl:w-32 xl:mr-8">
-    <Button className="xl:text-xl w-[192px] p-2 h-[50px] bg-[#FF3B30] font-bold text-white">
-      Request A Demo
-      {loading && (
-        <LoadingIcon
-          icon="spinning-circles"
-          color="white"
-          className="w-4 h-4 ml-2"
-        />
-      )}
-    </Button>
-  </Link>
-</div>
-
+              <Link to="/demo" className="xl:w-32 xl:mr-8">
+                <Button className="xl:text-xl w-[192px] p-2 h-[50px] bg-[#FF3B30] font-bold text-white">
+                  Request A Demo
+                  {loading && (
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      color="white"
+                      className="w-4 h-4 ml-2"
+                    />
+                  )}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
         <FooterComponent />
-
-  </div>
+      </div>
     </>
   );
 };
