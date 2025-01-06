@@ -164,6 +164,15 @@ function Main() {
     //   const url = URL.createObjectURL(blob);
     //   isLoading(true);
     try {
+      if (data.learner == "") {
+        throw Error("Select learner to continue");
+      } else if (data.term == "") {
+        throw Error("Select term to continue");
+      } else if (data.learning_area == "") {
+        throw Error("Select learning area to continue");
+      } else if (data.session == "") {
+        throw Error("Select test to continue");
+      }
       let res = await ApiService.getLeanerAssessmentReport(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
@@ -440,7 +449,7 @@ function Main() {
                   name="term"
                   onChange={(event: any) => setSelectedLearner(event)}
                 >
-                  <option>Select Learner</option>
+                  <option value={""}>Select Learner</option>
                   {learners
                     .filter((learner: any) => learner.status !== "D")
 
@@ -539,6 +548,13 @@ function Main() {
                 className="w-50 text-white"
               >
                 Generate Report
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
               </Button>
             </div>
           </div>

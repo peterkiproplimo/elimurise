@@ -483,6 +483,13 @@ function Main() {
 
     isLoading(true);
     try {
+      if (data.learner == "") {
+        throw Error("Select learner to continue");
+      } else if (data.term == "") {
+        throw Error("Select term to continue");
+      } else if (data.learning_area == "") {
+        throw Error("Select learning area to continue");
+      }
       let res = await ApiService.getReportByLearners(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
@@ -529,12 +536,19 @@ function Main() {
       test: test,
       term: selectedTerm,
       stream: stream,
-      learner: learner,
+      learner: learner._id,
       type: "learner",
     };
     console.log(data);
     isLoading(true);
     try {
+      if (learner == "") {
+        throw Error("Select learner to continue");
+      } else if (selectedTerm == "") {
+        throw Error("Select term to continue");
+      } else if (test == "") {
+        throw Error("Select test to continue");
+      }
       let res = await ApiService.getSummativeByLearners(data);
       const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
@@ -912,7 +926,7 @@ function Main() {
             </fieldset>
             <fieldset className="mt-5 p-5  box validate-form">
               <legend className="text-lg font-semibold">
-                Guardian 2 Details
+                Parent 2 Details
               </legend>
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
@@ -1639,7 +1653,7 @@ function Main() {
                             } font-semibold`}
                             onClick={() => setActiveTab("guardian1")}
                           >
-                            Guardian 1
+                            Parent 1
                           </button>
                         </li>
                         <li className="mr-2">
@@ -1651,7 +1665,7 @@ function Main() {
                             } font-semibold`}
                             onClick={() => setActiveTab("guardian2")}
                           >
-                            Guardian 2
+                            Parent 2
                           </button>
                         </li>
                       </>
@@ -1799,10 +1813,10 @@ function Main() {
                       </div>
                     )}
 
-                    {/* Guardian 1 Tab */}
+                    {/* Parent 1 Tab */}
                     {activeTab === "guardian1" && (
                       <div className="tab-pane">
-                        <h4 className="font-bold">Guardian 1 Information</h4>
+                        <h4 className="font-bold">Parent 1 Information</h4>
                         <table className="min-w-full border border-gray-200">
                           <tbody>
                             <tr>
@@ -1843,10 +1857,10 @@ function Main() {
                       </div>
                     )}
 
-                    {/* Guardian 2 Tab */}
+                    {/* Parent 2 Tab */}
                     {activeTab === "guardian2" && (
                       <div className="tab-pane">
-                        <h4 className="font-bold">Guardian 2 Information</h4>
+                        <h4 className="font-bold">Parent 2 Information</h4>
                         <table className="min-w-full border border-gray-200">
                           <tbody>
                             <tr>
@@ -1982,6 +1996,13 @@ function Main() {
                               className="w-50 text-white"
                             >
                               Generate Report
+                              {loading && (
+                                <LoadingIcon
+                                  icon="spinning-circles"
+                                  color="white"
+                                  className="w-4 h-4 ml-2"
+                                />
+                              )}
                             </Button>
                           </div>
                         </div>
@@ -2089,6 +2110,13 @@ function Main() {
                               className="w-50 text-white"
                             >
                               Generate Report
+                              {loading && (
+                                <LoadingIcon
+                                  icon="spinning-circles"
+                                  color="white"
+                                  className="w-4 h-4 ml-2"
+                                />
+                              )}
                             </Button>
                           </div>
                         </div>

@@ -22,12 +22,14 @@ import Tippy from "../../base-components/Tippy";
 import avarter from "../../assets/images/parent.jpeg";
 import * as c from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/Auth";
 
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const navigate = useNavigate();
+  const { hasPermission } = useAuth();
 
   const [parents, setParents] = useState([]);
   const [academic, setAcademic] = useState([]);
@@ -430,41 +432,47 @@ function Main() {
           )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-              <Button
-                variant="primary"
-                className="mr-2 shadow-md"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                  setIsEditMode(false);
-                }}
-              >
-                Add Parent
-              </Button>
-              <Menu>
-                <Menu.Button as={Button} className="px-2 !box">
-                  <span className="flex items-center justify-center w-5 h-5">
-                    <Lucide icon="Plus" className="w-4 h-4" />
-                  </span>
-                </Menu.Button>
-                <Menu.Items className="w-40">
-                  <Menu.Item onClick={() => setUploadDialog(true)}>
-                    <Lucide icon="Book" className="w-4 h-4 mr-2" /> Import Data
-                  </Menu.Item>
-                  <Menu.Item
-                    onClick={() => {
-                      setExportDialog(true);
+              {hasPermission("parents", "create") && (
+                <>
+                  <Button
+                    variant="primary"
+                    className="mr-2 shadow-md"
+                    onClick={(event: React.MouseEvent) => {
+                      event.preventDefault();
+                      setDialog(true);
+                      setIsEditMode(false);
                     }}
                   >
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    Template
-                  </Menu.Item>
-                  {/* <Menu.Item>
+                    Add Parent
+                  </Button>
+
+                  <Menu>
+                    <Menu.Button as={Button} className="px-2 !box">
+                      <span className="flex items-center justify-center w-5 h-5">
+                        <Lucide icon="Plus" className="w-4 h-4" />
+                      </span>
+                    </Menu.Button>
+                    <Menu.Items className="w-40">
+                      <Menu.Item onClick={() => setUploadDialog(true)}>
+                        <Lucide icon="Book" className="w-4 h-4 mr-2" /> Import
+                        Data
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => {
+                          setExportDialog(true);
+                        }}
+                      >
+                        <Lucide icon="FileText" className="w-4 h-4 mr-2" />{" "}
+                        Export Template
+                      </Menu.Item>
+                      {/* <Menu.Item>
                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
                    to PDF
                  </Menu.Item> */}
-                </Menu.Items>
-              </Menu>
+                    </Menu.Items>
+                  </Menu>
+                </>
+              )}
               {/* <Menu>
                 <Menu.Button as={Button} className="px-2 !box">
                   <span className="flex items-center justify-center w-5 h-5">
@@ -608,31 +616,35 @@ function Main() {
 
                             <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                               <div className="flex items-center justify-center">
-                                <a
-                                  className="flex items-center mr-3 text-success"
-                                  href="#"
-                                  onClick={() => editRecord(parent)}
-                                >
-                                  <Lucide
-                                    icon="CheckSquare"
-                                    className="w-4 h-4 mr-1"
-                                  />{" "}
-                                  Edit
-                                </a>
-                                <a
-                                  className="flex items-center text-danger"
-                                  href="#"
-                                  onClick={() => {
-                                    setParent(parent);
-                                    setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash2"
-                                    className="w-4 h-4 mr-1"
-                                  />{" "}
-                                  Delete
-                                </a>
+                                {hasPermission("parents", "update") && (
+                                  <a
+                                    className="flex items-center mr-3 text-success"
+                                    href="#"
+                                    onClick={() => editRecord(parent)}
+                                  >
+                                    <Lucide
+                                      icon="CheckSquare"
+                                      className="w-4 h-4 mr-1"
+                                    />{" "}
+                                    Edit
+                                  </a>
+                                )}
+                                {hasPermission("parents", "delete") && (
+                                  <a
+                                    className="flex items-center text-danger"
+                                    href="#"
+                                    onClick={() => {
+                                      setParent(parent);
+                                      setConfirmDelete(true);
+                                    }}
+                                  >
+                                    <Lucide
+                                      icon="Trash2"
+                                      className="w-4 h-4 mr-1"
+                                    />{" "}
+                                    Delete
+                                  </a>
+                                )}
                               </div>
                             </Table.Td>
 

@@ -35,5 +35,14 @@ html {
       padding-right: 0;
     }
   }
-  
+  /* Remove number input spinners for all inputs globally */
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  @apply appearance-none;
+}
+
+[type="number"] {
+  @apply appearance-none;
+}
+
 }

@@ -65,9 +65,11 @@ function Layout() {
 
       if (type === "parent") {
         dispatch(setMenuState(parentState));
-      } else if (type === "teacher") {
-        dispatch(setMenuState(teacherState));
-      } else {
+      }
+      //  else if (type === "teacher") {
+      //   dispatch(setMenuState(teacherState));
+      // }
+      else {
         dispatch(setMenuState(initialState));
       }
     };

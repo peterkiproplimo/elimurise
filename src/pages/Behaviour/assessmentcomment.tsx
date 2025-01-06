@@ -456,7 +456,7 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-                Behaviour Assessment
+                Termly Comments
               </h2>
             </div>
             <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg ">
@@ -480,8 +480,8 @@ function Main() {
                 <label className="font-semibold text-md text-gray-700">
                   Type:
                 </label>
-                <span className="text-md text-gray-800 ml-2">
-                  {meta?.learningArea?.name}
+                <span className="text-md text-gray-800 ml-2 capitalize">
+                  {meta?.type}
                 </span>
               </div>
             </div>
@@ -568,12 +568,10 @@ function Main() {
                         <FormInput
                           {...register("score[" + key + "]")}
                           type="text"
-                          className={`no-spinner appearance-none form-control w-[100px] ${
+                          className={`no-spinner appearance-none form-control w-[300px] ${
                             getValues("score") ? "is-invalid" : ""
                           }`}
                           defaultValue={assessment?.assessmentDetails?.comment}
-                          max={4}
-                          min={1}
                           onChange={(e) => {
                             handleInputChange({
                               score: e.target.value,
@@ -584,12 +582,9 @@ function Main() {
                       </Table.Td>
 
                       <Table.Td
-                        className={`  bg-white border-b border-grey dark:bg-darkmode-600 ${getDescriptionColor(
-                          assessment?.assessmentDetails?.score || 0 // Fallback if score is undefined
-                        )}`}
+                        className={`  bg-white border-b border-grey dark:bg-darkmode-600`}
                       >
-                        {assessment?.assessmentDetails?.comment ||
-                          "No description"}
+                        {assessment?.assessmentDetails?.comment || "No Comment"}
                       </Table.Td>
                     </Table.Tr>
                   ))}

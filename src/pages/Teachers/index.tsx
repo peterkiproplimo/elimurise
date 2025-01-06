@@ -20,7 +20,11 @@ import { useNavigate } from "react-router-dom";
 import Alert from "../../base-components/Alert";
 import Tippy from "../../base-components/Tippy";
 import avarter from "../../assets/images/teacher.jpeg";
+import { useAuth } from "../../contexts/Auth";
+
 function Main() {
+  const { hasPermission } = useAuth();
+
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -37,6 +41,16 @@ function Main() {
   const [learningAreas, setLearningAreas] = useState([]);
   const [filteredLearningAreas, setFilteredLearningAreas] = useState([]);
   const [grades, setGrades] = useState([]);
+
+  const [roles, setRoles] = useState([]);
+  const getRole = async () => {
+    let res = await ApiService.getRole({ page: "", search: "", limit: "" });
+    console.log(res);
+    setRoles(res.data);
+  };
+  useEffect(() => {
+    getRole();
+  }, []);
   const initialState = {
     grade: "",
     learning_area: "",
@@ -413,6 +427,38 @@ function Main() {
                   </div>
                 )}
               </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Role</FormLabel>
+                <FormSelect {...register("role")} name="role">
+                  {roles?.map((role: any, key) => (
+                    <option key={key} value={role._id}>
+                      {role.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.role && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.role.message === "string" &&
+                      errors.role.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+                <FormInput
+                  {...register("lastname")}
+                  type="text"
+                  name="lastname"
+                  className={errors.lastname ? "border-danger" : ""}
+                  placeholder="Doe"
+                />
+                {errors.lastname && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.lastname.message === "string" &&
+                      errors.lastname.message}
+                  </div>
+                )}
+              </div>
               {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <TomSelect
@@ -559,41 +605,47 @@ function Main() {
           )} */}
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-              <Button
-                variant="primary"
-                className="mr-2 shadow-md"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                  setIsEditMode(false);
-                }}
-              >
-                Add Teacher
-              </Button>
-              <Menu>
-                <Menu.Button as={Button} className="px-2 !box">
-                  <span className="flex items-center justify-center w-5 h-5">
-                    <Lucide icon="Plus" className="w-4 h-4" />
-                  </span>
-                </Menu.Button>
-                <Menu.Items className="w-40">
-                  <Menu.Item onClick={() => setUploadDialog(true)}>
-                    <Lucide icon="Book" className="w-4 h-4 mr-2" /> Import Data
-                  </Menu.Item>
-                  <Menu.Item
-                    onClick={() => {
-                      setExportDialog(true);
+              {hasPermission("teachers", "create") && (
+                <>
+                  <Button
+                    variant="primary"
+                    className="mr-2 shadow-md"
+                    onClick={(event: React.MouseEvent) => {
+                      event.preventDefault();
+                      setDialog(true);
+                      setIsEditMode(false);
                     }}
                   >
-                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
-                    Template
-                  </Menu.Item>
-                  {/* <Menu.Item>
+                    Add Teacher
+                  </Button>
+
+                  <Menu>
+                    <Menu.Button as={Button} className="px-2 !box">
+                      <span className="flex items-center justify-center w-5 h-5">
+                        <Lucide icon="Plus" className="w-4 h-4" />
+                      </span>
+                    </Menu.Button>
+                    <Menu.Items className="w-40">
+                      <Menu.Item onClick={() => setUploadDialog(true)}>
+                        <Lucide icon="Book" className="w-4 h-4 mr-2" /> Import
+                        Data
+                      </Menu.Item>
+                      <Menu.Item
+                        onClick={() => {
+                          setExportDialog(true);
+                        }}
+                      >
+                        <Lucide icon="FileText" className="w-4 h-4 mr-2" />{" "}
+                        Export Template
+                      </Menu.Item>
+                      {/* <Menu.Item>
                    <Lucide icon="FileText" className="w-4 h-4 mr-2" /> Export
                    to PDF
                  </Menu.Item> */}
-                </Menu.Items>
-              </Menu>
+                    </Menu.Items>
+                  </Menu>
+                </>
+              )}
               <div className="hidden mx-auto md:block text-slate-500">
                 Showing{" "}
                 {pagination.current_page +
@@ -699,41 +751,47 @@ function Main() {
                               />{" "}
                             </Menu.Button>
                             <Menu.Items className="w-40" placement="bottom-end">
-                              <Menu.Item
-                                onClick={() =>
-                                  navigate("/home/teacher/" + teacher?._id)
-                                }
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Assign Grade
-                              </Menu.Item>
-                              <Menu.Item
-                                onClick={(e: any) => {
-                                  e.preventDefault();
-                                  editRecord(teacher);
-                                }}
-                                className="  text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                              >
-                                <Lucide
-                                  icon="CheckSquare"
-                                  className="w-4 h-4 mr-1"
-                                />
-                                Edit Profile
-                              </Menu.Item>
-                              <Menu.Item
-                                onClick={() => {
-                                  setTeacher(teacher), setConfirmDelete(true);
-                                }}
-                              >
-                                <Lucide
-                                  icon="Trash2"
-                                  className="w-4 h-4 mr-1"
-                                />{" "}
-                                Delete
-                              </Menu.Item>
+                              {hasPermission("teachers", "asign-grade") && (
+                                <Menu.Item
+                                  onClick={() =>
+                                    navigate("/home/teacher/" + teacher?._id)
+                                  }
+                                >
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Assign Grade
+                                </Menu.Item>
+                              )}
+                              {hasPermission("teachers", "asign-grade") && (
+                                <Menu.Item
+                                  onClick={(e: any) => {
+                                    e.preventDefault();
+                                    editRecord(teacher);
+                                  }}
+                                  className="  text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                >
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />
+                                  Edit Profile
+                                </Menu.Item>
+                              )}
+                              {hasPermission("teachers", "asign-grade") && (
+                                <Menu.Item
+                                  onClick={() => {
+                                    setTeacher(teacher), setConfirmDelete(true);
+                                  }}
+                                >
+                                  <Lucide
+                                    icon="Trash2"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
+                                  Delete
+                                </Menu.Item>
+                              )}
                             </Menu.Items>
                           </Menu>
                         </div>
