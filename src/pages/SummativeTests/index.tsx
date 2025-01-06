@@ -131,6 +131,13 @@ function Main() {
       grade,
     });
     setTests(response.data);
+    const pagination = response.pagination;
+    setPagination({
+      current_page: pagination?.current_page,
+      total: pagination?.total,
+      total_pages: pagination?.total_pages,
+      per_page: pagination?.per_page,
+    });
     isLoading(false);
   };
 
@@ -144,13 +151,6 @@ function Main() {
     });
     isLoading(false);
 
-    const pagination = res.pagination;
-    setPagination({
-      current_page: pagination?.current_page,
-      total: pagination?.total,
-      total_pages: pagination?.total_pages,
-      per_page: pagination?.per_page,
-    });
     setGradings(res.data);
     console.log(gradings);
     isLoading(false);
