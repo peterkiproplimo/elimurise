@@ -751,7 +751,7 @@ function Main() {
                               />{" "}
                             </Menu.Button>
                             <Menu.Items className="w-40" placement="bottom-end">
-                              {hasPermission("teachers", "asign-grade") && (
+                              {hasPermission("teachers", "assign-grade") && (
                                 <Menu.Item
                                   onClick={() =>
                                     navigate("/home/teacher/" + teacher?._id)
@@ -764,7 +764,7 @@ function Main() {
                                   Assign Grade
                                 </Menu.Item>
                               )}
-                              {hasPermission("teachers", "asign-grade") && (
+                              {hasPermission("teachers", "edit") && (
                                 <Menu.Item
                                   onClick={(e: any) => {
                                     e.preventDefault();
@@ -779,7 +779,7 @@ function Main() {
                                   Edit Profile
                                 </Menu.Item>
                               )}
-                              {hasPermission("teachers", "asign-grade") && (
+                              {hasPermission("teachers", "delete") && (
                                 <Menu.Item
                                   onClick={() => {
                                     setTeacher(teacher), setConfirmDelete(true);

@@ -108,13 +108,13 @@ function Main() {
   };
   useEffect(() => {
     getTests();
-  }, [grade, selectedTerm, type]);
+  }, [grade, selectedTerm, type, search, limit, page]);
   useEffect(() => {
     fetchGrading();
-  }, [search, limit, page]);
+  }, []);
   useEffect(() => {
     getGrades();
-  }, [search, page, limit]);
+  }, []);
 
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
@@ -124,11 +124,12 @@ function Main() {
   const getTests = async () => {
     isLoading(true);
     const response = await ApiService.getTests({
-      page: 1,
+      page: page,
       type,
       search,
       term: selectedTerm,
       grade,
+      limit,
     });
     setTests(response.data);
     const pagination = response.pagination;
@@ -538,7 +539,7 @@ function Main() {
                         <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {key + 1}
+                              {limit * (page - 1) + key + 1}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -669,6 +670,7 @@ function Main() {
                         <span className="mr-3">Total {pagination.total}</span>
                         <FormSelect
                           className="w-30 mt-3 !box sm:mt-0"
+                          value={limit}
                           onChange={(e) => setLimit(parseInt(e.target.value))}
                         >
                           <option value={10}>10/page</option>

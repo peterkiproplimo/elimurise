@@ -386,6 +386,7 @@ function Main() {
       guardian_last_name: record?.guardian?.last_name,
       guardian_surname: record?.guardian?.surname,
       guardian_phone: record?.guardian?.phone,
+      guardian2_: record?.guardian2?.id_no,
       guardian2_id_no: record?.guardian2?.id_no,
       guardian2: record?.guardian2?._id,
       guardian2_first_name: record?.guardian2?.first_name,
@@ -676,6 +677,24 @@ function Main() {
                     </div>
                   )}
                 </div>
+                <div className="col-span-6 sm:col-span-4 py-2">
+                  <FormLabel htmlFor="modal-form-6">Gender</FormLabel>
+                  <FormSelect
+                    {...register("gender")}
+                    name="gender"
+                    // defaultValue={selectedLevel}
+                  >
+                    <option value={""}>Select Gender</option>
+                    <option value={"Male"}>Male</option>
+                    <option value={"Female"}>Female</option>
+                  </FormSelect>
+                  {errors.guardian2_relationship && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_relationship.message ===
+                        "string" && errors.guardian2_relationship.message}
+                    </div>
+                  )}
+                </div>
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
                     Admission Number
@@ -683,7 +702,7 @@ function Main() {
                   </FormLabel>
                   <FormInput
                     {...register("adm_no")}
-                    type="text"
+                    type="number"
                     name="adm_no"
                     className={errors.adm_no ? "border-danger" : ""}
                     placeholder="Admission no"
@@ -699,7 +718,7 @@ function Main() {
                   <FormLabel>Nemis No</FormLabel>
                   <FormInput
                     {...register("nemis_no")}
-                    type="text"
+                    type="number"
                     name="nemis_no"
                     className={errors.nemis_no ? "border-danger" : ""}
                     placeholder="Nemis no"
@@ -785,13 +804,11 @@ function Main() {
               </div>
             </fieldset>
             <fieldset className="mt-5 p-5  box validate-form">
-              <legend className="text-lg font-semibold">
-                Guardian Details
-              </legend>
+              <legend className="text-lg font-semibold">Parent Details</legend>
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Guardian ID Number or Email
+                    Parent ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <TomSelect
@@ -819,7 +836,7 @@ function Main() {
                     type="hidden"
                     name="guardian"
                     className={errors.guardian_id_no ? "border-danger" : ""}
-                    placeholder="Guardian ID number"
+                    placeholder="Parent ID number"
                   />
                   {errors.guardian_id_no && (
                     <div className="mt-2 text-danger">
@@ -828,9 +845,28 @@ function Main() {
                     </div>
                   )}
                 </div>
+                <div className="col-span-6 sm:col-span-4 py-2">
+                  <FormLabel htmlFor="modal-form-6">Relationship</FormLabel>
+                  <FormSelect
+                    {...register("guardian_relationship")}
+                    name="guardian_relationship"
+                    // defaultValue={selectedLevel}
+                  >
+                    <option value={""}>Select Relationship</option>
+                    <option value={"Father"}>Father</option>
+                    <option value={"Mother"}>Mother</option>
+                    <option value={"Guardian"}>Guardian</option>
+                  </FormSelect>
+                  {errors.guardian_relationship && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian_relationship.message ===
+                        "string" && errors.guardian_relationship.message}
+                    </div>
+                  )}
+                </div>
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Guardian First Name
+                    Parent First Name
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
@@ -840,7 +876,7 @@ function Main() {
                     className={
                       errors.guardian_first_name ? "border-danger" : ""
                     }
-                    placeholder="Guardian First name"
+                    placeholder="Parent First name"
                     disabled
                   />
                   {errors.guardian_first_name && (
@@ -851,13 +887,13 @@ function Main() {
                   )}
                 </div>
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Surname</FormLabel>
+                  <FormLabel>Parent Surname</FormLabel>
                   <FormInput
                     {...register("guardian_surname")}
                     type="text"
                     name="guardian_surname"
                     className={errors.guardian_surname ? "border-danger" : ""}
-                    placeholder="Guardian surname"
+                    placeholder="Parent surname"
                     disabled
                   />
                   {errors.guardian_surname && (
@@ -869,7 +905,7 @@ function Main() {
                 </div>
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Guardian Last Name
+                    Parent Last Name
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
@@ -877,7 +913,7 @@ function Main() {
                     type="text"
                     name="guardian_last_name"
                     className={errors.guardian_last_name ? "border-danger" : ""}
-                    placeholder="Guardian Last name"
+                    placeholder="Parent Last name"
                     disabled
                   />
                   {errors.guardian_last_name && (
@@ -889,13 +925,13 @@ function Main() {
                 </div>
 
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Email</FormLabel>
+                  <FormLabel>Parent Email</FormLabel>
                   <FormInput
                     {...register("guardian_email")}
                     type="email"
                     name="guardian_email"
                     className={errors.guardian_email ? "border-danger" : ""}
-                    placeholder="Guardian email"
+                    placeholder="Parent email"
                     disabled
                   />
                   {errors.guardian_email && (
@@ -906,13 +942,13 @@ function Main() {
                   )}
                 </div>
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Phone</FormLabel>
+                  <FormLabel>Parent Phone</FormLabel>
                   <FormInput
                     {...register("guardian_phone")}
                     type="text"
                     name="guardian_phone"
                     className={errors.guardian_phone ? "border-danger" : ""}
-                    placeholder="Guardian phone"
+                    placeholder="Parent phone"
                     disabled
                   />
                   {errors.guardian_phone && (
@@ -931,7 +967,7 @@ function Main() {
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Guardian ID Number or Email
+                    Parent ID Number or Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
 
@@ -960,7 +996,7 @@ function Main() {
                     type="hidden"
                     name="guardian2"
                     className={errors.guardian2_id_no ? "border-danger" : ""}
-                    placeholder="Second Guardian ID number"
+                    placeholder="Second Parent ID number"
                   />
                   {errors.guardian2_id_no && (
                     <div className="mt-2 text-danger">
@@ -969,9 +1005,28 @@ function Main() {
                     </div>
                   )}
                 </div>
+                <div className="col-span-6 sm:col-span-4 py-2">
+                  <FormLabel htmlFor="modal-form-6">Relationship</FormLabel>
+                  <FormSelect
+                    {...register("guardian2_relationship")}
+                    name="guardian2_relationship"
+                    // defaultValue={selectedLevel}
+                  >
+                    <option value={""}>Select Relationship</option>
+                    <option value={"Father"}>Father</option>
+                    <option value={"Mother"}>Mother</option>
+                    <option value={"Guardian"}>Guardian</option>
+                  </FormSelect>
+                  {errors.guardian2_relationship && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.guardian2_relationship.message ===
+                        "string" && errors.guardian2_relationship.message}
+                    </div>
+                  )}
+                </div>
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Guardian First Name
+                    Parent First Name
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
@@ -981,7 +1036,7 @@ function Main() {
                     className={
                       errors.guardian2_first_name ? "border-danger" : ""
                     }
-                    placeholder="Second Guardian First name"
+                    placeholder="Second Parent First name"
                     disabled
                   />
                   {errors.guardian2_first_name && (
@@ -992,13 +1047,13 @@ function Main() {
                   )}
                 </div>
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Surname</FormLabel>
+                  <FormLabel>Parent Surname</FormLabel>
                   <FormInput
                     {...register("guardian2_surname")}
                     type="text"
                     name="guardian2_surname"
                     className={errors.guardian2_surname ? "border-danger" : ""}
-                    placeholder="Second Guardian surname"
+                    placeholder="Second Parent surname"
                     disabled
                   />
                   {errors.guardian2_surname && (
@@ -1010,7 +1065,7 @@ function Main() {
                 </div>
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Guardian Last Name
+                    Parent Last Name
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <FormInput
@@ -1021,7 +1076,7 @@ function Main() {
                     className={
                       errors.guardian2_last_name ? "border-danger" : ""
                     }
-                    placeholder="Second Guardian Last name"
+                    placeholder="Second Parent Last name"
                   />
                   {errors.guardian2_last_name && (
                     <div className="mt-2 text-danger">
@@ -1032,13 +1087,13 @@ function Main() {
                 </div>
 
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Email</FormLabel>
+                  <FormLabel>Parent Email</FormLabel>
                   <FormInput
                     {...register("guardian2_email")}
                     type="email"
                     name="guardian2_email"
                     className={errors.guardian2_email ? "border-danger" : ""}
-                    placeholder="Second Guardian email"
+                    placeholder="Second Parent email"
                     disabled
                   />
                   {errors.guardian2_email && (
@@ -1049,13 +1104,13 @@ function Main() {
                   )}
                 </div>
                 <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Guardian Phone</FormLabel>
+                  <FormLabel>Parent Phone</FormLabel>
                   <FormInput
                     {...register("guardian2_phone")}
                     type="text"
                     name="guardian2_phone"
                     className={errors.guardian2_phone ? "border-danger" : ""}
-                    placeholder="Second Guardian phone"
+                    placeholder="Second Parent phone"
                     disabled
                   />
                   {errors.guardian2_phone && (
@@ -1266,19 +1321,19 @@ function Main() {
                         </Table.Th>
 
                         {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Last Name
+                          Parent Last Name
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Surname
+                          Parent Surname
                         </Table.Th> */}
                         {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian ID No
+                          Parent ID No
                         </Table.Th> */}
                         {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Email
+                          Parent Email
                         </Table.Th> */}
                         {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Guardian Phone
+                          Parent Phone
                         </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
                           Actions
@@ -1734,6 +1789,14 @@ function Main() {
                             </tr>
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
+                                Gender
+                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">
+                                {learner?.gender}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-4 font-bold border-b border-gray-200">
                                 Class
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
@@ -1833,7 +1896,7 @@ function Main() {
                                 Relationship
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian?.relationship}
+                                {learner?.guardian_relationship}
                               </td>
                             </tr>
                             <tr>
@@ -1877,7 +1940,7 @@ function Main() {
                                 Relationship
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian2?.relationship || "N/A"}
+                                {learner?.guardian2_relationship || "N/A"}
                               </td>
                             </tr>
                             <tr>

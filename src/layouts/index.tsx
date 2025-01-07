@@ -36,6 +36,7 @@ import MainColorSwitcher from "../components/MainColorSwitcher";
 import SideMenuTooltip from "../../src/components/SideMenuTooltip";
 import { useAuth } from "../contexts/Auth";
 import { useTour } from "../TourContext";
+
 interface School {
   school: Record<string, any>; // Replace `any` with specific types if known
   // Add other properties if needed
@@ -55,6 +56,7 @@ function Layout() {
   const dispatch = useDispatch();
   const auth = useAuth();
   const user = auth?.authData?.user as School;
+  const navigate = useNavigate();
 
   useEffect(() => {
     setFormattedMenu(sideMenu());
@@ -95,7 +97,12 @@ function Layout() {
         {/* <nav className="w-[105px] bg-primary/90 xl:w-[260px] px-5 pb-16 overflow-x-hidden z-50 pt-10 -mt-4 hidden md:block"> */}
         <nav className="w-[105px] scrollbar-hidden h-full  bg-primary xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md  hidden md:block fixed bg-primary z-[60] border-b border-white/[0.08]    mb-6 dark:bg-darkmode-800/90 ">
           <div className="mb-2">
-            <img alt="Hero" className=" w-[130px] ml-5" src={logoUrl} />
+            <img
+              alt="Hero"
+              className=" w-[130px] ml-5"
+              src={logoUrl}
+              onClick={(e) => navigate("/home")}
+            />
           </div>
           <hr className="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent"></hr>
           <ul className="pt-10">
@@ -307,7 +314,7 @@ function Layout() {
             <Outlet />
             {/* )} */}
             {/* </div> */}
-
+            {/* 
             <Joyride
               steps={currentSteps}
               run={runTour}
@@ -324,7 +331,7 @@ function Layout() {
                   handleStepChange(data.index + 1);
                 }
               }}
-            />
+            /> */}
           </div>
         </div>
         {/* END: Content */}
