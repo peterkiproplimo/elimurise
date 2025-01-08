@@ -251,11 +251,7 @@ function Main() {
 
   const handleTestChange = async () => {
     isLoading(true);
-    const response = await ApiService.getTests({
-      page: 1,
-      grade: strandFilter.grade,
-      term: selectedTerm,
-    });
+    const response = await ApiService.getTests({});
     setTests(response.data);
     isLoading(false);
   };
@@ -769,6 +765,35 @@ function Main() {
               </div>
 
               <div className="col-span-12 sm:col-span-4">
+                <FormLabel htmlFor="modal-form-6">Tests</FormLabel>
+                <FormSelect
+                  {...register("test")}
+                  name="test"
+                  value={test}
+                  onChange={(event: any) => setTest(event.target.value)}
+                >
+                  <option>Select Test</option>
+                  {tests
+                    .filter(
+                      (test: any) =>
+                        test?.grade?._id == strandFilter.grade &&
+                        test?.term == selectedTerm
+                    )
+                    .map((test: any, key) => (
+                      <option key={key} value={test._id}>
+                        {test.name} - {test?.type} - (
+                        {test?.school ? "Custom" : "Hero"})
+                      </option>
+                    ))}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-4">
                 <FormLabel htmlFor="modal-form-6">Learning Area</FormLabel>
                 <FormSelect
                   {...register("learning_area")}
@@ -791,35 +816,6 @@ function Main() {
                   <div className="mt-2 text-danger">
                     {typeof errors.learning_area.message === "string" &&
                       errors.learning_area.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-4">
-                <FormLabel htmlFor="modal-form-6">Tests</FormLabel>
-                <FormSelect
-                  {...register("test")}
-                  name="test"
-                  value={test}
-                  onChange={(event: any) => setTest(event.target.value)}
-                >
-                  <option>Select Test</option>
-                  {tests
-                    .filter(
-                      (test: any) =>
-                        test?.grade?._id == strandFilter.grade &&
-                        test?.term == selectedTerm
-                    )
-                    .map((test: any, key) => (
-                      <option key={key} value={test._id}>
-                        {test.name} ({test?.term ? "Custom" : "Hero Assessment"}
-                        )
-                      </option>
-                    ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
                   </div>
                 )}
               </div>

@@ -577,7 +577,25 @@ function Main() {
       notify.current?.showToast();
     }
   };
+  const [showParent2, setShowParent2] = useState(false);
 
+  const handleToggleParent2 = (event: any) => {
+    if (!event.target.checked) {
+      // Clear "Parent 2 Details" fields when unchecked
+      reset({
+        ...getValues(),
+        guardian2_id_no: "",
+        guardian2_relationship: "",
+        guardian2_first_name: "",
+        guardian2_surname: "",
+        guardian2_last_name: "",
+        guardian2_email: "",
+        guardian2_phone: "",
+      });
+      setGuardianIdNo2("");
+    }
+    setShowParent2(event.target.checked); // Toggle visibility
+  };
   return (
     <>
       {dialog && !profile ? (
@@ -804,11 +822,13 @@ function Main() {
               </div>
             </fieldset>
             <fieldset className="mt-5 p-5  box validate-form">
-              <legend className="text-lg font-semibold">Parent Details</legend>
+              <legend className="text-lg font-semibold">
+                Parent 1 Details
+              </legend>
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Parent ID Number or Email
+                    Parent Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
                   <TomSelect
@@ -960,14 +980,22 @@ function Main() {
                 </div>
               </div>
             </fieldset>
-            <fieldset className="mt-5 p-5  box validate-form">
-              <legend className="text-lg font-semibold">
-                Parent 2 Details
-              </legend>
+            <fieldset className="mt-5 p-5 box validate-form">
+              <div className="flex items-center mb-4">
+                <legend className="text-lg font-semibold mr-4">
+                  Parent 2 Details
+                </legend>
+                <Lucide
+                  icon="Trash"
+                  className="w-4 h-4 cursor-pointer"
+                  onClick={handleToggleParent2} // Use onClick for the icon
+                />
+              </div>
+
               <div className="grid grid-cols-12 gap-4 gap-y-3">
                 <div className="col-span-4 sm:col-span-4">
                   <FormLabel>
-                    Parent ID Number or Email
+                    Parent Email
                     <span className="text-danger ml-0.5">*</span>
                   </FormLabel>
 
@@ -976,7 +1004,7 @@ function Main() {
                     name="guardian2_id_no"
                     value={guardianIdNo2}
                     onChange={(event: any) => {
-                      reset({ ...getValues(), parent: event });
+                      reset({ ...getValues(), guardian2_id_no: event });
                       setGuardianIdNo2(event);
                     }}
                     className={errors.guardian2_id_no ? "border-danger" : ""}
@@ -1010,7 +1038,6 @@ function Main() {
                   <FormSelect
                     {...register("guardian2_relationship")}
                     name="guardian2_relationship"
-                    // defaultValue={selectedLevel}
                   >
                     <option value={""}>Select Relationship</option>
                     <option value={"Father"}>Father</option>
@@ -1072,11 +1099,11 @@ function Main() {
                     {...register("guardian2_last_name")}
                     type="text"
                     name="guardian2_last_name"
-                    disabled
                     className={
                       errors.guardian2_last_name ? "border-danger" : ""
                     }
                     placeholder="Second Parent Last name"
+                    disabled
                   />
                   {errors.guardian2_last_name && (
                     <div className="mt-2 text-danger">
@@ -1122,6 +1149,7 @@ function Main() {
                 </div>
               </div>
             </fieldset>
+
             <div className="col-span-12 sm:col-span-12 mt-3">
               <Button
                 type="button"
@@ -1988,7 +2016,8 @@ function Main() {
                                 <option value={""}>Select Grade</option>
                                 {learner_grades?.map((grade: any, key: any) => (
                                   <option key={key} value={grade.to_session}>
-                                    {grade?.to_grade?.name}
+                                    {grade?.to_grade?.name}-
+                                    {grade?.to_stream?.name}- {grade.to_session}
                                     {/* {grade?.to_stream?.name}- {grade.to_session} */}
                                   </option>
                                 ))}
@@ -2035,7 +2064,7 @@ function Main() {
                                 <option value={""}>Select Test</option>
                                 {tests.map((test: any, key: any) => (
                                   <option key={key} value={test._id}>
-                                    {test.name}
+                                    {test.name}- {test?.type}
                                   </option>
                                 ))}
                               </TomSelect>

@@ -18,8 +18,12 @@ import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
+import ProgressBar from "../AssessLearner/ProgressBar";
+import { useNavigate } from "react-router-dom";
 
 function Main() {
+  const navigate = useNavigate();
+
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
@@ -123,7 +127,7 @@ function Main() {
 
   const getTests = async () => {
     isLoading(true);
-    const response = await ApiService.getTests({
+    const response = await ApiService.getTestsDone({
       page: page,
       type,
       search,
@@ -132,7 +136,7 @@ function Main() {
       limit,
     });
     setTests(response.data);
-    const pagination = response.pagination;
+    const pagination = response?.pagination;
     setPagination({
       current_page: pagination?.current_page,
       total: pagination?.total,
@@ -521,23 +525,21 @@ function Main() {
                           Grade
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
-                          Scale
+                          Stream
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          Session
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          Created At
-                        </Table.Th>
+
                         <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                          Actions
+                          Progress
                         </Table.Th>
                       </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
                       {tests.map((test: any, key) => (
                         <Table.Tr key={key} className="">
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          <Table.Td
+                            onClick={(e: any) => navigate("")}
+                            className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                          >
                             <span className="font-medium whitespace-nowrap">
                               {limit * (page - 1) + key + 1}
                             </span>
@@ -569,59 +571,15 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {test?.grading?.name}
+                              {test?.stream?.name}
                             </span>
                           </Table.Td>
+
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test?.session}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {new Date(test.grade.createdAt).toLocaleString(
-                                "en-US",
-                                {
-                                  timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                                  year: "numeric",
-                                  month: "2-digit",
-                                  day: "2-digit",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            {test?.school && (
-                              <div className="flex items-center justify-center">
-                                <a
-                                  className="flex items-center mr-3 text-success"
-                                  href="#"
-                                  onClick={() => editRecord(test)}
-                                >
-                                  <Lucide
-                                    icon="CheckSquare"
-                                    className="w-4 h-4 mr-1 "
-                                  />{" "}
-                                  Edit
-                                </a>
-                                <a
-                                  className="flex items-center text-danger"
-                                  href="#"
-                                  onClick={() => {
-                                    setRecordId(test._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash2"
-                                    className="w-4 h-4 mr-1"
-                                  />{" "}
-                                  Delete
-                                </a>
-                              </div>
-                            )}
+                            <ProgressBar
+                              total={test?.totalLearners || 0}
+                              assessed={test?.assessedLearners || 0}
+                            />
                           </Table.Td>
                         </Table.Tr>
                       ))}

@@ -45,6 +45,7 @@ import LearnerDetails from "../pages/Learners/learnerDetails";
 import SummativeTests from "../pages/SummativeTests";
 import SummativeAssess from "../pages/SummativeAssess";
 import SummativeReport from "../pages/SummativeReport";
+import SummativeDone from "../pages/SummativeTests/done-tests";
 
 import User from "../pages/User";
 import Role from "../pages/roles";
@@ -120,6 +121,10 @@ function Router() {
         {
           path: "tests",
           element: <SummativeTests />,
+        },
+        {
+          path: "tests-done",
+          element: <SummativeDone />,
         },
         {
           path: "assess",
@@ -324,33 +329,23 @@ function Router() {
 
     {
       path: "/contact",
-      element: (
-          <Contact />
-      ),
+      element: <Contact />,
     },
     {
       path: "/demo",
-      element: (
-          <Demo />
-      ),
+      element: <Demo />,
     },
     {
       path: "/terms",
-      element: (
-          <Terms/>
-      ),
+      element: <Terms />,
     },
     {
       path: "/payment",
-      element: (
-          <Payment/>
-      ),
+      element: <Payment />,
     },
     {
       path: "/policy",
-      element: (
-          <Policy/>
-      ),
+      element: <Policy />,
     },
     // {
     //   path: "/register",
@@ -367,10 +362,9 @@ function Router() {
     //   ],
     // },
 
-
     {
       path: "/register",
-      element: <Register/>,
+      element: <Register />,
     },
     {
       path: "/error-page",

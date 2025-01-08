@@ -47,6 +47,9 @@ function Users() {
   const [levels, setLevels] = useState([]);
   const [learningAreas, setLearningAreas] = useState([]);
   const [filteredLearningAreas, setFilteredLearningAreas] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [teacher, setTeacher] = useState<any>({});
+
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -98,6 +101,7 @@ function Users() {
     resolver: yupResolver(schema),
   });
   useEffect(() => {
+    console.log("also...");
     getRole();
     getUsers();
     getLearningAreas();
@@ -153,7 +157,6 @@ function Users() {
   };
   const getStreams = async (selectedValue: any) => {
     setStreams([]);
-
     const response = await ApiService.getStream({
       page: 1,
       grade: selectedValue,
@@ -242,7 +245,7 @@ function Users() {
       grade: selectedValue,
     });
     reset({
-      grade: gradeId, // Keep the selected grade
+      grade: selectedValue, // Keep the selected grade
       stream: "", // Reset the stream
       lerningArea: [], // Reset the learning areas
     });
@@ -251,7 +254,75 @@ function Users() {
 
     // You might want to fetch filtered data here
   };
+  const handleSelectAll = () => {
+    setSelectAll(!selectAll);
 
+    // Update all learning areas' selected state
+    learningAreas.forEach((_, index) => {
+      setValue(`learningArea[${index}].selected`, !selectAll);
+    });
+  };
+  const [selectedAssignments, setSelectedAssignments] = useState<number[]>([]);
+
+  const handleSelectAllRows = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      // Select all assignments
+      setSelectedAssignments(assignments.map((assignment) => assignment._id));
+    } else {
+      // Deselect all assignments
+      setSelectedAssignments([]);
+    }
+  };
+
+  const handleRowSelect = (id: number) => {
+    if (selectedAssignments.includes(id)) {
+      // Remove from selected list
+      setSelectedAssignments(
+        selectedAssignments.filter((selectedId) => selectedId !== id)
+      );
+    } else {
+      // Add to selected list
+      setSelectedAssignments([...selectedAssignments, id]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedAssignments.length === 0) {
+      alert("No assignments selected.");
+      return;
+    }
+
+    // Perform the bulk delete operation
+    try {
+      let res = await ApiService.deleteMultipleLearningAreaAssignment({
+        ids: selectedAssignments,
+      });
+      getLearningAreasAssignments();
+      isLoading(false);
+      setConfirmDelete(false);
+      setSuccess(true);
+      setMessage(res.message);
+      notify.current?.showToast();
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+    // Example API call:
+    // await deleteAssignments(selectedAssignments);
+    setSelectedAssignments([]); // Clear selection after delete
+  };
+  useEffect(() => {
+    getTeachers();
+  }, []);
+  const getTeachers = async () => {
+    isLoading(true);
+    const response = await ApiService.getTeacher(userId);
+    setTeacher(response.data);
+
+    isLoading(false);
+  };
   return (
     <>
       <h2 className="mt-1 text-lg font-medium ">
@@ -266,7 +337,10 @@ function Users() {
           <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
           Back
         </a>
-        Learning Area Assignment
+        Learning Area Assignment for{" "}
+        <b>
+          {teacher?.firstname} {teacher?.lastname}
+        </b>
       </h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
@@ -306,6 +380,13 @@ function Users() {
             </div>
           </div>
         </div>
+        <div className="mb-4">
+          {selectedAssignments.length > 0 && (
+            <Button onClick={handleBulkDelete} className="text-danger">
+              Delete Selected
+            </Button>
+          )}
+        </div>
         <div className="col-span-12 overflow-auto  2xl:overflow-visible">
           {loading ? (
             <div className="flex flex-col items-center mt-5">
@@ -324,6 +405,12 @@ function Users() {
                   <FormCheck.Input type="checkbox" />
                 </Table.Th> */}
                   <Table.Th className="border-b-0 whitespace-nowrap">
+                    <FormCheck.Input
+                      type="checkbox"
+                      onChange={handleSelectAllRows}
+                    />
+                  </Table.Th>
+                  <Table.Th className="border-b-0 whitespace-nowrap">
                     NO
                   </Table.Th>
 
@@ -341,6 +428,13 @@ function Users() {
               <Table.Tbody>
                 {assignments.map((assignment: any, key) => (
                   <Table.Tr key={key} className="">
+                    <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                      <FormCheck.Input
+                        type="checkbox"
+                        checked={selectedAssignments.includes(assignment?._id)}
+                        onChange={() => handleRowSelect(assignment?._id)}
+                      />
+                    </Table.Td>
                     <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                       {key + 1}
                     </Table.Td>
@@ -437,7 +531,7 @@ function Users() {
         </div>
         {/* END: Pagination */}
       </div>
-      <Dialog
+      {/* <Dialog
         staticBackdrop
         size="lg"
         open={dialog}
@@ -514,12 +608,7 @@ function Users() {
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th className="border-b-0 whitespace-nowrap">
-                      {/* <FormInput
-                        type="checkbox"
-                        className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                        checked={selectAll}
-                        onChange={handleSelectAll}
-                      /> */}
+                    
                     </Table.Th>
                     <Table.Th className="border-b-0 whitespace-nowrap">
                       <u> Learning Area</u>
@@ -581,7 +670,158 @@ function Users() {
             </Dialog.Footer>
           </form>
         </Dialog.Panel>
+      </Dialog> */}
+      <Dialog
+        open={dialog}
+        onClose={() => {
+          cancel({ name: "" });
+          setDialog(false);
+        }}
+        className="relative z-50"
+      >
+        {/* Background Overlay */}
+        {/* <div className="fixed inset-0 bg-black bg-opacity-30"></div> */}
+
+        {/* Dialog Panel */}
+        <Dialog.Panel className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto mt-4 ">
+          <form className="validate-form" onSubmit={onSubmit}>
+            <Dialog.Title className="flex items-center justify-between">
+              <h2 className="mr-auto text-base font-medium">
+                {isEditMode ? "Edit Assignment" : "New Assignment"}
+              </h2>
+              <a
+                onClick={(event: React.MouseEvent) => {
+                  event.preventDefault();
+                  setDialog(false);
+                }}
+                className="absolute top-0 right-0 mt-3 mr-3"
+                href="#"
+              >
+                <Lucide icon="X" className="w-8 h-8 text-slate-400" />
+              </a>
+            </Dialog.Title>
+            <Dialog.Description className="grid grid-cols-12 gap-4 gap-y-3">
+              {/* Grade Selection */}
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
+                <FormSelect
+                  {...register("grade")}
+                  name="grade"
+                  value={strandFilter.grade}
+                  onChange={(event) => handleGradeChange(event)}
+                >
+                  <option value="">Select Grade</option>
+                  {grades.map((grade: any, key) => (
+                    <option key={key} value={grade._id}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              {/* Stream Selection */}
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
+                <FormSelect
+                  {...register("stream")}
+                  name="stream"
+                  value={stream}
+                  onChange={(event: any) => setStream(event.target.value)}
+                >
+                  <option value="">Select Stream</option>
+                  {streams.map((stream: any, key) => (
+                    <option key={key} value={stream._id}>
+                      {stream.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {errors.stream && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.stream.message === "string" &&
+                      errors.stream.message}
+                  </div>
+                )}
+              </div>
+
+              {/* Learning Areas */}
+              <Table className="w-100">
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      <FormInput
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={handleSelectAll}
+                        className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                      />
+                    </Table.Th>
+                    <Table.Th className="border-b-0 whitespace-nowrap">
+                      <u>Learning Area</u>
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {learningAreas.map((learningArea: any, key) => (
+                    <Table.Tr key={key}>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
+                        <span className="font-medium whitespace-nowrap">
+                          <FormInput
+                            type="checkbox"
+                            {...register(`learningArea[${key}].selected`)}
+                            name={`learningArea[${key}].selected`}
+                            className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                          <FormInput
+                            type="hidden"
+                            {...register(`learningArea[${key}].id`)}
+                            name={`learningArea[${key}].id`}
+                            defaultValue={learningArea?._id}
+                            className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
+                          />
+                        </span>
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
+                        <span className="font-medium whitespace-nowrap">
+                          {learningArea.name}
+                        </span>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </Table>
+            </Dialog.Description>
+            <Dialog.Footer className="flex justify-end space-x-4 mt-6">
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={() => {
+                  cancel({ name: "" });
+                  setDialog(false);
+                }}
+                className="w-20"
+              >
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" className="w-20">
+                Save
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </Button>
+            </Dialog.Footer>
+          </form>
+        </Dialog.Panel>
       </Dialog>
+
       {/* BEGIN: Delete Confirmation Modal */}
       <Dialog
         open={confirmDelete}

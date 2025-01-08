@@ -764,7 +764,7 @@ function Main() {
                                   Assign Grade
                                 </Menu.Item>
                               )}
-                              {hasPermission("teachers", "edit") && (
+                              {hasPermission("teachers", "update") && (
                                 <Menu.Item
                                   onClick={(e: any) => {
                                     e.preventDefault();
@@ -777,6 +777,21 @@ function Main() {
                                     className="w-4 h-4 mr-1"
                                   />
                                   Edit Profile
+                                </Menu.Item>
+                              )}
+                              {hasPermission("teachers", "deactivate") && (
+                                <Menu.Item
+                                  onClick={(e: any) => {
+                                    e.preventDefault();
+                                    editRecord(teacher);
+                                  }}
+                                  className="  text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                >
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />
+                                  Deactivate Profile
                                 </Menu.Item>
                               )}
                               {hasPermission("teachers", "delete") && (
