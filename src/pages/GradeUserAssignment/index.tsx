@@ -267,7 +267,9 @@ function Users() {
   const handleSelectAllRows = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       // Select all assignments
-      setSelectedAssignments(assignments.map((assignment) => assignment._id));
+      setSelectedAssignments(
+        assignments.map((assignment: any) => assignment?._id)
+      );
     } else {
       // Deselect all assignments
       setSelectedAssignments([]);
