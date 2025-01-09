@@ -919,10 +919,12 @@ export const createCommentAssessment = async (data: any) => {
 export const getReportByLearners = async (data: any) => {
   try {
     let type =
-      data.type == "analysis-grade" || data.type == "analysis-stream"
+      data.type === "analysis-grade" || data.type === "analysis-stream"
         ? "/analysis"
-        : "";
-    console.log(type);
+        : // : data.type === "learner-weakness"
+          // ? "/"
+          "";
+
     let res = await axios.get(c.ASSESSMENT + "/assessments" + type, {
       params: data,
       responseType: "arraybuffer",

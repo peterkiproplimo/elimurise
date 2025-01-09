@@ -292,7 +292,11 @@ function Main() {
   const generateAssessment = async () => {
     isLoading(true);
     let data = {};
-    if (type == "learner") {
+    if (
+      type == "learner" ||
+      type == "learner-weakness" ||
+      type == "learner-strength"
+    ) {
       data = {
         learning_area: strandFilter.learning_area,
         term: selectedTerm,
@@ -575,6 +579,9 @@ function Main() {
                   <option value={""}>Select Type</option>
 
                   <option value={"learner"}>Learner Report</option>
+                  <option value="learner-weakness">Learner Weaknesses</option>
+                  <option value="learner-strength">Learner Strengths</option>
+
                   {/* <option value={"indicator"}>Indicator Report</option> */}
                   <option value={"analysis-grade"}>
                     Stream Analysis Report
@@ -617,7 +624,10 @@ function Main() {
                   </div>
                 )}
               </div>
-              {(type == "analysis-stream" || type === "learner") && (
+              {(type == "analysis-stream" ||
+                type === "learner" ||
+                type === "learner-weakness" ||
+                type == "learner-strength") && (
                 <div className="col-span-12 sm:col-span-2">
                   <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
                   <FormSelect
@@ -645,7 +655,9 @@ function Main() {
                   )}
                 </div>
               )}
-              {type == "learner" && (
+              {(type == "learner" ||
+                type == "learner-weakness" ||
+                type == "learner-strength") && (
                 <div className="col-span-12 sm:col-span-2">
                   <FormLabel htmlFor="modal-form-6">Learners</FormLabel>
                   <FormSelect

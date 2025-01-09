@@ -420,7 +420,10 @@ function Main() {
                     type="text"
                     className="w-56 pr-10 !box"
                     placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                      setPage(1);
+                      setSearch(e.target.value);
+                    }}
                   />
                   <Lucide
                     icon="Search"

@@ -296,6 +296,24 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-6">Relationship</FormLabel>
+                <FormSelect
+                  {...register("gender")}
+                  name="gender"
+                  // defaultValue={selectedLevel}
+                >
+                  <option value={""}>Select Gender</option>
+                  <option value={"Male"}>Male</option>
+                  <option value={"Female"}>Female</option>
+                </FormSelect>
+                {errors.relationship && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.relationship.message === "string" &&
+                      errors.relationship.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Last Name <span className="text-danger ml-0.5">*</span>
                 </FormLabel>
