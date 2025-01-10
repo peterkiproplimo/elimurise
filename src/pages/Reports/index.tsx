@@ -580,7 +580,7 @@ function Main() {
 
                   <option value={"learner"}>Learner Report</option>
                   <option value="learner-weakness">Learner Weaknesses</option>
-                  <option value="learner-strength">Learner Strengths</option>
+                  {/* <option value="learner-strength">Learner Strengths</option> */}
 
                   {/* <option value={"indicator"}>Indicator Report</option> */}
                   <option value={"analysis-grade"}>
