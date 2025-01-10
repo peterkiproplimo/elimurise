@@ -437,6 +437,8 @@ function Main() {
                 className="w-56 box mr-3"
                 value={grade}
                 onChange={(event: any) => {
+                  setPage(1);
+
                   setGrade(event);
                   setSelectedTerm("");
                   setType("");
@@ -454,6 +456,8 @@ function Main() {
                 name="stream"
                 value={selectedTerm}
                 onChange={(event: any) => {
+                  setPage(1);
+
                   setSelectedTerm(event);
                   setType("");
                   // handleTestChange();
@@ -474,6 +478,8 @@ function Main() {
                 name="type"
                 value={type}
                 onChange={(event: any) => {
+                  setPage(1);
+
                   setType(event);
                   // handleTestChange();
                 }}

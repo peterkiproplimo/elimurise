@@ -222,7 +222,7 @@ function Main() {
                 <FormSelect
                   {...register("grade")}
                   name="grade"
-
+                  onChange={(e: any) => setPage(1)}
                   // defaultValue={selectedLevel}
                 >
                   {grades.map((grade: any, key: any) => (
