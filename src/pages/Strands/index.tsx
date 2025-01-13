@@ -106,7 +106,7 @@ function Main() {
   });
   useEffect(() => {
     getStrands();
-  }, [strandFilter]);
+  }, [strandFilter, page, search]);
   const getStrands = async () => {
     isLoading(true);
     const response = await ApiService.getStrands(
@@ -284,7 +284,10 @@ function Main() {
                   name="term"
                   className="relative w-56 text-slate-500 "
                   value={strandFilter.term}
-                  onChange={(event) => handleTermChange(event)}
+                  onChange={(event) => {
+                    setPage(1);
+                    handleTermChange(event);
+                  }}
                 >
                   <option>Select Term</option>
                   {terms.map((term: any, key) => (
@@ -300,7 +303,10 @@ function Main() {
                     type="text"
                     className="w-56 pr-10 !box"
                     placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                      setPage(1);
+                      setSearch(e.target.value);
+                    }}
                   />
                   <Lucide
                     icon="Search"

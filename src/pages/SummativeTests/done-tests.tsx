@@ -21,14 +21,14 @@ import Alert from "../../base-components/Alert";
 import ProgressBar from "../AssessLearner/ProgressBar";
 import { useNavigate } from "react-router-dom";
 
-function Main() {
+function Main(props: any) {
   const navigate = useNavigate();
-
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
   const [gradeId, setGradeId] = useState("");
   const [grade, setGrade] = useState("");
+
   const terms = [
     { _id: 1, name: "Term 1" },
     { _id: 2, name: "Term 2" },
@@ -54,11 +54,14 @@ function Main() {
     total_pages: 1,
     per_page: 0,
   });
+  const [subjects, setSubjects] = useState([]);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
+  const [pdfUrl, setPdfUrl] = useState("");
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -127,15 +130,9 @@ function Main() {
 
   const getTests = async () => {
     isLoading(true);
-    const response = await ApiService.getTestsDone({
-      page: page,
-      type,
-      search,
-      term: selectedTerm,
-      grade,
-      limit,
-    });
+    const response = await ApiService.getTestsDone(props.data);
     setTests(response.data);
+    setSubjects(response.subjects);
     const pagination = response?.pagination;
     setPagination({
       current_page: pagination?.current_page,
@@ -221,424 +218,200 @@ function Main() {
 
     setDialog(false);
   };
+  const generateAssessment = async () => {
+    isLoading(true);
+    let data = {};
+    if (props.data.stream == "") {
+      data = {
+        test: props.data.test,
+        term: props.data.term,
+        type: "grade",
+        grade: props.data.grade,
+      };
+    } else {
+      data = {
+        test: props.data.test,
+        term: props.data.term,
+        type: "stream",
+        stream: props.data.stream,
+      };
+    }
+
+    isLoading(true);
+    try {
+      let res = await ApiService.getSummativeByLearners(data);
+      const blob = new Blob([res], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const popup = window.open(
+        url,
+        `width=${window.innerWidth},height=${window.innerHeight},scrollbars=yes`
+      );
+
+      setPdfUrl(url);
+      // setEnrollments(res);
+      // const pagination = res.pagination;
+      // setPagination({
+      //   current_page: pagination?.current_page,
+      //   total: pagination?.total,
+      //   total_pages: pagination?.total_pages,
+      //   per_page: pagination?.per_page,
+      // });
+      // setDialog(true);
+      isLoading(false);
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      console.log(error);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
 
   return (
     <>
       {dialog ? (
+        <></>
+      ) : (
         <>
-          <div className="flex items-center mt-8 ">
-            <a
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                reset({ name: "" });
-                setDialog(false);
-              }}
-              href="#"
-            >
-              <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-            </a>
-            <h2 className="mr-auto text-lg font-medium">
-              {isEditMode ? "Edit Test" : "New Test"}
-            </h2>
-          </div>
-          <br />
-          <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
-            <div>
+          <h2 className="mt-1 text-lg font-medium ">
+            <div className="flex items-center mt-8 ">
               <a
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
-                  setDialog(false);
+                  props.setDisplayResults(false);
                 }}
-                className="absolute  top-0 right-0 mt-3 mr-3"
                 href="#"
-              ></a>
-            </div>{" "}
-            <div className="grid grid-cols-12 gap-6 ">
-              <div className="col-span-6 sm:col-span-4 py-2">
-                <FormLabel className="modal-form-6">
-                  Name<span className="text-danger ml-0.5">*</span>
-                </FormLabel>
-                <FormInput
-                  {...register("name")}
-                  type="text"
-                  name="name"
-                  className={errors.name ? "border-danger" : ""}
-                  placeholder="Summative Test"
-                />
-                {errors.name && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.name.message === "string" &&
-                      errors.name.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-6 sm:col-span-4 py-2">
-                <FormLabel htmlFor="modal-form-6">Type</FormLabel>
-                <FormSelect
-                  {...register("type")}
-                  name="type"
-                  // defaultValue={selectedLevel}
-                >
-                  <option value={""}>Select Type</option>
-                  <option value={"Tunner"}>Tunner-Up</option>
-                  <option value={"Mid Term"}>Miderm</option>
-                  <option value={"End of the Term"}>End of the Term</option>
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-6 sm:col-span-4 py-2">
-                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
-                <FormSelect
-                  {...register("grade")}
-                  name="grade"
-                  onChange={(event: any) => setGrade(event.target.value)}
-                  // defaultValue={selectedLevel}
-                >
-                  <option value={""}>Select Grade</option>
-                  {grades.map((grade: any, key: any) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-12 gap-6 ">
-              <div className="col-span-6 sm:col-span-4 py-2">
-                <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
-                <FormSelect
-                  {...register("term")}
-                  name="term"
-                  value={selectedTerm}
-                  onChange={(event: any) => setSelectedTerm(event.target.value)}
-                >
-                  <option value={""}>Select Academic Term</option>
-
-                  {terms.map((term: any, key) => (
-                    <option key={key} value={term._id}>
-                      {term.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div>
-
-              <div className="col-span-6 sm:col-span-4">
-                <div className="col-span-4 sm:col-span-12 py-2">
-                  <FormLabel className="modal-form-6">
-                    Performance Level Scale
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <TomSelect
-                    onChange={(data: any) => {
-                      setGradeId(data);
-                      reset({ ...getValues(), grading: data });
-                    }}
-                    value={gradeId}
-                  >
-                    <option value={""}>Select Scale</option>
-                    {gradings
-                      .filter((grading: any) => grading.grade._id === grade)
-                      .map((grading: any, key) => (
-                        <option key={key} value={grading._id}>
-                          {grading.name} ({grading.grade.name})
-                        </option>
-                      ))}
-                  </TomSelect>
-                  {errors.grading && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.grading.message === "string" &&
-                        errors.grading.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="col-span-12 sm:col-span-12 mt-3">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={() => cancel({ name: "" })}
-                className="w-20 mr-1"
               >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit" className="w-20">
-                Save
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Button>
+                <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+              </a>
+              <h2 className="mr-auto text-lg font-medium">
+                Assessment Records
+              </h2>
             </div>
-          </form>
-        </>
-      ) : (
-        <>
-          <h2 className="mt-1 text-lg font-medium ">Summative Tests</h2>
-
+          </h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-              <Button
-                variant="primary"
-                className="mr-2 shadow-md"
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setDialog(true);
-                }}
-              >
-                New Test
-              </Button>
-              <div className="hidden mx-auto md:block text-slate-500">
-                Showing{" "}
-                {pagination.current_page +
-                  " to " +
-                  pagination.total_pages +
-                  " of " +
-                  pagination.total}{" "}
-                entries
-              </div>
-
-              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                <div className="relative w-56 text-slate-500">
-                  <FormInput
-                    type="text"
-                    className="w-56 pr-10 !box"
-                    placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <Lucide
-                    icon="Search"
-                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center justify-end col-span-12 mt-2 xl:flex-nowrap ">
-              <TomSelect
-                className="w-56 box mr-3"
-                value={grade}
-                onChange={(event: any) => {
-                  setGrade(event);
-                  setSelectedTerm("");
-                  setType("");
-                }}
-              >
-                <option value={""}>All Grades</option>
-                {grades.map((grade: any, key: any) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </TomSelect>
-              <TomSelect
-                className="w-56 box mr-3"
-                name="stream"
-                value={selectedTerm}
-                onChange={(event: any) => {
-                  setSelectedTerm(event);
-                  setType("");
-                  // handleTestChange();
-                }}
-              >
-                <option value={""} selected>
-                  All Terms
-                </option>
-
-                {terms.map((term: any, key) => (
-                  <option key={key} value={term._id}>
-                    {term.name}
-                  </option>
-                ))}
-              </TomSelect>
-              <TomSelect
-                className="w-56 box"
-                name="type"
-                value={type}
-                onChange={(event: any) => {
-                  setType(event);
-                  // handleTestChange();
-                }}
-              >
-                <option value={""} selected>
-                  All Types
-                </option>
-
-                <option value={"Tunner"}>Tunner-Up</option>
-                <option value={"Mid Term"}>Miderm</option>
-                <option value={"End of the Term"}>End of the Term</option>
-              </TomSelect>
-            </div>
-
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto 2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
                 </div>
               ) : tests.length === 0 ? (
                 <div className="flex flex-col items-center mt-10 bg-white p-8">
-                  {/* <Search size={28} className="" /> */}
-                  <p className="text-xl text-slate-500 ">No records found</p>
+                  <p className="text-xl text-slate-500">No records found</p>
                 </div>
               ) : (
                 <>
-                  {" "}
-                  <Table className="border-spacing-y-[3px] border-separate -mt-2">
-                    <Table.Thead>
+                  <div className="grid grid-cols-12 gap-6 ">
+                    <div className="flex flex-wrap items-center col-span-12 xl:flex-nowrap">
+                      <div className="hidden mx-auto md:block text-slate-500"></div>
+
+                      <div className="flex items-right w-full mt-3 xl:w-auto xl:mt-0 pb-2">
+                        <Button
+                          variant="primary" // A variant that stands out more for export
+                          className="mr-2 shadow-md px-6 py-2.5 bg-primary text-white border border-blue-600 rounded-md hover:bg-blue hover:border-blue focus:ring-2 focus:ring-blue-500"
+                          onClick={(event: React.MouseEvent) => {
+                            event.preventDefault();
+                            generateAssessment();
+                          }}
+                        >
+                          <i className="mr-2 fas fa-download"></i>{" "}
+                          {/* Icon for the export functionality */}
+                          Export
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <Table
+                    id="table"
+                    className="border-separate border-spacing-y-[3px] w-full -mt-2"
+                  >
+                    <Table.Thead className="bg-gray-100">
                       <Table.Tr>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          NO.
+                        <Table.Th className="border-b-2 text-left py-2 px-4">
+                          #
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
+                        <Table.Th className="border-b-2 text-left py-2 px-4">
+                          ADM NO
+                        </Table.Th>
+                        <Table.Th className="border-b-2 text-left py-2 px-4">
                           Name
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          Owner
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          Type
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          Term
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          Grade
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
+                        <Table.Th className="border-b-2 text-left py-2 px-4">
                           Stream
                         </Table.Th>
-
-                        <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                          Progress
+                        {subjects?.map((subject, index) => (
+                          <Table.Th
+                            key={index}
+                            className="border-b-2 text-left py-2 px-4"
+                          >
+                            {subject}
+                          </Table.Th>
+                        ))}
+                        <Table.Th className="border-b-2 text-left py-2 px-4">
+                          Total
+                        </Table.Th>
+                        <Table.Th className="border-b-2 text-left py-2 px-4">
+                          AVG
+                        </Table.Th>
+                        <Table.Th className="border-b-2 text-left py-2 px-4">
+                          POS
                         </Table.Th>
                       </Table.Tr>
                     </Table.Thead>
-                    <Table.Tbody>
-                      {tests.map((test: any, key) => (
-                        <Table.Tr key={key} className="">
-                          <Table.Td
-                            onClick={(e: any) => navigate("")}
-                            className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                          >
-                            <span className="font-medium whitespace-nowrap">
+                    <Table.Tbody className="bg-white">
+                      {tests.map((test: any, key: any) => (
+                        <Table.Tr key={key} className="border-t">
+                          <Table.Td className="py-2 px-4 text-left">
+                            <span className="font-medium">
                               {limit * (page - 1) + key + 1}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test.name}
+                          <Table.Td className="py-2 px-4 text-left">
+                            <span className="font-medium">
+                              {test.learner.adm_no}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test.school ? "Local" : "Hero"}
+                          <Table.Td className="py-2 px-4 text-left">
+                            <span className="font-medium">
+                              {test.learner.first_name} {test.learner.last_name}{" "}
+                              {test.learner.surname}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test?.type}
+                          <Table.Td className="py-2 px-4 text-left">
+                            <span className="font-medium">
+                              {test.stream?.name}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test?.term}
+                          {subjects?.map((subject) => (
+                            <Table.Td
+                              key={subject}
+                              className="py-2 px-4 text-left"
+                            >
+                              <span className="font-medium">
+                                {test.assessments?.[subject] !== undefined
+                                  ? test.assessments[subject]
+                                  : "-"}
+                              </span>
+                            </Table.Td>
+                          ))}
+                          <Table.Td className="py-2 px-4 text-left">
+                            <span className="font-medium">
+                              {test.totalScore}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test?.grade?.name}
+                          <Table.Td className="py-2 px-4 text-left">
+                            <span className="font-medium">
+                              {test.averageScore}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test?.stream?.name}
-                            </span>
-                          </Table.Td>
-
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <ProgressBar
-                              total={test?.totalLearners || 0}
-                              assessed={test?.assessedLearners || 0}
-                            />
+                          <Table.Td className="py-2 px-4 text-left">
+                            <span className="font-medium">{test.rank}</span>
                           </Table.Td>
                         </Table.Tr>
                       ))}
                     </Table.Tbody>
                   </Table>
-                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                      <Pagination className="w-full sm:w-auto sm:mr-auto">
-                        <button
-                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                        </button>
-                        {_.times(pagination.total_pages).map((page, key) =>
-                          page + 1 == pagination.current_page ? (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 bg-white rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          )
-                        )}
-                        <button
-                          onClick={() =>
-                            setPage(
-                              page < pagination.total_pages ? page + 1 : 1
-                            )
-                          }
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronRight" className="w-4 h-4" />
-                        </button>
-                      </Pagination>
-                      <div className="text-slate-500">
-                        <span className="mr-3">Total {pagination.total}</span>
-                        <FormSelect
-                          className="w-30 mt-3 !box sm:mt-0"
-                          value={limit}
-                          onChange={(e) => setLimit(parseInt(e.target.value))}
-                        >
-                          <option value={10}>10/page</option>
-                          <option value={25}>25/page</option>
-                          <option value={50}>50/page</option>
-                          <option value={100}>100/page</option>
-                        </FormSelect>
-                      </div>
-                    </div>
-                  </div>
                 </>
               )}
             </div>
