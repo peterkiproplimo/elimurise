@@ -15,7 +15,7 @@ import logoUrl from "../assets/images/Untitled-1.png";
 import logo from "../assets/images/heros.png";
 import icon from "../assets/images/Icon.png";
 import homepic from "../assets/images/Ellipse.png";
-import child from "../assets/images/child.png";
+import child from "../assets/images/Mask group.png";
 import aboutpic from "../assets/images/excellence.png";
 import aboutpic2 from "../assets/images/inclusive.png";
 import aboutpic3 from "../assets/images/community.png";
@@ -23,12 +23,13 @@ import aboutpic4 from "../assets/images/Frame.png";
 import pic from "../assets/images/Rectangle.jpg";
 import pic2 from "../assets/images/Rectangle 8.png";
 import pic3 from "../assets/images/Rectangle.png";
+import pic4 from "../assets/images/Rectangle 8 (3).png";
 import users from "../assets/images/Users_Group.png";
 import check from "../assets/images/Checkbox_Check.png";
 import vector from "../assets/images/Vector.png";
 import user from "../assets/images/User.png";
-import servicepic from "../assets/images/parental-control 1.png";
-import servicepic2 from "../assets/images/parental-control.png";
+import servicepic from "../assets/images/user_group.png";
+import servicepic2 from "../assets/images/parental-control .png";
 import servicepic3 from "../assets/images/teacher-showing-on-whiteboard 1.png";
 
 import { Menu, X } from "lucide-react";
@@ -240,7 +241,7 @@ const Home = () => {
                 </a>
                 <Link to="/demo" className="xl:w-32 xl:mr-8">
                   <Button className="text-md w-[192px] p-2 h-[50px] bg-[#FF3B30] text-white rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px]">
-                    REQUEST DEMO
+                    REQUEST A DEMO
                     {loading && (
                       <LoadingIcon
                         icon="spinning-circles"
@@ -250,163 +251,55 @@ const Home = () => {
                     )}
                   </Button>
                 </Link>
-                {/* <Link to="/auth/login" className="xl:w-32 xl:mr-3">
-                      <Button className="w-full xl:px-4 xl:py-3 px-2 py-2 border-blue-800">
-                        Sign in
-                        {loading && (
-                          <LoadingIcon
-                            icon="spinning-circles"
-                            color="white"
-                            className="w-4 h-4 ml-2"
-                          />
-                        )}
-                      </Button>
-                    </Link> */}
               </div>
             </div>
           </div>
         </div>
 
         <div className="lg:flex justify-center items-center overflow-visible">
-  <div className="xl:p-10 mt-5 p-5 max-w-[1600px] overflow-visible">
-    <div className="grid bg-[#BAB4D7] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
-      {/* Left Side Content */}
-      <div className="group p-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-        <h1 className="xl:text-6xl text-2xl font-semibold mt-5 text-primary w-full">
-          Empowering Competency <br /> Based Curriculum <br /> Education
-          In Kenya
-        </h1>
-        <div className="mt-2">
-          <p className="xl:text-lg sm:text-3l text-primary">
-            We revolutionize education through our innovative digital
-            Competency Based <br /> Curriculum (CBC) approach. Join us
-            in shaping the future of learning.
-          </p>
-        </div>
-        <div className="mt-8 text-center xl:mt-8 xl:text-left">
-          <Button
-            variant="primary"
-            className="text-md w-[192px] p-2 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
-          >
-            <div className="icon mr-2">
-              <img alt="ACS" className="xl:w-35 xl:w-auto" src={icon} />
-            </div>
-            See How It Works
-            {loading && (
-              <LoadingIcon
-                icon="spinning-circles"
-                color="white"
-                className="w-4 h-4 ml-2"
-              />
-            )}
-          </Button>
-        </div>
-      </div>
+          <div className=" xl:mt-0 xl:p-0  mt-5  max-w-[1500px] overflow-visible">
+            <div className="grid   sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2">
+              <div className="group xl:p-0 p-5 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex justify-center items-center">
+                <div className="xl:p-5 ">
+                  <h1 className="xl:text-6xl text-2xl font-semibold  text-primary w-full">
+                    Empowering Competency <br /> Based Curriculum <br />{" "}
+                    Education In Kenya
+                  </h1>
+                  <div className="mt-2">
+                    <p className="xl:text-2xl sm:text-lg ">
+                      Empowering schools with a simplified CBC assessment tool
+                      for accurate learner evaluation and providing parents
+                      real-time access to their child's progress, performance &
+                      personalized feedback.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-      {/* Right Side Content */}
-      <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex justify-center">
-        <img
-          alt="ACS"
-          className="xl:w-30 md:w-full xl:w-auto max-h-[600px] w-full"
-          src={homepic}
-        />
-         <img
-          alt="Child"
-          className="absolute xl:top-[-50px] xl:left-[100px] xl:w-35 xl:h-[500px] h-full"
-          style={{
-            zIndex: "1",
-          }}
-          src={child}
-        />
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-        <div className="aboutContainer mt-10 xl:mx-auto max-w-[1600px]">
-          <p className="xl:text-lg text-lg text-center text-primary">
-            Why choose us
-          </p>
-          <h1 className="xl:text-5xl text-2xl text-center text-primary font-medium">
-            Our Values
-          </h1>
-          <div className="grid overflow-hidden rounded-3xl  gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 xl:p-10 p-5 xl:grid-cols-4">
-            <div className="group relative bg-[#5F2FA81A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
+              <div className="group dark:bg-gray-800 transition flex justify-center items-center">
                 <img
                   alt="ACS"
-                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
-                  src={aboutpic}
+                  className="xl:w-30 md:w-full xl:w-auto max-h-[602px] w-full object-contain"
+                  src={child}
                 />
               </div>
-              <div className="contents ">
-                <h2 className="xl:text-2xl text-xl font-bold p-2 ">
-                  Excellence
-                </h2>
-                <div className="border-b border-primary w-full mt-8"></div>
-                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
-                  Providing highest quality and standards in education.
-                </p>
-              </div>
-            </div>
-            <div className="group bg-[#5F2FA81A] relative p-4 rounded-3xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
-                <img
-                  alt="ACS"
-                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
-                  src={aboutpic2}
-                />
-              </div>
-              <h2 className="xl:text-2xl text-xl font-bold p-2 ">
-                Inclusivity
-              </h2>
-              <div className="border-b border-primary w-full mt-8"></div>
-              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
-                Providing an all inclusive learning environment.
-              </p>
-            </div>
-            <div className="group relative bg-[#5F2FA81A] p-4 rounded-3xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
-                <img
-                  alt="ACS"
-                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
-                  src={aboutpic3}
-                />
-              </div>
-              <h2 className="xl:text-2xl text-xl font-bold mt-2 p-2 ">
-                Community
-              </h2>
-              <div className="border-b border-primary w-full mt-8"></div>
-              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
-                Strong partnerships with teachers, learners and parents.
-              </p>
-            </div>
-            <div className="group relative p-4 bg-[#5F2FA81A] rounded-3xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
-                <img
-                  alt="ACS"
-                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
-                  src={aboutpic4}
-                />
-              </div>
-              <h2 className="xl:text-2xl text-xl mt-2 font-bold p-2 ">
-                Innovation
-              </h2>
-              <div className="border-b border-primary w-full mt-8"></div>
-              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
-                Tapping creativity and using technology make learning fun.
-              </p>
             </div>
           </div>
         </div>
 
-        <div id="about" className=" xl:mx-auto  max-w-[1500px] p-5">
+        <div className="bg-primary">
+          <div className="grid xl:mx-auto  max-w-[1500px] overflow-hidden">
+            <h4 className="p-4 text-white xl:text-3xl text-xl text-center">
+              With Hero Learning, you are not just keeping up with Education -{" "}
+              <span className="font-bold">You're Leading it</span>
+            </h4>
+          </div>
+        </div>
+
+        <div id="about" className=" xl:mx-auto xl:mt-10 max-w-[1500px] p-5">
           <Button
             variant="primary"
-            className="text-primary bg-transparent border-primary text-md w-[92px] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
+            className="text-white bg-[#FF3B30]  border-none xl:text-lg text-md w-[92px] p-2 h-[40px]  mb-5 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
           >
             About Us
             {loading && (
@@ -418,26 +311,27 @@ const Home = () => {
             )}
           </Button>
 
-          <h1 className="xl:text-5xl text-2xl text-left text-primary font-medium">
+          <h1 className="xl:text-5xl text-2xl text-left text-primary font-bold">
             Transforming Dreams into Reality
           </h1>
-          <p className="mt-2 md:text-lg xl:text-xl text-left text-primary xl:mt-5">
-            Hero Learning is about envisioning the future of education and
-            setting goals that align with the needs of Competency-Based
-            Curriculum (CBC) in Kenya. This vision serves as your guiding star,
-            illuminating the path forward and providing clarity amidst the
-            challenges of modern education.
+          <p className="mt-2 md:text-lg xl:text-2xl text-left text-primary xl:mt-5">
+            Hero Learning is committed to advancing education by aligning with
+            the goals in Kenya's Compentency- Based-Curriculum(CBC).We focus on
+            providing tools, resources and support that schools need to navigate
+            the challenges of modern education.Our approach empowers
+            facilitators and learners, ensuring every step taken leads to the
+            realization of learner's full potential.
           </p>
 
           <div>
             <div className="border-b border-primary w-full mt-5 xl:mb-5 px-5"></div>
             <div className="xl:flex gap-10 xl:space-x-8 items-center justify-between">
               <div className="flex flex-col text-left xl:p-4">
-                <h1 className="text-xl pl-2 pt-2 md:text-xl xl:text-2xl font-medium text-primary xl:mb-2">
+                <h1 className="text-xl pl-2 pt-2 md:text-xl xl:text-2xl font-bold text-primary xl:mb-2">
                   Vision
                 </h1>
               </div>
-              <div className="flex flex-col items-center  xl:p-4 p-2  md:text-xl xl:text-xl text-primary">
+              <div className="flex flex-col items-center  xl:p-4 p-2  md:text-xl xl:text-2xl text-primary">
                 To empower every learner's talent with the skills and knowledge
                 to build a successful future.
               </div>
@@ -447,11 +341,11 @@ const Home = () => {
           <div>
             <div className="xl:flex gap-10 xl:space-x-8 items-center justify-between">
               <div className="flex flex-col text-left xl:p-4">
-                <h1 className="text-xl pl-2 pt-2 md:text-2xl xl:text-2xl font-medium text-primary xl:mb-2">
+                <h1 className="text-xl pl-2 pt-2 md:text-2xl xl:text-2xl font-bold text-primary xl:mb-2">
                   Mission
                 </h1>
               </div>
-              <div className="flex flex-col items-center  xl:p-4 p-2 md:text-xl xl:text-xl  text-primary">
+              <div className="flex flex-col items-center  xl:p-4 p-2 md:text-xl xl:text-2xl  text-primary">
                 At Hero Learning, we pride ourselves in building and inclusive
                 and robust learning
                 <br />
@@ -464,21 +358,107 @@ const Home = () => {
           </div>
         </div>
 
-        <div className=" xl:flex gap-10 space-x-8  xl:mx-auto max-w-[1500px] items-center justify-center">
+        <div className="aboutContainer mt-10 xl:mx-auto max-w-[1500px]">
+          <h1 className="xl:text-5xl text-2xl text-center text-primary font-bold">
+            Our Values
+          </h1>
+          <div className="grid overflow-hidden rounded-3xl  gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 xl:p-10 p-5 xl:grid-cols-4">
+            <div className="group relative bg-[#5F2FA81A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
+                <img
+                  alt="ACS"
+                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
+                  src={aboutpic}
+                />
+              </div>
+              <div className="contents ">
+                <h2 className="xl:text-3xl text-xl font-bold p-2 ">
+                  Excellence
+                </h2>
+                <div className="border-b border-primary w-full mt-5"></div>
+                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
+                  We are dedicated to providing high-quality solutions that
+                  guarantee accurate, realiable, and CBC-complaint content and
+                  assessments, empowering schools to achieve exceptional
+                  eduactional outcomes.
+                </p>
+              </div>
+            </div>
+            <div className="group bg-[#5F2FA81A] relative p-4 rounded-2xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
+                <img
+                  alt="ACS"
+                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
+                  src={aboutpic2}
+                />
+              </div>
+              <h2 className="xl:text-3xl text-xl font-bold p-2 ">
+                Inclusivity
+              </h2>
+              <div className="border-b border-primary w-full mt-5"></div>
+              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
+                We foster an inclusive environment where every school,
+                facilitator, parent, and learner can thrive through accessible
+                eduactional tools.
+              </p>
+            </div>
+            <div className="group relative bg-[#5F2FA81A] p-4 rounded-2xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
+                <img
+                  alt="ACS"
+                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
+                  src={aboutpic3}
+                />
+              </div>
+              <h2 className="xl:text-3xl text-xl font-bold mt-2 p-2 ">
+                Community
+              </h2>
+              <div className="border-b border-primary w-full mt-5"></div>
+              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
+                We build strong partnerships with schools, facilitators,
+                parents, and learners to create a collaborative and connected
+                educational ecosystem where everyone works together to support
+                learner success.
+              </p>
+            </div>
+            <div className="group relative p-4 bg-[#5F2FA81A] rounded-2xl dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+              <div className="secondArea bg-primary w-14 h-14 m-2 rounded-lg flex items-center justify-center">
+                <img
+                  alt="ACS"
+                  className="xl:w-35 md:w-full xl:w-auto w-full object-contain p-0.5"
+                  src={aboutpic4}
+                />
+              </div>
+              <h2 className="xl:text-3xl text-xl mt-2 font-bold p-2 ">
+                Innovation
+              </h2>
+              <div className="border-b border-primary w-full mt-5"></div>
+              <p className="mt-5 xl:text-lg sm:text-lg md:text-lg pl-2 text-primary">
+                We harness the power of technology to deliver smarter,
+                data-driven solutions that enhance learning, streamline
+                assessments, and create more effective educational experiences.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className=" xl:flex gap-10 space-x-8  xl:mx-auto max-w-[1450px] m-5 items-center justify-center">
           <div id="services" className="flex flex-col items-center  xl:p-4 p-2">
             <h1 className="text-3xl md:text-3xl  xl:text-5xl font-bold text-primary xl:mb-2">
               Why Choose Hero Learning?
             </h1>
           </div>
           <div className="flex-col items-center xl:p-4 md:text-2xl xl:text-2xl font-medium text-primary">
-            Empower your child's future with Hero Learning. <br />
-            Our innovative platform and dedicated team are committed to helping
-            your child reach their full potential.
+            At Hero Learning, we offer a unique approach to education that is
+            tailored to the needs of the <br /> Competency-Based Curriculum
+            (CBC) in Kenya. Our solutions empower facilitators and learners to
+            thrive in a rapidly evolving educational landscape. By choosing us,
+            you gain access to:
           </div>
         </div>
 
-        <div className="grid overflow-hidden xl:mx-auto max-w-[1500px] rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 m-5  xl:grid-cols-3 gap-20">
-          <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between h-full">
+        <div className="grid overflow-hidden xl:mx-auto max-w-[1450px]   sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 m-5  xl:grid-cols-4 gap-10">
+          <div className="group relative dark:bg-gray-800 p-4 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between h-full">
             <div className="secondArea">
               <img
                 alt="ACS"
@@ -487,34 +467,14 @@ const Home = () => {
               />
             </div>
             <h2 className="text xl:text-3xl text-xl font-bold text-left mt-5">
-              Innovative CBC Approach:
+              Customized Tools & Resources
             </h2>
             <p className="mt-3 text xl:text-xl sm:text-xl md:text-xl text-left ">
-              Our digital assessment tool is designed for meeting the various
-              needs of each learner and promoting a deeper understanding of
-              subjects.
+              Aligned with CBC objectives, designed to simplify assessment,
+              enhance learning experiences, and foster learners growth.
             </p>
           </div>
-
-          <div className="group mt-5 xl:mt-0 relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col justify-between  h-full">
-            <div className="secondArea">
-              <img
-                alt="ACS"
-                className="xl:w-full md:w-[300px] w-full max-w-[100%]"
-                src={pic2}
-              />
-            </div>
-            <h2 className="text xl:text-3xl text-xl font-bold text-left mt-5">
-              Technology Integration:
-            </h2>
-            <p className="xl:mt-3 text xl:text-xl sm:text-xl md:text-xl text-left">
-              With advanced technology, we're transforming education into a more
-              interactive and engaging experience for teachers, learners, and
-              parents.
-            </p>
-          </div>
-
-          <div className="group mt-5 xl:mt-0 relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between  h-full">
+          <div className="group relative bg-white dark:bg-gray-800 p-4  transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between h-full">
             <div className="secondArea">
               <img
                 alt="ACS"
@@ -523,46 +483,63 @@ const Home = () => {
               />
             </div>
             <h2 className="text xl:text-3xl text-xl font-bold text-left mt-5">
-              Experienced Educators:
+              Innovative Solution
+            </h2>
+            <p className="mt-3 text xl:text-xl sm:text-xl md:text-xl text-left ">
+              Cutting-edge technology that streamlines education processes,
+              helping schools stay ahead of the curve.
+            </p>
+          </div>
+
+          <div className="group mt-5 xl:mt-0 relative bg-white p-4  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col justify-between  h-full">
+            <div className="secondArea">
+              <img
+                alt="ACS"
+                className="xl:w-full md:w-[300px] w-full max-w-[100%]"
+                src={pic2}
+              />
+            </div>
+            <h2 className="text xl:text-3xl text-xl font-bold text-left mt-5">
+              Commitment to learners Success
             </h2>
             <p className="xl:mt-3 text xl:text-xl sm:text-xl md:text-xl text-left">
-              With a passion for education, our team is dedicated to nurturing
-              the unique
-              <br /> potential of every learner.
+              Our focus is on ensuring every learner achieves their full
+              potential, preparing them for the challenges of tomorrow.
+            </p>
+          </div>
+
+          <div className="group mt-5 xl:mt-0 relative bg-white  p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex flex-col  justify-between  h-full">
+            <div className="secondArea">
+              <img
+                alt="ACS"
+                className="xl:w-full md:w-[300px] w-full max-w-[100%]"
+                src={pic4}
+              />
+            </div>
+            <h2 className="text xl:text-3xl text-xl font-bold text-left mt-5">
+              Expert Support
+            </h2>
+            <p className="xl:mt-3 text xl:text-xl sm:text-xl md:text-xl text-left">
+              Ongoing training and consultation from seasoned professionals who
+              understand the intricacies of the CBC system
             </p>
           </div>
         </div>
 
-        <div className="service  xl:mt-20 mt-10 bg-primary  xl:h-[35vh] ">
-          <h1 className="text-center xl:text-5xl text-2xl pt-10 text-white font-bold mt-10">
+        <div className="service  xl:mt-10  max-w-[1500px]  xl:mx-auto   ">
+          <h1 className="text-center text-primary xl:text-5xl text-2xl pt-10 font-bold mt-10">
             CBC Made Easy
           </h1>
+          <p className="text-center text-2xl mt-5">
+            Designed for schools, facilitators, and parents, our platform
+            streamlines processes,
+            <br /> enhances teaching, and fosters learner success through
+            innovative, CBC-compliant
+            <br /> solutions.
+          </p>
 
-          <div className="mx-auto  max-w-[1500px] grid overflow-hidden rounded-3xl gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 p-5 xl:grid-cols-3">
-            <div className="group relative bg-[#51608A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-              <div className="flex gap-2">
-                <div className="secondArea xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
-                  <img
-                    alt="ACS"
-                    className="w-35 md:w-full xl:w-auto w-full object-contain"
-                    src={servicepic}
-                  />
-                </div>
-                <div className="xl:mt-5 mt-2">
-                  <h2 className="xl:text-3xl text-xl text-white font-bold">
-                    Parents
-                  </h2>
-                </div>
-              </div>
-              <div className="contents">
-                <p className="xl:text-lg sm:text-lg md:text-lg text-white">
-                  Our platform gives you the ability to assess the learner in
-                  real time, allowing one to keep proper track of progress.
-                </p>
-              </div>
-            </div>
-
-            <div className="group relative bg-[#51608A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+          <div className="mx-auto  max-w-[1500px] grid overflow-hidden  gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 p-5 xl:grid-cols-4">
+            <div className="group relative bg-[#5F2FA81A] rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 xl:col-span-2">
               <div className="flex gap-2">
                 <div className="secondArea xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
                   <img
@@ -572,18 +549,54 @@ const Home = () => {
                   />
                 </div>
                 <div className="xl:mt-5 mt-2">
-                  <h2 className="xl:text-3xl text-xl text-white font-bold">
+                  <h2 className="xl:text-3xl text-xl text-primary font-bold">
                     Schools
                   </h2>
                 </div>
               </div>
-              <p className="xl:text-lg sm:text-lg md:text-lg text-white">
-                Our platform monitors the performance of learners and provides
-                options for open communication with the parents.
+              <p className="xl:text-lg sm:text-lg md:text-lg text-primary font-medium">
+                Hero Learning enhances school efficiency by streamlining
+                administration and improving teaching effectiveness. With
+                automated tools for assessments, reporting, lesson planning, and
+                record-keeping, schools save time and resources while ensuring
+                high-quality education.
+              </p>
+              <p className="xl:text-lg sm:text-lg md:text-lg text-primary mt-2 font-medium">
+                CBC-compliant and aligned with Ministry guidelines, Hero
+                Learning provides accurate assessments, error-free reporting,
+                and real-time analytics to address learning gaps and boost
+                outcomes.
               </p>
             </div>
 
-            <div className="group relative bg-[#51608A] rounded-3xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <div className="group relative bg-[#5F2FA81A] rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+              <div className="flex gap-2">
+                <div className="secondArea xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
+                  <img
+                    alt="ACS"
+                    className="w-35 md:w-full xl:w-auto w-full object-contain"
+                    src={servicepic}
+                  />
+                </div>
+                <div className="xl:mt-5 mt-2">
+                  <h2 className="xl:text-3xl text-xl text-primary font-bold">
+                    Parents
+                  </h2>
+                </div>
+              </div>
+              <div className="contents">
+                <p className="xl:text-lg sm:text-lg md:text-lg text-primary font-medium">
+                  Hero Learning keeps parents actively involved in their child's
+                  education by providing real-time updates on performance,
+                  continuous assessment results, and progress reports. With
+                  clear insights and transparent communication, parents can
+                  confidently support their child's academic journey and ensure
+                  they excel in the CBC curriculum.
+                </p>
+              </div>
+            </div>
+
+            <div className="group relative bg-[#5F2FA81A] rounded-xl p-4 dark:bg-gray-800  ">
               <div className="flex gap-2">
                 <div className="secondArea xl:w-20 xl:h-20 rounded-lg flex items-center justify-center">
                   <img
@@ -593,14 +606,18 @@ const Home = () => {
                   />
                 </div>
                 <div className="xl:mt-5 mt-2">
-                  <h2 className="xl:text-3xl text-xl text-white font-bold">
-                    Teachers
+                  <h2 className="xl:text-3xl text-xl text-primary font-bold">
+                    Facilitators
                   </h2>
                 </div>
               </div>
-              <p className="xl:text-lg sm:text-lg md:text-lg text-white">
-                Our platform gives you the ability to properly assess and tap
-                into each child's understanding of the sub-strands.
+              <p className="xl:text-lg sm:text-lg md:text-lg text-primary font-medium">
+                Hero Learning streamlines workflows, saving teachers 10+ hours
+                weekly by automating tasks like assessments, reporting, schemes
+                of work, lesson planning, and record of work covered. This
+                efficiency reduces administrative burdens, enhances teaching,
+                and allows facilitators to focus on personalized instructions
+                and learner success
               </p>
             </div>
           </div>
@@ -615,87 +632,80 @@ const Home = () => {
           </p>
 
           <div className=" xl:mx-auto max-w-[1500px] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10  p-5 xl:grid-cols-3">
-            <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
-                <Button
-                  variant="primary"
-                  className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                >
+                <p className="xl:text-2xl text-lg  font-bold text-primary">
                   EVIDENCE OF LEARNING
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
+                </p>
                 <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
                   You get access to hard copy assessment tool books for all
                   grades. Charges per book:
                 </p>
-                <Button
-                  variant="primary"
-                  className="text-md w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
-                >
-                  Choose A Plan
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
+                <Link to="/register">
+                  <Button className="text-lg  font-bold w-full mt-5 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
+                    Get a Quote
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
+                  </Button>
+                </Link>
               </div>
-              <div>
-                <div className="border-b border-primary/50 w-full mt-8"></div>
+              <ul className="space-y-2 mt-8 ml-2 xl:text-lg text-primary">
+                <li className="flex items-center p-0.5">
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-green-500 w-5 h-5 mr-2"
+                  />
+                  Pre-School
+                </li>
 
-                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
-                  PreSchool
-                </p>
-                <h1 className="xl:text-5xl text-2xl font-medium">KES 250</h1>
-              </div>
-              <div>
-                <div className="border-b border-primary/50 w-full mt-8"></div>
+                <li className="flex items-center p-0.5">
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-green-500 w-5 h-5 mr-2"
+                  />
+                  Custom Summative Assessment
+                </li>
 
-                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+                <li className="flex items-center p-0.5">
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-green-500 w-5 h-5 mr-2"
+                  />
                   Lower Primary
-                </p>
-                <h1 className="xl:text-5xl text-2xl font-medium">KES 350</h1>
-              </div>
-              <div>
-                <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+                </li>
+                <li className="flex items-center p-0.5">
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-green-500 w-5 h-5 mr-2"
+                  />
                   Upper Primary
-                </p>
-                <h1 className="xl:text-5xl text-2xl font-medium">KES 500</h1>
-              </div>
-              <div className="mb-2">
-                <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+                </li>
+                <li className="flex items-center p-0.5">
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-green-500 w-5 h-5 mr-2"
+                  />
                   Junior Secondary
-                </p>
-                <h1 className="xl:text-5xl text-2xl font-medium">KES 600</h1>
-              </div>
+                </li>
+                <li className="flex items-center p-0.5">
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-green-500 w-5 h-5  mr-2"
+                  />
+                  Senior Secondary
+                </li>
+              </ul>
             </div>
-            <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
-                <Button
-                  variant="primary"
-                  className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                >
+                <p className="xl:text-2xl text-lg  font-bold text-primary">
                   BASIC PLAN
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
+                </p>
                 <div>
                   <div className="border-b border-primary/50 w-full mt-8"></div>
 
@@ -707,20 +717,19 @@ const Home = () => {
                   </p>
 
                   <div className="border-b border-primary/50 w-full mt-8"></div>
-                </div>{" "}
-                <Button
-                  variant="primary"
-                  className="text-md w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
-                >
-                  Choose A Plan
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
+                </div>
+                <Link to="/register">
+                  <Button className="text-lg  font-bold w-full mt-5 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
+                    Get a Quote
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
+                  </Button>
+                </Link>
               </div>
               <ul className="space-y-2 mt-8 ml-2 xl:text-lg text-primary">
                 <li className="flex items-center p-0.5">
@@ -790,21 +799,11 @@ const Home = () => {
                 </li>
               </ul>
             </div>
-            <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+            <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
-                <Button
-                  variant="primary"
-                  className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                >
+                <p className="xl:text-2xl text-lg  font-bold text-primary">
                   PREMIUM PLAN
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
+                </p>
                 <div>
                   <div className="border-b border-primary/50 w-full mt-8"></div>
 
@@ -816,20 +815,19 @@ const Home = () => {
                   </p>
 
                   <div className="border-b border-primary/50 w-full mt-8"></div>
-                </div>{" "}
-                <Button
-                  variant="primary"
-                  className="text-md w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
-                >
-                  Choose A Plan
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
+                </div>
+                <Link to="/register">
+                  <Button className="text-lg  font-bold w-full mt-5 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
+                    Get a Quote
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
+                  </Button>
+                </Link>
               </div>
               <ul className="space-y-2 mt-8 ml-2 p-2 xl:text-lg text-primary">
                 <li className="flex items-center p-0.5">

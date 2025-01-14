@@ -205,7 +205,7 @@ const Register = () => {
 
         <div className="xl:mx-auto mt-2 max-w-[1500px] bg-white p-2">
           <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
-            Account Creation
+            Get A Quote
           </h1>
           <p className="text-primary text-center text-md xl:text-2xl  p-4">
             Subscription types grant access to all of Hero Learning's platform
@@ -253,17 +253,11 @@ const Register = () => {
               </div>
             </div>
           </div>
-          <form
-            className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
-            onSubmit={onSubmit}
-          >
-            <div>
+
+          <form className="validate-form" onSubmit={onSubmit}>
+            <div className=" bg-white xl:p-10 m-5 box border border-gray-300">
               <p className="mt-5 xl:text-2xl text-xl text-primary font-bold">
-                <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
-                  />
+                <div className="flex flex-1 xl:text-2xl items-center  bg-white ">
                   <div>
                     <h1 className="text-primary font-bold ">
                       Personal Information:
@@ -271,7 +265,7 @@ const Register = () => {
                   </div>{" "}
                 </div>
               </p>
-              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5  m-5 ">
+              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-5 ">
                 <div className="input-form">
                   <FormInput
                     {...register("firstname")}
@@ -414,144 +408,20 @@ const Register = () => {
                         </Button>
                       </div> */}
             </div>
-
-            <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
-              <FontAwesomeIcon
-                icon={faCircleCheck}
-                className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
-              />
-              <div>
-                <h1 className="text-primary font-bold ">Choose a plan</h1>
-                {errors.plan && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.plan.message === "string" &&
-                      errors.plan.message}
-                  </div>
-                )}
-              </div>{" "}
-            </div>
-            <div className="grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3 m-5">
-              <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                <div className="contents">
-                  <Button
-                    variant="primary"
-                    className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                  >
-                    EVIDENCE OF LEARNING
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                  <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
-                    You get access to hard copy assessment tool books for all
-                    grades. Charges per book:
-                  </p>
-                  <Button
-                    variant="primary"
-                    className="text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
-                  >
-                    Add to Cart
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-4 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </div>
-                <div>
-                  <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                  <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
-                    PreSchool
-                  </p>
-                  <h1 className="xl:text-5xl text-2xl font-medium">KES 250</h1>
-                </div>
-              </div>
-              {packages.map((Package: any, key: any) => (
-                <>
-                  <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                    <div className="contents">
-                      <Button
-                        variant="primary"
-                        className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                      >
-                        BASIC PLAN
-                        {loading && (
-                          <LoadingIcon
-                            icon="spinning-circles"
-                            color="white"
-                            className="w-4 h-4 ml-2"
-                          />
-                        )}
-                      </Button>
-                      <div>
-                        <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                        <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
-                          KES {Package.pricePerLearner}
-                        </h1>
-                        <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
-                          Per Learner, per Month
-                        </p>
-
-                        <div className="border-b border-primary/50 w-full mt-8"></div>
-                      </div>{" "}
-                      <Button
-                        type="button"
-                        variant={
-                          selectedPackage === Package._id
-                            ? "success"
-                            : "primary"
-                        }
-                        className={`text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2 border ${
-                          selectedPackage === Package._id
-                            ? "bg-green-500 text-white"
-                            : ""
-                        }`}
-                        onClick={() => handleSelectPlan(Package._id)}
-                      >
-                        {selectedPackage === Package._id
-                          ? "Plan Selected"
-                          : "Choose Plan"}
-                        {loading && (
-                          <LoadingIcon
-                            icon="spinning-circles"
-                            color="white"
-                            className="w-4 h-4 ml-2"
-                          />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              ))}
-            </div>
-
-            <div>
+            <div className=" bg-white xl:p-10 m-5 box border border-gray-300">
               {/* <form
                       className="validate-form bg-white xl:p-10 m-5 xl:box xl:border xl:border-gray-300"
                       onSubmit={onSubmit}
                     > */}
-              <div className="flex flex-1 xl:text-2xl items-center p-4 bg-white ">
-                <FontAwesomeIcon
-                  icon={faCircleCheck}
-                  className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
-                />
+              <div className="flex flex-1 xl:text-2xl items-center  bg-white ">
                 <div>
-                  <h1 className="text-primary font-bold ">Subscribe:</h1>
-                  <p className="mt-2 xl:text-2xl text-lg text-primary font-bold">
-                    You have Chosen Hero System.
-                  </p>
-                </div>{" "}
+                  <h1 className="text-primary font-bold ">
+                    School Information:
+                  </h1>
+                </div>
               </div>
 
-              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2  xl:mt-8 m-5 ">
+              <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-2  ">
                 <div className="input-form">
                   <FormInput
                     {...register("school_name")}
@@ -589,7 +459,7 @@ const Register = () => {
                         className={
                           errors.county
                             ? " px-4 p-3 xl:mt-4  min-w-full  border-danger"
-                            : " px-4 p-3  xl:mt-4 mt-2 min-w-full xl:p-4 border-gray-300 "
+                            : " px-4 py-2 xl:mt-4 mt-2 min-w-full  border-gray-300 "
                         }
                       >
                         <option value={""}>Select County</option>
@@ -630,7 +500,7 @@ const Register = () => {
                         className={
                           errors.subcounty
                             ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
-                            : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
+                            : "py-2 xl:mt-4 mt-2 min-w-full  border-gray-300"
                         }
                       >
                         <option value={""}>Select Subcounty</option>
@@ -663,7 +533,7 @@ const Register = () => {
                       className={
                         errors.password
                           ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
-                          : "p-3  xl:mt-4 mt-2 min-w-full  border-gray-300"
+                          : "p-3 xl:mt-4 mt-2 min-w-full  border-gray-300"
                       }
                       placeholder="Number Of Learners*"
                     />
@@ -677,7 +547,7 @@ const Register = () => {
                         required: "County is required",
                       })}
                       name="county"
-                      className="block px-4 xl:py-4 py-2 xl:mt-4  mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
+                      className="block px-4  py-3 xl:mt-4  mt-2 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
                       defaultValue=""
                     >
                       <option value="" className="text-primary">
@@ -706,7 +576,153 @@ const Register = () => {
                     </div>
                   </div> */}
               </div>
+              <div className="flex items-center mr-auto ml-2 mt-3">
+                <FormCheck.Input
+                  id="remember-me"
+                  type="checkbox"
+                  className="mr-2 border-gray-300"
+                />
+                <label
+                  className="cursor-pointer select-none text-[#808080]"
+                  htmlFor="remember-me"
+                >
+                  You agree to our friendly
+                  <Link
+                    to="/policy"
+                    className="font-bold ml-1.5 mr-1.5 text-primary "
+                  >
+                    privacy policy
+                  </Link>
+                  and
+                  <Link to="/policy" className="font-bold ml-1.5 text-primary ">
+                    Terms of Use
+                  </Link>
+                </label>
+              </div>
+            </div>
 
+            <div className=" bg-white xl:p-10 m-5 box border border-gray-300">
+              <div className="flex flex-1 xl:text-2xl items-center  bg-white ">
+                {/* <FontAwesomeIcon
+                icon={faCircleCheck}
+                className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
+              /> */}
+                <div>
+                  <h1 className="text-primary font-bold ">Choose a plan</h1>
+                  {errors.plan && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.plan.message === "string" &&
+                        errors.plan.message}
+                    </div>
+                  )}
+                </div>{" "}
+              </div>
+
+              <div className="grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3 mt-2">
+                <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+                  <div className="contents">
+                    <Button
+                      variant="primary"
+                      className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
+                    >
+                      EVIDENCE OF LEARNING
+                      {loading && (
+                        <LoadingIcon
+                          icon="spinning-circles"
+                          color="white"
+                          className="w-4 h-4 ml-2"
+                        />
+                      )}
+                    </Button>
+                    <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+                      You get access to hard copy assessment tool books for all
+                      grades. Charges per book:
+                    </p>
+                    <Button
+                      variant="primary"
+                      className="text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
+                    >
+                      Add to Cart
+                      {loading && (
+                        <LoadingIcon
+                          icon="spinning-circles"
+                          color="white"
+                          className="w-4 h-4 ml-2"
+                        />
+                      )}
+                    </Button>
+                  </div>
+                  <div>
+                    <div className="border-b border-primary/50 w-full mt-8"></div>
+
+                    <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
+                      PreSchool
+                    </p>
+                    <h1 className="xl:text-5xl text-2xl font-medium">
+                      KES 250
+                    </h1>
+                  </div>
+                </div>
+
+                {packages.map((Package: any, key: any) => (
+                  <>
+                    <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+                      <div className="contents">
+                        <Button
+                          variant="primary"
+                          className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
+                        >
+                          BASIC PLAN
+                          {loading && (
+                            <LoadingIcon
+                              icon="spinning-circles"
+                              color="white"
+                              className="w-4 h-4 ml-2"
+                            />
+                          )}
+                        </Button>
+                        <div>
+                          <div className="border-b border-primary/50 w-full mt-8"></div>
+
+                          <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
+                            KES {Package.pricePerLearner}
+                          </h1>
+                          <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
+                            Per Learner, per Month
+                          </p>
+
+                          <div className="border-b border-primary/50 w-full mt-8"></div>
+                        </div>{" "}
+                        <Button
+                          type="button"
+                          variant={
+                            selectedPackage === Package._id
+                              ? "success"
+                              : "primary"
+                          }
+                          className={`text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2 border ${
+                            selectedPackage === Package._id
+                              ? "bg-green-500 text-white"
+                              : ""
+                          }`}
+                          onClick={() => handleSelectPlan(Package._id)}
+                        >
+                          {selectedPackage === Package._id
+                            ? "Plan Selected"
+                            : "Choose Plan"}
+                          {loading && (
+                            <LoadingIcon
+                              icon="spinning-circles"
+                              color="white"
+                              className="w-4 h-4 ml-2"
+                            />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                ))}
+              </div>
               <div className="mt-5  xl:mt-8 xl:text-left">
                 {/* <Link to="/payment" className="xl:w-32 xl:mr-8"> */}
                 <Button
@@ -727,8 +743,8 @@ const Register = () => {
               </div>
             </div>
           </form>
-          <FooterComponent />
         </div>
+        <FooterComponent />
       </div>
 
       <Notification

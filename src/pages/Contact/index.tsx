@@ -10,6 +10,13 @@ import { Link } from "react-router-dom";
 import logoUrl from "../assets/images/Untitled-1.png";
 import logo from "../../assets/images/heros.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
+import email from "../../assets/images/Social Media Button (1).png";
+import phone from "../../assets/images/Social Media Button (2).png";
+
+import youtube from "../../assets/images/Social Media Button (4).png";
+import linked from "../../assets/images/Social Media Button (3).png";
+import facebook from "../../assets/images/Social Media Button.png";
+import whatsapp from "../../assets/images/Social Media Button (5).png";
 
 import FooterComponent from "../../webapp/footer";
 import NavbarMenu from "../../webapp/NavBarMenu";
@@ -27,7 +34,7 @@ const Contact = () => {
   return (
     <>
       <div className="homeContainer  xl:p-0">
-      <NavbarMenu/>
+        <NavbarMenu />
 
         <div className="xl:mx-auto  max-w-[1500px] p-5">
           <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
@@ -107,6 +114,54 @@ const Contact = () => {
                     email our communications team here.
                   </a>
                 </p>
+              </div>
+              <h1 className="xl:text-xl text-xl font-semibold mt-5 text-primary w-full">
+                Follow Us on:
+              </h1>
+              <div className="text-white flex ">
+                <Link to="/register" className=" px-2 py-2 font-medium text-lg">
+                  <img
+                    alt="ACS"
+                    className="xl:w-35 md:w-10 xl:w-auto"
+                    src={facebook}
+                  />
+                </Link>
+                <Link to="/register" className="px-2 py-2 font-medium text-lg">
+                  <img
+                    alt="ACS"
+                    className="xl:w-35 md:w-10 xl:w-auto"
+                    src={email}
+                  />
+                </Link>
+                <Link to="/register" className="px-2 py-2 font-medium text-lg">
+                  <img
+                    alt="ACS"
+                    className="xl:w-35 md:w-10 xl:w-auto"
+                    src={phone}
+                  />
+                </Link>
+                <Link to="/register" className="px-2 py-2 font-medium text-lg">
+                  <img
+                    alt="ACS"
+                    className="xl:w-35 md:w-10 xl:w-auto"
+                    src={linked}
+                  />
+                </Link>
+                <Link to="/register" className="px-2 py-2 font-medium text-lg">
+                  <img
+                    alt="ACS"
+                    className="xl:w-35 md:w-10 xl:w-auto"
+                    src={youtube}
+                  />
+                </Link>
+
+                <Link to="/register" className=" px-2 py-2 font-medium text-lg">
+                  <img
+                    alt="ACS"
+                    className="xl:w-35 md:w-10 xl:w-auto"
+                    src={whatsapp}
+                  />
+                </Link>
               </div>
             </div>
             <div className="group relative dark:bg-gray-800 p-2  m-0 w-full flex">
