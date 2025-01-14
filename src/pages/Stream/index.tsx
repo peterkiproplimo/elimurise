@@ -222,7 +222,7 @@ function Main() {
                 <FormSelect
                   {...register("grade")}
                   name="grade"
-
+                  onChange={(e: any) => setPage(1)}
                   // defaultValue={selectedLevel}
                 >
                   {grades.map((grade: any, key: any) => (
@@ -351,7 +351,10 @@ function Main() {
                     type="text"
                     className="w-56 pr-10 !box"
                     placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                      setPage(1);
+                      setSearch(e.target.value);
+                    }}
                   />
                   <Lucide
                     icon="Search"

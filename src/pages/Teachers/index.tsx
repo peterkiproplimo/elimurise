@@ -751,7 +751,7 @@ function Main() {
                               />{" "}
                             </Menu.Button>
                             <Menu.Items className="w-40" placement="bottom-end">
-                              {hasPermission("teachers", "asign-grade") && (
+                              {hasPermission("teachers", "assign-grade") && (
                                 <Menu.Item
                                   onClick={() =>
                                     navigate("/home/teacher/" + teacher?._id)
@@ -764,7 +764,7 @@ function Main() {
                                   Assign Grade
                                 </Menu.Item>
                               )}
-                              {hasPermission("teachers", "asign-grade") && (
+                              {hasPermission("teachers", "update") && (
                                 <Menu.Item
                                   onClick={(e: any) => {
                                     e.preventDefault();
@@ -779,7 +779,22 @@ function Main() {
                                   Edit Profile
                                 </Menu.Item>
                               )}
-                              {hasPermission("teachers", "asign-grade") && (
+                              {hasPermission("teachers", "deactivate") && (
+                                <Menu.Item
+                                  onClick={(e: any) => {
+                                    e.preventDefault();
+                                    editRecord(teacher);
+                                  }}
+                                  className="  text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                >
+                                  <Lucide
+                                    icon="CheckSquare"
+                                    className="w-4 h-4 mr-1"
+                                  />
+                                  Deactivate Profile
+                                </Menu.Item>
+                              )}
+                              {hasPermission("teachers", "delete") && (
                                 <Menu.Item
                                   onClick={() => {
                                     setTeacher(teacher), setConfirmDelete(true);

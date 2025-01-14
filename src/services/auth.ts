@@ -309,6 +309,16 @@ export const getTests = async (data: any) => {
     throw handler(e);
   }
 };
+export const getTestsDone = async (data: any) => {
+  try {
+    let res = await axios.get(c.TESTS + "/assessed-tests", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
 export const createSummativeTests = async (data: any) => {
   try {
@@ -909,10 +919,12 @@ export const createCommentAssessment = async (data: any) => {
 export const getReportByLearners = async (data: any) => {
   try {
     let type =
-      data.type == "analysis-grade" || data.type == "analysis-stream"
+      data.type === "analysis-grade" || data.type === "analysis-stream"
         ? "/analysis"
-        : "";
-    console.log(type);
+        : // : data.type === "learner-weakness"
+          // ? "/"
+          "";
+
     let res = await axios.get(c.ASSESSMENT + "/assessments" + type, {
       params: data,
       responseType: "arraybuffer",
@@ -1297,6 +1309,18 @@ export async function createLearningAreaAssignment(data: FieldValues) {
 export async function deleteLearningAreaAssignment(userId: any) {
   try {
     let res = await axios.delete(c.LEARNING_AREA_ASSIGNMENT + "/" + userId);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function deleteMultipleLearningAreaAssignment(data: any) {
+  try {
+    console.log(data);
+    let res = await axios.delete(c.LEARNING_AREA_ASSIGNMENT + "/multiple", {
+      data,
+    });
     console.log(res);
     return res.data;
   } catch (e) {

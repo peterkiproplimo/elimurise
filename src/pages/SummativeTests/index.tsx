@@ -18,13 +18,20 @@ import TomSelect from "../../base-components/TomSelect";
 import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
-
+import SummativeDone from "./done-tests";
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
   const [gradeId, setGradeId] = useState("");
   const [grade, setGrade] = useState("");
+  const [dialogView, setDialogView] = useState(false);
+  const [streams, setStreams] = useState([]);
+  const [stream, setStream] = useState("");
+  const [term, setTerm] = useState("");
+  const [grade_data, setGradeData] = useState("");
+  const [displayResults, setDisplayResults] = useState(false);
+
   const terms = [
     { _id: 1, name: "Term 1" },
     { _id: 2, name: "Term 2" },
@@ -78,6 +85,14 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+  const getStreams = async (selectedValue: any) => {
+    setStreams([]);
+    const response = await ApiService.getStream({
+      page: 1,
+      grade: selectedValue,
+    });
+    setStreams(response.data);
+  };
 
   const onSubmit = async (event: any) => {
     event.preventDefault();
@@ -108,13 +123,13 @@ function Main() {
   };
   useEffect(() => {
     getTests();
-  }, [grade, selectedTerm, type]);
+  }, [grade, selectedTerm, type, search, limit, page]);
   useEffect(() => {
     fetchGrading();
-  }, [search, limit, page]);
+  }, []);
   useEffect(() => {
     getGrades();
-  }, [search, page, limit]);
+  }, []);
 
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
@@ -124,11 +139,12 @@ function Main() {
   const getTests = async () => {
     isLoading(true);
     const response = await ApiService.getTests({
-      page: 1,
+      page: page,
       type,
       search,
       term: selectedTerm,
       grade,
+      limit,
     });
     setTests(response.data);
     const pagination = response.pagination;
@@ -219,7 +235,12 @@ function Main() {
 
   return (
     <>
-      {dialog ? (
+      {displayResults ? (
+        <SummativeDone
+          data={{ stream: stream, test: recordId, grade: grade_data, term }}
+          setDisplayResults={setDisplayResults}
+        />
+      ) : dialog ? (
         <>
           <div className="flex items-center mt-8 ">
             <a
@@ -419,7 +440,10 @@ function Main() {
                     type="text"
                     className="w-56 pr-10 !box"
                     placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                      setPage(1);
+                      setSearch(e.target.value);
+                    }}
                   />
                   <Lucide
                     icon="Search"
@@ -433,12 +457,14 @@ function Main() {
                 className="w-56 box mr-3"
                 value={grade}
                 onChange={(event: any) => {
+                  setPage(1);
+
                   setGrade(event);
                   setSelectedTerm("");
                   setType("");
                 }}
               >
-                <option value={""}>Filter By Grade</option>
+                <option value={""}>All Grades</option>
                 {grades.map((grade: any, key: any) => (
                   <option key={key} value={grade._id}>
                     {grade.name}
@@ -450,13 +476,15 @@ function Main() {
                 name="stream"
                 value={selectedTerm}
                 onChange={(event: any) => {
+                  setPage(1);
+
                   setSelectedTerm(event);
                   setType("");
                   // handleTestChange();
                 }}
               >
                 <option value={""} selected>
-                  Filter By Term
+                  All Terms
                 </option>
 
                 {terms.map((term: any, key) => (
@@ -470,12 +498,14 @@ function Main() {
                 name="type"
                 value={type}
                 onChange={(event: any) => {
+                  setPage(1);
+
                   setType(event);
                   // handleTestChange();
                 }}
               >
                 <option value={""} selected>
-                  Filter By Type
+                  All Types
                 </option>
 
                 <option value={"Tunner"}>Tunner-Up</option>
@@ -538,12 +568,26 @@ function Main() {
                         <Table.Tr key={key} className="">
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
-                              {key + 1}
+                              {limit * (page - 1) + key + 1}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                          <Table.Td
+                            onClick={(e: any) => {
+                              setRecordId(test._id);
+                              setGradeData(test.grade._id);
+                              getStreams(test?.grade);
+                              setDialogView(true);
+                              setTerm(test.term);
+                            }}
+                            className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] cursor-pointer "
+                          >
                             <span className="font-medium whitespace-nowrap">
-                              {test.name}
+                              <a
+                                onClick={(event: any) => event.preventDefault()}
+                              >
+                                {" "}
+                                {test.name}
+                              </a>
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -592,35 +636,54 @@ function Main() {
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            {test?.school && (
-                              <div className="flex items-center justify-center">
-                                <a
-                                  className="flex items-center mr-3 text-success"
-                                  href="#"
-                                  onClick={() => editRecord(test)}
-                                >
-                                  <Lucide
-                                    icon="CheckSquare"
-                                    className="w-4 h-4 mr-1 "
-                                  />{" "}
-                                  Edit
-                                </a>
-                                <a
-                                  className="flex items-center text-danger"
-                                  href="#"
-                                  onClick={() => {
-                                    setRecordId(test._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash2"
-                                    className="w-4 h-4 mr-1"
-                                  />{" "}
-                                  Delete
-                                </a>
-                              </div>
-                            )}
+                            {/* <div className="flex items-center justify-center"> */}
+                            <div className="flex items-center justify-center">
+                              <a
+                                className="flex items-center mr-3 text-success"
+                                href="#"
+                                onClick={() => {
+                                  setRecordId(test._id);
+                                  setGradeData(test.grade._id);
+                                  getStreams(test?.grade);
+                                  setDialogView(true);
+                                  setTerm(test.term);
+                                }}
+                              >
+                                <Lucide icon="View" className="w-4 h-4 mr-1 " />{" "}
+                                View
+                              </a>
+                              {/* </div> */}
+                              {test?.school && (
+                                <>
+                                  {" "}
+                                  <a
+                                    className="flex items-center mr-3 text-success"
+                                    href="#"
+                                    onClick={() => editRecord(test)}
+                                  >
+                                    <Lucide
+                                      icon="CheckSquare"
+                                      className="w-4 h-4 mr-1 "
+                                    />{" "}
+                                    Edit
+                                  </a>
+                                  <a
+                                    className="flex items-center text-danger"
+                                    href="#"
+                                    onClick={() => {
+                                      setRecordId(test._id),
+                                        setConfirmDelete(true);
+                                    }}
+                                  >
+                                    <Lucide
+                                      icon="Trash2"
+                                      className="w-4 h-4 mr-1"
+                                    />{" "}
+                                    Delete
+                                  </a>
+                                </>
+                              )}
+                            </div>
                           </Table.Td>
                         </Table.Tr>
                       ))}
@@ -669,6 +732,7 @@ function Main() {
                         <span className="mr-3">Total {pagination.total}</span>
                         <FormSelect
                           className="w-30 mt-3 !box sm:mt-0"
+                          value={limit}
                           onChange={(e) => setLimit(parseInt(e.target.value))}
                         >
                           <option value={10}>10/page</option>
@@ -688,12 +752,63 @@ function Main() {
           <Dialog
             staticBackdrop
             size="lg"
-            open={dialog}
+            open={dialogView}
             onClose={() => {
-              setDialog(false);
+              setDialogView(false);
             }}
           >
-            <Dialog.Panel></Dialog.Panel>
+            <Dialog.Panel className={"p-5"}>
+              {/* <form> */}
+              <div className="col-span-12 sm:col-span-4 mt-2">
+                <FormLabel htmlFor="stream">
+                  Select Stream<span className="text-danger ml-0.5">*</span>
+                </FormLabel>
+                <FormSelect
+                  id="stream"
+                  {...register("stream")}
+                  name="stream"
+                  onChange={(e: any) => setStream(e.target.value)}
+                >
+                  <option value="" selected>
+                    All
+                  </option>
+                  {streams.map((stream: any, key) => (
+                    <option key={key} value={stream._id}>
+                      {stream.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {/* {errors.stream && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.stream.message === "string" &&
+                        errors.stream.message}
+                    </div>
+                  )} */}
+              </div>
+
+              <div className="col-span-12 mt-4 text-right">
+                <Button
+                  variant="outline-secondary"
+                  type="button"
+                  onClick={() => {
+                    setDialogView(false);
+                  }}
+                  className="w-24 mr-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => setDisplayResults(true)}
+                  variant="success"
+                  type="submit"
+                  className="w-24 ml-4 text-white"
+                  // ref={}
+                >
+                  View
+                </Button>
+              </div>
+              {/* </form> */}
+            </Dialog.Panel>
           </Dialog>
           {/* BEGIN: Delete Confirmation Modal s*/}
           <Dialog
@@ -741,6 +856,7 @@ function Main() {
           {/* END: Delete Confirmation Modal */}
         </>
       )}
+
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {

@@ -798,7 +798,8 @@ function Main() {
                     <option>Select Test</option>
                     {tests.map((test: any, key) => (
                       <option key={key} value={test._id}>
-                        {test.name}
+                        {test.name} - {test?.type} - (
+                        {test?.school ? "Custom" : "Hero"})
                       </option>
                     ))}
                   </FormSelect>
