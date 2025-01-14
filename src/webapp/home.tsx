@@ -58,7 +58,7 @@ const Home = () => {
       <div className="homeContainer sm:p-5 xl:p-0 p-0 font-lexend">
         <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           <div className="buttons">
-            <div className="relative flex flex-col gap-5 w-[310px]">
+          <div className="hidden lg:flex  flex-col gap-5 w-[310px]">
               {/* Toggleable Text */}
               <div
                 onClick={handleClick}
