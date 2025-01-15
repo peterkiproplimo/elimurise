@@ -141,7 +141,7 @@ function Roles() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      name: yup.string().required("Role name is required"),
+      // name: yup.string().required("Role name is required"),
     })
     .required();
 
