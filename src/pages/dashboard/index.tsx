@@ -482,7 +482,7 @@ function Main() {
                   className={clsx(["relative zoom-in"])}
                   onClick={(event) => {
                     event.preventDefault(); // Prevent the default anchor behavior
-                    navigate("/home/teachers"); // Navigate using your custom function
+                    navigate("/home/streams"); // Navigate using your custom function
                   }}
                 >
                   <div className="p-5 box">
@@ -513,7 +513,7 @@ function Main() {
                   className={clsx(["relative zoom-in"])}
                   onClick={(event) => {
                     event.preventDefault(); // Prevent the default anchor behavior
-                    navigate("/home/grade"); // Navigate using your custom function
+                    navigate("/home/learners"); // Navigate using your custom function
                   }}
                 >
                   <div className="p-5 box">
@@ -547,7 +547,7 @@ function Main() {
                   className={clsx(["relative zoom-in"])}
                   onClick={(event) => {
                     event.preventDefault(); // Prevent the default anchor behavior
-                    navigate("/home/tests"); // Navigate using your custom function
+                    navigate("/home/grade"); // Navigate using your custom function
                   }}
                 >
                   <div className="p-5 box">

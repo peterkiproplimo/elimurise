@@ -333,7 +333,10 @@ function Main() {
                 <FormSelect
                   {...register("grade")}
                   name="grade"
-                  onChange={(e: any) => setGrade(e.target.value)}
+                  onChange={(e: any) => {
+                    setPage(1);
+                    setGrade(e.target.value);
+                  }}
                   // defaultValue={selectedLevel}
                 >
                   <option value={""}>{"All Grades"}</option>
