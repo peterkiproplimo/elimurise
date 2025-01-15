@@ -181,7 +181,7 @@ const initialState: SideMenuState = {
       icon: "Wallet",
       pathname: "/home/billing",
       title: "Billing",
-      ignore: !hasPermission("comment", "read"),
+      ignore: !hasPermission("subscrition", "read"),
     },
 
     {

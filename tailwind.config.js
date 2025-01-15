@@ -43,7 +43,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        lexend: ['Lexend'], // Add Lexend with Roboto fallback
+        roboto: ["Roboto"],
       },
       container: {
         center: true,
