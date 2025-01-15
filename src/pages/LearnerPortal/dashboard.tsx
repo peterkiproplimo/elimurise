@@ -37,6 +37,7 @@ import student1 from "../../assets/images/st-1.svg";
 import student2 from "../../assets/images/st-2.svg";
 import student3 from "../../assets/images/st-3.svg";
 import student4 from "../../assets/images/st-4.svg";
+import { IMG_URL } from "../../utils/constants";
 
 function Main() {
   const importantNotesRef = useRef<TinySliderElement>();
@@ -241,15 +242,11 @@ function Main() {
                           );
                           navigate("/parent/profile", {});
                         }}
-                        className="relative box cursor-pointer  bg-white-100 min-h-[150px] rounded-lg"
-                        style={{
-                          backgroundImage: `url(${student2})`,
-                          backgroundPosition: "right bottom",
-                          backgroundRepeat: "no-repeat",
-                        }}
+                        className="relative cursor-pointer bg-white-100 rounded-lg box overflow-hidden flex items-center max-h-[150px]"
                       >
-                        <div className="p-4">
-                          <h4 className="mt-10 mb-1 text-xl font-semibold">
+                        {/* Text Content on the Left */}
+                        <div className="flex-1 p-4">
+                          <h4 className="mt-10 mb-1 text-xl font-semibold truncate">
                             {learner?.first_name} {learner?.surname}
                           </h4>
                           <p className="text-gray-500 text-sm">
@@ -258,13 +255,22 @@ function Main() {
                           </p>
                           <p
                             className={
-                              learner?.status != "D"
+                              learner?.status !== "D"
                                 ? "flex items-center text-success"
                                 : "flex items-center text-danger"
                             }
                           >
-                            {learner?.status == "D" ? "Deactivated" : "Active"}{" "}
+                            {learner?.status === "D" ? "Deactivated" : "Active"}
                           </p>
+                        </div>
+
+                        {/* Image on the Right (as an <img> element with size 100x100) */}
+                        <div className="w-32 h-full flex items-center justify-center">
+                          <img
+                            src={IMG_URL + learner.photo}
+                            alt={`${learner?.first_name} ${learner?.surname}`}
+                            className="w-24 h-24 object-cover rounded-lg"
+                          />
                         </div>
                       </div>
                     </div>

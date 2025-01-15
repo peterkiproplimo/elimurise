@@ -676,7 +676,7 @@ function Main() {
                               Relationship
                             </td>
                             <td className="px-4 py-4 border-b border-gray-200">
-                              {learner?.guardian?.relationship}
+                              {learner?.guardian_relationship}
                             </td>
                           </tr>
                           <tr>
@@ -684,7 +684,7 @@ function Main() {
                               Contact
                             </td>
                             <td className="px-4 py-4 border-b border-gray-200">
-                              {learner?.guardian?.contact || "N/A"}
+                              {learner?.guardian?.phone || "N/A"}
                             </td>
                           </tr>
                           <tr>
@@ -720,7 +720,7 @@ function Main() {
                               Relationship
                             </td>
                             <td className="px-4 py-4 border-b border-gray-200">
-                              {learner?.guardian2?.relationship || "N/A"}
+                              {learner?.guardian2_relationship || "N/A"}
                             </td>
                           </tr>
                           <tr>
@@ -728,7 +728,7 @@ function Main() {
                               Contact
                             </td>
                             <td className="px-4 py-4 border-b border-gray-200">
-                              {learner?.guardian2?.contact || "N/A"}
+                              {learner?.guardian2?.phone || "N/A"}
                             </td>
                           </tr>
                           <tr>

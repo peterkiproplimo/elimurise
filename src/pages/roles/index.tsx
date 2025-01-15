@@ -373,7 +373,7 @@ function Roles() {
 
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                     <div className="flex items-center justify-center">
-                      {true && (
+                      {role.name != "Super Admin" && (
                         <Menu>
                           <Menu.Button as={Button} className="px-2 !box">
                             <span className="flex items-center justify-center w-5 h-5">
