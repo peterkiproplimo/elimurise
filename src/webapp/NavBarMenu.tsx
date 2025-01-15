@@ -29,7 +29,7 @@ const NavbarMenu = () => {
      
      
      
-    <div className="hidden lg:flex flex-col gap-5 w-[310px]">
+    <div className="hidden lg:flex flex-col gap-5 w-[310px] relative">
               {/* Toggleable Text */}
               <div
                 onClick={handleClick}

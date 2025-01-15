@@ -13,7 +13,8 @@ import contact4 from "../assets/images/contact2.png";
 
 import logoUrl from "../assets/images/Untitled-1.png";
 import logo from "../assets/images/heros.png";
-import icon from "../assets/images/Icon.png";
+import icon from "../assets/images/login.png";
+import stroke from "../assets/images/Vector 32.png"
 import homepic from "../assets/images/Ellipse.png";
 import child from "../assets/images/Mask group.png";
 import aboutpic from "../assets/images/excellence.png";
@@ -48,17 +49,42 @@ const Home = () => {
   const [loading, isLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showLinks, setShowLinks] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const handleClick = () => {
     setShowLinks(!showLinks);
   };
+
+  const handleLogoClick = () => {
+    window.location.reload(); 
+  };
+
+  const items = [
+    "Standard Summative Assessment",
+    "Custom Summative Assessment",
+    "Formative Assessment",
+    "Learner Report",
+    "Learner Promotion",
+    "Learner Transfers",
+    "Stream Analysis Report",
+    "Grade Analysis Report",
+    "Combined Summative & Formative Termly Report",
+    "Parents Portal",
+    "Branded Evidence of Learning Book for Learners",
+    "Dedicated Account Manager",
+    "Dedicated Technical Support",
+  ];
+
+  // Display either the first 6 items or all items depending on `showAll`
+  const displayedItems = showAll ? items : items.slice(0, 6);
 
   return (
     <>
       <div className="homeContainer sm:p-5 xl:p-0 p-0 font-lexend">
         <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           <div className="buttons">
-          <div className="hidden lg:flex  flex-col gap-5 w-[310px]">
+        
+          <div className="hidden lg:flex flex-col gap-5 w-[310px] relative">
               {/* Toggleable Text */}
               <div
                 onClick={handleClick}
@@ -106,13 +132,47 @@ const Home = () => {
                 </div>
               )}
             </div>
+
+
+  {/* Links to display when clicked */}
+  {showLinks && (
+    <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded">
+      <div className="flex flex-col gap-4">
+        <Link
+          to="/auth/login"
+          className="font-bold items-center text-lg text-primary w-full mt-4 ml-4"
+        >
+          <div className="flex w-[240px]">
+            Log in
+            <div className="icon ml-auto mt-2">
+              <img alt="ACS" className="xl:w-35" src={icon} />
+            </div>
           </div>
+        </Link>
+        <div className="border-b border-primary/50 w-full m-0 p-0"></div>
+        <Link
+          to="/register"
+          className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
+        >
+          <div className="flex w-[240px]">
+            Register
+            <div className="icon ml-auto mt-2">
+              <img alt="ACS" className="xl:w-35" src={icon} />
+            </div>
+          </div>
+        </Link>
+      </div>
+    </div>
+  )}
+</div>
+
+          
         </div>
         <div className="box">
           <div className="flex xl:mx-auto  max-w-[1500px] justify-between items-center w-full px-4 lg:px-10  p-2">
-            <div className="icon ">
-              <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
-            </div>
+          <div className="icon cursor-pointer" onClick={handleLogoClick}>
+      <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
+    </div>
             <div className="buttons">
               <div className="block xl:hidden">
                 <button
@@ -211,6 +271,7 @@ const Home = () => {
               <div className="hidden xl:flex gap-5 mr-10 ">
                 <Link
                   to="/"
+                  onClick={handleLogoClick}
                   className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary"
                 >
                   Home
@@ -287,13 +348,25 @@ const Home = () => {
           </div>
         </div>
 
+       
         <div className="bg-primary">
-          <div className="grid xl:mx-auto  max-w-[1500px] overflow-hidden">
-            <h4 className="p-4 text-white xl:text-3xl text-xl text-center">
-              With Hero Learning, you are not just keeping up with Education -{" "}
-              <span className="font-bold">You're Leading it</span>
-            </h4>
-          </div>
+  <div className="grid xl:mx-auto max-w-[1500px] overflow-hidden">
+    <h4 className="p-4 text-white xl:text-3xl text-xl text-center">
+      With Hero Learning, you are not just keeping up with Education -
+      <span className="font-black inline-block">
+        you're Leading it
+        <div className="-mt-2">
+          <img
+            src={stroke}
+            alt="Leadership Illustration"
+            className="mx-auto w-60 h-5"
+          />
+        </div>
+      </span>
+    </h4>
+  </div>
+
+
         </div>
 
         <div id="about" className=" xl:mx-auto xl:mt-10 max-w-[1500px] p-5">
@@ -703,23 +776,16 @@ const Home = () => {
             </div>
             <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
+              <div className="xl:mb-20">
                 <p className="xl:text-2xl text-lg  font-bold text-primary">
                   BASIC PLAN
                 </p>
-                <div>
-                  <div className="border-b border-primary/50 w-full mt-8"></div>
+            
 
-                  <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
-                    KES 150
-                  </h1>
-                  <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
-                    Per Learner, per Month
-                  </p>
-
-                  <div className="border-b border-primary/50 w-full mt-8"></div>
+                 
                 </div>
                 <Link to="/register">
-                  <Button className="text-lg  font-bold w-full mt-5 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
+                  <Button className="text-lg  font-bold w-full mt-2 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
                     Get a Quote
                     {loading && (
                       <LoadingIcon
@@ -730,6 +796,7 @@ const Home = () => {
                     )}
                   </Button>
                 </Link>
+                <div className="border-b border-primary/50 w-full mt-8"></div>
               </div>
               <ul className="space-y-2 mt-8 ml-2 xl:text-lg text-primary">
                 <li className="flex items-center p-0.5">
@@ -737,87 +804,58 @@ const Home = () => {
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                  Standard Summative Assessment
+                  <span className="font-bold mr-1.5">Standard </span> Summative Assessment
                 </li>
+
 
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                  Custom Summative Assessment
-                </li>
-
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5 mr-2"
-                  />
-                  Formative Assessment
+                   <span className="font-bold mr-1.5">Formative</span> Assessment
                 </li>
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                  Learner Report
+                  <span className="font-bold mr-1.5"> Learner</span> Report
                 </li>
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                  Learner Promotion
+                     <span className="font-bold mr-1.5">  Learner</span> Promotion
                 </li>
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5  mr-2"
                   />
-                  Learner Transfers
+                      <span className="font-bold mr-1.5"> Learner</span> Transfers
                 </li>
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                  Stream Analysis
+                  <span className="font-bold mr-1.5"> Email </span>Analysis
                 </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Ip Monitoring
-                </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Backlink Monitoring
-                </li>
+              
               </ul>
             </div>
             <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
+                <div className="mb-20">
                 <p className="xl:text-2xl text-lg  font-bold text-primary">
                   PREMIUM PLAN
                 </p>
-                <div>
-                  <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                  <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
-                    KES 300
-                  </h1>
-                  <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
-                    Per Learner, per Month
-                  </p>
-
-                  <div className="border-b border-primary/50 w-full mt-8"></div>
                 </div>
+               
                 <Link to="/register">
-                  <Button className="text-lg  font-bold w-full mt-5 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
+                  <Button className="text-lg  font-bold w-full mt-2 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
                     Get a Quote
                     {loading && (
                       <LoadingIcon
@@ -828,65 +866,30 @@ const Home = () => {
                     )}
                   </Button>
                 </Link>
+
+                <div className="border-b border-primary/50 w-full mt-8"></div>
               </div>
-              <ul className="space-y-2 mt-8 ml-2 p-2 xl:text-lg text-primary">
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Standard Summative Assessment
-                </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Formative Assessment
-                </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Learner Report
-                </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5 mr-2"
-                  />
-                  Learner Promotion
-                </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5 mr-2"
-                  />
-                  Learner Transfers
-                </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Stream Analysis Report
-                </li>
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Grade Analysis Report
-                </li>
-                <li className="flex items-center p-0.5 ">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5  mr-2"
-                  />
-                  Combined Summative & Formative Termly Report
-                </li>
-              </ul>
+              <div className="space-y-2 mt-8 ml-2 p-2 xl:text-lg text-primary">
+      <ul>
+        {displayedItems.map((item, index) => (
+          <li key={index} className="flex items-center p-0.5">
+            <FontAwesomeIcon
+              icon={faCircleCheck}
+              className="text-green-500 w-5 h-5 mr-2"
+            />
+            <span className="break-words">{item}</span>
+         
+          </li>
+        ))}
+      </ul>
+      <button
+  className="mt-4 text-primary font-bold"
+  onClick={() => setShowAll(!showAll)}
+>
+  {showAll ? "See less Features" : "See all Features"}
+</button>
+
+    </div>
             </div>
           </div>
         </div>
