@@ -482,7 +482,7 @@ function Main() {
                   className={clsx(["relative zoom-in"])}
                   onClick={(event) => {
                     event.preventDefault(); // Prevent the default anchor behavior
-                    navigate("/home/streams"); // Navigate using your custom function
+                    navigate("/home/stream"); // Navigate using your custom function
                   }}
                 >
                   <div className="p-5 box">

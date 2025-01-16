@@ -648,7 +648,13 @@ function Main() {
                               : ""}
                           </b>
                           <br />
-                          {assessment?.assessmentDetails?.description}
+                          {assessment?.learner?.first_name}{" "}
+                          {assessment?.assessmentDetails?.description
+                            ? assessment.assessmentDetails.description
+                                .charAt(0)
+                                .toLowerCase() +
+                              assessment.assessmentDetails.description.slice(1)
+                            : ""}
                         </span>
                       </Table.Td>
                     </Table.Tr>
