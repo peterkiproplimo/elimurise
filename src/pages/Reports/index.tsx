@@ -579,16 +579,18 @@ function Main() {
                   <option value={""}>Select Type</option>
 
                   <option value={"learner"}>Learner Report</option>
-                  <option value="learner-weakness">Learner Weaknesses</option>
+                  <option value="learner-weakness">
+                    Learner Area of Improvement
+                  </option>
                   {/* <option value="learner-strength">Learner Strengths</option> */}
 
                   {/* <option value={"indicator"}>Indicator Report</option> */}
                   <option value={"analysis-grade"}>
-                    Stream Analysis Report
+                    Grade Analysis Report
                   </option>
 
                   <option value={"analysis-stream"}>
-                    Grade Analysis Report
+                    Stream Analysis Report
                   </option>
 
                   {/* <option value={"learner"}>Single learner</option>
@@ -670,7 +672,8 @@ function Main() {
 
                     {enrollments?.map((learner: any, key) => (
                       <option key={key} value={learner?._id}>
-                        {learner?.first_name}
+                        {learner?.adm_no} - {learner?.first_name}{" "}
+                        {learner?.last_name}
                       </option>
                     ))}
                   </FormSelect>

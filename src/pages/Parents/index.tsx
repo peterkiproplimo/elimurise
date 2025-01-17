@@ -812,6 +812,13 @@ function Main() {
                       ref={deleteButtonRef}
                     >
                       Download
+                      {loading && (
+                        <LoadingIcon
+                          icon="spinning-circles"
+                          color="white"
+                          className="w-4 h-4 ml-2"
+                        />
+                      )}
                     </Button>
                   </div>
                 </Dialog.Footer>
@@ -906,6 +913,13 @@ function Main() {
                     ref={deleteButtonRef}
                   >
                     Import
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-4 h-4 ml-2"
+                      />
+                    )}
                   </Button>
                 </Dialog.Footer>
               </Dialog.Panel>

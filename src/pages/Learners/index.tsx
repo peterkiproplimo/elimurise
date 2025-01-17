@@ -2316,6 +2316,13 @@ function Main() {
                 ref={deleteButtonRef}
               >
                 Download
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
               </Button>
             </div>
           </Dialog.Footer>
@@ -2331,7 +2338,7 @@ function Main() {
       >
         <Dialog.Panel className="w-full max-w-screen-lg">
           <Dialog.Title>
-            <h2 className="mr-auto text-base font-medium">Import Strands</h2>
+            <h2 className="mr-auto text-base font-medium">Import Learners</h2>
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
@@ -2379,6 +2386,13 @@ function Main() {
                 ref={deleteButtonRef}
               >
                 Import
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
               </Button>
             </div>
           </Dialog.Footer>
