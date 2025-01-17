@@ -296,7 +296,7 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Relationship</FormLabel>
+                <FormLabel htmlFor="modal-form-6">Gender</FormLabel>
                 <FormSelect
                   {...register("gender")}
                   name="gender"
