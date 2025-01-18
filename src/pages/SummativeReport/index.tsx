@@ -750,7 +750,8 @@ function Main() {
 
                     {enrollments?.map((learner: any, key) => (
                       <option key={key} value={learner?._id}>
-                        {learner?.first_name}
+                        {learner?.adm_no} - {learner?.first_name}{" "}
+                        {learner?.last_name}
                       </option>
                     ))}
                   </FormSelect>
@@ -798,8 +799,7 @@ function Main() {
                     <option>Select Test</option>
                     {tests.map((test: any, key) => (
                       <option key={key} value={test._id}>
-                        {test.name} - {test?.type} - (
-                        {test?.school ? "Custom" : "Hero"})
+                        {test.name} - {test?.type}
                       </option>
                     ))}
                   </FormSelect>

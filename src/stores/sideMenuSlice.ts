@@ -184,34 +184,34 @@ const initialState: SideMenuState = {
       ignore: !hasPermission("subscrition", "read"),
     },
 
+    // {
+    //   icon: "Settings",
+    //   title: "Settings",
+    //   subMenu: [
+    // {
+    //   icon: "FileText",
+    //   pathname: "/home/academic",
+    //   title: "Year",
+    // },
+    // {
+    //   icon: "BarChart",
+    //   pathname: "/home/term",
+    //   title: "Term",
+    // },
+
     {
       icon: "Settings",
-      title: "Settings",
-      subMenu: [
-        // {
-        //   icon: "FileText",
-        //   pathname: "/home/academic",
-        //   title: "Year",
-        // },
-        // {
-        //   icon: "BarChart",
-        //   pathname: "/home/term",
-        //   title: "Term",
-        // },
-
-        {
-          icon: "Activity",
-          pathname: "/home/settings",
-          title: "System Settings",
-          ignore: !hasPermission("school", "read"),
-        },
-        // {
-        //   icon: "User",
-        //   pathname: "/home/enrollment",
-        //   title: "Learner Enrollment",
-        // },
-      ],
+      pathname: "/home/settings",
+      title: "System Settings",
+      ignore: !hasPermission("school", "read"),
     },
+    // {
+    //   icon: "User",
+    //   pathname: "/home/enrollment",
+    //   title: "Learner Enrollment",
+    // },
+    //   ],
+    // },
     {
       icon: "File",
       pathname: "/home/roles",
@@ -220,7 +220,7 @@ const initialState: SideMenuState = {
     },
     {
       icon: "Users",
-      title: "Users",
+      title: "System Users",
       pathname: "/home/users",
       ignore: !hasPermission("users", "read"),
     },
