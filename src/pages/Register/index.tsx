@@ -143,6 +143,27 @@ const Register = () => {
     }
   };
 
+  type CategoryType =
+    | "preschool"
+    | "juniorSecondary"
+    | "seniorSecondary"
+    | "higherEducation";
+
+  const [selectedCategories, setSelectedCategories] = useState({
+    preschool: false,
+    juniorSecondary: false,
+    seniorSecondary: false,
+    higherEducation: false,
+  });
+
+  // Toggle the checkbox state
+  const handleCheckboxChange = (category: CategoryType) => {
+    setSelectedCategories((prevState) => ({
+      ...prevState,
+      [category]: !prevState[category],
+    }));
+  };
+
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
@@ -220,7 +241,7 @@ const Register = () => {
               />
               <div>
                 <h1 className="text-primary font-bold ">Analytics & Data</h1>
-                <p>To monitor student progress in assignments and reading.</p>
+                <p>To monitor student progress in learning.</p>
               </div>{" "}
             </div>
 
@@ -608,7 +629,9 @@ const Register = () => {
                 className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
               /> */}
                 <div>
-                  <h1 className="text-primary font-bold ">Choose a plan</h1>
+                  <h1 className="text-primary font-bold ">
+                    Add Evidence of Learning - Optional
+                  </h1>
                   {errors.plan && (
                     <div className="mt-2 text-danger">
                       {typeof errors.plan.message === "string" &&
@@ -617,9 +640,127 @@ const Register = () => {
                   )}
                 </div>{" "}
               </div>
+              <div className="flex flex-wrap gap-5 mt-2">
+                {/* Preschool */}
+                <div className="w-1/4">
+                  <label className="flex  text-lg items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-5 w-5 text-blue-500"
+                      onChange={() => handleCheckboxChange("preschool")}
+                    />
+                    Preschool
+                  </label>
+                  {selectedCategories.preschool && (
+                    <div className="mt-2">
+                      <select className="w-full border border-gray-300 rounded-md p-2 bg-white text-gray-700">
+                        <option value="" disabled selected>
+                          Select Grade
+                        </option>
+                        <option>PlayGroup</option>
+                        <option>Pre-Primary 1</option>
+                        <option>Pre-Primary 2</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
 
-              <div className="grid overflow-hidden gap-5 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3  xl:grid-cols-3 mt-2">
-                <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
+                {/* Junior Secondary */}
+                <div className="w-1/4">
+                  <label className="flex text-lg items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-5 w-5 text-blue-500"
+                      onChange={() => handleCheckboxChange("juniorSecondary")}
+                    />
+                    Lower Primary
+                  </label>
+                  {selectedCategories.juniorSecondary && (
+                    <div className="mt-2">
+                      <select className="w-full border border-gray-300 rounded-md p-2 bg-white text-gray-700">
+                        <option value="" disabled selected>
+                          Select Grade
+                        </option>
+                        <option>Grade 1</option>
+                        <option>Grade 2</option>
+                        <option>Grade 3</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Senior Secondary */}
+                <div className="w-1/4">
+                  <label className="flex text-lg items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-5 w-5 text-blue-500"
+                      onChange={() => handleCheckboxChange("seniorSecondary")}
+                    />
+                    Upper Primary
+                  </label>
+                  {selectedCategories.seniorSecondary && (
+                    <div className="mt-2">
+                      <select className="w-full border border-gray-300 rounded-md bg-white text-gray-700">
+                        <option value="" disabled selected>
+                          Select Grade
+                        </option>
+                        <option>Grade 4</option>
+                        <option>Grade 5</option>
+                        <option>Grade 6</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Higher Education */}
+                <div className="w-1/4">
+                  <label className="flex text-lg items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-5 w-5 text-blue-500"
+                      onChange={() => handleCheckboxChange("higherEducation")}
+                    />
+                    Junior Secondary
+                  </label>
+                  {selectedCategories.higherEducation && (
+                    <div className="mt-2">
+                      <select className="w-full border border-gray-300 rounded-md p-2 bg-white text-gray-700">
+                        <option value="" disabled selected>
+                          Select Grade
+                        </option>
+                        <option>Grade 7</option>
+                        <option>Grade 8</option>
+                        <option>Grade 9</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+                <div className="w-1/4">
+                  <label className="flex text-lg items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-5 w-5 text-blue-500"
+                      onChange={() => handleCheckboxChange("higherEducation")}
+                    />
+                    Senior Secondary
+                  </label>
+                  {selectedCategories.higherEducation && (
+                    <div className="mt-2">
+                      <select className="w-full border border-gray-300 rounded-md p-2 bg-white text-gray-700">
+                        <option value="" disabled selected>
+                          Select Grade
+                        </option>
+                        <option>Grade 10</option>
+                        <option>Grade 11</option>
+                        <option>Grade 12</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
                   <div className="contents">
                     <Button
                       variant="primary"
@@ -721,16 +862,15 @@ const Register = () => {
                       </div>
                     </div>
                   </>
-                ))}
-              </div>
+                ))} */}
               <div className="mt-5  xl:mt-8 xl:text-left">
                 {/* <Link to="/payment" className="xl:w-32 xl:mr-8"> */}
                 <Button
                   variant="primary"
                   type="submit"
-                  className="text-md xl:text-lg w-[292px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
+                  className="text-md xl:text-lg w-[200px] p-4 h-[40px] px-3 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border "
                 >
-                  Proceed
+                  Submit
                   {loading && (
                     <LoadingIcon
                       icon="spinning-circles"

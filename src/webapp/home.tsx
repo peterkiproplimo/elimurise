@@ -70,7 +70,6 @@ const Home = () => {
     "Grade Analysis Report",
     "Combined Summative & Formative Termly Report",
     "Parents Portal",
-    "Branded Evidence of Learning Book for Learners",
     "Dedicated Account Manager",
     "Dedicated Technical Support",
   ];
@@ -84,54 +83,58 @@ const Home = () => {
         <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           <div className="buttons">
         
-          <div className="hidden lg:flex flex-col gap-5 w-[310px] relative">
-              {/* Toggleable Text */}
-              <div
-                onClick={handleClick}
-                className={`font-bold flex text-center text-lg p-4 text-primary cursor-pointer transition duration-300 ${
-                  showLinks ? "bg-red-500 text-white" : "text-white"
-                }`}
-              >
-                <div className="icon mr-2 ">
-                  <img alt="ACS" className="w-7 h-7" src={users} />
-                </div>
+          <div
+  className="hidden lg:flex flex-col gap-5 w-[310px] relative"
+  onMouseEnter={() => setShowLinks(true)}
+  onMouseLeave={() => setShowLinks(false)}
+>
+  {/* Toggleable Text */}
+  <div
+    className={`font-bold flex text-center text-lg p-4 pl-0 text-primary cursor-pointer transition duration-300 ${
+      showLinks ? "bg-red-500 text-white" : "text-white"
+    }`}
+  >
+    <div className="icon mr-2 ml-2">
+      <img alt="ACS" className="w-7 h-7" src={users} />
+    </div>
 
-                {showLinks
-                  ? "For Teachers & Administrators"
-                  : "Log in or register for free"}
-              </div>
+    {showLinks
+      ? "For Teachers & Administrators"
+      : "Log in or register for free"}
+  </div>
 
-              {/* Links to display when clicked */}
-              {showLinks && (
-                <div className="absolute top-full left-0 w-full  bg-white shadow-lg  rounded">
-                  <div className="flex flex-col gap-4 ">
-                    <Link
-                      to="/auth/login"
-                      className="font-bold   items-center text-lg text-primary w-full mt-4 ml-4"
-                    >
-                      <div className=" flex w-[240px]">
-                        Log in
-                        <div className="icon ml-auto mt-2">
-                          <img alt="ACS" className="xl:w-35 " src={icon} />
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="border-b border-primary/50 w-full m-0 p-0"></div>
-                    <Link
-                      to="/register"
-                      className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
-                    >
-                      <div className=" flex w-[240px]">
-                        Register
-                        <div className="icon ml-auto mt-2">
-                          <img alt="ACS" className="xl:w-35 " src={icon} />
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              )}
+  {/* Links to display when hovered */}
+  {showLinks && (
+    <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded">
+      <div className="flex flex-col gap-4">
+        <Link
+          to="/auth/login"
+          className="font-bold items-center text-lg text-primary w-full mt-4 ml-4"
+        >
+          <div className="flex w-[240px]">
+            Log in
+            <div className="icon ml-auto mt-2">
+              <img alt="ACS" className="xl:w-35" src={icon} />
             </div>
+          </div>
+        </Link>
+        <div className="border-b border-primary/50 w-full m-0 p-0"></div>
+        <Link
+          to="/register"
+          className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
+        >
+          <div className="flex w-[240px]">
+            Register
+            <div className="icon ml-auto mt-2">
+              <img alt="ACS" className="xl:w-35" src={icon} />
+            </div>
+          </div>
+        </Link>
+      </div>
+    </div>
+  )}
+</div>
+
 
 
   {/* Links to display when clicked */}
@@ -701,7 +704,7 @@ const Home = () => {
             Pricing Plan
           </h1>
           <p className="xl:text-2xl text-lg text-center text-primary">
-            Choose the perfect plan for your business needs
+            Choose the perfect plan for your school needs
           </p>
 
           <div className=" xl:mx-auto max-w-[1500px] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10  p-5 xl:grid-cols-3">
@@ -711,8 +714,8 @@ const Home = () => {
                   EVIDENCE OF LEARNING
                 </p>
                 <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
-                  You get access to hard copy assessment tool books for all
-                  grades. Charges per book:
+                It refers to the tangible demonstrations of learner's progress, understanding and mastery of specific competencies. They include: portfolios of work, performance tasks, rubrics and checklists, projects and assignments, peer and self-assessment and teachers observations
+                 to evaluate practical skills and understanding. Evidence of Learning ensures learners acquire the skills, values and attitudes effectively.
                 </p>
                 <Link to="/register">
                   <Button className="text-lg  font-bold w-full mt-5 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
@@ -736,13 +739,7 @@ const Home = () => {
                   Pre-School
                 </li>
 
-                <li className="flex items-center p-0.5">
-                  <FontAwesomeIcon
-                    icon={faCircleCheck}
-                    className="text-green-500 w-5 h-5 mr-2"
-                  />
-                  Custom Summative Assessment
-                </li>
+
 
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
