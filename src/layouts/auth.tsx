@@ -7,33 +7,28 @@ import "./auth.css";
 import { useEffect } from "react";
 
 const Auth = () => {
-  useEffect(() => {
-    localStorage.clear();
-  }, []);
+  // useEffect(() => {
+  //   localStorage.clear();
+  // }, []);
   return (
     <>
- 
-<div className="grid bg-white overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-[2fr_3fr] xl:grid-cols-[2fr_3fr]">
-  {/* Slimmer Image Section */}
-  <div className="group w-full dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex">
-    <div className="relative w-full xl:h-[100vh] h-[80vh] ">
-      <img 
-        src={image}
-        alt="Demo Icon" 
-        className="w-full h-full object-cover object-top" 
-      />
-    </div>
-  </div>
+      <div className="grid bg-white overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-[2fr_3fr] xl:grid-cols-[2fr_3fr]">
+        {/* Slimmer Image Section */}
+        <div className="group w-full dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 flex">
+          <div className="relative w-full xl:h-[100vh] h-[80vh] ">
+            <img
+              src={image}
+              alt="Demo Icon"
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+        </div>
 
-  {/* Wider Form Section */}
-  <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 ">
-    <Outlet />
-  </div>
-</div>
-
-
-
-        
+        {/* Wider Form Section */}
+        <div className="group relative dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 ">
+          <Outlet />
+        </div>
+      </div>
 
       {/* <div
         className={clsx([
