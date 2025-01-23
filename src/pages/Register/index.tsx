@@ -620,14 +620,11 @@ const Register = () => {
                   </Link>
                 </label>
               </div>
-            </div>
+              {/* </div> */}
 
-            <div className=" bg-white xl:p-10 m-5 box border border-gray-300">
-              <div className="flex flex-1 xl:text-2xl items-center  bg-white ">
-                {/* <FontAwesomeIcon
-                icon={faCircleCheck}
-                className="text-primary w-8 h-8 xl:w-10 xl:h-10 mr-2"
-              /> */}
+              <div className=" bg-white xl:p-10 m-5  ">
+                {/* <div className="flex flex-1 xl:text-2xl items-center  bg-white ">
+        
                 <div>
                   <h1 className="text-primary font-bold ">
                     Add Evidence of Learning - Optional
@@ -641,7 +638,7 @@ const Register = () => {
                 </div>{" "}
               </div>
               <div className="flex flex-wrap gap-5 mt-2">
-                {/* Preschool */}
+        
                 <div className="w-1/4">
                   <label className="flex  text-lg items-center gap-2 cursor-pointer">
                     <input
@@ -665,7 +662,6 @@ const Register = () => {
                   )}
                 </div>
 
-                {/* Junior Secondary */}
                 <div className="w-1/4">
                   <label className="flex text-lg items-center gap-2 cursor-pointer">
                     <input
@@ -689,7 +685,7 @@ const Register = () => {
                   )}
                 </div>
 
-                {/* Senior Secondary */}
+            
                 <div className="w-1/4">
                   <label className="flex text-lg items-center gap-2 cursor-pointer">
                     <input
@@ -713,7 +709,7 @@ const Register = () => {
                   )}
                 </div>
 
-                {/* Higher Education */}
+            
                 <div className="w-1/4">
                   <label className="flex text-lg items-center gap-2 cursor-pointer">
                     <input
@@ -758,112 +754,9 @@ const Register = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
 
-              {/* <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                  <div className="contents">
-                    <Button
-                      variant="primary"
-                      className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                    >
-                      EVIDENCE OF LEARNING
-                      {loading && (
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          color="white"
-                          className="w-4 h-4 ml-2"
-                        />
-                      )}
-                    </Button>
-                    <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
-                      You get access to hard copy assessment tool books for all
-                      grades. Charges per book:
-                    </p>
-                    <Button
-                      variant="primary"
-                      className="text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2  border "
-                    >
-                      Add to Cart
-                      {loading && (
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          color="white"
-                          className="w-4 h-4 ml-2"
-                        />
-                      )}
-                    </Button>
-                  </div>
-                  <div>
-                    <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                    <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
-                      PreSchool
-                    </p>
-                    <h1 className="xl:text-5xl text-2xl font-medium">
-                      KES 250
-                    </h1>
-                  </div>
-                </div>
-
-                {packages.map((Package: any, key: any) => (
-                  <>
-                    <div className="group relative border rounded-xl p-4 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
-                      <div className="contents">
-                        <Button
-                          variant="primary"
-                          className="text-dark bg-[#F1F1F1] xl:text-lg w-[220px] p-2 h-[40px] mb-2 gap-2 border-none"
-                        >
-                          BASIC PLAN
-                          {loading && (
-                            <LoadingIcon
-                              icon="spinning-circles"
-                              color="white"
-                              className="w-4 h-4 ml-2"
-                            />
-                          )}
-                        </Button>
-                        <div>
-                          <div className="border-b border-primary/50 w-full mt-8"></div>
-
-                          <h1 className="mt-5 xl:text-7xl text-2xl font-medium">
-                            KES {Package.pricePerLearner}
-                          </h1>
-                          <p className=" xl:text-lg sm:text-lg md:text-lg text-primary">
-                            Per Learner, per Month
-                          </p>
-
-                          <div className="border-b border-primary/50 w-full mt-8"></div>
-                        </div>{" "}
-                        <Button
-                          type="button"
-                          variant={
-                            selectedPackage === Package._id
-                              ? "success"
-                              : "primary"
-                          }
-                          className={`text-md xl:text-lg w-full mt-5 p-2 h-[40px] px-3 gap-2 border ${
-                            selectedPackage === Package._id
-                              ? "bg-green-500 text-white"
-                              : ""
-                          }`}
-                          onClick={() => handleSelectPlan(Package._id)}
-                        >
-                          {selectedPackage === Package._id
-                            ? "Plan Selected"
-                            : "Choose Plan"}
-                          {loading && (
-                            <LoadingIcon
-                              icon="spinning-circles"
-                              color="white"
-                              className="w-4 h-4 ml-2"
-                            />
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  </>
-                ))} */}
-              <div className="mt-5  xl:mt-8 xl:text-left">
+                {/* <div className="mt-5  xl:mt-8 xl:text-left"> */}
                 {/* <Link to="/payment" className="xl:w-32 xl:mr-8"> */}
                 <Button
                   variant="primary"

@@ -699,7 +699,7 @@ const Home = () => {
             Choose the perfect plan for your school needs
           </p>
 
-          <div className=" xl:mx-auto max-w-[1500px] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10  p-5 xl:grid-cols-3">
+          <div className="xl:mx-auto max-w-[1500px] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10 p-5 xl:grid-cols-3">
             <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
                 <p className="xl:text-2xl text-lg  font-bold text-primary">
@@ -766,7 +766,7 @@ const Home = () => {
                 </li>
               </ul>
             </div>
-            <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
+            {/* <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
                 <div className="xl:mb-20">
                   <p className="xl:text-2xl text-lg  font-bold text-primary">
@@ -833,7 +833,7 @@ const Home = () => {
                   <span className="font-bold mr-1.5"> Email </span>Analysis
                 </li>
               </ul>
-            </div>
+            </div> */}
             <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
                 <div className="mb-20">
