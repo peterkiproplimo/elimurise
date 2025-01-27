@@ -119,22 +119,22 @@ const Login = () => {
 
   return (
     <>
-      <div className="form-container mt-5 ">
-        <div className=" mt-5  ml-5">
-          <img alt="ACS" className="xl:w-10 p-5  md:w-8 xl:w-auto" src={logo} />
+      <div className="form-container mt-5 p-0">
+        <div className=" mt-5  xl:ml-5">
+          <img alt="ACS" className="xl:w-10 xl:p-5 w-36   md:w-8 xl:w-auto" src={logo} />
         </div>
-        <div className="p-10">
-          <h2 className="xl:text-5xl text-3xl font-bold  xl:mt-5  ml-10 ">
+        <div className="xl:p-10">
+          <h2 className="xl:text-5xl text-3xl font-bold  xl:mt-5  xl:ml-10  ml-5">
             Login
           </h2>
-          <div className="mt-2 text-slate-900 ml-10 xl text-xl">
+          <div className="mt-2 text-slate-900 xl:ml-10 ml-5 xl:text-xl">
             Login with the data you entered during your registration.
           </div>
-          <div className="ml-8">
-            <FormLabel className="mr-5">
+          <div className="xl:ml-8 ml-2">
+            <FormLabel className="xl:mr-5">
               <input
                 type="radio"
-                className="p-3 m-3"
+                className="xl:p-3 m-3"
                 value="form1"
                 checked={selectedForm === "form1"}
                 onChange={handleFormChange}
@@ -145,7 +145,7 @@ const Login = () => {
               <input
                 type="radio"
                 value="form2"
-                className="p-3 m-3"
+                className="xl:p-3 m-3"
                 checked={selectedForm === "form2"}
                 onChange={handleFormChange}
               />
@@ -155,7 +155,7 @@ const Login = () => {
 
           {selectedForm === "form1" ? (
             <>
-              <form className="validate-form pl-10 pr-10" onSubmit={onSubmit}>
+              <form className="validate-form xl:pl-10 xl:pr-10 pl-5 pr-5" onSubmit={onSubmit}>
                 <div className=" ">
                   <div className="input-form">
                     <label className="">Email</label>
@@ -166,8 +166,8 @@ const Login = () => {
                       name="email"
                       className={
                         errors.email
-                          ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
-                          : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-500 rounded-none"
+                          ? "block px-4 py-3 mt-2  min-w-full xl:min-w-[350px] border-danger"
+                          : "block px-4 py-3 mt-2  min-w-full  border-gray-500"
                       }
                       placeholder="Email"
                     />
@@ -188,8 +188,8 @@ const Login = () => {
                         name="password"
                         className={
                           errors.password
-                            ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
-                            : "block px-4 py-3 mt-4  min-w-full  p-4 border-gray-500 rounded-none"
+                            ? "block px-4 py-3 mt-2  min-w-full xl:min-w-[350px] border-danger pr-10"
+                            : "block px-4 py-3 mt-2 min-w-full  border-gray-500 "
                         }
                         placeholder="Enter Password"
                       />
@@ -218,7 +218,7 @@ const Login = () => {
                 <div className="mt-5 text-center  xl:mt-8 ">
                   <Button
                     variant="primary"
-                    className="w-full px-4 py-3 align-top  text-lg xl:text-lg xl:w-22 xl:mr-3"
+                    className="w-full px-4 py-3 align-top   xl:text-lg xl:w-22 xl:mr-3"
                   >
                     Login
                     {loading && (
@@ -250,13 +250,26 @@ const Login = () => {
                   </Link>
                 </div>
               </form>
-              <div className="border m-10 p-5 border-gray-300">
-                <p className="mt-2 pb-2 ml-5 text-xl xl:text-2xl font-bold">
+              <div className="border xl:m-10 m-5 xl:p-5 p-3 border-gray-300">
+                <p className="mt-2 pb-2 xl:ml-5 xl:text-xl xl:text-2xl font-bold">
                   Dont have an account?
                 </p>
-                <div className=" text-center ml-5 ">
+                <div className=" text-center xl:ml-5 ">
                   <Link to="/register">
-                    <Button className="w-full px-4 py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3">
+
+                  <Button
+                    className="w-full xl:px-4 xl:py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] xl:text-lg border-gray-500 rounded-none xl:text-lg xl:w-22 xl:mr-3"
+                  >
+                   Create Account
+                    {loading && (
+                      <LoadingIcon
+                        icon="spinning-circles"
+                        color="white"
+                        className="w-2 h-4 ml-2"
+                      />
+                    )}
+                  </Button>
+                    {/* <Button className="w-full px-4 py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3">
                       Create Account
                       {loading && (
                         <LoadingIcon
@@ -265,13 +278,13 @@ const Login = () => {
                           className="w-2 h-4 ml-2"
                         />
                       )}
-                    </Button>
+                    </Button> */}
                   </Link>
                 </div>
               </div>
             </>
           ) : (
-            <form className="validate-form" onSubmit={onSubmit}>
+            <form className="validate-form xl:pl-10 xl:pr-10 pl-5 pr-5" onSubmit={onSubmit}>
               <div className="mt-5 ">
                 <div className="input-form">
                   <label>Guardian Email</label>
@@ -282,8 +295,8 @@ const Login = () => {
                     name="email"
                     className={
                       errors.email
-                        ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
-                        : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                        ? "block px-4 py-3 mt-2 mb-4  min-w-full xl:min-w-[350px] border-danger"
+                        : "block px-4 py-3 mt-2 mb-4  min-w-full xl:min-w-[350px]  border-gray-500"
                     }
                     placeholder="Email"
                   />
@@ -303,8 +316,8 @@ const Login = () => {
                     name="code"
                     className={
                       errors.code
-                        ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger"
-                        : "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] bg-blue-100 border-blue-300"
+                        ? "block px-4 py-3 mt-2 mb-4   min-w-full xl:min-w-[350px] border-danger"
+                        : "block px-4 py-3 mt-2 mb-4  min-w-full xl:min-w-[350px] border-gray-500"
                     }
                     placeholder="School Code"
                   />
@@ -325,13 +338,13 @@ const Login = () => {
                       name="password"
                       className={
                         errors.password
-                          ? "block px-4 py-3 mt-4  min-w-full xl:min-w-[350px] border-danger pr-10"
-                          : "block px-4 py-3 mt-4  min-w-[250px] xl:min-w-[350px] border pr-10 bg-blue-100 border-blue-300"
+                          ? "block px-4 py-3 mt-2  min-w-full xl:min-w-[350px] border-danger pr-10"
+                          : "block px-4 py-3 mt-2 min-w-[250px] xl:min-w-[350px] border pr-10 border-gray-500"
                       }
                       placeholder="Enter Password"
                     />
                     <div
-                      className="flex items-center cursor-pointer eye-icon"
+                      className="flex items-center cursor-pointer -mt-2 eye-icon"
                       onClick={togglePasswordVisibility}
                     >
                       <FontAwesomeIcon
