@@ -1,30 +1,159 @@
-import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../base-components/Button";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { FormInput, FormCheck, FormSelect } from "../../base-components/Form";
 import * as yup from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-
-import { Link } from "react-router-dom";
-import icon from "../../assets/images/Arrow_Right_MD.png";
-import FooterComponent from "../../webapp/footer";
-import NavbarMenu from "../../webapp/NavBarMenu";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import NavbarMenu from "../../webapp/NavBarMenu";
+import icon from "../../assets/images/Arrow_Right_MD.png";
+import * as ApiService from "../../services/auth";
+import { Controller, useForm } from "react-hook-form";
+import TomSelect from "../../base-components/TomSelect";
+
+import FooterComponent from "../../webapp/footer";
+import { yupResolver } from "@hookform/resolvers/yup";
+interface County {
+  name: string;
+  capital: string;
+  code: number;
+  sub_counties: string[];
+}
 
 const Demo = () => {
-  const schema = yup
-    .object({
-      email: yup.string().required().email(),
-      password: yup.string().required().min(4),
-    })
-    .required();
-  const [loading, isLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedCounty, setSelectedCounty] = useState<any>({});
+  const [loading, setLoading] = useState(false);
+  const [subCounties, setSubCounties] = useState([]);
+  const [counties, setCounties] = useState<County[]>([]); // List<County>
+  const handleCountyChange = (countyName: any) => {
+    setSelectedCounty(countyName);
+    const counties = localStorage.getItem("counties") || "{}";
+    const county_list = JSON.parse(counties);
+    // Find the selected county in the counties array
+    const selected = county_list.find(
+      (county: any) => county.name === countyName
+    );
 
-  const [showMenu, setShowMenu] = useState(false);
+    console.log("updated", selected);
+
+    // Update subCounties based on the selected county
+    if (selected) {
+      setSubCounties(selected.sub_counties);
+    } else {
+      setSubCounties([]);
+    }
+  };
+
+  const [selected_date, setselected_date] = useState("");
+  const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    school_name: "",
+    county: "",
+    subcounty: "",
+    phone_number: "",
+    role: "",
+    message: "",
+    town: "",
+  });
+
+  const schema = yup.object({
+    first_name: yup.string().required("First name is required"),
+    last_name: yup.string().required("Last name is required"),
+    email: yup.string().email("Invalid email").required("Email is required"),
+    school_name: yup.string().required("School name is required"),
+    county: yup.string().required("County is required"),
+    subcounty: yup.string().required("Sub-county is required"),
+    phone_number: yup
+      .string()
+      .required("Phone number is required")
+      .matches(/^[0-9]{10}$/, "Invalid phone number"),
+    // role: yup.string().required("Role is required"),
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+  useEffect(() => {
+    const getCounties = async () => {
+      const counties = await ApiService.getCounties({});
+      const data = await counties.data;
+      setCounties(data);
+      localStorage.setItem("counties", JSON.stringify(data));
+    };
+
+    getCounties();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await schema.validate({ ...form, selected_date }, { abortEarly: false });
+      console.log("Form submitted successfully", { ...form, selected_date });
+      await ApiService.scedule_demo({ ...form, selected_date });
+      // Add your submission logic here (e.g., API call)
+    } catch (error: any) {
+      if (error.inner) {
+        error.inner.forEach((err: yup.ValidationError) => {
+          console.error(err.message);
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const {
+    control,
+    register,
+    setValue,
+    trigger,
+    getValues,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    resolver: yupResolver(schema),
+  });
+  const handleDateChange = (date: any) => {
+    if (date) {
+      // Convert the selected date to Kenyan Time (UTC +3)
+      const kenyaTime = new Date(date).toLocaleString("en-US", {
+        timeZone: "Africa/Nairobi",
+      });
+
+      // Create a new Date object from Kenya time and format it as "yyyy-MM-dd HH:mm:ss"
+      const formattedDate = new Date(kenyaTime)
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+
+      setselected_date(formattedDate);
+    } else {
+      setselected_date("");
+    }
+  };
+  const adjustToKenyanTime = (date: any) => {
+    if (!date) return null;
+    // Parse the stored date in 'yyyy-MM-dd HH:mm:ss' format to Kenyan time
+    const kenyaDate = new Date(date);
+    const kenyaDateString = new Date(kenyaDate).toLocaleString("en-US", {
+      timeZone: "Africa/Nairobi",
+    });
+    return new Date(kenyaDateString);
+  };
 
   return (
     <>
@@ -78,128 +207,202 @@ const Demo = () => {
               </div>
             </div>
             <div className="group relative dark:bg-gray-800 p-2 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 m-0 w-full flex">
-              <form className="validate-form w-full shadow-md p-8 border">
-                <div className="mt-5">
-                  <div className="input-form p-2">
-                    <FormInput
-                      id="validation-form-2"
-                      type="text"
-                      name="email"
-                      placeholder="First Name *"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-                    />
-                  </div>
-                  <div className="input-form p-2">
-                    <FormInput
-                      id="validation-form-2"
-                      type="email"
-                      name="email"
-                      placeholder="Last Name *"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-                    />
-                  </div>
-                  <div className="input-form p-2">
-                    <FormInput
-                      id="validation-form-2"
-                      type="email"
-                      name="email"
-                      placeholder="Email Address *"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-                    />
-                  </div>
+              <form
+                className="validate-form w-full shadow-md p-8 border"
+                onSubmit={handleSubmit}
+              >
+                <div className="input-form p-2">
+                  <FormInput
+                    name="first_name"
+                    placeholder="First Name *"
+                    value={form.first_name}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  />
+                </div>
+                <div className="input-form p-2">
+                  <FormInput
+                    name="last_name"
+                    placeholder="Last Name *"
+                    value={form.last_name}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  />
+                </div>
+                <div className="input-form p-2">
+                  <FormInput
+                    name="email"
+                    type="email"
+                    placeholder="Email Address *"
+                    value={form.email}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  />
+                </div>
+                <div className="input-form p-2">
+                  <FormInput
+                    name="school_name"
+                    placeholder="School Name *"
+                    value={form.school_name}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  />
+                </div>
+                {/* <div className="input-form p-2">
+                  <FormInput
+                    name="town"
+                    placeholder="Town *"
+                    value={form.town}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  />
+                </div> */}
 
-                  <div className="input-form p-2">
-                    <FormInput
-                      id="validation-form-3"
-                      type={"password"}
-                      name="password"
-                      placeholder="School Name *"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-                    />
-                  </div>
-                  <div className="input-form p-2">
-                    <FormSelect
-                      id="validation-form-2"
-                      name="code"
-                      className="block px-4 py-3 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
-                      defaultValue=""
-                    >
-                      <option value="" className="text-primary" disabled>
-                        County*
-                      </option>
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
-                    </FormSelect>
-                  </div>
-                  <div className="input-form p-2">
-                    <FormSelect
-                      id="validation-form-2"
-                      name="code"
-                      className="block px-4 py-3 min-w-full text-[#808080] xl:min-w-[350px] w-full rounded-none border-gray-300"
-                      defaultValue=""
-                    >
-                      <option value="" className="text-primary" disabled>
-                        Sub County*
-                      </option>
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
-                    </FormSelect>
-                  </div>
-                  <div className="input-form p-2">
-                    <FormInput
-                      id="validation-form-3"
-                      type={"password"}
-                      name="password"
-                      placeholder="Phone Number*"
-                      className="block px-4 py-3  min-w-full xl:min-w-[350px] w-full rounded-none  border-gray-300"
-                    />
-                  </div>
-
-                  <div className="input-form p-2">
-                    <FormSelect
-                      id="validation-form-2"
-                      name="code"
-                      className="block px-4 py-3 min-w-full text-[#808080]  xl:min-w-[350px] w-full rounded-none border-gray-300"
-                      defaultValue=""
-                    >
-                      <option value="" disabled>
-                        Your Role*
-                      </option>
-                      <option value="option1">Option 1</option>
-                      <option value="option2">Option 2</option>
-                      <option value="option3">Option 3</option>
-                    </FormSelect>
-                  </div>
-
-                  <div className="relative max-w-sm">
-                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                      <svg
-                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
+                {/* Sub County Selection */}
+                <div className="input-form p-2">
+                  <Controller
+                    control={control}
+                    name="county"
+                    // defaultValue={form.county}
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        onChange={(value: any) => {
+                          setForm((prevForm) => ({
+                            ...prevForm,
+                            county: value, // Update county in form state
+                            subcounty: "", // Reset subcounty when county changes
+                          }));
+                          field.onChange(value); // Update the form's state using react-hook-form
+                          handleCountyChange(value); // Dynamically update subcounty options
+                        }}
+                        className={
+                          errors.county
+                            ? " px-4 p-3 xl:mt-4  min-w-full  border-danger"
+                            : " px-4 py-2 xl:mt-4 mt-2 min-w-full  border-gray-300 "
+                        }
                       >
-                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                      </svg>
+                        <option value={""}>Select County</option>
+                        {counties.map((county: any) => (
+                          <option key={county.code} value={county.name}>
+                            {county.name}
+                          </option>
+                        ))}
+                      </TomSelect>
+                    )}
+                  />
+
+                  {errors.county && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.county.message === "string" &&
+                        errors.county.message}
                     </div>
-                    <DatePicker
-                      selected={selectedDate}
-                      onChange={(date: any) => setSelectedDate(date)}
-                      placeholderText="Select date"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="input-form p-2">
-                    <textarea
-                      id="message"
-                      name="message"
-                      placeholder="Comment: Let us know how we can help you"
-                      className="mt-1 block px-4 py-3  min-w-full xl:min-w-[350px]  h-[150px] w-full rounded-none  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
-                    ></textarea>
-                  </div>
+                  )}
+                </div>
+
+                {/* Sub County Selection */}
+                <div className="input-form p-2">
+                  <Controller
+                    control={control}
+                    name="subcounty"
+                    defaultValue={form.subcounty}
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        onChange={(value: any) => {
+                          console.log(form);
+                          setForm((prevForm) => ({
+                            ...prevForm,
+                            subcounty: value, // Update subcounty in form state
+                          }));
+                          field.onChange(value);
+                        }}
+                        className={
+                          errors.subcounty
+                            ? "p-3xl:mt-4 py-2 min-w-full  border-danger"
+                            : "py-2 xl:mt-4 mt-2 min-w-full  border-gray-300"
+                        }
+                      >
+                        <option value={""}>Select Subcounty</option>
+                        {/* Dynamically populate subcounty options based on the selected county */}
+                        {subCounties?.map((subcounty: any, key: any) => (
+                          <option key={key} value={subcounty}>
+                            {subcounty}
+                          </option>
+                        ))}
+                      </TomSelect>
+                    )}
+                  />
+
+                  {errors.subcounty && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.subcounty.message === "string" &&
+                        errors.subcounty.message}
+                    </div>
+                  )}
+                </div>
+                <div className="input-form p-2">
+                  <FormInput
+                    name="town"
+                    placeholder="Town *"
+                    value={form.town}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  />
+                </div>
+
+                <div className="input-form p-2">
+                  <FormInput
+                    name="phone_number"
+                    placeholder="Phone Number *"
+                    value={form.phone_number}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  />
+                </div>
+                <div className="input-form p-2">
+                  <FormSelect
+                    name="role"
+                    value={form.role}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] w-full rounded-none border-gray-300"
+                  >
+                    <option value="" disabled>
+                      Your Role*
+                    </option>
+                    <option value="Head Teacher">Head Teacher</option>
+                    <option value="Director">Director</option>
+                    <option value="Teacher">Teacher</option>
+                  </FormSelect>
+                </div>
+                <div className="input-form p-2">
+                  <textarea
+                    name="message"
+                    placeholder="Comment: Let us know how we can help you"
+                    value={form.message}
+                    onChange={handleInputChange}
+                    className="block px-4 py-3 min-w-full xl:min-w-[350px] h-[150px] w-full rounded-none border-gray-300"
+                  />
+                </div>
+                <div className="relative max-w-sm p-2">
+                  {/* <DatePicker
+                    selected={selected_date}
+                    onChange={(date: Date) => setselected_date(date)}
+                    placeholderText="Select date"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  /> */}
+                  <DatePicker
+                    selected={
+                      selected_date ? adjustToKenyanTime(selected_date) : null
+                    }
+                    onChange={handleDateChange}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15} // Adjust time intervals as needed
+                    dateFormat="yyyy-MM-dd HH:mm:ss" // Format both date and time
+                    placeholderText="Select date and time"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                  />
                 </div>
                 <p className="p-2 text-gray-500">
                   Hero Learning needs the contact information you provide to us

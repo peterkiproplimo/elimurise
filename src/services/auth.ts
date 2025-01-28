@@ -77,7 +77,17 @@ export const getPackages = async (data: any) => {
     throw handler(e);
   }
 };
-
+export const scedule_demo = async (data: any) => {
+  try {
+    let res = await axios.post(
+      "https://staging-erp.herolearning.co.ke/api/method/hero.hero.apis.appointment.schedule_appointment",
+      data
+    );
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const getSubscriptions = async (data: any) => {
   try {
     await getData();
