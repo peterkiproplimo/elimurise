@@ -31,7 +31,7 @@ const FooterComponent = () => {
             <Link to="/terms" className="xl:px-3 xl:py-3 hover:text-blue-800 hover:scale-105 xl:text-lg">
               Terms of Use
             </Link>
-            <Link to="" className="xl:px-3 xl:py-3 hover:text-blue-800 hover:scale-105 xl:text-lg">
+            <Link to="/cookie-policy" className="xl:px-3 xl:py-3 hover:text-blue-800 hover:scale-105 xl:text-lg">
               Cookie Policy
             </Link>
           </div>

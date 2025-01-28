@@ -373,7 +373,7 @@ function Main() {
     }
   };
   const handleInputChange = async (data: any) => {
-    if (data.score < 1 || data.score > 4) {
+    if (data.score > 4) {
       return false;
     }
     const assessment = {
@@ -614,11 +614,6 @@ function Main() {
                             const enteredValue = parseInt(e.target.value);
                             if (enteredValue > 4) {
                               e.target.value = "4"; // Set the value to the maximum allowed
-                            } else if (enteredValue < 1) {
-                              alert(
-                                "value should be within the range of 1, 2, 3, 4"
-                              );
-                              e.target.value = "1";
                             }
                             handleInputChange({
                               score: e.target.value,
@@ -634,21 +629,24 @@ function Main() {
                       >
                         <span>
                           <b>
+                            {" "}
                             {assessment?.assessmentDetails?.score == 4
-                              ? "Exceeding Expectation: "
+                              ? "Exceeding Expectation: " +
+                                assessment?.learner?.first_name
                               : ""}
                             {assessment?.assessmentDetails?.score == 3
-                              ? "Meeting Expectation: "
+                              ? "Meeting Expectation: " +
+                                assessment?.learner?.first_name
                               : ""}
                             {assessment?.assessmentDetails?.score == 2
-                              ? "Approaching Expectation: "
+                              ? "Approaching Expectation: " +
+                                assessment?.learner?.first_name
                               : ""}
                             {assessment?.assessmentDetails?.score == 1
-                              ? "Below Expectation: "
-                              : ""}
-                          </b>
-                          <br />
-                          {assessment?.learner?.first_name}{" "}
+                              ? "Below Expectation: " +
+                                assessment?.learner?.first_name
+                              : ""}{" "}
+                          </b>{" "}
                           {assessment?.assessmentDetails?.description
                             ? assessment.assessmentDetails.description
                                 .charAt(0)

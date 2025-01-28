@@ -14,7 +14,7 @@ import contact4 from "../assets/images/contact2.png";
 import logoUrl from "../assets/images/Untitled-1.png";
 import logo from "../assets/images/heros.png";
 import icon from "../assets/images/login.png";
-import stroke from "../assets/images/Vector 32.png"
+import stroke from "../assets/images/Vector 32.png";
 import homepic from "../assets/images/Ellipse.png";
 import child from "../assets/images/Mask group.png";
 import aboutpic from "../assets/images/excellence.png";
@@ -56,7 +56,7 @@ const Home = () => {
   };
 
   const handleLogoClick = () => {
-    window.location.reload(); 
+    window.location.reload();
   };
 
   const items = [
@@ -82,100 +82,95 @@ const Home = () => {
       <div className="homeContainer sm:p-5 xl:p-0 p-0 font-lexend">
         <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
           <div className="buttons">
-        
-          <div
-  className="hidden lg:flex flex-col gap-5 w-[310px] relative"
-  onMouseEnter={() => setShowLinks(true)}
-  onMouseLeave={() => setShowLinks(false)}
->
-  {/* Toggleable Text */}
-  <div
-    className={`font-bold flex text-center text-lg p-4 pl-0 text-primary cursor-pointer transition duration-300 ${
-      showLinks ? "bg-red-500 text-white" : "text-white"
-    }`}
-  >
-    <div className="icon mr-2 ml-2">
-      <img alt="ACS" className="w-7 h-7" src={users} />
-    </div>
+            <div
+              className="hidden lg:flex flex-col gap-5 w-[310px] relative"
+              onMouseEnter={() => setShowLinks(true)}
+              onMouseLeave={() => setShowLinks(false)}
+            >
+              {/* Toggleable Text */}
+              <div
+                className={`font-bold flex text-center text-lg p-4 pl-0 text-primary cursor-pointer transition duration-300 ${
+                  showLinks ? "bg-red-500 text-white" : "text-white"
+                }`}
+              >
+                <div className="icon mr-2 ml-2">
+                  <img alt="ACS" className="w-7 h-7" src={users} />
+                </div>
 
-    {showLinks
-      ? "For Teachers & Administrators"
-      : "Log in or register for free"}
-  </div>
+                {showLinks
+                  ? "For Teachers & Administrators"
+                  : "Log in or register for free"}
+              </div>
 
-  {/* Links to display when hovered */}
-  {showLinks && (
-    <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded">
-      <div className="flex flex-col gap-4">
-        <Link
-          to="/auth/login"
-          className="font-bold items-center text-lg text-primary w-full mt-4 ml-4"
-        >
-          <div className="flex w-[240px]">
-            Log in
-            <div className="icon ml-auto mt-2">
-              <img alt="ACS" className="xl:w-35" src={icon} />
+              {/* Links to display when hovered */}
+              {showLinks && (
+                <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded">
+                  <div className="flex flex-col gap-4">
+                    <Link
+                      to="/auth/login"
+                      className="font-bold items-center text-lg text-primary w-full mt-4 ml-4"
+                    >
+                      <div className="flex w-[240px]">
+                        Log in
+                        <div className="icon ml-auto mt-2">
+                          <img alt="ACS" className="xl:w-35" src={icon} />
+                        </div>
+                      </div>
+                    </Link>
+                    <div className="border-b border-primary/50 w-full m-0 p-0"></div>
+                    <Link
+                      to="/register"
+                      className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
+                    >
+                      <div className="flex w-[240px]">
+                        Register
+                        <div className="icon ml-auto mt-2">
+                          <img alt="ACS" className="xl:w-35" src={icon} />
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        </Link>
-        <div className="border-b border-primary/50 w-full m-0 p-0"></div>
-        <Link
-          to="/register"
-          className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
-        >
-          <div className="flex w-[240px]">
-            Register
-            <div className="icon ml-auto mt-2">
-              <img alt="ACS" className="xl:w-35" src={icon} />
-            </div>
-          </div>
-        </Link>
-      </div>
-    </div>
-  )}
-</div>
 
-
-
-  {/* Links to display when clicked */}
-  {showLinks && (
-    <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded">
-      <div className="flex flex-col gap-4">
-        <Link
-          to="/auth/login"
-          className="font-bold items-center text-lg text-primary w-full mt-4 ml-4"
-        >
-          <div className="flex w-[240px]">
-            Log in
-            <div className="icon ml-auto mt-2">
-              <img alt="ACS" className="xl:w-35" src={icon} />
-            </div>
+            {/* Links to display when clicked */}
+            {showLinks && (
+              <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded">
+                <div className="flex flex-col gap-4">
+                  <Link
+                    to="/auth/login"
+                    className="font-bold items-center text-lg text-primary w-full mt-4 ml-4"
+                  >
+                    <div className="flex w-[240px]">
+                      Log in
+                      <div className="icon ml-auto mt-2">
+                        <img alt="ACS" className="xl:w-35" src={icon} />
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="border-b border-primary/50 w-full m-0 p-0"></div>
+                  <Link
+                    to="/register"
+                    className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
+                  >
+                    <div className="flex w-[240px]">
+                      Register
+                      <div className="icon ml-auto mt-2">
+                        <img alt="ACS" className="xl:w-35" src={icon} />
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
-        </Link>
-        <div className="border-b border-primary/50 w-full m-0 p-0"></div>
-        <Link
-          to="/register"
-          className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
-        >
-          <div className="flex w-[240px]">
-            Register
-            <div className="icon ml-auto mt-2">
-              <img alt="ACS" className="xl:w-35" src={icon} />
-            </div>
-          </div>
-        </Link>
-      </div>
-    </div>
-  )}
-</div>
-
-          
         </div>
         <div className="box">
           <div className="flex xl:mx-auto  max-w-[1500px] justify-between items-center w-full px-4 lg:px-10  p-2">
-          <div className="icon cursor-pointer" onClick={handleLogoClick}>
-      <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
-    </div>
+            <div className="icon cursor-pointer" onClick={handleLogoClick}>
+              <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
+            </div>
             <div className="buttons">
               <div className="block xl:hidden">
                 <button
@@ -351,25 +346,22 @@ const Home = () => {
           </div>
         </div>
 
-       
         <div className="bg-primary">
-  <div className="grid xl:mx-auto max-w-[1500px] overflow-hidden">
-    <h4 className="p-4 text-white xl:text-3xl text-xl text-center">
-      With Hero Learning, you are not just keeping up with Education -
-      <span className="font-black inline-block">
-        you're Leading it
-        <div className="-mt-2">
-          <img
-            src={stroke}
-            alt="Leadership Illustration"
-            className="mx-auto w-60 h-5"
-          />
-        </div>
-      </span>
-    </h4>
-  </div>
-
-
+          <div className="grid xl:mx-auto max-w-[1500px] overflow-hidden">
+            <h4 className="p-4 text-white xl:text-3xl text-xl text-center">
+              With Hero Learning, you are not just keeping up with Education -
+              <span className="font-black inline-block">
+                you're Leading it
+                <div className="-mt-2">
+                  <img
+                    src={stroke}
+                    alt="Leadership Illustration"
+                    className="mx-auto w-60 h-5"
+                  />
+                </div>
+              </span>
+            </h4>
+          </div>
         </div>
 
         <div id="about" className=" xl:mx-auto xl:mt-10 max-w-[1500px] p-5">
@@ -707,15 +699,20 @@ const Home = () => {
             Choose the perfect plan for your school needs
           </p>
 
-          <div className=" xl:mx-auto max-w-[1500px] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10  p-5 xl:grid-cols-3">
+          <div className="xl:mx-auto max-w-[1500px] grid overflow-hidden rounded-3xl xl:m-10 gap-10 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:p-10 p-5 xl:grid-cols-3">
             <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
                 <p className="xl:text-2xl text-lg  font-bold text-primary">
                   EVIDENCE OF LEARNING
                 </p>
                 <p className="mt-5 xl:text-lg sm:text-lg md:text-lg text-primary">
-                It refers to the tangible demonstrations of learner's progress, understanding and mastery of specific competencies. They include: portfolios of work, performance tasks, rubrics and checklists, projects and assignments, peer and self-assessment and teachers observations
-                 to evaluate practical skills and understanding. Evidence of Learning ensures learners acquire the skills, values and attitudes effectively.
+                  Refers to the tangible demonstrations of learner's progress,
+                  understanding and mastery of specific competencies. They
+                  include: portfolios of work, performance tasks, rubrics and
+                  checklists, projects and assignments, peer and self-assessment
+                  and teachers observations to evaluate practical skills and
+                  understanding. Evidence of Learning ensures learners acquire
+                  the skills, values and attitudes effectively.
                 </p>
                 <Link to="/register">
                   <Button className="text-lg  font-bold w-full mt-5 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
@@ -738,8 +735,6 @@ const Home = () => {
                   />
                   Pre-School
                 </li>
-
-
 
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
@@ -771,15 +766,12 @@ const Home = () => {
                 </li>
               </ul>
             </div>
-            <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
+            {/* <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
-              <div className="xl:mb-20">
-                <p className="xl:text-2xl text-lg  font-bold text-primary">
-                  BASIC PLAN
-                </p>
-            
-
-                 
+                <div className="xl:mb-20">
+                  <p className="xl:text-2xl text-lg  font-bold text-primary">
+                    BASIC PLAN
+                  </p>
                 </div>
                 <Link to="/register">
                   <Button className="text-lg  font-bold w-full mt-2 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
@@ -801,16 +793,16 @@ const Home = () => {
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                  <span className="font-bold mr-1.5">Standard </span> Summative Assessment
+                  <span className="font-bold mr-1.5">Standard </span> Summative
+                  Assessment
                 </li>
-
 
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                   <span className="font-bold mr-1.5">Formative</span> Assessment
+                  <span className="font-bold mr-1.5">Formative</span> Assessment
                 </li>
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
@@ -824,14 +816,14 @@ const Home = () => {
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5 mr-2"
                   />
-                     <span className="font-bold mr-1.5">  Learner</span> Promotion
+                  <span className="font-bold mr-1.5"> Learner</span> Promotion
                 </li>
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
                     icon={faCircleCheck}
                     className="text-green-500 w-5 h-5  mr-2"
                   />
-                      <span className="font-bold mr-1.5"> Learner</span> Transfers
+                  <span className="font-bold mr-1.5"> Learner</span> Transfers
                 </li>
                 <li className="flex items-center p-0.5">
                   <FontAwesomeIcon
@@ -840,17 +832,16 @@ const Home = () => {
                   />
                   <span className="font-bold mr-1.5"> Email </span>Analysis
                 </li>
-              
               </ul>
-            </div>
+            </div> */}
             <div className="group relative border rounded-xl p-8 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10 hover:border-primary">
               <div className="contents">
                 <div className="mb-20">
-                <p className="xl:text-2xl text-lg  font-bold text-primary">
-                  PREMIUM PLAN
-                </p>
+                  <p className="xl:text-2xl text-lg  font-bold text-primary">
+                    PREMIUM PLAN
+                  </p>
                 </div>
-               
+
                 <Link to="/register">
                   <Button className="text-lg  font-bold w-full mt-2 p-2 h-[40px] px-3 gap-2 border-2 border-primary text-primary transition duration-300 ease-in-out transition group-hover:bg-primary group-hover:text-white">
                     Get a Quote
@@ -867,26 +858,24 @@ const Home = () => {
                 <div className="border-b border-primary/50 w-full mt-8"></div>
               </div>
               <div className="space-y-2 mt-8 ml-2 p-2 xl:text-lg text-primary">
-      <ul>
-        {displayedItems.map((item, index) => (
-          <li key={index} className="flex items-center p-0.5">
-            <FontAwesomeIcon
-              icon={faCircleCheck}
-              className="text-green-500 w-5 h-5 mr-2"
-            />
-            <span className="break-words">{item}</span>
-         
-          </li>
-        ))}
-      </ul>
-      <button
-  className="mt-4 text-primary font-bold"
-  onClick={() => setShowAll(!showAll)}
->
-  {showAll ? "See less Features" : "See all Features"}
-</button>
-
-    </div>
+                <ul>
+                  {displayedItems.map((item, index) => (
+                    <li key={index} className="flex items-center p-0.5">
+                      <FontAwesomeIcon
+                        icon={faCircleCheck}
+                        className="text-green-500 w-5 h-5 mr-2"
+                      />
+                      <span className="break-words">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  className="mt-4 text-primary font-bold"
+                  onClick={() => setShowAll(!showAll)}
+                >
+                  {showAll ? "See less Features" : "See all Features"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

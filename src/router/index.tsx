@@ -68,6 +68,7 @@ import Demo from "../pages/Demo";
 import Terms from "../pages/Terms";
 import Policy from "../pages/Policy";
 import Payment from "../pages/Payment";
+import Cookies from "../pages/Cookies";
 
 //nn
 function Router() {
@@ -291,6 +292,7 @@ function Router() {
       element: (
         <GuestGuard>
           <Auth />
+          {/* <></> */}
         </GuestGuard>
       ),
       children: [
@@ -338,6 +340,10 @@ function Router() {
     {
       path: "/terms",
       element: <Terms />,
+    },
+    {
+      path: "/cookie-policy",
+      element: <Cookies/>,
     },
     {
       path: "/payment",
