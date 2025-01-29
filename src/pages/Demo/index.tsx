@@ -27,6 +27,7 @@ const Demo = () => {
   const [selectedCounty, setSelectedCounty] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [requestError, setRequestError] = useState(false);
 
   const [subCounties, setSubCounties] = useState([]);
   const [counties, setCounties] = useState<County[]>([]); // List<County>
@@ -106,8 +107,15 @@ const Demo = () => {
     try {
       await schema.validate({ ...form, selected_date }, { abortEarly: false });
       console.log("Form submitted successfully", { ...form, selected_date });
-      await ApiService.scedule_demo({ ...form, selected_date });
-      setSuccess(true);
+      const response = await ApiService.scedule_demo({
+        ...form,
+        selected_date,
+      });
+      if (response.message.success) {
+        setSuccess(true);
+      } else {
+        setRequestError(response.message.error);
+      }
       // Add your submission logic here (e.g., API call)
     } catch (error: any) {
       if (error.inner) {
@@ -115,6 +123,7 @@ const Demo = () => {
           console.error(err.message);
         });
       }
+      // setRequestError(error.message);
     } finally {
       setLoading(false);
     }
@@ -458,6 +467,8 @@ const Demo = () => {
                       </label>
                     </div>
                   </div>
+                  <p className="p-2 text-gray-500 text-red">{requestError}</p>
+
                   <div className="mt-5  xl:mt-8 xl:text-left">
                     <Button
                       variant="primary"

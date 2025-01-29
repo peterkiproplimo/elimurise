@@ -80,7 +80,7 @@ export const getPackages = async (data: any) => {
 export const scedule_demo = async (data: any) => {
   try {
     let res = await axios.post(
-      "https://staging-erp.herolearning.co.ke/api/method/hero.hero.apis.appointment.schedule_appointment",
+      "http://localhost:8021/api/method/hero.hero.apis.appointment.schedule_appointment",
       data
     );
     return res.data;

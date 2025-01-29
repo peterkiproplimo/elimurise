@@ -733,6 +733,25 @@ function Main() {
                   )}
                 </div>
                 <div className="col-span-4 sm:col-span-4">
+                  <FormLabel>
+                    Assessment Number
+                    {/* <span className="text-danger ml-0.5">*</span> */}
+                  </FormLabel>
+                  <FormInput
+                    {...register("assessment_no")}
+                    type="number"
+                    name="assessment_no"
+                    className={errors.adm_no ? "border-danger" : ""}
+                    placeholder="Assessment No"
+                  />
+                  {errors.adm_no && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.adm_no.message === "string" &&
+                        errors.adm_no.message}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-4 sm:col-span-4">
                   <FormLabel>Nemis No</FormLabel>
                   <FormInput
                     {...register("nemis_no")}
@@ -1333,6 +1352,9 @@ function Main() {
                           Adm No
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
+                          Assessment No
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
                           Nemis
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap w-20">
@@ -1411,6 +1433,11 @@ function Main() {
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.adm_no}
+                            </span>
+                          </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.assessment_no ?? "N/A"}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
