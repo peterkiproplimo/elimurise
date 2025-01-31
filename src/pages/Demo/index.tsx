@@ -13,6 +13,7 @@ import icon from "../../assets/images/Arrow_Right_MD.png";
 import * as ApiService from "../../services/auth";
 import { Controller, useForm } from "react-hook-form";
 import TomSelect from "../../base-components/TomSelect";
+import { addDays, isSameDay, parseISO } from "date-fns";
 
 import FooterComponent from "../../webapp/footer";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -28,6 +29,7 @@ const Demo = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [requestError, setRequestError] = useState(false);
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
   const [subCounties, setSubCounties] = useState([]);
   const [counties, setCounties] = useState<County[]>([]); // List<County>
@@ -48,6 +50,49 @@ const Demo = () => {
     } else {
       setSubCounties([]);
     }
+  };
+  const fetchBookedDates = async () => {
+    try {
+      const booked = await ApiService.get_schedule_demo();
+      if (booked) {
+        const formattedDates = booked.map((date: string) => parseISO(date));
+        setBookedDates(formattedDates);
+      }
+    } catch (error) {
+      console.error("Error fetching booked dates:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookedDates();
+  }, []);
+
+  // Array of additional disabled dates
+  const disabledDates = [
+    new Date(2025, 0, 10), // Jan 10, 2024
+    new Date(2025, 0, 15), // Jan 15, 2024
+    new Date(2025, 1, 20), // Jan 20, 2024
+  ];
+
+  // const isDisabled = (date) => {
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0); // Normalize today's date
+
+  //   return (
+  //     date < today || // Block past days including today
+  //     date.getDay() === 0 || // Block Sundays
+  //     disabledDates.some((disabledDate) => isSameDay(date, disabledDate)) // Block additional dates
+  //   );
+  // };
+  const isDisabled = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    console.log(bookedDates);
+    return (
+      date < today || // Block past days
+      date.getDay() === 0 || // Block Sundays
+      bookedDates.some((booked) => isSameDay(date, booked)) // Block booked future dates
+    );
   };
 
   const [selected_date, setselected_date] = useState("");
@@ -89,6 +134,7 @@ const Demo = () => {
       [name]: value,
     }));
   };
+
   useEffect(() => {
     const getCounties = async () => {
       const counties = await ApiService.getCounties({});
@@ -113,11 +159,14 @@ const Demo = () => {
       });
       if (response.message.success) {
         setSuccess(true);
+        fetchBookedDates();
       } else {
         setRequestError(response.message.error);
       }
       // Add your submission logic here (e.g., API call)
     } catch (error: any) {
+      console.error(err);
+
       if (error.inner) {
         error.inner.forEach((err: yup.ValidationError) => {
           console.error(err.message);
@@ -433,6 +482,7 @@ const Demo = () => {
                       selected={
                         selected_date ? adjustToKenyanTime(selected_date) : null
                       }
+                      filterDate={(date) => !isDisabled(date)}
                       onChange={handleDateChange}
                       showTimeSelect
                       timeFormat="HH:mm"

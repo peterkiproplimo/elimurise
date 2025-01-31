@@ -80,7 +80,7 @@ export const getPackages = async (data: any) => {
 export const scedule_demo = async (data: any) => {
   try {
     let res = await axios.post(
-      "http://localhost:8021/api/method/hero.hero.apis.appointment.schedule_appointment",
+      "http://127.0.0.1:8021/api/method/hero.hero.apis.appointment.schedule_appointment",
       data
     );
     return res.data;
@@ -88,6 +88,17 @@ export const scedule_demo = async (data: any) => {
     throw handler(e);
   }
 };
+export const get_schedule_demo = async () => {
+  try {
+    let res = await axios.get(
+      "http://127.0.0.1:8021/api/method/hero.hero.apis.appointment.get_booked_dates"
+    );
+    return res.data.message; // Assuming booked dates are inside `message`
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
 export const getSubscriptions = async (data: any) => {
   try {
     await getData();
