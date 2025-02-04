@@ -165,7 +165,7 @@ const Demo = () => {
       }
       // Add your submission logic here (e.g., API call)
     } catch (error: any) {
-      console.error(err);
+      // console.error(err);
 
       if (error.inner) {
         error.inner.forEach((err: yup.ValidationError) => {
