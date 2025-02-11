@@ -46,7 +46,7 @@ import SummativeTests from "../pages/SummativeTests";
 import SummativeAssess from "../pages/SummativeAssess";
 import SummativeReport from "../pages/SummativeReport";
 import SummativeDone from "../pages/SummativeTests/done-tests";
-
+import ParentConnect from "../pages/Parents/parentConnectPart";
 import User from "../pages/User";
 import Role from "../pages/roles";
 import Term from "../pages/Term";
@@ -69,6 +69,9 @@ import Terms from "../pages/Terms";
 import Policy from "../pages/Policy";
 import Payment from "../pages/Payment";
 import Cookies from "../pages/Cookies";
+import AttendanceForm from "../pages/Attendance/attendance";
+import AttendanceSummary from "../pages/Attendance/attendance_summary";
+import AttendanceTermly from "../pages/Attendance/attendance_termly";
 
 //nn
 function Router() {
@@ -152,6 +155,22 @@ function Router() {
         {
           path: "comments",
           element: <Comment />,
+        },
+        {
+          path: "attendance",
+          element: <AttendanceForm />,
+        },
+        {
+          path: "message",
+          element: <ParentConnect />,
+        },
+        {
+          path: "attendance_summary",
+          element: <AttendanceSummary />,
+        },
+        {
+          path: "attendance_termly_summary",
+          element: <AttendanceTermly />,
         },
         {
           path: "behaviour-assessment",
@@ -343,7 +362,7 @@ function Router() {
     },
     {
       path: "/cookie-policy",
-      element: <Cookies/>,
+      element: <Cookies />,
     },
     {
       path: "/payment",

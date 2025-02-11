@@ -100,6 +100,60 @@ const initialState: SideMenuState = {
       pathname: "/home/grade",
     },
 
+    {
+      icon: "Activity",
+      title: "Attendance",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/home/attendance",
+          title: "Learners Attendance",
+          ignore: false,
+          // ignore: !hasPermission("grading-system", "read"),
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/attendance_summary",
+          title: "Attendance Report",
+          ignore: false,
+          // ignore: !hasPermission("grading-system", "read"),
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/attendance_termly_summary",
+          title: "Attendance Termly",
+          ignore: false,
+          // ignore: !hasPermission("grading-system", "read"),
+        },
+      ],
+    },
+    {
+      icon: "Activity",
+      title: "Parent Connect",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/home/message",
+          title: "Chat",
+          ignore: false,
+          // ignore: !hasPermission("grading-system", "read"),
+        },
+        // {
+        //   icon: "Activity",
+        //   pathname: "/home/attendance_summary",
+        //   title: "Attendance Report",
+        //   ignore: false,
+        //   // ignore: !hasPermission("grading-system", "read"),
+        // },
+        // {
+        //   icon: "Activity",
+        //   pathname: "/home/attendance_termly_summary",
+        //   title: "Attendance Termly",
+        //   ignore: false,
+        //   // ignore: !hasPermission("grading-system", "read"),
+        // },
+      ],
+    },
     // {
     //   icon: "FileCheck",
     //   pathname: "/home/learning_areas",
@@ -161,6 +215,7 @@ const initialState: SideMenuState = {
         },
       ],
     },
+
     // {
     //   icon: "Users",
     //   title: "Learner Behaviour",

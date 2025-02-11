@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import * as c from "../../utils/constants";
 import leanerImg from "../../assets/images/learner.jpeg";
 import { formatDate } from "../../utils/helper";
+import Calendar from "../../components/Calendar/index";
 
 interface TableRow {
   no: number;
@@ -55,6 +56,9 @@ function Main() {
   const [message, setMessage] = useState("");
   const [learners, setLearners] = useState([{}]);
   const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
+  const [calendarEvents, setCalendarEvents] = useState<
+    { date: string; title: string }[]
+  >([]);
 
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -79,6 +83,7 @@ function Main() {
   useEffect(() => {
     const learner = JSON.parse(localStorage.getItem("learner") || "");
     setLearner(learner);
+    fetchAttendance(learner);
   }, []);
   // Success notification
   const notify = useRef<NotificationElement>();
@@ -102,353 +107,34 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
+  const fetchAttendance = async (learner: any) => {
+    // Fetch attendance data based on the clicked date
+    const response = await ApiService.parentAttendance(learner._id);
+    const events = response.data
+      .map((attendance: any) => {
+        const formattedDate = formatDate(attendance.date, "YYYY-MM-DD");
+        return [
+          {
+            date: formattedDate,
+            title: `Morning: ${attendance.morning ? "P" : "A"}`,
+          },
+          {
+            date: formattedDate,
+            title: `Afternoon: ${attendance.afternoon ? "P" : "A"}`,
+          },
+        ];
+      })
+      .flat();
+    setCalendarEvents(events);
+  };
+
   return (
     <>
       <div className="flex items-center mt-8 ">
         <h2 className="mr-auto text-lg font-medium">{"Profile Details"}</h2>
       </div>
       <br />
-      {/* <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
-        <div>
-          <a
-            onClick={(event: React.MouseEvent) => {
-              event.preventDefault();
-              setDialog(false);
-            }}
-            className="absolute top-0 right-0 mt-3 mr-3"
-            href="#"
-          ></a>
-        </div>
-        <fieldset className="mt-5 p-5  box validate-form">
-          <legend className="text-lg font-semibold">Learner Details</legend>
-          <div className="grid grid-cols-12 gap-4 gap-y-3">
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                First Name<span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                disabled
-                {...register("first_name")}
-                type="text"
-                name="first_name"
-                className={errors.first_name ? "border-danger" : ""}
-                placeholder="first name"
-              />
-              {errors.first_name && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.first_name.message === "string" &&
-                    errors.first_name.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Last Name<span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                disabled
-                {...register("last_name")}
-                type="text"
-                name="last_name"
-                className={errors.last_name ? "border-danger" : ""}
-                placeholder="last name"
-              />
-              {errors.last_name && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.last_name.message === "string" &&
-                    errors.last_name.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Surname</FormLabel>
-              <FormInput
-                disabled
-                {...register("surname")}
-                type="text"
-                name="surname"
-                className={errors.surname ? "border-danger" : ""}
-                placeholder="surname"
-              />
-              {errors.surname && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.surname.message === "string" &&
-                    errors.surname.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Admission Number
-                <span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                disabled
-                {...register("adm_no")}
-                type="text"
-                name="adm_no"
-                className={errors.adm_no ? "border-danger" : ""}
-                placeholder="admission no"
-              />
-              {errors.adm_no && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.adm_no.message === "string" &&
-                    errors.adm_no.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Nemis No</FormLabel>
-              <FormInput
-                disabled
-                {...register("nemis_no")}
-                type="text"
-                name="nemis_no"
-                className={errors.nemis_no ? "border-danger" : ""}
-                placeholder="nemis no"
-              />
-              {errors.nemis_no && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.nemis_no.message === "string" &&
-                    errors.nemis_no.message}
-                </div>
-              )}
-            </div>
-          </div>
-        </fieldset>
-        <fieldset className="mt-5 p-5  box validate-form">
-          <legend className="text-lg font-semibold">Guardian Details</legend>
-          <div className="grid grid-cols-12 gap-4 gap-y-3">
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Guardian First Name
-                <span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                disabled
-                {...register("guardian_first_name")}
-                type="text"
-                name="guardian_first_name"
-                className={errors.guardian_first_name ? "border-danger" : ""}
-                placeholder="guardian first name"
-              />
-              {errors.guardian_first_name && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian_first_name.message === "string" &&
-                    errors.guardian_first_name.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Guardian Surname</FormLabel>
-              <FormInput
-                disabled
-                {...register("guardian_surname")}
-                type="text"
-                name="guardian_surname"
-                className={errors.guardian_surname ? "border-danger" : ""}
-                placeholder="guardian surname"
-              />
-              {errors.guardian_surname && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian_surname.message === "string" &&
-                    errors.guardian_surname.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Guardian Last Name
-                <span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                disabled
-                {...register("guardian_last_name")}
-                type="text"
-                name="guardian_last_name"
-                className={errors.guardian_last_name ? "border-danger" : ""}
-                placeholder="guardian last name"
-              />
-              {errors.guardian_last_name && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian_last_name.message === "string" &&
-                    errors.guardian_last_name.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Guardian ID Number
-                <span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                disabled
-                {...register("guardian_id_no")}
-                type="text"
-                name="guardian_id_no"
-                className={errors.guardian_id_no ? "border-danger" : ""}
-                placeholder="guardian ID number"
-              />
-              {errors.guardian_id_no && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian_id_no.message === "string" &&
-                    errors.guardian_id_no.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Guardian Email</FormLabel>
-              <FormInput
-                disabled
-                {...register("guardian_email")}
-                type="email"
-                name="guardian_email"
-                className={errors.guardian_email ? "border-danger" : ""}
-                placeholder="guardian email"
-              />
-              {errors.guardian_email && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian_email.message === "string" &&
-                    errors.guardian_email.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Guardian Phone</FormLabel>
-              <FormInput
-                disabled
-                {...register("guardian_phone")}
-                type="text"
-                name="guardian_phone"
-                className={errors.guardian_phone ? "border-danger" : ""}
-                placeholder="guardian phone"
-              />
-              {errors.guardian_phone && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian_phone.message === "string" &&
-                    errors.guardian_phone.message}
-                </div>
-              )}
-            </div>
-          </div>
-        </fieldset>
-        <fieldset className="mt-5 p-5  box validate-form">
-          <legend className="text-lg font-semibold">Parent 2 Details</legend>
-          <div className="grid grid-cols-12 gap-4 gap-y-3">
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Guardian First Name
-                <span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                {...register("guardian2_first_name")}
-                type="text"
-                name="guardian2_first_name"
-                className={errors.guardian2_first_name ? "border-danger" : ""}
-                placeholder="Second guardian first name"
-                disabled
-              />
-              {errors.guardian2_first_name && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian2_first_name.message === "string" &&
-                    errors.guardian2_first_name.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Guardian Surname</FormLabel>
-              <FormInput
-                {...register("guardian2_surname")}
-                type="text"
-                name="guardian2_surname"
-                className={errors.guardian2_surname ? "border-danger" : ""}
-                placeholder="Second guardian surname"
-                disabled
-              />
-              {errors.guardian2_surname && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian2_surname.message === "string" &&
-                    errors.guardian2_surname.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Guardian Last Name
-                <span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                {...register("guardian2_last_name")}
-                type="text"
-                name="guardian2_last_name"
-                className={errors.guardian2_last_name ? "border-danger" : ""}
-                placeholder="Second guardian last name"
-                disabled
-              />
-              {errors.guardian2_last_name && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian2_last_name.message === "string" &&
-                    errors.guardian2_last_name.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>
-                Guardian ID Number
-                <span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormInput
-                {...register("guardian2_id_no")}
-                type="text"
-                name="guardian2_id_no"
-                className={errors.guardian2_id_no ? "border-danger" : ""}
-                placeholder="Second guardian ID number"
-                disabled
-              />
-              {errors.guardian2_id_no && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian2_id_no.message === "string" &&
-                    errors.guardian2_id_no.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Guardian Email</FormLabel>
-              <FormInput
-                {...register("guardian2_email")}
-                type="email"
-                name="guardian2_email"
-                className={errors.guardian2_email ? "border-danger" : ""}
-                placeholder="Second guardian email"
-                disabled
-              />
-              {errors.guardian2_email && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian2_email.message === "string" &&
-                    errors.guardian2_email.message}
-                </div>
-              )}
-            </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel>Guardian Phone</FormLabel>
-              <FormInput
-                {...register("guardian2_phone")}
-                type="text"
-                name="guardian2_phone"
-                className={errors.guardian2_phone ? "border-danger" : ""}
-                placeholder="Second guardian phone"
-                disabled
-              />
-              {errors.guardian2_phone && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.guardian2_phone.message === "string" &&
-                    errors.guardian2_phone.message}
-                </div>
-              )}
-            </div>
-          </div>
-        </fieldset>
-      </form> */}
+
       <div className="content">
         {/* Custom Back Button */}
         <a
@@ -547,6 +233,18 @@ function Main() {
                       onClick={() => setActiveTab("tab3")}
                     >
                       History
+                    </button>
+                  </li>
+                  <li className="mr-2">
+                    <button
+                      className={`inline-block py-2 px-4 ${
+                        activeTab === "attendance"
+                          ? "text-blue-600 border-b-2 border-blue-600"
+                          : "text-gray-600 hover:text-blue-600"
+                      } font-semibold`}
+                      onClick={() => setActiveTab("attendance")}
+                    >
+                      Attendance
                     </button>
                   </li>
                 </ul>
@@ -750,6 +448,21 @@ function Main() {
                       <h4 className="font-bold">Additional Information</h4>
                       <p>Comming soon...</p>
                       {/* You can include more fields or tables here as needed */}
+                    </div>
+                  )}
+
+                  {/* Attendance Tab */}
+                  {activeTab === "attendance" && (
+                    <div className="tab-pane">
+                      <h4 className="font-bold">Attendance</h4>
+                      <Calendar
+                        initialDate="2025-02-12"
+                        events={calendarEvents}
+                        // onDateClick={fetchAttendancel}
+                      />
+                      <div>
+                        P- Present <div>A- Absent</div>
+                      </div>
                     </div>
                   )}
                 </div>

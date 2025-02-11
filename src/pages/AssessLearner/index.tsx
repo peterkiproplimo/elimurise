@@ -395,16 +395,66 @@ function Main() {
     fetchIndicator();
   };
   const publishIndicator = async () => {
-    let res = await ApiService.toggleIdicatorStatus(indicator, {
-      term: selectedTerm,
-      stream: stream,
+    const confirmed = await new Promise((resolve) => {
+      setConfirmDialog({
+        open: true,
+        onConfirm: () => resolve(true),
+        onCancel: () => resolve(false),
+      });
     });
-    // console.log(assessment);
-    // console.log(res);
-    // generateAssessment(indicator);
-    // fetchIndicator();
+
+    if (confirmed) {
+      let res = await ApiService.toggleIdicatorStatus(indicator, {
+        term: selectedTerm,
+        stream: stream,
+      });
+      generateAssessment(indicator);
+    }
   };
-  publishIndicator;
+
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    onConfirm: () => {},
+    onCancel: () => {},
+  });
+
+  const ConfirmDialog = ({ open, onConfirm, onCancel }) => (
+    <Dialog open={open} onClose={onCancel}>
+      <Dialog.Panel>
+        <div className="p-5 text-center">
+          <Lucide
+            icon="AlertCircle"
+            className="w-16 h-16 mx-auto mt-3 text-warning"
+          />
+          <div className="mt-5 text-3xl">Are you sure?</div>
+          <div className="mt-2 text-slate-500">
+            Once you publish, the results will be sent directly to the
+            individual parents and this action is irreversible . Please confirm
+            to continue or cancel to go back.
+          </div>
+        </div>
+        <div className="px-5 pb-8 text-center">
+          <Button
+            variant="outline-secondary"
+            type="button"
+            onClick={onCancel}
+            className="w-24 mr-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={onConfirm}
+            variant="primary"
+            type="button"
+            className="w-24"
+          >
+            Publish
+          </Button>
+        </div>
+      </Dialog.Panel>
+    </Dialog>
+  );
+
   const getDescriptionColor = (score: any) => {
     switch (score) {
       case 4:
@@ -432,6 +482,18 @@ function Main() {
 
   return (
     <>
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onConfirm={() => {
+          confirmDialog.onConfirm();
+          setConfirmDialog({ ...confirmDialog, open: false });
+        }}
+        onCancel={() => {
+          confirmDialog.onCancel();
+          setConfirmDialog({ ...confirmDialog, open: false });
+        }}
+      />
+      ;
       {dialog ? (
         <>
           {/* path: 'strand',
@@ -610,6 +672,7 @@ function Main() {
                           defaultValue={assessment?.assessmentDetails?.score}
                           max={4}
                           min={1}
+                          disabled={assessment?.assessmentDetails?.published}
                           onChange={(e) => {
                             const enteredValue = parseInt(e.target.value);
                             if (enteredValue > 4) {

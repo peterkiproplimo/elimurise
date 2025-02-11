@@ -80,7 +80,7 @@ export const getPackages = async (data: any) => {
 export const scedule_demo = async (data: any) => {
   try {
     let res = await axios.post(
-      "http://127.0.0.1:8021/api/method/hero.hero.apis.appointment.schedule_appointment",
+      "https://staging.herolearning.co.ke/api/method/hero.hero.apis.appointment.schedule_appointment",
       data
     );
     return res.data;
@@ -91,7 +91,7 @@ export const scedule_demo = async (data: any) => {
 export const get_schedule_demo = async () => {
   try {
     let res = await axios.get(
-      "http://127.0.0.1:8021/api/method/hero.hero.apis.appointment.get_booked_dates"
+      "https://staging.herolearning.co.ke/api/method/hero.hero.apis.appointment.get_booked_dates"
     );
     return res.data.message; // Assuming booked dates are inside `message`
   } catch (e) {
@@ -384,6 +384,55 @@ export const getStream = async (data: any) => {
     throw handler(e);
   }
 };
+export const getAttendance = async (data: any) => {
+  try {
+    let res = await axios.get(c.ATTENDANCE, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getAttendanceSummary = async (data: any) => {
+  try {
+    let res = await axios.get(c.ATTENDANCE + "/monthly-analysis", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getAttendanceMonthlySummary = async (data: any) => {
+  try {
+    let res = await axios.get(c.ATTENDANCE + "/monthly-summary", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getAttendanceMonthlyAnalysis = async (data: any) => {
+  try {
+    let res = await axios.get(c.ATTENDANCE + "/getMonthlyAttendanceSummary", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const createAttendance = async (data: any) => {
+  try {
+    console.log("data", data);
+    let res = await axios.post(c.ATTENDANCE, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
 export async function createStream(data: FieldValues) {
   try {
@@ -654,6 +703,14 @@ export async function createParents(data: FieldValues) {
 export async function parentDashboard() {
   try {
     let res = await axios.get(c.PARENT + "/v1/dashboard");
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function parentAttendance(data: any) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/attendance/" + data);
     return res.data;
   } catch (e) {
     throw handler(e);

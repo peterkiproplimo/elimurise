@@ -14,6 +14,8 @@ export const SUBSCRIPTION = `${BASE_URL}portal/subscription`;
 export const ACADEMIC = `${BASE_URL}portal/academic-year`;
 export const TERM = `${BASE_URL}portal/term`;
 export const STREAMS = `${BASE_URL}portal/streams`;
+export const ATTENDANCE = `${BASE_URL}portal/attendance`;
+
 export const LEARNERS = `${BASE_URL}portal/learners`;
 export const ENROLLMENT = `${BASE_URL}portal/enrollment`;
 export const ASSESSMENT = `${BASE_URL}portal/assessment`;

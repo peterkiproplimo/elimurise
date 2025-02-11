@@ -5,70 +5,57 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { CalendarOptions } from "@fullcalendar/common";
+// import "./Calendar.css"; // Import the CSS file
 
-function Main() {
-  const options: CalendarOptions = {
-    plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
-    droppable: true,
-    headerToolbar: {
-      left: "prev,next today",
-      center: "title",
-      right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-    },
-    initialDate: "2021-01-12",
-    navLinks: true,
-    editable: true,
-    dayMaxEvents: true,
-    events: [
-      {
-        title: "Vue Vixens Day",
-        start: "2021-01-05",
-        end: "2021-01-08",
-      },
-      {
-        title: "VueConfUS",
-        start: "2021-01-11",
-        end: "2021-01-15",
-      },
-      {
-        title: "VueJS Amsterdam",
-        start: "2021-01-17",
-        end: "2021-01-21",
-      },
-      {
-        title: "Vue Fes Japan 2019",
-        start: "2021-01-21",
-        end: "2021-01-24",
-      },
-      {
-        title: "Laracon 2021",
-        start: "2021-01-24",
-        end: "2021-01-27",
-      },
-    ],
-    drop: function (info) {
-      if (
-        document.querySelectorAll("#checkbox-events").length &&
-        (document.querySelectorAll("#checkbox-events")[0] as HTMLInputElement)
-          ?.checked
-      ) {
-        (info.draggedEl.parentNode as HTMLElement).remove();
-        if (
-          document.querySelectorAll("#calendar-events")[0].children.length == 1
-        ) {
-          document
-            .querySelectorAll("#calendar-no-events")[0]
-            .classList.remove("hidden");
-        }
-      }
-    },
-  };
-
-  return (
-    <div className="full-calendar">
-      <FullCalendar {...options} />
-    </div>
-  );
+interface CalendarProps {
+  initialDate?: string;
+  events?: Array<{ title: string; start: string; end?: string }>;
+  onDateClick?: (dateStr: string) => void;
 }
 
-export default Main;
+const Calendar: React.FC<CalendarProps> = ({
+  initialDate = new Date().toISOString().split("T")[0], // Default to today
+  events = [],
+  onDateClick,
+}) => {
+  return (
+    <div className="full-calendar">
+      <FullCalendar
+        plugins={[interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin]}
+        droppable={true}
+        headerToolbar={{
+          left: "prev,next today",
+          center: "title",
+        }}
+        initialDate={initialDate}
+        navLinks={false}
+        editable={true}
+        dayMaxEvents={true}
+        events={events}
+        drop={(info) => {
+          const checkbox = document.querySelector(
+            "#checkbox-events"
+          ) as HTMLInputElement;
+          if (checkbox?.checked) {
+            info.draggedEl.parentNode?.removeChild(info.draggedEl);
+            const eventContainer = document.querySelector(
+              "#calendar-events"
+            ) as HTMLElement;
+            if (eventContainer && eventContainer.children.length === 1) {
+              document
+                .querySelector("#calendar-no-events")
+                ?.classList.remove("hidden");
+            }
+          }
+        }}
+        dateClick={(info) => {
+          if (onDateClick) {
+            onDateClick(info.dateStr); // Call the API callback function
+          }
+        }}
+      />
+    </div>
+  );
+};
+
+export default Calendar;
