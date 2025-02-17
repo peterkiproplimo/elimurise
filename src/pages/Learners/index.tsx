@@ -232,7 +232,7 @@ function Main() {
       setSelectedFile(file);
     }
   };
-  const approveTranferSubmit = async (event: any) => {
+  const approveTranferSubmit = async () => {
     console.log("event");
     // event.preventDefault();
     // const result = await trigger();
