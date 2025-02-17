@@ -928,6 +928,7 @@ export const getReportByLearners = async (data: any) => {
     let res = await axios.get(c.ASSESSMENT + "/assessments" + type, {
       params: data,
       responseType: "arraybuffer",
+      timeout: 600000,
     });
     return res.data;
   } catch (e) {
