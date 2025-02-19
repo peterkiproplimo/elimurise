@@ -1789,7 +1789,7 @@ function Main() {
                         } font-semibold`}
                         onClick={() => setActiveTab("tab4")}
                       >
-                        Formartive Assessements
+                        Fomartive Assessements
                       </button>
                     </li>
                     <li className="mr-2">
@@ -1814,6 +1814,18 @@ function Main() {
                         onClick={() => setActiveTab("tab5")}
                       >
                         History
+                      </button>
+                    </li>
+                    <li className="mr-2">
+                      <button
+                        className={`inline-block py-2 px-4 ${
+                          activeTab === "tab5"
+                            ? "text-blue-600 border-b-2 border-blue-600"
+                            : "text-gray-600 hover:text-blue-600"
+                        } font-semibold`}
+                        onClick={() => setActiveTab("tab6")}
+                      >
+                        E-Portforlio
                       </button>
                     </li>
                   </ul>
@@ -2245,6 +2257,13 @@ function Main() {
                     {activeTab === "tab5" && (
                       <div className="tab-pane">
                         <h4 className="font-bold">Additional Information</h4>
+                        <p>Comming soon...2</p>
+                        {/* You can include more fields or tables here as needed */}
+                      </div>
+                    )}
+                    {activeTab === "tab6" && (
+                      <div className="tab-pane">
+                        <h4 className="font-bold">Information</h4>
                         <p>Comming soon...2</p>
                         {/* You can include more fields or tables here as needed */}
                       </div>

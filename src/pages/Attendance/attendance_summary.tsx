@@ -4,6 +4,7 @@ import * as ApiService from "../../services/auth";
 import { CheckCircle, XCircle } from "lucide-react"; // Import Lucide icons
 import LoadingIcon from "../../base-components/LoadingIcon";
 import jsPDF from "jspdf"; // Import jsPDF for PDF generation
+import Tooltip from "../../base-components/ToolTip"; // Import the Tooltip component
 
 function AttendanceForm() {
   const [grades, setGrades] = useState([]);
@@ -48,7 +49,7 @@ function AttendanceForm() {
 
     // Process attendance data for learners
     const learnersData = response?.data?.attendanceSummary.map(
-      (learnerData) => {
+      (learnerData: any) => {
         const learnerName = `${learnerData.learner.first_name} ${learnerData.learner.last_name}`;
         const attendanceDates = Object.keys(learnerData.attendance);
         return {
@@ -57,6 +58,8 @@ function AttendanceForm() {
           attendance: attendanceDates.map((date) => ({
             date,
             morning: learnerData.attendance[date].morning,
+            morning_reason: learnerData.attendance[date].morning_reason,
+            afternoon_reason: learnerData.attendance[date].afternoon_reason,
             afternoon: learnerData.attendance[date].afternoon,
             day: date,
           })),
@@ -101,10 +104,10 @@ function AttendanceForm() {
     yOffset += 10;
 
     // Add table content
-    attendanceSummary.learnersData.forEach((entry, index) => {
+    attendanceSummary.learnersData.forEach((entry: any, index) => {
       doc.text((index + 1).toString(), 14, yOffset);
       doc.text(entry.learnerName, 30, yOffset);
-      entry.attendance.forEach((attend, idx) => {
+      entry.attendance.forEach((attend: any, idx) => {
         const status =
           attend.morning && attend.afternoon
             ? "X"
@@ -215,13 +218,12 @@ function AttendanceForm() {
                 <tbody>
                   {attendanceSummary.learnersData.length > 0 ? (
                     <>
-                      {attendanceSummary.learnersData.map((entry, index) => (
-                        <>
+                      {attendanceSummary.learnersData.map(
+                        (entry: any, index) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="border border-gray-300 p-2">
                               {index + 1}
                             </td>
-
                             <td className="border border-gray-300 p-2">
                               {entry.learnerName}
                             </td>
@@ -229,25 +231,36 @@ function AttendanceForm() {
                               {entry.gender.charAt(0)}
                             </td>
 
-                            {entry.attendance.map((attend, idx) => (
+                            {entry.attendance.map((attend: any, idx) => (
                               <td
                                 key={idx}
-                                className="border border-gray-300 text-center p-2"
+                                className="border border-gray-300 text-center p-2 relative group"
                               >
-                                {attend.morning && attend.afternoon ? (
-                                  <span className="text-black-500">X</span>
-                                ) : !attend.morning && !attend.afternoon ? (
-                                  <span className="text-black-500">oo</span>
-                                ) : attend.morning && !attend.afternoon ? (
-                                  <span className="text-black-500">/o</span>
-                                ) : (
-                                  <span className="text-black-500">o/</span>
+                                <span className="text-black-500">
+                                  {
+                                    attend.morning && attend.afternoon
+                                      ? "X" // Full Day
+                                      : !attend.morning && !attend.afternoon
+                                      ? "oo" // Absent
+                                      : attend.morning && !attend.afternoon
+                                      ? "/o" // Half Day (Morning)
+                                      : "o/" // Half Day (Afternoon)
+                                  }
+                                </span>
+                                {/* Tooltip only if absent */}
+                                {(!attend.morning || !attend.afternoon) && (
+                                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-md">
+                                    {attend.morning_reason ||
+                                      attend.afternoon_reason ||
+                                      "No reason provided"}
+                                  </div>
                                 )}
                               </td>
                             ))}
                           </tr>
-                        </>
-                      ))}
+                        )
+                      )}
+
                       <tr>
                         <td className="border border-gray-300 p-2"></td>
                         <td className="border border-gray-300 p-2" colSpan="2">

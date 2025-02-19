@@ -478,6 +478,63 @@ export const getGrades = async (data: any) => {
   }
 };
 
+export const getParentNotifications = async (data: any) => {
+  try {
+    let res = await axios.get(c.PARENT + "/notifications/list", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getNotificeBoardParent = async (data: any) => {
+  try {
+    let res = await axios.get(c.PARENT + "/noticeboard", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getNotificeBoard = async (data: any) => {
+  try {
+    let res = await axios.get(c.SCHOOL_PATH + "/noticeboard", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const createNotificeBoard = async (data: any) => {
+  try {
+    let res = await axios.post(c.SCHOOL_PATH + "/noticeboard", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const deleteNotificeBoard = async (data: any) => {
+  try {
+    let res = await axios.delete(c.SCHOOL_PATH + "/noticeboard" + data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const getSchoolNotifications = async (data: any) => {
+  try {
+    let res = await axios.get(c.SCHOOL_PATH + "/notifications/list", {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
 export async function deleteGrade(gradeId: any) {
   try {
     let res = await axios.delete(c.GRADES + "/" + gradeId);
@@ -647,6 +704,24 @@ export async function deleteTransfer(transferId: any) {
 export async function getBehaviour() {
   try {
     let res = await axios.get(c.BEHAVIOUR);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getMessage(data: any) {
+  try {
+    console.log(data);
+    let res = await axios.get(c.MESSAGE + "/" + data.parent);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getMessageParent(data: any) {
+  try {
+    console.log(data);
+    let res = await axios.get(c.MESSAGE_PARENT + "/" + data.parent);
     return res.data;
   } catch (e) {
     throw handler(e);

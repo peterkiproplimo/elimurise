@@ -53,7 +53,9 @@ function Main() {
   const { register, handleSubmit, reset } = useForm<FormData>();
   const [parents, setParents] = useState<Parent[]>([]);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
-  const [selectedParent, setSelectedParent] = useState<string>("");
+  const [selectedParent, setSelectedParent] = useState<string>(
+    "676e2905deac6e09363e2dcf"
+  );
 
   const getParents = async () => {
     setLoading(true);
@@ -90,8 +92,10 @@ function Main() {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      console.log(selectedParent);
-      const response = await ApiService.getMessage({ parent: selectedParent });
+      console.log("fetching");
+      const response = await ApiService.getMessageParent({
+        parent: selectedParent,
+      });
       console.log(response);
       setMessages(response.data);
       setLoading(false);
@@ -131,16 +135,13 @@ function Main() {
   }, []);
 
   useEffect(() => {
-    if (selectedParent == "") {
-      return;
-    }
     fetchMessages();
   }, [selectedParent]);
 
   return (
     <>
       <div className="flex items-center mt-8">
-        <h2 className="mr-auto text-lg font-medium">Message</h2>
+        <h2 className="mr-auto text-lg font-medium">Parent Conmmunication</h2>
       </div>
       <div className="mt-5 p-5 box">
         <div className="overflow-y-auto h-96 chat-box">
@@ -159,19 +160,8 @@ function Main() {
           )}
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-          <FormLabel>Select Parent</FormLabel>
-          <FormSelect
-            {...register("parent")}
-            onChange={(e) => setSelectedParent(e.target.value)}
-            className="mb-4"
-          >
-            <option value="">Select a parent</option>
-            {parents.map((parent) => (
-              <option key={parent._id} value={parent._id}>
-                {parent.first_name} {parent.last_name}
-              </option>
-            ))}
-          </FormSelect>
+          {/* <FormLabel>Select Parent</FormLabel> */}
+
           <FormLabel>Message</FormLabel>
           <FormInput
             {...register("content")}

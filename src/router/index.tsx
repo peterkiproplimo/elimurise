@@ -46,7 +46,11 @@ import SummativeTests from "../pages/SummativeTests";
 import SummativeAssess from "../pages/SummativeAssess";
 import SummativeReport from "../pages/SummativeReport";
 import SummativeDone from "../pages/SummativeTests/done-tests";
-import ParentConnect from "../pages/Parents/parentConnectPart";
+import ParentConnect from "../pages/Parents/parentConnect";
+import ParentConnectPart from "../pages/Parents/parentConnectPart";
+import Noticesboard from "../pages/Parents/Noticeboard";
+import NoticesboardParent from "../pages/Parents/NoticeboardParent";
+
 import User from "../pages/User";
 import Role from "../pages/roles";
 import Term from "../pages/Term";
@@ -162,8 +166,13 @@ function Router() {
         },
         {
           path: "message",
-          element: <ParentConnect />,
+          element: <ParentConnectPart />,
         },
+        {
+          path: "notice-board",
+          element: <Noticesboard />,
+        },
+
         {
           path: "attendance_summary",
           element: <AttendanceSummary />,
@@ -295,6 +304,14 @@ function Router() {
         {
           path: "report",
           element: <LearnerProfiles />,
+        },
+        {
+          path: "message",
+          element: <ParentConnect />,
+        },
+        {
+          path: "noticeboard",
+          element: <NoticesboardParent />,
         },
         {
           path: "summative",

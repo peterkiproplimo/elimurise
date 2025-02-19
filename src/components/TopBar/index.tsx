@@ -20,6 +20,8 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   const signOut = () => {
     auth.signOut();
   };
+  const [notifications, setNotifications] = useState<any>([]);
+
   const [user, setUser] = useState<any>({});
   const [school, setSchool] = useState<any>({});
 
@@ -30,7 +32,35 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
     const el = document.querySelectorAll("html")[0];
     darkMode ? el.classList.add("dark") : el.classList.remove("dark");
   };
+  useEffect(() => {
+    // Function to fetch notifications
+    const fetchNotifications = () => {
+      getParentNotifications();
+    };
 
+    // Call initially
+    fetchNotifications();
+
+    // Set interval to call every minute
+    const interval = setInterval(() => {
+      fetchNotifications();
+    }, 1000); // 60000ms = 1 minute
+
+    // Cleanup function to clear interval when component unmounts
+    return () => clearInterval(interval);
+  }, []);
+
+  const getParentNotifications = async () => {
+    const type = localStorage.getItem("type");
+
+    if (type === "parent") {
+      const response = await ApiService.getParentNotifications({ page: 1 });
+      setNotifications(response.data);
+    } else {
+      const response = await ApiService.getSchoolNotifications({ page: 1 });
+      setNotifications(response.data);
+    }
+  };
   const switchMode = () => {
     dispatch(setDarkMode(!darkMode));
     localStorage.setItem("darkMode", (!darkMode).toString());
@@ -121,35 +151,32 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
             >
               <Lucide icon="Bell" className="w-5 h-5 dark:text-slate-500" />
             </Popover.Button>
-            <Popover.Panel className="w-[280px] sm:w-[350px] p-5 mt-2">
+            <Popover.Panel className="w-[280px] sm:w-[350px] p-5 mt-2 max-h-[300px] overflow-y-auto">
               <div className="mb-5 font-medium">Notifications</div>
-              {_.take(fakerData, 5).map((faker, fakerKey) => (
+              {notifications.map((notification: any) => (
                 <div
-                  key={fakerKey}
-                  className={clsx([
-                    "cursor-pointer relative flex items-center",
-                    { "mt-5": fakerKey },
-                  ])}
+                  key={notification._id}
+                  className="cursor-pointer relative flex items-center mt-5"
                 >
                   <div className="relative flex-none w-12 h-12 mr-1 image-fit">
-                    <img
-                      alt=""
-                      className="rounded-full"
-                      src={faker.photos[0]}
-                    />
+                    {/* <img
+          alt="User"
+          className="rounded-full"
+          src="https://via.placeholder.com/48" // Replace with user avatar if available
+        /> */}
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
                   </div>
                   <div className="ml-2 overflow-hidden">
                     <div className="flex items-center">
-                      <a href="" className="mr-5 font-medium truncate">
-                        {faker.users[0].name}
+                      <a href="#" className="mr-5 font-medium truncate">
+                        {notification.title}
                       </a>
                       <div className="ml-auto text-xs text-slate-400 whitespace-nowrap">
-                        {faker.times[0]}
+                        {new Date(notification.createdAt).toLocaleTimeString()}{" "}
                       </div>
                     </div>
                     <div className="w-full truncate text-slate-500 mt-0.5">
-                      {faker.news[0].shortContent}
+                      {notification.message}
                     </div>
                   </div>
                 </div>

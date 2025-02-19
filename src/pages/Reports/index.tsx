@@ -559,7 +559,7 @@ function Main() {
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <h2 className="mr-auto text-base font-medium border-b p-2">
-              Formartive Report
+              Formative Report
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2">
@@ -580,7 +580,7 @@ function Main() {
 
                   <option value={"learner"}>Learner Report</option>
                   <option value="learner-weakness">
-                    Learner's Area of Improvement
+                    Learner's Areas to Improve
                   </option>
                   {/* <option value="learner-strength">Learner Strengths</option> */}
 

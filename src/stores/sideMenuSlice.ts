@@ -129,12 +129,19 @@ const initialState: SideMenuState = {
     },
     {
       icon: "Activity",
-      title: "Parent Connect",
+      title: "Communications",
       subMenu: [
         {
           icon: "Activity",
           pathname: "/home/message",
-          title: "Chat",
+          title: "Parents",
+          ignore: false,
+          // ignore: !hasPermission("grading-system", "read"),
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/notice-board",
+          title: "Notice Board",
           ignore: false,
           // ignore: !hasPermission("grading-system", "read"),
         },
@@ -369,13 +376,35 @@ const parentState: SideMenuState = {
 
     {
       icon: "FileText",
-      title: "Formartive Report",
+      title: "Formative Reports",
       pathname: "/parent/report",
     },
     {
       icon: "FileText",
-      title: "Summative Report",
+      title: "Summative Reports",
       pathname: "/parent/summative",
+    },
+    {
+      icon: "Activity",
+      pathname: "/parent/message2",
+      title: "E-Portifolio",
+      ignore: false,
+      // ignore: !hasPermission("grading-system", "read"),
+    },
+    {
+      icon: "Activity",
+      pathname: "/parent/message",
+      title: "Messages",
+      ignore: false,
+      // ignore: !hasPermission("grading-system", "read"),
+    },
+
+    {
+      icon: "Activity",
+      pathname: "/parent/noticeboard",
+      title: "Noticeboard",
+      ignore: false,
+      // ignore: !hasPermission("grading-system", "read"),
     },
     // {
     //   icon: "Users",

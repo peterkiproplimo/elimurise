@@ -13,8 +13,9 @@ function AttendanceForm() {
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedStream, setSelectedStream] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [attendanceList, setAttendanceList] = useState([]);
+  const [attendanceList, setAttendanceList] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [reason, setReason] = useState("");
   const [loadingSave, setLoadingSave] = useState(false);
 
   const [calendarEvents, setCalendarEvents] = useState([]);
@@ -37,7 +38,7 @@ function AttendanceForm() {
     setStreams(response.data);
   };
 
-  const fetchAttendance = async (date) => {
+  const fetchAttendance = async (date: any) => {
     if (!selectedGrade || !selectedStream || !date) return;
     setLoading(true);
     const response = await ApiService.getAttendance({
@@ -82,13 +83,13 @@ function AttendanceForm() {
     setCalendarEvents(events);
   };
 
-  const updateAttendance = (index, type, value) => {
+  const updateAttendance = (index: any, type: any, value) => {
     const updatedList = [...attendanceList];
     updatedList[index].attendanceDetails[type] = value;
     setAttendanceList(updatedList);
   };
 
-  const markAll = (type, status) => {
+  const markAll = (type: any, status) => {
     const updatedList = attendanceList.map((item) => ({
       ...item,
       attendanceDetails: {
@@ -106,7 +107,7 @@ function AttendanceForm() {
       attendanceList.attendanceDetails.length === 0
     ) {
       // Set morning and afternoon to false for all entries if attendanceDetails is empty or null
-      attendanceList.attendanceDetails = attendanceList?.map((item) => ({
+      attendanceList.attendanceDetails = attendanceList?.map((item: any) => ({
         ...item,
         attendanceDetails: {
           morning: false,
@@ -134,7 +135,7 @@ function AttendanceForm() {
 
   return (
     <div className="flex flex-wrap items-start col-span-12 mt-2 xl:flex-nowrap bg-white rounded-lg">
-      <div className="w-full xl:w-1/2 p-4">
+      <div className="w-full xl:w-2/5 p-4">
         <div className="box">
           <h3 className="text-lg font-bold mb-4 text-gray-700">
             Attendance Overview
@@ -152,7 +153,7 @@ function AttendanceForm() {
         </div>
       </div>
 
-      <div className="w-full xl:w-1/2 p-4">
+      <div className="w-full xl:w-3/5 p-4">
         <h2 className="text-2xl font-bold text-gray-800">Record Attendance</h2>
         {/* <form
           onSubmit={(e) => {
@@ -311,33 +312,206 @@ function AttendanceForm() {
                         <div className="text-gray-600">
                           {item.learner.adm_no}
                         </div>
-                        <div className="flex justify-center">
-                          <FormInput
-                            type="checkbox"
-                            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            checked={item.attendanceDetails?.morning}
-                            onChange={(e) =>
-                              updateAttendance(
-                                index,
-                                "morning",
-                                e.target.checked
-                              )
-                            }
-                          />
+                        <div className="flex flex-col items-center">
+                          {/* Morning Checkbox */}
+                          <div>
+                            <FormInput
+                              type="checkbox"
+                              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              checked={item.attendanceDetails?.morning || false}
+                              onChange={(e) =>
+                                updateAttendance(
+                                  index,
+                                  "morning",
+                                  e.target.checked
+                                )
+                              }
+                            />
+                          </div>
+
+                          {/* Show reason dropdown only when absent (checkbox unchecked) */}
+                          {!item.attendanceDetails?.morning && (
+                            <div className="mt-2">
+                              <FormSelect
+                                name="morning_reason"
+                                className="w-100 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                defaultValue={
+                                  item.attendanceDetails?.morning_reason || ""
+                                }
+                                onChange={(e) => {
+                                  const reason = e.target.value;
+
+                                  // Reset 'other reason' if reason is not 'Other'
+                                  if (reason === "Other") {
+                                    updateAttendance(
+                                      index,
+                                      "morning_other_reason",
+                                      reason
+                                    );
+                                    updateAttendance(
+                                      index,
+                                      "morning_reason",
+                                      ""
+                                    );
+                                  } else {
+                                    updateAttendance(
+                                      index,
+                                      "morning_other_reason",
+                                      ""
+                                    );
+                                    updateAttendance(
+                                      index,
+                                      "morning_reason",
+                                      reason
+                                    );
+                                  }
+                                }}
+                              >
+                                <option value="">Select Reason</option>
+                                <option value="Sick">Sick</option>
+                                <option value="Leave">Leave</option>
+                                <option value="On Leave">On Leave</option>
+                                <option value="Family Emergency">
+                                  Family Emergency
+                                </option>
+                                <option value="Personal Reasons">
+                                  Personal Reasons
+                                </option>
+                                <option value="Medical Appointment">
+                                  Medical Appointment
+                                </option>
+                                <option value="Transportation Issues">
+                                  Transportation Issues
+                                </option>
+                                <option value="Other">Other</option>
+                              </FormSelect>
+
+                              {/* Show input field for 'Other' reason */}
+                              {item.attendanceDetails?.morning_other_reason ===
+                                "Other" && (
+                                <div className="mt-2">
+                                  <FormInput
+                                    type="text"
+                                    placeholder="Please specify"
+                                    className="w-full text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    value={
+                                      item.attendanceDetails?.morning_reason ||
+                                      ""
+                                    }
+                                    onChange={(e) =>
+                                      updateAttendance(
+                                        index,
+                                        "morning_reason",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        <div className="flex justify-center">
-                          <FormInput
-                            type="checkbox"
-                            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            checked={item.attendanceDetails?.afternoon}
-                            onChange={(e) =>
-                              updateAttendance(
-                                index,
-                                "afternoon",
-                                e.target.checked
-                              )
-                            }
-                          />
+
+                        <div className="flex flex-col items-center">
+                          {/* Afternoon Checkbox */}
+                          <div>
+                            <FormInput
+                              type="checkbox"
+                              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              checked={
+                                item.attendanceDetails?.afternoon || false
+                              }
+                              onChange={(e) =>
+                                updateAttendance(
+                                  index,
+                                  "afternoon",
+                                  e.target.checked
+                                )
+                              }
+                            />
+                          </div>
+                          {/* {JSON.stringify(item.attendanceDetails)} */}
+
+                          {/* Show reason dropdown only when absent (checkbox unchecked) */}
+                          {!item.attendanceDetails?.afternoon && (
+                            <div className="mt-2">
+                              <FormSelect
+                                name="afternoon_reason"
+                                className="w-100 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                defaultValue={
+                                  item.attendanceDetails?.afternoon_reason || ""
+                                }
+                                onChange={(e) => {
+                                  const reason = e.target.value;
+
+                                  if (reason === "Other") {
+                                    updateAttendance(
+                                      index,
+                                      "afternoon_other_reason",
+                                      reason
+                                    );
+                                    updateAttendance(
+                                      index,
+                                      "afternoon_reason",
+                                      ""
+                                    );
+                                  } else {
+                                    updateAttendance(
+                                      index,
+                                      "afternoon_other_reason",
+                                      ""
+                                    );
+                                    updateAttendance(
+                                      index,
+                                      "afternoon_reason",
+                                      reason
+                                    );
+                                  }
+                                  // Reset 'other reason' if reason is not 'Other'
+                                }}
+                              >
+                                <option value="">Select Reason</option>
+                                <option value="Sick">Sick</option>
+                                <option value="Leave">Leave</option>
+                                <option value="On Leave">On Leave</option>
+                                <option value="Family Emergency">
+                                  Family Emergency
+                                </option>
+                                <option value="Personal Reasons">
+                                  Personal Reasons
+                                </option>
+                                <option value="Medical Appointment">
+                                  Medical Appointment
+                                </option>
+                                <option value="Transportation Issues">
+                                  Transportation Issues
+                                </option>
+                                <option value="Other">Other</option>
+                              </FormSelect>
+                              {/* Show input field for 'Other' reason */}
+                              {item.attendanceDetails
+                                ?.afternoon_other_reason === "Other" && (
+                                <div className="mt-2">
+                                  <FormInput
+                                    type="text"
+                                    placeholder="Please specify"
+                                    className="w-full text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    value={
+                                      item.attendanceDetails
+                                        ?.afternoon_reason || ""
+                                    }
+                                    onChange={(e) =>
+                                      updateAttendance(
+                                        index,
+                                        "afternoon_reason",
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
