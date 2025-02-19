@@ -141,7 +141,7 @@ const initialState: SideMenuState = {
         {
           icon: "Activity",
           pathname: "/home/notice-board",
-          title: "Notice Board",
+          title: "Notices",
           ignore: false,
           // ignore: !hasPermission("grading-system", "read"),
         },
@@ -223,22 +223,22 @@ const initialState: SideMenuState = {
       ],
     },
 
-    // {
-    //   icon: "Users",
-    //   title: "Learner Behaviour",
-    //   subMenu: [
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/home/behaviour",
-    //       title: "Behaviour Category",
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/home/behaviour-assessment",
-    //       title: "Behaviour Assessment",
-    //     },
-    //   ],
-    // },
+    {
+      icon: "Users",
+      title: "Learner Behaviour",
+      subMenu: [
+        {
+          icon: "Activity",
+          pathname: "/home/behaviour",
+          title: "Behaviour Category",
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/behaviour-assessment",
+          title: "Behaviour Assessment",
+        },
+      ],
+    },
     {
       icon: "Wallet",
       pathname: "/home/billing",
@@ -402,7 +402,7 @@ const parentState: SideMenuState = {
     {
       icon: "Activity",
       pathname: "/parent/noticeboard",
-      title: "Noticeboard",
+      title: "Notices",
       ignore: false,
       // ignore: !hasPermission("grading-system", "read"),
     },
