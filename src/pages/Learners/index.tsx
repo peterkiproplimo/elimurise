@@ -286,6 +286,38 @@ function Main() {
       notify.current?.showToast();
     }
   };
+
+  // Call the function with API response
+  const exportToCSV = (jsonData: any) => {
+    if (!jsonData || (!jsonData.data && !jsonData.errors)) return;
+
+    // Extract and merge data from both arrays
+    const combinedData = [...(jsonData.data || []), ...(jsonData.errors || [])];
+
+    if (combinedData.length === 0) return;
+
+    // Extract headers from the first object
+    const headers = Object.keys(combinedData[0]);
+
+    // Convert JSON to CSV
+    const csvRows = [
+      headers.join(","), // Header row
+      ...combinedData.map((row) =>
+        headers.map((field) => `"${row[field] || ""}"`).join(",")
+      ),
+    ];
+
+    // Create Blob and download
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "export.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const importData = async () => {
     console.log(selectedFile);
 
@@ -303,6 +335,7 @@ function Main() {
 
         const res = await ApiService.importLearners(formData);
         // await getStrands();
+        exportToCSV(res);
         await getStudents();
         isLoading(false);
         setUploadDialog(false);

@@ -153,7 +153,22 @@ export const setCurrentSettings = async (data: any) => {
 
 export async function importLearners(data: FieldValues) {
   try {
-    let res = await axios.post(c.LEARNERS + "/import", data);
+    let res = await axios.post(c.LEARNERS + "/import", data, {
+      responseType: "blob",
+    });
+    const now = new Date();
+    const formattedDate = now.toISOString().replace(/[-:]/g, "").split(".")[0]; // Format: YYYYMMDDTHHMMSS
+    const filename = `learners_${formattedDate}.csv`;
+
+    const url = window.URL.createObjectURL(
+      new Blob([res.data], { type: "text/csv" })
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename); // Filename with date and time
+    document.body.appendChild(link);
+    link.click();
+    link.remove(); // Clean up
     return res.data;
   } catch (e) {
     throw handler(e);
