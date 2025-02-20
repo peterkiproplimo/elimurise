@@ -32,11 +32,7 @@ const ForgotPasswordOTP = () => {
     password: yup
       .string()
       .required("Password is required")
-      .min(8, "Password must be at least 8 characters long")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-      ),
+      .min(6, "Password must be at least 6 characters long"),
     cpassword: yup
       .string()
       .required("Confirm password is required")
@@ -99,7 +95,7 @@ const ForgotPasswordOTP = () => {
           Verification
         </h2>
         <div className="mt-2 text-center  text-slate-400 xl:hidden">
-          Enter the 4-digit OTP sent to your email.
+          Enter new password
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
           <div className="mt-8 ">
