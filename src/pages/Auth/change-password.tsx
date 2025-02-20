@@ -20,7 +20,7 @@ function ChangePassword() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      password: yup.string().required().min(8),
+      password: yup.string().required().min(4),
       confirm_password: yup
         .string()
         .oneOf([yup.ref("password"), null], "Passwords do not match")
