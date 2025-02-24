@@ -22,7 +22,7 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search } from "lucide-react";
+import { MessageCircle, Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
@@ -32,12 +32,24 @@ import Tippy from "../../base-components/Tippy";
 import * as c from "../../utils/constants";
 import leanerImg from "../../assets/images/learner.jpeg";
 import { formatDate, is_admin } from "../../utils/helper";
+import io, { Socket } from "socket.io-client";
 
 interface TableRow {
   no: number;
   strandName: string;
 }
+const auth = await localStorage.getItem("@AuthData");
 
+// value previously stored
+let auth_data = JSON.parse(auth);
+let user = auth_data.user;
+
+const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
+  transports: ["websocket"],
+  auth: {
+    token: `Bearer ${user.token}`, // Use the token from localStorage
+  },
+});
 function Main() {
   // const [confirmDelete, setConfirmDelete] = useState(false);
   const [viewMore, setViewMore] = useState(false);
@@ -96,8 +108,41 @@ function Main() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
   const [learningAreas, setLearningAreas] = useState([]);
-  const location = useLocation();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loadings, setLoading] = useState<boolean>(false);
+  const [parentLoading, setParentLoading] = useState<boolean>(true);
 
+  const location = useLocation();
+  const fetchMessages = async () => {
+    setLoading(true);
+    try {
+      console.log(selectedParent);
+      const response = await ApiService.getMessage({
+        parent: selectedParent._id,
+      });
+      console.log(response);
+      setMessages(response.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setMessage("Failed to load messages");
+      notify.current?.showToast();
+    }
+  };
+
+  useEffect(() => {
+    socket.emit("register", { userId: user.id, userType: "parent" });
+
+    socket.on("receiveMessage", (newMessage: Message) => {
+      fetchMessages();
+
+      setMessages((prev) => [...prev, newMessage]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
       replace: true,
@@ -150,7 +195,30 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+  const onSubmitMesage = async (data: any) => {
+    setLoading(true);
+    try {
+      const newMessage = {
+        sender: user.id,
+        senderModel: "Parent",
+        receiver: selectedParent?._id, // Use selected parent
+        receiverModel: "Parent",
+        message: data,
+      };
 
+      socket.emit("sendMessage", newMessage);
+      fetchMessages();
+
+      reset();
+      setLoading(false);
+      setMessage("Message sent successfully");
+      notify.current?.showToast();
+    } catch (error) {
+      setLoading(false);
+      setMessage("Failed to send message");
+      notify.current?.showToast();
+    }
+  };
   const onSubmit = async (event: any) => {
     event.preventDefault();
     const result = await trigger();
@@ -244,6 +312,7 @@ function Main() {
       notify.current?.showToast();
     }
   };
+
   const importData = async () => {
     console.log(selectedFile);
 
@@ -411,6 +480,10 @@ function Main() {
   useEffect(() => {
     handleGuardianIdNoBlur2();
   }, [guardianIdNo2]);
+  const unreadMessages = {
+    guardian1: 3, // Replace with actual count
+    guardian2: 1, // Replace with actual count
+  };
 
   const handleGuardianIdNoBlur = async () => {
     reset({
@@ -471,6 +544,19 @@ function Main() {
     reset({ name: "" });
     setDialog(false);
     setIsEditMode(false);
+  };
+
+  // Function to open chat
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedParent, setSelectedParent] = useState<any>(null);
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedParent]);
+
+  const openChat = (parent: any) => {
+    setSelectedParent(parent);
+    setIsOpen(true);
   };
   const generateAssessment = async () => {
     isLoading(true);
@@ -596,8 +682,132 @@ function Main() {
     }
     setShowParent2(event.target.checked); // Toggle visibility
   };
+  const [content, setContent] = useState("");
+
+  const handleChange = (e: any) => {
+    console.log(e.target.value);
+    setContent(e.target.value);
+  };
+  const handleSend = () => {
+    if (!content.trim()) return; // Prevent sending empty messages
+    console.log(content);
+    onSubmitMesage(content); // Call function with the message
+    setContent(""); // Clear input after sending
+  };
+
   return (
     <>
+      <div className="fixed bottom-4 right-4 z-50">
+        {/* Chat Toggle Button */}
+        {/* {!isOpen && (
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-all duration-300"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+              />
+            </svg>
+          </button>
+        )} */}
+
+        {/* Chat Window */}
+        {isOpen && (
+          <div className="w-80 bg-white rounded-lg shadow-xl flex flex-col h-[400px]">
+            {/* Chat Header */}
+            <div className="bg-blue-500 text-white p-3 rounded-t-lg flex justify-between items-center">
+              <span className="font-semibold">
+                {selectedParent
+                  ? `Chat with ${selectedParent?.first_name} ${selectedParent?.last_name}`
+                  : "Messages"}
+              </span>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white hover:text-gray-200"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Messages Area */}
+            <div className="flex-1 p-3 overflow-y-auto">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`mb-2 ${
+                    msg.sender === user.id ? "text-right" : "text-left"
+                  }`}
+                >
+                  <span
+                    className={`inline-block p-2 rounded-lg ${
+                      msg.sender === user.id
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {msg.message}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Message Input */}
+            <div className="p-3 border-t">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  name="content"
+                  value={content}
+                  onChange={handleChange}
+                  className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Type a message..."
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()} // Send on Enter key
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={loading || !message.trim()}
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg disabled:opacity-50"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       {dialog && !profile ? (
         <>
           <div className="flex items-center mt-8 ">
@@ -1754,28 +1964,54 @@ function Main() {
                     </li>
                     {is_admin() && (
                       <>
-                        <li className="mr-2">
+                        <li className="mr-2 flex items-center">
                           <button
                             className={`inline-block py-2 px-4 ${
                               activeTab === "guardian1"
                                 ? "text-blue-600 border-b-2 border-blue-600"
                                 : "text-gray-600 hover:text-blue-600"
-                            } font-semibold`}
+                            } font-semibold flex items-center`}
                             onClick={() => setActiveTab("guardian1")}
                           >
-                            Parent 1
+                            <span>Parent 1</span>
+                            {learner?.guardian?.email && (
+                              <div
+                                className="relative"
+                                onClick={() => openChat(learner?.guardian)}
+                              >
+                                <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
+                                {unreadMessages?.guardian1 > 0 && (
+                                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                    {unreadMessages?.guardian1}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </button>
                         </li>
-                        <li className="mr-2">
+                        <li className="mr-2 flex items-center">
                           <button
                             className={`inline-block py-2 px-4 ${
                               activeTab === "guardian2"
                                 ? "text-blue-600 border-b-2 border-blue-600"
                                 : "text-gray-600 hover:text-blue-600"
-                            } font-semibold`}
+                            } font-semibold flex items-center`}
                             onClick={() => setActiveTab("guardian2")}
                           >
-                            Parent 2
+                            <span>Parent 2</span>
+                            {learner?.guardian2?.email && (
+                              <div
+                                className="relative"
+                                onClick={() => openChat(learner?.guardian2)}
+                              >
+                                <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
+                                {unreadMessages?.guardian2 > 0 && (
+                                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                    {unreadMessages?.guardian2}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </button>
                         </li>
                       </>
@@ -1789,7 +2025,7 @@ function Main() {
                         } font-semibold`}
                         onClick={() => setActiveTab("tab4")}
                       >
-                        Fomartive Assessements
+                        Formative Assessments
                       </button>
                     </li>
                     <li className="mr-2">
@@ -1819,13 +2055,13 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${
-                          activeTab === "tab5"
+                          activeTab === "tab6"
                             ? "text-blue-600 border-b-2 border-blue-600"
                             : "text-gray-600 hover:text-blue-600"
                         } font-semibold`}
                         onClick={() => setActiveTab("tab6")}
                       >
-                        E-Portforlio
+                        E-Portfolio
                       </button>
                     </li>
                   </ul>
@@ -1946,8 +2182,10 @@ function Main() {
                     {/* Parent 1 Tab */}
                     {activeTab === "guardian1" && (
                       <div className="tab-pane">
-                        <h4 className="font-bold">Parent 1 Information</h4>
-                        <table className="min-w-full border border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-bold">Parent 1 Information</h4>
+                        </div>
+                        <table className="min-w-full border border-gray-200 mt-2">
                           <tbody>
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
@@ -1990,8 +2228,10 @@ function Main() {
                     {/* Parent 2 Tab */}
                     {activeTab === "guardian2" && (
                       <div className="tab-pane">
-                        <h4 className="font-bold">Parent 2 Information</h4>
-                        <table className="min-w-full border border-gray-200">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-bold">Parent 2 Information</h4>
+                        </div>
+                        <table className="min-w-full border border-gray-200 mt-2">
                           <tbody>
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">

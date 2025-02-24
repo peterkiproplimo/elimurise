@@ -181,6 +181,34 @@ function Main() {
           </div>
           <div className="flex-grow h-[80vh] p-2 rounded-md">
             <Messages messages={messages} user={auth} />
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+              <div className="h-15 p-3 rounded-xl rounded-tr-none rounded-tl-none bg-gray-100 dark:bg-gray-800">
+                <div className="flex items-center">
+                  <input
+                    {...register("content")}
+                    className="text-gray-700 dark:text-gray-200 text-sm p-5 focus:outline-none bg-gray-100 dark:bg-gray-800 flex-grow rounded-l-md"
+                    type="text"
+                    placeholder="Type your message ..."
+                  />
+                  <button className="bg-gray-100 dark:bg-gray-800 text-gray-400 rounded-r-md p-3">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>

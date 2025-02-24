@@ -488,6 +488,14 @@ export const getParentNotifications = async (data: any) => {
     throw handler(e);
   }
 };
+export const dismissParentNotifications = async (data: any) => {
+  try {
+    let res = await axios.put(c.PARENT + "/notifications/" + data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const getNotificeBoardParent = async (data: any) => {
   try {
     let res = await axios.get(c.PARENT + "/noticeboard", {
@@ -534,7 +542,14 @@ export const getSchoolNotifications = async (data: any) => {
     throw handler(e);
   }
 };
-
+export const dissmissSchoolNotifications = async (data: any) => {
+  try {
+    let res = await axios.put(c.SCHOOL_PATH + "/notifications/" + data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export async function deleteGrade(gradeId: any) {
   try {
     let res = await axios.delete(c.GRADES + "/" + gradeId);

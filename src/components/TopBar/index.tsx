@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Lucide from "../../base-components/Lucide";
 import logoUrl from "../../assets/images/hero.png";
 import Breadcrumb from "../../base-components/Breadcrumb";
-import { Menu, Popover } from "../../base-components/Headless";
+import { Dialog, Menu, Popover } from "../../base-components/Headless";
 import TomSelect from "../../base-components/TomSelect";
 import fakerData from "../../utils/faker";
 import _ from "lodash";
@@ -20,6 +20,10 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   const signOut = () => {
     auth.signOut();
   };
+  const [selectedNotification, setSelectedNotification] = useState<any | null>(
+    null
+  );
+
   const [notifications, setNotifications] = useState<any>([]);
 
   const [user, setUser] = useState<any>({});
@@ -50,6 +54,18 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
     return () => clearInterval(interval);
   }, []);
 
+  const dismissParentNotifications = async (id: any) => {
+    const type = localStorage.getItem("type");
+
+    if (type === "parent") {
+      console.log(id);
+      const response = await ApiService.dismissParentNotifications(id);
+    } else {
+      const response = await ApiService.dissmissSchoolNotifications(id);
+    }
+    getParentNotifications();
+    setSelectedNotification(null);
+  };
   const getParentNotifications = async () => {
     const type = localStorage.getItem("type");
 
@@ -142,47 +158,92 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
 
           {/* END: Search */}
           {/* BEGIN: Notifications */}
-          <Popover className="mr-4 ml-4  sm:mr-6">
+
+          {/* Notification Popover */}
+          <Popover className="mr-4 ml-4 sm:mr-6">
             <Popover.Button
               className="
-              relative text-primary/70 outline-none block
-              before:content-[''] before:w-[8px] before:h-[8px] before:rounded-full before:absolute before:top-[-2px] before:right-0 before:bg-danger
-            "
+            relative text-primary/70 outline-none block
+            before:content-[''] before:w-[8px] before:h-[8px] before:rounded-full before:absolute 
+            before:top-[-2px] before:right-0 before:bg-danger
+          "
             >
               <Lucide icon="Bell" className="w-5 h-5 dark:text-slate-500" />
             </Popover.Button>
-            <Popover.Panel className="w-[280px] sm:w-[350px] p-5 mt-2 max-h-[300px] overflow-y-auto">
+
+            <Popover.Panel className="w-[280px] sm:w-[350px] p-5 mt-2 max-h-[300px] overflow-y-auto bg-white rounded-lg shadow-lg">
               <div className="mb-5 font-medium">Notifications</div>
-              {notifications.map((notification: any) => (
-                <div
-                  key={notification._id}
-                  className="cursor-pointer relative flex items-center mt-5"
-                >
-                  <div className="relative flex-none w-12 h-12 mr-1 image-fit">
-                    {/* <img
-          alt="User"
-          className="rounded-full"
-          src="https://via.placeholder.com/48" // Replace with user avatar if available
-        /> */}
-                    <div className="absolute bottom-0 right-0 w-3 h-3 border-2 border-white rounded-full bg-success dark:border-darkmode-600"></div>
-                  </div>
-                  <div className="ml-2 overflow-hidden">
-                    <div className="flex items-center">
-                      <a href="#" className="mr-5 font-medium truncate">
+              {notifications.length > 0 ? (
+                notifications.map((notification: any) => (
+                  <div
+                    key={notification._id}
+                    className="cursor-pointer flex flex-col p-3 rounded-lg hover:bg-gray-100 transition"
+                    onClick={() => setSelectedNotification(notification)}
+                  >
+                    <div className="flex justify-between">
+                      <span className="font-medium truncate">
                         {notification.title}
-                      </a>
-                      <div className="ml-auto text-xs text-slate-400 whitespace-nowrap">
-                        {new Date(notification.createdAt).toLocaleTimeString()}{" "}
-                      </div>
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {new Date(notification.createdAt).toLocaleTimeString()}
+                      </span>
                     </div>
-                    <div className="w-full truncate text-slate-500 mt-0.5">
+                    <p className="text-sm text-gray-600 truncate">
                       {notification.message}
-                    </div>
+                    </p>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-center text-gray-500">
+                  No new notifications
+                </p>
+              )}
             </Popover.Panel>
           </Popover>
+
+          {/* Full Notification Dialog */}
+          {/* <Transition appear show={!!selectedNotification} as={Fragment}> */}
+          <Dialog
+            open={!!selectedNotification}
+            as="div"
+            // className="relative z-50"
+            onClose={() => {
+              setSelectedNotification(null);
+            }}
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-30" />
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <Dialog.Panel className="w-full max-w-lg bg-white rounded-lg shadow-lg p-6">
+                <Dialog.Title className="text-lg font-semibold">
+                  {selectedNotification?.title}
+                </Dialog.Title>
+                <p className="text-xs text-gray-400">
+                  {new Date(selectedNotification?.createdAt).toLocaleString()}
+                </p>
+                <Dialog.Description className="mt-2 text-gray-700">
+                  {selectedNotification?.message}
+                </Dialog.Description>
+                {selectedNotification?.link && (
+                  <a
+                    href={selectedNotification.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline mt-2 block"
+                  >
+                    View More
+                  </a>
+                )}
+                <button
+                  onClick={() => {
+                    dismissParentNotifications(selectedNotification._id);
+                  }}
+                  className="mt-4 w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-700 transition"
+                >
+                  Mark as read
+                </button>
+              </Dialog.Panel>
+            </div>
+          </Dialog>
 
           {/* END: Notifications */}
           {/* BEGIN: Account Menu */}

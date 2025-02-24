@@ -1,0 +1,169 @@
+     html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Times New Roman', Times, serif;
+        font-weight: 100;
+        box-sizing: border-box;
+      }
+
+      .page {
+        position: relative;
+        display: block;
+        page-break-after: always;
+        margin: 20px; /* Reduced for better screen preview */
+        overflow: hidden;
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+        .page {
+          margin: 0;
+          padding: 10mm;
+        }
+        @page {
+          margin: 10mm;
+        }
+      }
+
+      .watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        font-size: 36px;
+        color: rgba(150, 150, 150, 0.1);
+        z-index: -1;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .letterhead {
+        text-align: center;
+        text-transform: uppercase;
+        margin: 0;
+        /* padding: 20px; */
+        border-bottom: 2px solid #ccc; /* Separator */
+      }
+
+      .letterhead img {
+        max-width: 100%;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+        display: block;
+        margin: 0 auto 10px;
+        border: 1px solid #ccc; /* Subtle border */
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
+      }
+
+      .letterhead .school-name {
+        font-size: 20px; /* Larger and more prominent */
+        font-weight: bold;
+        letter-spacing: 1px; /* Improved spacing */
+      }
+
+      .letterhead .subtitle {
+        font-size: 18px;
+        font-style: italic;
+        margin-top: 5px;
+        color: #444; /* Slightly darker for contrast */
+      }
+
+      .letterhead .address {
+        font-size: 12px; /* Readable size */
+      }
+
+      .info {
+        font-size: 12px;
+        line-height: 2;
+        margin-top: 10px;
+      }
+
+      .info .label {
+        font-size: 10px; /* Smaller labels */
+        color: #666; /* Gray for distinction */
+        margin-right: 5px;
+        text-transform: uppercase;
+      }
+
+      .info .value {
+        font-size: 12px;
+        font-weight: bold;
+        text-decoration: underline;
+        text-transform: uppercase;
+      }
+
+      .double-line {
+        border: 0;
+        height: 0;
+        position: relative;
+        margin: 10px 0;
+      }
+
+      .double-line::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border-top: 3px solid #006400; /* Dark green to match theme */
+      }
+
+      .double-line::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 0;
+        width: 100%;
+        border-top: 1px solid #006400;
+      }
+
+      .result {
+        margin-top: 20px;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .result th {
+        background-color: #e0e0e0;
+        font-weight: bold;
+      }
+
+      .result td,
+      .result th {
+        border: 1px solid rgb(49, 49, 49);
+        text-align: left;
+        padding: 8px;
+        font-size: 14px;
+        page-break-inside: avoid;
+      }
+
+      .result tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+
+      .result tr:nth-child(even) {
+        background-color: #f7f5f5;
+      }
+
+      .result thead {
+        display: table-header-group;
+      }
+
+      .result tbody {
+        display: table-row-group;
+      }
+      table,
+      tr,
+      td {
+        page-break-inside: avoid;
+      }
+      @media print {
+        .page {
+          page-break-before: always;
+        }
+      }
