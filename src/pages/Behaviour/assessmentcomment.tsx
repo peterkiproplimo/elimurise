@@ -528,10 +528,10 @@ function Main() {
                       NAME
                     </Table.Th>
                     <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
-                      Score
+                      Comment entry
                     </Table.Th>
                     <Table.Th className="text-left border-b-1 whitespace-wrap ">
-                      DESCRIPTION
+                      Comment
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
@@ -747,9 +747,11 @@ function Main() {
                   value={test}
                   onChange={(event: any) => setTest(event.target.value)}
                 >
-                  <option>Select User</option>
-                  <option value={"teacher"}>Class Teacher</option>
-                  <option value={"head"}>H/Teacher</option>
+                  {/* <option>Select </option> */}
+                  <option value={"teacher"} selected={true}>
+                    Class Manager
+                  </option>
+                  {/* <option value={"head"}>H/Teacher</option> */}
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
@@ -766,7 +768,7 @@ function Main() {
                 type="button"
                 className="w-24 text-white"
               >
-                Assess
+                Begin
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"
