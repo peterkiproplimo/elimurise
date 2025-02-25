@@ -306,7 +306,7 @@ function Main() {
     const selectedValue = event.target.value;
     setStream("");
     setStrands([]);
-    setTest();
+    setTest("teacher");
     await setStrandFilter({
       learning_area: "na",
       term: "na",
