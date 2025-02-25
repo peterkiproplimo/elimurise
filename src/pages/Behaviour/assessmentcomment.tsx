@@ -55,7 +55,7 @@ function Main() {
   const [hasTheme, setHasTheme] = useState(false);
   const [strands, setStrands] = useState([]);
   const [tests, setTests] = useState([]);
-  const [test, setTest] = useState([]);
+  const [test, setTest] = useState("teacher");
   const [streams, setStreams] = useState([]);
   const [substrands, setSubstrands] = useState([]);
   const [stream, setStream] = useState("");
@@ -306,7 +306,7 @@ function Main() {
     const selectedValue = event.target.value;
     setStream("");
     setStrands([]);
-    setTest([]);
+    setTest();
     await setStrandFilter({
       learning_area: "na",
       term: "na",
@@ -364,7 +364,7 @@ function Main() {
       term: selectedTerm,
       stream: stream,
       // learning_area: strandFilter.learning_area,
-      type: test,
+      type: "teacher",
       adm_no,
     };
 
@@ -399,7 +399,7 @@ function Main() {
       term: selectedTerm,
       comment: data.score,
       learner: data?.learner?._id,
-      type: test,
+      type: "teacher",
     };
     let res = await ApiService.createCommentAssessment(assessment);
     console.log(assessment);
@@ -739,7 +739,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-2">
+              {/* <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">User</FormLabel>
                 <FormSelect
                   {...register("type")}
@@ -747,11 +747,9 @@ function Main() {
                   value={test}
                   onChange={(event: any) => setTest(event.target.value)}
                 >
-                  {/* <option>Select </option> */}
                   <option value={"teacher"} selected={true}>
                     Class Manager
                   </option>
-                  {/* <option value={"head"}>H/Teacher</option> */}
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
@@ -759,7 +757,7 @@ function Main() {
                       errors.grade.message}
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
             <div className="px-5 pb-8 text-right">
               <Button
@@ -768,7 +766,7 @@ function Main() {
                 type="button"
                 className="w-24 text-white"
               >
-                Begin
+                Commet
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"
