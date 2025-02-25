@@ -141,7 +141,7 @@ function Main() {
       first_name: yup.string().required("First name is required"),
       last_name: yup.string().required("Last name is required"),
       surname: yup.string().required("Surname is required"),
-      adm_no: yup.string().required("Adm.No is required"),
+      adm_no: yup.string().required("Adm No is required"),
       grade: yup.string().required("Grade is required"),
       stream: yup.string().required("Stream is required"),
       guardian_first_name: yup.string().required("First name is required"),
@@ -795,7 +795,7 @@ function Main() {
                   </FormLabel>
                   <FormInput
                     {...register("adm_no")}
-                    type="number"
+                    type="text"
                     name="adm_no"
                     className={errors.adm_no ? "border-danger" : ""}
                     placeholder="Admission no"
