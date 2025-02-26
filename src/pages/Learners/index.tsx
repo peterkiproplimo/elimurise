@@ -63,6 +63,18 @@ function Main() {
   const [uploadDialog, setUploadDialog] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [exportDialog, setExportDialog] = useState(false);
+  const approveButtonRef = useRef(null);
+  const [approveDialog, setApproveDialog] = useState(false);
+
+  const [approveTranfer, setApproveTranfer] = useState<any>({
+    learner: [],
+    to_stream: "",
+    to_grade: "",
+    from_grade: "",
+    from_stream: "",
+    from_session: "",
+    next_session: "",
+  });
 
   const [schools, setSchools] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
@@ -174,7 +186,7 @@ function Main() {
       first_name: yup.string().required("First name is required"),
       last_name: yup.string().required("Last name is required"),
       surname: yup.string().required("Surname is required"),
-      adm_no: yup.string().required("Adm.No is required"),
+      adm_no: yup.string().required("Adm No is required"),
       grade: yup.string().required("Grade is required"),
       stream: yup.string().required("Stream is required"),
       guardian_first_name: yup.string().required("First name is required"),
@@ -288,7 +300,37 @@ function Main() {
       setSelectedFile(file);
     }
   };
+  const approveTranferSubmit = async () => {
+    console.log("event");
+    // event.preventDefault();
+    // const result = await trigger();
+    console.log(approveTranfer);
 
+    if (!loading) {
+      isLoading(true);
+      try {
+        const data = await getValues();
+        console.log();
+        // data.transferCode = approveTranfer.transferCode;
+        let res = await ApiService.leanersPromote(approveTranfer);
+        await getStudents();
+
+        await reset({ name: "" });
+        isLoading(false);
+        setApproveDialog(false);
+        setSuccess(true);
+        setMessage("Transfer Approved successfully.");
+        notify.current?.showToast();
+      } catch (error: any) {
+        isLoading(false);
+        setSuccess(false);
+        setMessage(
+          error.message || "An error occurred while creating the learner."
+        );
+        notify.current?.showToast();
+      }
+    }
+  };
   const exportTemplate = async () => {
     console.log(selectedFile);
 
@@ -313,6 +355,37 @@ function Main() {
     }
   };
 
+  // Call the function with API response
+  const exportToCSV = (jsonData: any) => {
+    if (!jsonData || (!jsonData.data && !jsonData.errors)) return;
+
+    // Extract and merge data from both arrays
+    const combinedData = [...(jsonData.data || []), ...(jsonData.errors || [])];
+
+    if (combinedData.length === 0) return;
+
+    // Extract headers from the first object
+    const headers = Object.keys(combinedData[0]);
+
+    // Convert JSON to CSV
+    const csvRows = [
+      headers.join(","), // Header row
+      ...combinedData.map((row) =>
+        headers.map((field) => `"${row[field] || ""}"`).join(",")
+      ),
+    ];
+
+    // Create Blob and download
+    const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "export.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const importData = async () => {
     console.log(selectedFile);
 
@@ -330,6 +403,7 @@ function Main() {
 
         const res = await ApiService.importLearners(formData);
         // await getStrands();
+        exportToCSV(res);
         await getStudents();
         isLoading(false);
         setUploadDialog(false);
@@ -930,7 +1004,7 @@ function Main() {
                   </FormLabel>
                   <FormInput
                     {...register("adm_no")}
-                    type="number"
+                    type="text"
                     name="adm_no"
                     className={errors.adm_no ? "border-danger" : ""}
                     placeholder="Admission no"
@@ -1580,21 +1654,6 @@ function Main() {
                           Status
                         </Table.Th>
 
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Parent Last Name
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Parent Surname
-                        </Table.Th> */}
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Parent ID No
-                        </Table.Th> */}
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Parent Email
-                        </Table.Th> */}
-                        {/* <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Parent Phone
-                        </Table.Th> */}
                         <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
                           Actions
                         </Table.Th>
@@ -1686,38 +1745,7 @@ function Main() {
                               {learner?.status == "D" ? "Disabled" : ""}
                             </div>
                           </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.guardian?.first_name}{" "}
-                              {learner?.guardian?.last_name}{" "}
-                              {learner?.guardian?.surname}
-                            </span>
-                          </Table.Td> */}
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.guardian?.last_name}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.guardian?.surname}
-                            </span>
-                          </Table.Td> */}
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.guardian?.id_no}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.guardian?.email}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.guardian?.phone}
-                            </span>
-                          </Table.Td> */}
+
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0  before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                             <div className="flex items-center justify-center">
                               <Menu className="inline-block mb-2 mr-1 box">
@@ -1753,6 +1781,33 @@ function Main() {
                                       >
                                         <i className="icon-eye mr-2"></i> Edit
                                         Profile
+                                      </Menu.Item>
+                                      <Menu.Item
+                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                        onClick={() => {
+                                          setApproveTranfer({
+                                            learners: [
+                                              {
+                                                id: learner._id,
+                                                status: "P",
+                                              },
+                                            ],
+                                            from_stream: learner.stream._id,
+                                            from_grade: learner.grade._id,
+                                            from_session:
+                                              learner.current_session,
+                                            next_session:
+                                              learner.current_session,
+                                          });
+                                          setApproveDialog(true);
+                                        }}
+                                      >
+                                        {/* <Lucide
+                                            icon="CheckSquare"
+                                            className="w-4 h-4 mr-1"
+                                          />{" "} */}
+                                        <i className="icon-eye mr-2"></i>
+                                        Transfer
                                       </Menu.Item>
                                       {(learner.status === "D" ||
                                         learner.status === "P") && (
@@ -2517,6 +2572,113 @@ function Main() {
       ) : (
         ""
       )}
+      <Dialog
+        open={approveDialog}
+        onClose={() => {
+          setApproveDialog(false);
+        }}
+        initialFocus={approveButtonRef}
+      >
+        <Dialog.Panel>
+          <div className="p-5">
+            {/* <Lucide
+                  icon="XCircle"
+                  className="w-16 h-16 mx-auto mt-3 text-danger"
+                /> */}
+            <div className="mt-5  font-medium">Incoming Tranfer</div>
+            <div className="mt-2 text-slate-500">
+              Do you really approve this record?
+            </div>
+            <div className="col-span-4 sm:col-span-4">
+              <FormLabel htmlFor="grade">
+                Grade<span className="text-danger ml-0.5">*</span>
+              </FormLabel>
+              <TomSelect
+                id="grade"
+                name="grade"
+                value={grade}
+                onChange={(event: any) => {
+                  // reset({ ...getValues(), grade: event });
+                  console.log("test");
+                  setApproveTranfer({
+                    ...approveTranfer,
+                    to_grade: event,
+                  });
+                  setGrade(event);
+                }}
+                disabled={isEditMode}
+              >
+                <option value="">Select Grade</option>
+                {grades.map((grade: any, key) => (
+                  <option key={key} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </TomSelect>
+              {errors.grade && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.grade.message === "string" &&
+                    errors.grade.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 sm:col-span-4 mt-2">
+              <FormLabel htmlFor="stream">
+                Select Stream<span className="text-danger ml-0.5">*</span>
+              </FormLabel>
+              <FormSelect
+                id="stream"
+                // {...register("stream")}
+                name="stream"
+                defaultValue={approveTranfer.to_stream}
+                onChange={(e) =>
+                  setApproveTranfer({
+                    ...approveTranfer,
+                    to_stream: e.target.value,
+                  })
+                }
+              >
+                <option value="">Select Stream</option>
+                {streams.map((stream: any, key) => (
+                  <option key={key} value={stream._id}>
+                    {stream.name}
+                  </option>
+                ))}
+              </FormSelect>
+              {errors.stream && (
+                <div className="mt-2 text-danger">
+                  {typeof errors.stream.message === "string" &&
+                    errors.stream.message}
+                </div>
+              )}
+            </div>
+
+            <div className="col-span-12 mt-4 text-right">
+              <Button
+                variant="outline-secondary"
+                type="button"
+                onClick={() => {
+                  setApproveDialog(false);
+                }}
+                className="w-24 mr-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => approveTranferSubmit()}
+                variant="success"
+                type="submit"
+                className="w-24 ml-4 text-white"
+                ref={approveButtonRef}
+              >
+                Approve
+              </Button>
+            </div>
+          </div>
+          <div className="px-5 pb-8 text-center"></div>
+        </Dialog.Panel>
+      </Dialog>
       <Dialog
         staticBackdrop
         size="lg"

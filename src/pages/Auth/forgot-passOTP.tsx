@@ -95,7 +95,7 @@ const ForgotPasswordOTP = () => {
           Verification
         </h2>
         <div className="mt-2 text-center  text-slate-400 xl:hidden">
-          Enter the 4-digit OTP sent to your email.
+          Enter new password
         </div>
         <form className="validate-form" onSubmit={onSubmit}>
           <div className="mt-8 ">

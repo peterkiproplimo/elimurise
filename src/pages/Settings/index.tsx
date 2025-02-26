@@ -222,6 +222,59 @@ function Settings() {
                     />
                   </div>
                   <div className="col-span-12 md:col-span-6">
+                    <FormLabel>H/Teacher Name</FormLabel>
+                    <FormInput
+                      {...register("school_head_teacher")}
+                      type="text"
+                      name="school_head_teacher"
+                      className={errors.name ? "border-danger" : ""}
+                      placeholder="Head Teacher"
+                    />
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
+                    <FormLabel>H/Teacher Signature</FormLabel>
+                    <PassportUpload
+                      name={"school_head_teacher_signature"}
+                      register={register}
+                      errors={errors}
+                      initialImageUrl={
+                        IMG_URL + schoolDetails.school_head_teacher_signature
+                      }
+                    />
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
+                    <FormInput
+                      {...register("summative_has_score")}
+                      type="checkbox"
+                      name="summative_has_score"
+                      className={
+                        errors.name
+                          ? "border-danger w-5 h-5 mr-3"
+                          : "w-5 h-5 mr-3"
+                      }
+                      placeholder="Head Teacher"
+                    />
+                    <FormLabel>
+                      Summative Report With Score(Not Remended)
+                    </FormLabel>
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>School Stamp</FormLabel>
+                      <PassportUpload
+                        name={"school_stamp"}
+                        register={register}
+                        errors={errors}
+                        initialImageUrl={IMG_URL + schoolDetails.school_stamp}
+                      />
+                    </div>
+                    {/* <span className="text-md text-gray-800 ml-2">
+                    <FormInput
+                      type="checkbox"
+                      className="w-5 h-5"
+                      // onChange={(e: any) => publishIndicator()}
+                    />
+                  </span> */}
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
                     <FormLabel>Logo</FormLabel>
                     <PassportUpload
                       name={"logo"}

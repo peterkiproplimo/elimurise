@@ -93,7 +93,7 @@ const Register = () => {
       email: yup.string().required("Email is required").email(),
       password: yup.string().required("Password is required").min(4),
       school_name: yup.string().required("School Name is required"),
-      plan: yup.string().required("Plan is required"),
+      // plan: yup.string().required("Plan is required"),
       total_learners: yup
         .string()
         .required("Total number of learners is required"),

@@ -189,7 +189,7 @@ function Main() {
         {
           page: page,
           search: search,
-          limit: limit,
+          limit: 1000,
         },
         strandFilter
       );
