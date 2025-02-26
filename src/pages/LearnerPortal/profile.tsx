@@ -56,9 +56,7 @@ function Main() {
   const [message, setMessage] = useState("");
   const [learners, setLearners] = useState([{}]);
   const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
-  const [calendarEvents, setCalendarEvents] = useState<
-    { date: string; title: string }[]
-  >([]);
+  const [calendarEvents, setCalendarEvents] = useState<any>([]);
 
   const [pagination, setPagination] = useState({
     current_page: 1,

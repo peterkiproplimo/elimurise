@@ -27,7 +27,7 @@ interface FormData {
 function NoticeBoard() {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const notify = useRef<NotificationElement>(null);
+  const notify = useRef<NotificationElement>();
   const { register, handleSubmit, reset, setValue } = useForm<FormData>();
   const [notices, setNotices] = useState<any[]>([]);
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -46,7 +46,7 @@ function NoticeBoard() {
   const fetchNotices = async () => {
     setLoading(true);
     try {
-      const response = await ApiService.getNotificeBoard();
+      const response = await ApiService.getNotificeBoard({});
       setNotices(response.data);
     } catch (error) {
       setMessage("Failed to load notices");
@@ -58,7 +58,7 @@ function NoticeBoard() {
   // Fetch Roles (for Recipients)
   const fetchRoles = async () => {
     try {
-      const response = await ApiService.getRoles();
+      const response = await ApiService.getRole({});
       setRoles(response.data);
     } catch (error) {
       console.error("Failed to load roles", error);
@@ -85,7 +85,7 @@ function NoticeBoard() {
       recipients.forEach((id) => formData.append("recipients[]", id));
 
       if (editingId) {
-        await ApiService.updateNotice(editingId, formData);
+        // await ApiService.updateNotice(editingId, formData);
       } else {
         await ApiService.createNotificeBoard(formData);
       }
@@ -133,7 +133,7 @@ function NoticeBoard() {
     if (!window.confirm("Are you sure you want to delete this notice?")) return;
     setLoading(true);
     try {
-      await ApiService.deleteNotice(id);
+      //await ApiService.deleteNotice(id);
       fetchNotices();
       setMessage("Notice deleted successfully");
       notify.current?.showToast();
@@ -274,7 +274,16 @@ function NoticeBoard() {
         </div>
       )}
 
-      <Notification ref={notify}>{message}</Notification>
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+        // ref={notify}
+      >
+        {message}
+      </Notification>
     </>
   );
 }

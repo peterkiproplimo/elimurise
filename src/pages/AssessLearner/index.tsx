@@ -108,7 +108,11 @@ function Main() {
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
-
+  interface ConfirmDialogProps {
+    open: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+  }
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
@@ -418,7 +422,11 @@ function Main() {
     onCancel: () => {},
   });
 
-  const ConfirmDialog = ({ open, onConfirm, onCancel }) => (
+  const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+    open,
+    onConfirm,
+    onCancel,
+  }) => (
     <Dialog open={open} onClose={onCancel}>
       <Dialog.Panel>
         <div className="p-5 text-center">

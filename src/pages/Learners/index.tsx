@@ -38,10 +38,10 @@ interface TableRow {
   no: number;
   strandName: string;
 }
-const auth = await localStorage.getItem("@AuthData");
+const auth = localStorage.getItem("@AuthData"); // No need for `await` since `localStorage` is synchronous
 
-// value previously stored
-let auth_data = JSON.parse(auth);
+let auth_data = auth ? JSON.parse(auth) : null; // Prevents JSON.parse(null) error
+
 let user = auth_data.user;
 
 const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
@@ -120,7 +120,7 @@ function Main() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("basicInfo"); // Default to Basic Info
   const [learningAreas, setLearningAreas] = useState([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<any>([]);
   const [loadings, setLoading] = useState<boolean>(false);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
 
@@ -145,10 +145,10 @@ function Main() {
   useEffect(() => {
     socket.emit("register", { userId: user.id, userType: "parent" });
 
-    socket.on("receiveMessage", (newMessage: Message) => {
+    socket.on("receiveMessage", (newMessage: any) => {
       fetchMessages();
 
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev: any) => [...prev, newMessage]);
     });
 
     return () => {
@@ -826,7 +826,7 @@ function Main() {
 
             {/* Messages Area */}
             <div className="flex-1 p-3 overflow-y-auto">
-              {messages.map((msg, index) => (
+              {messages.map((msg: any, index: any) => (
                 <div
                   key={index}
                   className={`mb-2 ${

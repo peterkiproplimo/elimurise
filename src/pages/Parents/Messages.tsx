@@ -1,6 +1,24 @@
 import React from "react";
 
-const Messages = ({ messages, user }) => {
+interface Message {
+  sender: string;
+  avatar: string;
+  message: string;
+  timestamp: string;
+}
+
+interface User {
+  name: string;
+  avatar: string;
+  status: string;
+}
+
+interface MessagesProps {
+  messages: Message[];
+  user: User;
+}
+
+const Messages: React.FC<MessagesProps> = ({ messages, user }) => {
   return (
     <div className="flex-grow h-full flex flex-col">
       {/* Header */}
@@ -48,19 +66,12 @@ const Messages = ({ messages, user }) => {
                   : "bg-purple-300 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-bl-none"
               }`}
             >
-              {/* {msg.sender !== user.name && (
-                <div className="text-xs text-gray-600 dark:text-gray-200">
-                  {msg.sender}
-                </div>
-              )} */}
               <div>{msg.message}</div>
               <div className="text-xs text-gray-400">{msg.timestamp}</div>
             </div>
           </div>
         ))}
       </div>
-
-      {/* Input Field */}
     </div>
   );
 };

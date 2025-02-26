@@ -11,7 +11,7 @@ function AttendanceForm() {
   const [streams, setStreams] = useState([]);
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedStream, setSelectedStream] = useState("");
-  const [attendanceSummary, setAttendanceSummary] = useState({
+  const [attendanceSummary, setAttendanceSummary] = useState<any>({
     learnersData: [],
     dailySummary: [],
   });
@@ -32,7 +32,7 @@ function AttendanceForm() {
     setGrades(response.data);
   };
 
-  const getStreams = async (gradeId) => {
+  const getStreams = async (gradeId: any) => {
     const response = await ApiService.getStream({ page: 1, grade: gradeId });
     setStreams(response.data);
   };
@@ -98,16 +98,18 @@ function AttendanceForm() {
     doc.setFontSize(12);
     doc.text("#", 14, yOffset);
     doc.text("Learner", 30, yOffset);
-    attendanceSummary.learnersData[0]?.attendance.forEach((entry, idx) => {
-      doc.text(entry.day, 50 + idx * 30, yOffset);
-    });
+    attendanceSummary.learnersData[0]?.attendance.forEach(
+      (entry: any, idx: any) => {
+        doc.text(entry.day, 50 + idx * 30, yOffset);
+      }
+    );
     yOffset += 10;
 
     // Add table content
-    attendanceSummary.learnersData.forEach((entry: any, index) => {
+    attendanceSummary.learnersData.forEach((entry: any, index: any) => {
       doc.text((index + 1).toString(), 14, yOffset);
       doc.text(entry.learnerName, 30, yOffset);
-      entry.attendance.forEach((attend: any, idx) => {
+      entry.attendance.forEach((attend: any, idx: any) => {
         const status =
           attend.morning && attend.afternoon
             ? "X"
@@ -152,7 +154,7 @@ function AttendanceForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">Select Grade</option>
-              {grades.map((grade) => (
+              {grades.map((grade: any) => (
                 <option key={grade._id} value={grade._id}>
                   {grade.name}
                 </option>
@@ -171,7 +173,7 @@ function AttendanceForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">Select Stream</option>
-              {streams.map((stream) => (
+              {streams.map((stream: any) => (
                 <option key={stream._id} value={stream._id}>
                   {stream.name}
                 </option>
@@ -204,7 +206,7 @@ function AttendanceForm() {
 
                     {attendanceSummary.learnersData.length > 0 &&
                       attendanceSummary.learnersData[0].attendance.map(
-                        (entry) => (
+                        (entry: any) => (
                           <th
                             key={entry.date}
                             className="border border-gray-300 text-center p-2"
@@ -219,7 +221,7 @@ function AttendanceForm() {
                   {attendanceSummary.learnersData.length > 0 ? (
                     <>
                       {attendanceSummary.learnersData.map(
-                        (entry: any, index) => (
+                        (entry: any, index: any) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="border border-gray-300 p-2">
                               {index + 1}
@@ -231,7 +233,7 @@ function AttendanceForm() {
                               {entry.gender.charAt(0)}
                             </td>
 
-                            {entry.attendance.map((attend: any, idx) => (
+                            {entry.attendance.map((attend: any, idx: any) => (
                               <td
                                 key={idx}
                                 className="border border-gray-300 text-center p-2 relative group"
@@ -263,11 +265,11 @@ function AttendanceForm() {
 
                       <tr>
                         <td className="border border-gray-300 p-2"></td>
-                        <td className="border border-gray-300 p-2" colSpan="2">
+                        <td className="border border-gray-300 p-2" colSpan={2}>
                           <b>Present: Afternoon</b>
                         </td>
                         {attendanceSummary.dailySummary.map(
-                          (summary, index) => (
+                          (summary: any, index: any) => (
                             <td
                               key={index}
                               className="border border-gray-300 text-center p-2"
@@ -279,11 +281,11 @@ function AttendanceForm() {
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2"></td>
-                        <td className="border border-gray-300 p-2" colSpan="2">
+                        <td className="border border-gray-300 p-2" colSpan={2}>
                           <b>Present: Morning</b>
                         </td>
                         {attendanceSummary.dailySummary.map(
-                          (summary, index) => (
+                          (summary: any, index: any) => (
                             <td
                               key={index}
                               className="border border-gray-300 text-center p-2"
@@ -295,11 +297,11 @@ function AttendanceForm() {
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2"></td>
-                        <td className="border border-gray-300 p-2" colSpan="2">
+                        <td className="border border-gray-300 p-2" colSpan={2}>
                           <b>Total</b>
                         </td>
                         {attendanceSummary.dailySummary.map(
-                          (summary, index) => (
+                          (summary: any, index: any) => (
                             <td
                               key={index}
                               className="border border-gray-300 text-center p-2"

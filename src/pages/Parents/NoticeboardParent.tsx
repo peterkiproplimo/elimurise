@@ -27,7 +27,7 @@ interface FormData {
 function NoticeBoard() {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const notify = useRef<NotificationElement>(null);
+  const notify = useRef<NotificationElement>();
   const { register, handleSubmit, reset, setValue } = useForm<FormData>();
   const [notices, setNotices] = useState<any[]>([]);
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -45,7 +45,7 @@ function NoticeBoard() {
     const fetchNotices = async () => {
       setLoading(true);
       try {
-        const response = await ApiService.getNotificeBoardParent();
+        const response = await ApiService.getNotificeBoardParent({});
         setNotices(response.data);
       } catch (error) {
         setMessage("Failed to load notices");
@@ -149,7 +149,16 @@ function NoticeBoard() {
           </tbody>
         </table>
       </div>
-      <Notification ref={notify}>{message}</Notification>
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+        // ref={notify}
+      >
+        {message}
+      </Notification>
     </div>
   );
 }

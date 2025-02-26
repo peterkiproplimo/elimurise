@@ -18,7 +18,7 @@ function AttendanceForm() {
   const [reason, setReason] = useState("");
   const [loadingSave, setLoadingSave] = useState(false);
 
-  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [calendarEvents, setCalendarEvents] = useState<any>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,7 +33,7 @@ function AttendanceForm() {
     setGrades(response.data);
   };
 
-  const getStreams = async (gradeId) => {
+  const getStreams = async (gradeId: any) => {
     const response = await ApiService.getStream({ page: 1, grade: gradeId });
     setStreams(response.data);
   };
@@ -58,7 +58,7 @@ function AttendanceForm() {
       stream: selectedStream,
     });
 
-    const events = Object.keys(response.data).flatMap((date) => {
+    const events = Object.keys(response.data).flatMap((date: any) => {
       const attendance = response.data[date];
       return [
         {
@@ -83,14 +83,14 @@ function AttendanceForm() {
     setCalendarEvents(events);
   };
 
-  const updateAttendance = (index: any, type: any, value) => {
+  const updateAttendance = (index: any, type: any, value: any) => {
     const updatedList = [...attendanceList];
     updatedList[index].attendanceDetails[type] = value;
     setAttendanceList(updatedList);
   };
 
-  const markAll = (type: any, status) => {
-    const updatedList = attendanceList.map((item) => ({
+  const markAll = (type: any, status: any) => {
+    const updatedList = attendanceList.map((item: any) => ({
       ...item,
       attendanceDetails: {
         ...item.attendanceDetails,
@@ -122,7 +122,7 @@ function AttendanceForm() {
       // Proceed with saving the attendance if validation passes
       await ApiService.createAttendance(attendanceList);
       // Fetch updated data after saving
-      fetchAttendance();
+      fetchAttendance({});
       fetchAttendanceAnalysis();
     } catch (error) {
       console.error("Error saving attendance:", error);
@@ -177,7 +177,7 @@ function AttendanceForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">Select Grade</option>
-              {grades.map((grade) => (
+              {grades.map((grade: any) => (
                 <option key={grade._id} value={grade._id}>
                   {grade.name}
                 </option>
@@ -199,7 +199,7 @@ function AttendanceForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">Select Stream</option>
-              {streams.map((stream) => (
+              {streams.map((stream: any) => (
                 <option key={stream._id} value={stream._id}>
                   {stream.name}
                 </option>
@@ -247,7 +247,7 @@ function AttendanceForm() {
                   <button
                     className={`${
                       attendanceList.every(
-                        (item) => item.attendanceDetails?.morning
+                        (item: any) => item.attendanceDetails?.morning
                       )
                         ? "bg-green-500"
                         : "bg-red-500"
@@ -255,7 +255,7 @@ function AttendanceForm() {
                     onClick={(event) => {
                       event.preventDefault();
                       const newStatus = !attendanceList.every(
-                        (item) => item.attendanceDetails?.morning
+                        (item: any) => item.attendanceDetails?.morning
                       );
                       markAll("morning", newStatus);
                     }}
@@ -263,7 +263,7 @@ function AttendanceForm() {
                     <CheckCircle className="h-4 w-4" />
                     <span className="ml-1">
                       {attendanceList.every(
-                        (item) => item.attendanceDetails?.morning
+                        (item: any) => item.attendanceDetails?.morning
                       )
                         ? "All present Morning"
                         : "All absent Morning"}
@@ -274,7 +274,7 @@ function AttendanceForm() {
                   <button
                     className={`${
                       attendanceList.every(
-                        (item) => item.attendanceDetails?.afternoon
+                        (item: any) => item.attendanceDetails?.afternoon
                       )
                         ? "bg-green-500"
                         : "bg-red-500"
@@ -282,7 +282,7 @@ function AttendanceForm() {
                     onClick={(event) => {
                       event.preventDefault();
                       const newStatus = !attendanceList.every(
-                        (item) => item.attendanceDetails?.afternoon
+                        (item: any) => item.attendanceDetails?.afternoon
                       );
                       markAll("afternoon", newStatus);
                     }}
@@ -290,7 +290,7 @@ function AttendanceForm() {
                     <CheckCircle className="h-4 w-4" />
                     <span className="ml-1">
                       {attendanceList.every(
-                        (item) => item.attendanceDetails?.afternoon
+                        (item: any) => item.attendanceDetails?.afternoon
                       )
                         ? "All present Afternoon"
                         : "All absent Afternoon"}
@@ -301,7 +301,7 @@ function AttendanceForm() {
               <ul className="space-y-2">
                 {attendanceList.length > 0 ? (
                   <div className="grid grid-cols-1 gap-4">
-                    {attendanceList.map((item, index) => (
+                    {attendanceList.map((item: any, index: any) => (
                       <div
                         key={item.learner._id}
                         className="grid grid-cols-4 items-center p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition duration-200"

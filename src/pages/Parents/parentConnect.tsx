@@ -29,11 +29,11 @@ interface FormData {
   content: string;
 }
 
-const auth = await localStorage.getItem("@AuthData");
-
 // value previously stored
-let auth_data = JSON.parse(auth);
-let user = auth_data.user;
+const auth = localStorage.getItem("@AuthData");
+
+let auth_data: { user?: any } = auth ? JSON.parse(auth) : {}; // Ensure `auth_data` is always an object
+let user = auth_data.user || null; // Default to `null` if `user` is missing
 
 // Set the default Authorization header for axios
 
@@ -47,19 +47,27 @@ const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
 console.log(user);
 console.log(socket);
 
+interface User {
+  name: string;
+  avatar: string;
+  status: string;
+}
+
 function Main() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const notify = useRef<NotificationElement>(null);
+  const notify = useRef<NotificationElement>();
   const { register, handleSubmit, reset } = useForm<FormData>();
   const [parents, setParents] = useState<Parent[]>([]);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
   const [selectedParent, setSelectedParent] = useState<string>(
     "676e2905deac6e09363e2dcf"
   );
-  const auth = useAuth();
+  const auth = localStorage.getItem("@AuthData");
 
+  let auth_data: { user?: any } = auth ? JSON.parse(auth) : {}; // Ensure `auth_data` is always an object
+  let user: any = auth_data.user || null; // Default to `null` if `user` is missing
   const getParents = async () => {
     setLoading(true);
 
@@ -84,7 +92,7 @@ function Main() {
       console.log(newMessage);
       // fetchMessages();
 
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev: any) => [...prev, newMessage]);
     });
 
     return () => {
@@ -180,7 +188,7 @@ function Main() {
             </div>
           </div>
           <div className="flex-grow h-[80vh] p-2 rounded-md">
-            <Messages messages={messages} user={auth} />
+            <Messages messages={messages} user={user} />
             <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
               <div className="h-15 p-3 rounded-xl rounded-tr-none rounded-tl-none bg-gray-100 dark:bg-gray-800">
                 <div className="flex items-center">

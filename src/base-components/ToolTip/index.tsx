@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Transition } from "@headlessui/react";
 
-export default function Tooltip({ text, children }) {
+interface TooltipProps {
+  text: string;
+  children: ReactNode;
+}
+
+export default function Tooltip({ text, children }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

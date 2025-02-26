@@ -9,7 +9,7 @@ function AttendanceForm() {
   const [streams, setStreams] = useState([]);
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedStream, setSelectedStream] = useState("");
-  const [attendanceSummary, setAttendanceSummary] = useState({
+  const [attendanceSummary, setAttendanceSummary] = useState<any>({
     totalBoys: 0,
     totalGirls: 0,
     totalCumulativeBoys: 0,
@@ -34,7 +34,7 @@ function AttendanceForm() {
     setGrades(response.data);
   };
 
-  const getStreams = async (gradeId) => {
+  const getStreams = async (gradeId: any) => {
     const response = await ApiService.getStream({ page: 1, grade: gradeId });
     setStreams(response.data);
   };
@@ -55,7 +55,7 @@ function AttendanceForm() {
 
   // Function to handle PDF export for printing and filing
   const generateReport = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF() as any;
     const summary = attendanceSummary;
 
     doc.setFontSize(18);
@@ -74,7 +74,6 @@ function AttendanceForm() {
       ["Boys Attendance", `${summary.boysAttendancePercentage}%`],
       ["Girls Attendance", `${summary.girlsAttendancePercentage}%`],
     ];
-
     // Table styles
     doc.autoTable({
       head: [tableColumn],
@@ -95,10 +94,11 @@ function AttendanceForm() {
         fillColor: [240, 240, 240],
       },
     });
+    const autoTableOutput = (doc as any).lastAutoTable;
 
     // Footer with date and time
     const currentDate = new Date().toLocaleDateString();
-    doc.text(`Generated on: ${currentDate}`, 14, doc.lastAutoTable.finalY + 10);
+    doc.text(`Generated on: ${currentDate}`, 14, autoTableOutput.finalY + 10);
 
     // Save the PDF file
     doc.save("attendance-summary-report.pdf");
@@ -125,7 +125,7 @@ function AttendanceForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">Select Grade</option>
-              {grades.map((grade) => (
+              {grades.map((grade: any) => (
                 <option key={grade._id} value={grade._id}>
                   {grade.name}
                 </option>
@@ -144,7 +144,7 @@ function AttendanceForm() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg"
             >
               <option value="">Select Stream</option>
-              {streams.map((stream) => (
+              {streams.map((stream: any) => (
                 <option key={stream._id} value={stream._id}>
                   {stream.name}
                 </option>

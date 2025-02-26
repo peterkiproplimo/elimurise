@@ -27,11 +27,10 @@ interface FormData {
   content: string;
 }
 
-const auth = await localStorage.getItem("@AuthData");
+const auth = localStorage.getItem("@AuthData");
 
-// value previously stored
-let auth_data = JSON.parse(auth);
-let user = auth_data.user;
+let auth_data: { user?: any } = auth ? JSON.parse(auth) : {}; // Ensure `auth_data` is always an object
+let user = auth_data.user || null; // Default to `null` if `user` is missing
 
 // Set the default Authorization header for axios
 
@@ -49,7 +48,7 @@ function Main() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
-  const notify = useRef<NotificationElement>(null);
+  const notify = useRef<NotificationElement>();
   const { register, handleSubmit, reset } = useForm<FormData>();
   const [parents, setParents] = useState<Parent[]>([]);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
