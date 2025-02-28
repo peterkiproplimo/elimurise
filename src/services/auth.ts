@@ -30,7 +30,7 @@ const getData = async () => {
     if (auth !== null) {
       // value previously stored
       let auth_data = JSON.parse(auth);
-      let user = auth_data.user;
+      let user = auth_data?.user;
       axios.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
       return user;
     }

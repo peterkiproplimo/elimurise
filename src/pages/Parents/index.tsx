@@ -69,10 +69,10 @@ function Main() {
         .string()
         .required("Phone Number is required")
         .min(6, "Phone Number must be at least 6 characters long"),
-      id_no: yup
-        .string()
-        .required("ID Number is required")
-        .min(6, "ID Number must be at least 6 characters long"),
+      // id_no: yup
+      //   .string()
+      //   .required("ID Number is required")
+      //   .min(6, "ID Number must be at least 6 characters long"),
     })
     .required();
 

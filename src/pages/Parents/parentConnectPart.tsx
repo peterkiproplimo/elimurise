@@ -38,7 +38,7 @@ let user = auth_data.user || null; // Default to `null` if `user` is missing
 const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
   transports: ["websocket"],
   auth: {
-    token: `Bearer ${user.token}`, // Use the token from localStorage
+    token: `Bearer ${user?.token}`, // Use the token from localStorage
   },
 });
 console.log(user);

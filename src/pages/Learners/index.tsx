@@ -42,12 +42,12 @@ const auth = localStorage.getItem("@AuthData"); // No need for `await` since `lo
 
 let auth_data = auth ? JSON.parse(auth) : null; // Prevents JSON.parse(null) error
 
-let user = auth_data.user;
+let user = auth_data?.user;
 
 const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
   transports: ["websocket"],
   auth: {
-    token: `Bearer ${user.token}`, // Use the token from localStorage
+    token: `Bearer ${user?.token}`, // Use the token from localStorage
   },
 });
 function Main() {
