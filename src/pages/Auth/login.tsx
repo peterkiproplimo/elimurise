@@ -250,11 +250,11 @@ const Login = () => {
                   </Link>
                 </div>
               </form>
-              <div className="border m-10 p-5 border-gray-300">
-                <p className="mt-2 pb-2 ml-5 text-xl xl:text-2xl font-bold">
+              {/* <div className="border m-10 p-5 border-gray-300"> */}
+              {/* <p className="mt-2 pb-2 ml-5 text-xl xl:text-2xl font-bold">
                   Dont have an account?
-                </p>
-                <div className=" text-center ml-5 ">
+                </p> */}
+              {/* <div className=" text-center ml-5 ">
                   <Link to="/register">
                     <Button className="w-full px-4 py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3">
                       Create Account
@@ -267,8 +267,8 @@ const Login = () => {
                       )}
                     </Button>
                   </Link>
-                </div>
-              </div>
+                </div> */}
+              {/* </div> */}
             </>
           ) : (
             <form className="validate-form" onSubmit={onSubmit}>
