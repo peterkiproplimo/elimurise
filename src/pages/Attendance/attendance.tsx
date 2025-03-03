@@ -122,7 +122,7 @@ function AttendanceForm() {
       // Proceed with saving the attendance if validation passes
       await ApiService.createAttendance(attendanceList);
       // Fetch updated data after saving
-      fetchAttendance({});
+      fetchAttendance(selectedDate);
       fetchAttendanceAnalysis();
     } catch (error) {
       console.error("Error saving attendance:", error);
