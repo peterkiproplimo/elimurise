@@ -739,6 +739,24 @@ export async function getBehaviour() {
     throw handler(e);
   }
 }
+export async function sendMessage(data: any) {
+  try {
+    console.log(data);
+    let res = await axios.post(c.MESSAGE + "/send", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function sendMessageParent(data: any) {
+  try {
+    console.log(data);
+    let res = await axios.post(c.MESSAGE_PARENT + "/send", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 export async function getMessage(data: any) {
   try {
     console.log(data);
@@ -752,6 +770,14 @@ export async function getMessageParent(data: any) {
   try {
     console.log(data);
     let res = await axios.get(c.MESSAGE_PARENT + "/" + data.parent);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getChatheads() {
+  try {
+    let res = await axios.get(c.MESSAGE_PARENT + "/chat-heads");
     return res.data;
   } catch (e) {
     throw handler(e);

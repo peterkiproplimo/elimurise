@@ -137,13 +137,13 @@ function Main() {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      setMessage("Failed to load messages");
-      notify.current?.showToast();
+      // setMessage("Failed to load messages");
+      // notify.current?.showToast();
     }
   };
 
   useEffect(() => {
-    socket.emit("register", { userId: user.id, userType: "parent" });
+    socket.emit("register", { userId: user._id, userType: "parent" });
 
     socket.on("receiveMessage", (newMessage: any) => {
       fetchMessages();
@@ -211,14 +211,15 @@ function Main() {
     setLoading(true);
     try {
       const newMessage = {
-        sender: user.id,
+        sender: user._id,
         senderModel: "Parent",
         receiver: selectedParent?._id, // Use selected parent
         receiverModel: "Parent",
         message: data,
       };
+      const response = await ApiService.sendMessage(newMessage);
 
-      socket.emit("sendMessage", newMessage);
+      // socket.emit("sendMessage", newMessage);
       fetchMessages();
 
       reset();
