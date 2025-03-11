@@ -162,7 +162,8 @@ const Login = () => {
               />
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
+                  {typeof errors.email.message === "string" &&
+                    errors.email.message}
                 </p>
               )}
             </div>
@@ -180,7 +181,8 @@ const Login = () => {
                 />
                 {errors.code && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.code.message}
+                    {typeof errors.code.message === "string" &&
+                      errors.code.message}
                   </p>
                 )}
               </div>
@@ -207,7 +209,8 @@ const Login = () => {
               </div>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
+                  {typeof errors.password.message === "string" &&
+                    errors.password.message}
                 </p>
               )}
             </div>
