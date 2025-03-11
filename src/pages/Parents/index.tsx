@@ -141,6 +141,24 @@ function Main() {
       isLoading(false);
     } catch (error: any) {
       setMessage("Ooops failed to load");
+
+      isLoading(false);
+    }
+  };
+  const sendWelcomeEmail = async (data: any) => {
+    isLoading(true);
+
+    try {
+      const response = await ApiService.sendWecomeEmail(data);
+      setSuccess(true);
+      setMessage("Welcome email sent succeessiful");
+      notify.current?.showToast();
+    } catch (error: any) {
+      setSuccess(false);
+
+      setMessage("Ooops failed to send, contact Administrator");
+      notify.current?.showToast();
+
       isLoading(false);
     }
   };
@@ -634,6 +652,21 @@ function Main() {
 
                             <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                               <div className="flex items-center justify-center">
+                                {hasPermission("parents", "update") && (
+                                  <a
+                                    className="flex items-center mr-3 text-success"
+                                    href="#"
+                                    onClick={() => {
+                                      sendWelcomeEmail(parent._id);
+                                    }}
+                                  >
+                                    <Lucide
+                                      icon="Mail"
+                                      className="w-4 h-4 mr-1"
+                                    />{" "}
+                                    Email
+                                  </a>
+                                )}
                                 {hasPermission("parents", "update") && (
                                   <a
                                     className="flex items-center mr-3 text-success"
