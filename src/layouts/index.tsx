@@ -36,6 +36,7 @@ import MainColorSwitcher from "../components/MainColorSwitcher";
 import SideMenuTooltip from "../../src/components/SideMenuTooltip";
 import { useAuth } from "../contexts/Auth";
 import { useTour } from "../TourContext";
+import { IMG_URL } from "../utils/constants";
 
 interface School {
   school: Record<string, any>; // Replace `any` with specific types if known
@@ -55,12 +56,16 @@ function Layout() {
   const sideMenu = () => nestedMenu(sideMenuStore, location);
   const dispatch = useDispatch();
   const auth = useAuth();
-  const user = auth?.authData?.user as School;
+  const [school, setSchool] = useState<any>();
+  useEffect(() => {
+    setSchool(JSON.parse(localStorage.getItem("school") ?? "{}"));
+  }, [auth]);
   const navigate = useNavigate();
 
   useEffect(() => {
     setFormattedMenu(sideMenu());
   }, [sideMenuStore, location.pathname, auth]);
+
   useEffect(() => {
     const handleStorageChange = () => {
       const type = localStorage.getItem("type");
@@ -95,12 +100,19 @@ function Layout() {
         {/* BEGIN: Side Menu */}
         {/* w-full fixed bg-primary/90 z-[60] border-b border-white/[0.08] -mt-5 -mx-3 sm:-mx-8 mb-6 dark:bg-darkmode-800/90 md:hidden */}
         {/* <nav className="w-[105px] bg-primary/90 xl:w-[260px] px-5 pb-16 overflow-x-hidden z-50 pt-10 -mt-4 hidden md:block"> */}
-        <nav className="w-[105px] scrollbar-hidden h-full  bg-primary xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md  hidden md:block fixed bg-primary z-[60] border-b border-white/[0.08]    mb-6 dark:bg-darkmode-800/90 ">
+        <nav
+          className={`w-[105px] scrollbar-hidden h-full xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md hidden md:block fixed border-b border-white/[0.08] mb-6 dark:bg-darkmode-800/90 ${
+            school?.primaryColor ? "" : "bg-primary"
+          }`}
+          style={
+            school?.primaryColor ? { backgroundColor: school.primaryColor } : {}
+          }
+        >
           <div className="mb-2">
             <img
               alt="Hero"
               className=" w-[130px] ml-5"
-              src={logoUrl}
+              src={school?.logo ? IMG_URL + school?.logo : logoUrl}
               onClick={(e) => navigate("/home")}
             />
           </div>
