@@ -41,6 +41,8 @@ function Main() {
   const [learningAreas, setLearningAreas] = useState([]);
   const [filteredLearningAreas, setFilteredLearningAreas] = useState([]);
   const [grades, setGrades] = useState([]);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const [roles, setRoles] = useState([]);
   const getRole = async () => {
@@ -159,27 +161,40 @@ function Main() {
 
   useEffect(() => {
     getTeachers();
-  }, [search, page, limit]);
+  }, [search, page, limit, sortField, sortOrder]);
   useEffect(() => {
     // getAcademicYear();
   }, []);
   const getTeachers = async () => {
     isLoading(true);
-    const response = await ApiService.getTeachers({
-      page,
-      limit,
-      search,
-    });
-    setTeachers(response.data);
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    isLoading(false);
+    try {
+      const response = await ApiService.getTeachers({
+        page,
+        limit,
+        search,
+        sortField,
+        sortOrder, // Include sorting in API request
+      });
+
+      setTeachers(response.data);
+      const pagination = response.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+    } catch (error) {
+      console.error("Error fetching teachers:", error);
+    } finally {
+      isLoading(false);
+    }
   };
+  const handleSort = (field: string) => {
+    setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
+    setSortField(field);
+  };
+
   useEffect(() => {
     getLearningAreas();
     getGrades();
@@ -350,16 +365,14 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
-                <FormLabel>
-                  Middle Name<span className="text-danger ml-0.5">*</span>
-                </FormLabel>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
                 <FormInput
                   {...register("lastname")}
                   type="text"
                   name="lastname"
                   className={errors.lastname ? "border-danger" : ""}
-                  placeholder="Middle name"
+                  placeholder="Doe"
                 />
                 {errors.lastname && (
                   <div className="mt-2 text-danger">
@@ -384,6 +397,7 @@ function Main() {
                   </div>
                 )}
               </div>
+
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Phone Number<span className="text-danger ml-0.5">*</span>
@@ -443,22 +457,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
-                <FormInput
-                  {...register("lastname")}
-                  type="text"
-                  name="lastname"
-                  className={errors.lastname ? "border-danger" : ""}
-                  placeholder="Doe"
-                />
-                {errors.lastname && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.lastname.message === "string" &&
-                      errors.lastname.message}
-                  </div>
-                )}
-              </div>
+
               {/* <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
                 <TomSelect
@@ -679,21 +678,49 @@ function Main() {
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                       No.
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Name
+
+                    <Table.Th
+                      className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                      onClick={() => handleSort("firstname")}
+                    >
+                      Name{" "}
+                      {sortField === "firstname"
+                        ? sortOrder === "asc"
+                          ? "▲"
+                          : "▼"
+                        : ""}
                     </Table.Th>
 
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Phone Number
+                    <Table.Th
+                      className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                      onClick={() => handleSort("phone")}
+                    >
+                      Phone Number{" "}
+                      {sortField === "phone"
+                        ? sortOrder === "asc"
+                          ? "▲"
+                          : "▼"
+                        : ""}
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Email
+
+                    <Table.Th
+                      className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                      onClick={() => handleSort("email")}
+                    >
+                      Email{" "}
+                      {sortField === "email"
+                        ? sortOrder === "asc"
+                          ? "▲"
+                          : "▼"
+                        : ""}
                     </Table.Th>
+
                     <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
                       Actions
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
+
                 <Table.Tbody>
                   {teachers.map((teacher: any, key) => (
                     <Table.Tr key={key} className="">
@@ -725,7 +752,7 @@ function Main() {
                               className="font-medium whitespace-nowrap"
                             >
                               {teacher.firstname && teacher.firstname}
-                              {" " + teacher.surname + " " + teacher.lastname}
+                              {" " + teacher.lastname + " " + teacher.surname}
                             </a>
                           </div>
                         </div>

@@ -92,8 +92,9 @@ const Login = () => {
           } else {
             localStorage.setItem("type", "school");
           }
-
           await auth.signIn({ ...res.user, token });
+
+          window.location.href = "/home";
         } else {
           let res = await ApiService.login_parent(data);
           isLoading(false);
@@ -101,8 +102,9 @@ const Login = () => {
           let token = res.token;
           localStorage.setItem("type", "parent");
           await auth.signIn({ ...res.user, token });
+          setSchool(res.school);
+          window.location.href = "/parent";
         }
-        window.location.href = "/home";
         setSuccess(true);
         setMessage("Authenticated successfully");
         notify.current?.showToast();

@@ -63,6 +63,8 @@ function Main() {
     from_session: "",
     next_session: "",
   });
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const [schools, setSchools] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
@@ -216,7 +218,7 @@ function Main() {
   }, [grade]);
   useEffect(() => {
     getStudents();
-  }, [search, page, limit, grade, stream]);
+  }, [search, page, limit, grade, stream, sortField, sortOrder]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -356,25 +358,36 @@ function Main() {
   };
   const getStudents = async () => {
     isLoading(true);
-    const response = await ApiService.getLearnersEnroll(
-      {
-        page,
-        search,
-        limit,
-        grade,
-        stream,
-      },
-      strandFilter
-    );
-    const pagination = response.pagination;
-    setPagination({
-      current_page: pagination.current_page,
-      total: pagination.total,
-      total_pages: pagination.total_pages,
-      per_page: pagination.per_page,
-    });
-    setLearners(response.data);
-    isLoading(false);
+    try {
+      const response = await ApiService.getLearnersEnroll(
+        {
+          page,
+          search,
+          limit,
+          grade,
+          stream,
+          sortField,
+          sortOrder, // Include sorting in API request
+        },
+        strandFilter
+      );
+      const pagination = response.pagination;
+      setPagination({
+        current_page: pagination.current_page,
+        total: pagination.total,
+        total_pages: pagination.total_pages,
+        per_page: pagination.per_page,
+      });
+      setLearners(response.data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    } finally {
+      isLoading(false);
+    }
+  };
+  const handleSort = (field: string) => {
+    setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
+    setSortField(field);
   };
   const getParents = async () => {
     const response = await ApiService.getParents({
@@ -1400,27 +1413,88 @@ function Main() {
                           No.
                         </Table.Th>
 
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Name
+                        <Table.Th
+                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
+                          onClick={() => handleSort("first_name")}
+                        >
+                          Name{" "}
+                          {sortField === "first_name"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Adm No
+                        <Table.Th
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          onClick={() => handleSort("adm_no")}
+                        >
+                          Adm No{" "}
+                          {sortField === "adm_no"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Nemis
+
+                        <Table.Th
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          onClick={() => handleSort("nemis_no")}
+                        >
+                          Nemis{" "}
+                          {sortField === "nemis_no"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Grade
+
+                        <Table.Th
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          onClick={() => handleSort("grade")}
+                        >
+                          Grade{" "}
+                          {sortField === "grade"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Stream
+
+                        <Table.Th
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          onClick={() => handleSort("stream")}
+                        >
+                          Stream{" "}
+                          {sortField === "stream"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Session
+
+                        <Table.Th
+                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
+                          onClick={() => handleSort("session")}
+                        >
+                          Session{" "}
+                          {sortField === "session"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Status
+
+                        <Table.Th
+                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
+                          onClick={() => handleSort("status")}
+                        >
+                          Status{" "}
+                          {sortField === "status"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
                         <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
@@ -1428,6 +1502,7 @@ function Main() {
                         </Table.Th>
                       </Table.Tr>
                     </Table.Thead>
+
                     <Table.Tbody>
                       {learners.map((learner: any, key) => (
                         <Table.Tr key={key} className="">

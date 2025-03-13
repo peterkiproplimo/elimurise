@@ -112,7 +112,7 @@ const initialState: SideMenuState = {
         {
           icon: "Activity",
           pathname: "/home/assessment",
-          title: " Assessment",
+          title: " Formative Assessment",
           ignore: !hasPermission("assessment", "read"),
         },
         {
@@ -157,7 +157,7 @@ const initialState: SideMenuState = {
         {
           icon: "Activity",
           pathname: "/home/comments",
-          title: "Termly Comments",
+          title: "Termly Report",
         },
       ],
     },
