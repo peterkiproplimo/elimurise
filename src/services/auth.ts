@@ -223,6 +223,16 @@ export async function importParents(data: FieldValues) {
     throw handler(e);
   }
 }
+
+export async function sendWecomeEmail(data: any) {
+  try {
+    let res = await axios.put(c.PARENTS + "/welcome-email/" + data);
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 export async function exportParents(data: FieldValues) {
   try {
     let res = await axios.post(c.PARENTS + "/export", data, {

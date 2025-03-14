@@ -45,6 +45,8 @@ function Main() {
   const [uploadDialog, setUploadDialog] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [exportDialog, setExportDialog] = useState(false);
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -69,10 +71,6 @@ function Main() {
         .string()
         .required("Phone Number is required")
         .min(6, "Phone Number must be at least 6 characters long"),
-      // id_no: yup
-      //   .string()
-      //   .required("ID Number is required")
-      //   .min(6, "ID Number must be at least 6 characters long"),
     })
     .required();
 
@@ -119,7 +117,13 @@ function Main() {
 
   useEffect(() => {
     getParents();
-  }, [search, page, limit]);
+  }, [search, page, limit, sortBy, sortOrder]);
+  const handleSort = (column: string) => {
+    setSortOrder((prevOrder) =>
+      sortBy === column && prevOrder === "asc" ? "desc" : "asc"
+    );
+    setSortBy(column);
+  };
 
   const getParents = async () => {
     isLoading(true);
@@ -129,6 +133,8 @@ function Main() {
         page,
         limit,
         search,
+        sortBy,
+        sortOrder,
       });
       setParents(response.data);
       const pagination = response.pagination;
@@ -141,6 +147,26 @@ function Main() {
       isLoading(false);
     } catch (error: any) {
       setMessage("Ooops failed to load");
+
+      isLoading(false);
+    }
+  };
+  const sendWelcomeEmail = async (data: any) => {
+    isLoading(true);
+
+    try {
+      const response = await ApiService.sendWecomeEmail(data);
+      setSuccess(true);
+      setMessage("Welcome email sent succeessiful");
+      isLoading(false);
+
+      notify.current?.showToast();
+    } catch (error: any) {
+      setSuccess(false);
+
+      setMessage("Ooops failed to send, contact Administrator");
+      notify.current?.showToast();
+
       isLoading(false);
     }
   };
@@ -244,8 +270,36 @@ function Main() {
     setDialog(false);
   };
 
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleSendEmail = () => {
+    setOpenDialog(false); // Close dialog
+    sendWelcomeEmail("all"); // Trigger email
+  };
+
   return (
     <>
+      {/* Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <Dialog.Panel className={"p-5"}>
+          <Dialog.Title>Confirm Action</Dialog.Title>
+          <Dialog.Description>
+            Are you sure you want to send the welcome email to all parents?
+          </Dialog.Description>
+          <div className="flex justify-end space-x-2 mt-4">
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOpenDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSendEmail}>
+              Yes, Send
+            </Button>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+
       {dialog ? (
         <>
           <div className="flex items-center mt-8 ">
@@ -295,24 +349,7 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Gender</FormLabel>
-                <FormSelect
-                  {...register("gender")}
-                  name="gender"
-                  // defaultValue={selectedLevel}
-                >
-                  <option value={""}>Select Gender</option>
-                  <option value={"Male"}>Male</option>
-                  <option value={"Female"}>Female</option>
-                </FormSelect>
-                {errors.relationship && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.relationship.message === "string" &&
-                      errors.relationship.message}
-                  </div>
-                )}
-              </div>
+
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>
                   Last Name <span className="text-danger ml-0.5">*</span>
@@ -350,9 +387,25 @@ function Main() {
                 )}
               </div>
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>
-                  ID Number<span className="text-danger ml-0.5">*</span>
-                </FormLabel>
+                <FormLabel htmlFor="modal-form-6">Gender</FormLabel>
+                <FormSelect
+                  {...register("gender")}
+                  name="gender"
+                  // defaultValue={selectedLevel}
+                >
+                  <option value={""}>Select Gender</option>
+                  <option value={"Male"}>Male</option>
+                  <option value={"Female"}>Female</option>
+                </FormSelect>
+                {errors.relationship && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.relationship.message === "string" &&
+                      errors.relationship.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-6 sm:col-span-6">
+                <FormLabel>ID Number</FormLabel>
                 <FormInput
                   {...register("id_no")}
                   type="text"
@@ -520,6 +573,16 @@ function Main() {
                   pagination.total}{" "}
                 entries
               </div>
+              <div className="flex items-center space-x-3 mr-3">
+                <Button
+                  variant="outline-primary"
+                  onClick={() => setOpenDialog(true)}
+                >
+                  <Lucide icon="Mail" className="w-4 h-4 mr-2" />
+                  Send Wecome Email
+                </Button>
+              </div>
+
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
                 <div className="relative w-56 text-slate-500">
                   <FormInput
@@ -556,25 +619,56 @@ function Main() {
                           <Table.Th className="py-0 border-b-0 whitespace-nowrap">
                             No.
                           </Table.Th>
-                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                            Name
+                          <Table.Th
+                            className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                            onClick={() => handleSort("first_name")}
+                          >
+                            Name{" "}
+                            {sortBy === "first_name"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
                           </Table.Th>
-
-                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                            Email
+                          <Table.Th
+                            className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                            onClick={() => handleSort("email")}
+                          >
+                            Email{" "}
+                            {sortBy === "email"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
                           </Table.Th>
-                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                            ID Number
+                          <Table.Th
+                            className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                            onClick={() => handleSort("id_no")}
+                          >
+                            ID Number{" "}
+                            {sortBy === "id_no"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
                           </Table.Th>
-                          <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                            Phone Number
+                          <Table.Th
+                            className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                            onClick={() => handleSort("phone")}
+                          >
+                            Phone Number{" "}
+                            {sortBy === "phone"
+                              ? sortOrder === "asc"
+                                ? "▲"
+                                : "▼"
+                              : ""}
                           </Table.Th>
-
                           <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
                             Actions
                           </Table.Th>
                         </Table.Tr>
                       </Table.Thead>
+
                       <Table.Tbody>
                         {parents.map((parent: any, key) => (
                           <Table.Tr key={key} className="">
@@ -634,6 +728,21 @@ function Main() {
 
                             <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
                               <div className="flex items-center justify-center">
+                                {hasPermission("parents", "update") && (
+                                  <a
+                                    className="flex items-center mr-3 text-success"
+                                    href="#"
+                                    onClick={() => {
+                                      sendWelcomeEmail(parent._id);
+                                    }}
+                                  >
+                                    <Lucide
+                                      icon="Mail"
+                                      className="w-4 h-4 mr-1"
+                                    />{" "}
+                                    Email
+                                  </a>
+                                )}
                                 {hasPermission("parents", "update") && (
                                   <a
                                     className="flex items-center mr-3 text-success"

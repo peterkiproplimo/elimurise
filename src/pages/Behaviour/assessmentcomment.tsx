@@ -456,7 +456,7 @@ function Main() {
                 >
                   <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
                 </a>{" "}
-                Termly Comments
+                Termly Report
               </h2>
             </div>
             <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg ">
@@ -528,10 +528,10 @@ function Main() {
                       NAME
                     </Table.Th>
                     <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
-                      Comment entry
+                      Learner's Termly Report Entry
                     </Table.Th>
                     <Table.Th className="text-left border-b-1 whitespace-wrap ">
-                      Comment
+                      Learner's Termly Report
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
@@ -651,7 +651,7 @@ function Main() {
           </h2>
           <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <h2 className="mr-auto text-base font-medium border-b p-2">
-              Comments Entry
+              Learner's Report Entry
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2">
@@ -764,9 +764,9 @@ function Main() {
                 onClick={() => generateAssessment()}
                 variant="primary"
                 type="button"
-                className="w-24 text-white"
+                className=" text-white"
               >
-                Commet
+                Type Learner's Report
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"

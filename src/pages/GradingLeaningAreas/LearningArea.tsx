@@ -75,7 +75,6 @@ const LearningArea: React.FC<LearningAreaProps> = ({
                   type="text"
                   name="description"
                   value={grading.description}
-                  disabled
                   onChange={(e: any) => handleGradingChange(e, gradingIndex)}
                   className="w-full p-2 border rounded"
                 />

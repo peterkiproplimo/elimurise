@@ -26,6 +26,11 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [selectedForm, setSelectedForm] = useState("form1");
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   // Retrieve from local storage on component mount
   useEffect(() => {
     const storedForm = localStorage.getItem("selectedForm");
@@ -87,8 +92,9 @@ const Login = () => {
           } else {
             localStorage.setItem("type", "school");
           }
-
           await auth.signIn({ ...res.user, token });
+
+          window.location.href = "/home";
         } else {
           let res = await ApiService.login_parent(data);
           isLoading(false);
@@ -96,8 +102,9 @@ const Login = () => {
           let token = res.token;
           localStorage.setItem("type", "parent");
           await auth.signIn({ ...res.user, token });
+          setSchool(res.school);
+          window.location.href = "/parent";
         }
-        window.location.href = "/home";
         setSuccess(true);
         setMessage("Authenticated successfully");
         notify.current?.showToast();
@@ -110,293 +117,123 @@ const Login = () => {
     }
   };
 
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  const togglePasswordVisibility = () => {
-    console.log("Button clicked");
-    setShowPassword(!showPassword);
-  };
-
   return (
     <>
-      <div className="form-container mt-5 p-0">
-        <div className=" mt-5  xl:ml-5">
-          <img alt="ACS" className="xl:w-10 xl:p-5 w-36   md:w-8 xl:w-auto" src={logo} />
+      <div className="form-container mt-5 px-5 md:px-10 lg:px-20">
+        <div className="mt-5 flex justify-center">
+          <img alt="ACS" className="w-[100px] md:w-24" src={logo} />
         </div>
-        <div className="xl:p-10">
-          <h2 className="xl:text-5xl text-3xl font-bold  xl:mt-5  xl:ml-10  ml-5">
-            Login
-          </h2>
-          <div className="mt-2 text-slate-900 xl:ml-10 ml-5 xl:text-xl">
+        <div className="p-5 md:p-10">
+          <h2 className="text-3xl md:text-4xl font-bold text-center">Login</h2>
+          <p className="mt-2 text-center text-gray-700">
             Login with the data you entered during your registration.
-          </div>
-          <div className="xl:ml-8 ml-2">
-            <FormLabel className="xl:mr-5">
+          </p>
+          <div className="flex justify-center mt-4">
+            <label className="mr-5">
               <input
                 type="radio"
-                className="xl:p-3 m-3"
                 value="form1"
+                className="mr-2"
                 checked={selectedForm === "form1"}
                 onChange={handleFormChange}
               />
               School
-            </FormLabel>
-            <FormLabel className="mr-5">
+            </label>
+            <label>
               <input
                 type="radio"
                 value="form2"
-                className="xl:p-3 m-3"
+                className="mr-2"
                 checked={selectedForm === "form2"}
                 onChange={handleFormChange}
               />
-              Parent{" "}
-            </FormLabel>
+              Parent
+            </label>
           </div>
 
-          {selectedForm === "form1" ? (
-            <>
-              <form className="validate-form xl:pl-10 xl:pr-10 pl-5 pr-5" onSubmit={onSubmit}>
-                <div className=" ">
-                  <div className="input-form">
-                    <label className="">Email</label>
-                    <FormInput
-                      {...register("email")}
-                      id="validation-form-2"
-                      type="email"
-                      name="email"
-                      className={
-                        errors.email
-                          ? "block px-4 py-3 mt-2  min-w-full xl:min-w-[350px] border-danger"
-                          : "block px-4 py-3 mt-2  min-w-full  border-gray-500"
-                      }
-                      placeholder="Email"
-                    />
-                    {errors.email && (
-                      <div className="mt-2 text-danger">
-                        {typeof errors.email.message === "string" &&
-                          errors.email.message}
-                      </div>
-                    )}
-                  </div>
-                  <div className="input-form pt-2">
-                    <label className=" ">Password</label>
-                    <div className="flex items-center">
-                      <FormInput
-                        {...register("password")}
-                        id="validation-form-3"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        className={
-                          errors.password
-                            ? "block px-4 py-3 mt-2  min-w-full xl:min-w-[350px] border-danger pr-10"
-                            : "block px-4 py-3 mt-2 min-w-full  border-gray-500 "
-                        }
-                        placeholder="Enter Password"
-                      />
-                      {/* <div
-                    className="flex items-center cursor-pointer eye-icon mt-5"
-                    onClick={togglePasswordVisibility}
-                  >
-                    <FontAwesomeIcon
-                      icon={showPassword ? faEyeSlash : faEye}
-                      className="text-grey-800"
-                    />
-                  </div> */}
-                    </div>
-
-                    {errors.password && (
-                      <div className="mt-2 text-danger">
-                        {typeof errors.password.message === "string" &&
-                          errors.password.message}
-                      </div>
-                    )}
-
-                    {/* Eye Icon */}
-                  </div>
-                </div>
-
-                <div className="mt-5 text-center  xl:mt-8 ">
-                  <Button
-                    variant="primary"
-                    className="w-full px-4 py-3 align-top   xl:text-lg xl:w-22 xl:mr-3"
-                  >
-                    Login
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-2 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                </div>
-                <div className="flex mt-4 text-md xl:text-md justify-end  text-slate-600 dark:text-slate-500 ">
-                  {/* <div className="flex items-center mr-auto">
-                <FormCheck.Input
-                  id="remember-me"
-                  type="checkbox"
-                  className="mr-2 border-blue-300"
-                />
-                <label
-                  className="cursor-pointer select-none"
-                  htmlFor="remember-me"
-                >
-                  Remember me
-                </label>
-              </div> */}
-                  <Link to="/auth/forgot-password">
-                    {" "}
-                    Did You Forget Password?
-                  </Link>
-                </div>
-              </form>
-              <div className="border xl:m-10 m-5 xl:p-5 p-3 border-gray-300">
-                <p className="mt-2 pb-2 xl:ml-5 xl:text-xl xl:text-2xl font-bold">
-                  Dont have an account?
+          <form className="mt-5" onSubmit={onSubmit}>
+            <div>
+              <label>Email</label>
+              <input
+                {...register("email")}
+                type="email"
+                className={`block w-full px-4 py-3 mt-2 border rounded-md ${
+                  errors.email ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Email"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {typeof errors.email.message === "string" &&
+                    errors.email.message}
                 </p>
-                <div className=" text-center xl:ml-5 ">
-                  <Link to="/register">
+              )}
+            </div>
 
-                  <Button
-                    className="w-full xl:px-4 xl:py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] xl:text-lg border-gray-500 rounded-none xl:text-lg xl:w-22 xl:mr-3"
-                  >
-                   Create Account
-                    {loading && (
-                      <LoadingIcon
-                        icon="spinning-circles"
-                        color="white"
-                        className="w-2 h-4 ml-2"
-                      />
-                    )}
-                  </Button>
-                    {/* <Button className="w-full px-4 py-3 align-top  bg-[#E8EDFF]  hover:bg-[#D1D9F9] border-gray-500 rounded-none text-lg xl:text-lg xl:w-22 xl:mr-3">
-                      Create Account
-                      {loading && (
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          color="white"
-                          className="w-2 h-4 ml-2"
-                        />
-                      )}
-                    </Button> */}
-                  </Link>
-                </div>
+            {selectedForm === "form2" && (
+              <div className="mt-3">
+                <label>School Code</label>
+                <input
+                  {...register("code")}
+                  type="text"
+                  className={`block w-full px-4 py-3 mt-2 border rounded-md ${
+                    errors.code ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="School Code"
+                />
+                {errors.code && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {typeof errors.code.message === "string" &&
+                      errors.code.message}
+                  </p>
+                )}
               </div>
-            </>
-          ) : (
-            <form className="validate-form xl:pl-10 xl:pr-10 pl-5 pr-5" onSubmit={onSubmit}>
-              <div className="mt-5 ">
-                <div className="input-form">
-                  <label>Guardian Email</label>
-                  <FormInput
-                    {...register("email")}
-                    id="validation-form-2"
-                    type="email"
-                    name="email"
-                    className={
-                      errors.email
-                        ? "block px-4 py-3 mt-2 mb-4  min-w-full xl:min-w-[350px] border-danger"
-                        : "block px-4 py-3 mt-2 mb-4  min-w-full xl:min-w-[350px]  border-gray-500"
-                    }
-                    placeholder="Email"
-                  />
-                  {errors.email && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.email.message === "string" &&
-                        errors.email.message}
-                    </div>
-                  )}
-                </div>
-                <div className="input-form">
-                  <label>School Code</label>
-                  <FormInput
-                    {...register("code")}
-                    id="validation-form-2"
-                    type="text"
-                    name="code"
-                    className={
-                      errors.code
-                        ? "block px-4 py-3 mt-2 mb-4   min-w-full xl:min-w-[350px] border-danger"
-                        : "block px-4 py-3 mt-2 mb-4  min-w-full xl:min-w-[350px] border-gray-500"
-                    }
-                    placeholder="School Code"
-                  />
-                  {errors.code && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.code.message === "string" &&
-                        errors.code.message}
-                    </div>
-                  )}
-                </div>
-                <div className="input-form">
-                  <label>Password</label>
-                  <div className="flex items-center">
-                    <FormInput
-                      {...register("password")}
-                      id="validation-form-3"
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      className={
-                        errors.password
-                          ? "block px-4 py-3 mt-2  min-w-full xl:min-w-[350px] border-danger pr-10"
-                          : "block px-4 py-3 mt-2 min-w-[250px] xl:min-w-[350px] border pr-10 border-gray-500"
-                      }
-                      placeholder="Enter Password"
-                    />
-                    <div
-                      className="flex items-center cursor-pointer -mt-2 eye-icon"
-                      onClick={togglePasswordVisibility}
-                    >
-                      <FontAwesomeIcon
-                        icon={showPassword ? faEyeSlash : faEye}
-                        className="text-grey-800"
-                      />
-                    </div>
-                  </div>
+            )}
 
-                  {errors.password && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.password.message === "string" &&
-                        errors.password.message}
-                    </div>
-                  )}
+            <div className="mt-3 relative">
+              <label>Password</label>
+              <input
+                {...register("password")}
+                type={showPassword ? "text" : "password"}
+                className={`block w-full px-4 py-3 mt-2 border rounded-md pr-10 ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
+                placeholder="Enter Password"
+              />
+              <div
+                className="absolute right-3 top-12 cursor-pointer"
+                onClick={togglePasswordVisibility}
+              >
+                <FontAwesomeIcon
+                  icon={showPassword ? faEyeSlash : faEye}
+                  className="text-gray-600"
+                />
+              </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {typeof errors.password.message === "string" &&
+                    errors.password.message}
+                </p>
+              )}
+            </div>
 
-                  {/* Eye Icon */}
-                </div>
-              </div>
-              <div className="flex mt-4 text-xs  text-slate-600 dark:text-slate-500 sm:text-sm">
-                <div className="flex items-center mr-auto">
-                  <FormCheck.Input
-                    id="remember-me"
-                    type="checkbox"
-                    className="mr-2 border-blue-300"
-                  />
-                  <label
-                    className="cursor-pointer select-none"
-                    htmlFor="remember-me"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <Link to="/auth/v1/forgot-password">Forgot Password?</Link>
-              </div>
-              <div className="mt-5 text-center  xl:mt-8 xl:text-left">
-                <Button
-                  variant="primary"
-                  className="w-full px-4 py-3 align-top xl:w-22 xl:mr-3"
-                >
-                  Login
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-2 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </div>
-            </form>
-          )}
+            <div className="mt-5 text-right text-sm">
+              <a
+                href="/auth/forgot-password"
+                className="text-blue-500 hover:underline"
+              >
+                Forgot Password?
+              </a>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3 rounded-md mt-5 hover:bg-blue-700"
+            >
+              Login
+              {loading && <span className="ml-2 animate-spin">🔄</span>}
+            </button>
+          </form>
         </div>
       </div>
       <Notification

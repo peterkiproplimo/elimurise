@@ -25,6 +25,7 @@ function Settings() {
       // adm_no: yup.string().required("Adm.No is required"),
     })
     .required();
+
   const [terms, setTerms] = useState([]);
   const [currentAcademicYear, setCurrentAcademicYear] = useState("");
   const [currentTerm, setCurrentTerm] = useState("");
@@ -243,6 +244,33 @@ function Settings() {
                     />
                   </div>
                   <div className="col-span-12 md:col-span-6">
+                    <fieldset className="mb-5">
+                      <legend className="font-medium text-lg text-gray-700">
+                        Branding
+                      </legend>
+
+                      <div className="grid grid-cols-12 gap-4">
+                        <div className="col-span-12 md:col-span-6">
+                          <FormLabel>Primary Color</FormLabel>
+                          <input
+                            type="color"
+                            {...register("primaryColor")}
+                            className="w-full h-10 cursor-pointer border rounded-md"
+                          />
+                        </div>
+
+                        <div className="col-span-12 md:col-span-6">
+                          <FormLabel>Secondary Color</FormLabel>
+                          <input
+                            type="color"
+                            {...register("secondaryColor")}
+                            className="w-full h-10 cursor-pointer border rounded-md"
+                          />
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
                     <FormInput
                       {...register("summative_has_score")}
                       type="checkbox"
@@ -266,6 +294,7 @@ function Settings() {
                         initialImageUrl={IMG_URL + schoolDetails.school_stamp}
                       />
                     </div>
+
                     {/* <span className="text-md text-gray-800 ml-2">
                     <FormInput
                       type="checkbox"
@@ -274,6 +303,7 @@ function Settings() {
                     />
                   </span> */}
                   </div>
+
                   <div className="col-span-12 md:col-span-6">
                     <FormLabel>Logo</FormLabel>
                     <PassportUpload

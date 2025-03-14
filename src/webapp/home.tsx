@@ -84,54 +84,21 @@ const Home = () => {
           <div className="buttons">
             <div
               className="hidden lg:flex flex-col gap-5 w-[310px] relative"
-              onMouseEnter={() => setShowLinks(true)}
-              onMouseLeave={() => setShowLinks(false)}
+              // onMouseEnter={() => setShowLinks(true)}
+              // onMouseLeave={() => setShowLinks(false)}
             >
               {/* Toggleable Text */}
               <div
-                className={`font-bold flex text-center text-lg p-4 pl-0 text-primary cursor-pointer transition duration-300 ${
+                onClick={handleClick}
+                className={`font-bold flex items-center text-lg p-4 text-primary cursor-pointer transition duration-300 ${
                   showLinks ? "bg-red-500 text-white" : "text-white"
                 }`}
               >
-                <div className="icon mr-2 ml-2">
+                <Link to="/auth/login" className="flex items-center gap-2">
                   <img alt="ACS" className="w-7 h-7" src={users} />
-                </div>
-
-                {showLinks
-                  ? "For Teachers & Administrators"
-                  : "Log in or register for free"}
+                  <span>Log in</span>
+                </Link>
               </div>
-
-              {/* Links to display when hovered */}
-              {showLinks && (
-                <div className="absolute top-full left-0 w-full bg-white shadow-lg rounded">
-                  <div className="flex flex-col gap-4">
-                    <Link
-                      to="/auth/login"
-                      className="font-bold items-center text-lg text-primary w-full mt-4 ml-4"
-                    >
-                      <div className="flex w-[240px]">
-                        Log in
-                        <div className="icon ml-auto mt-2">
-                          <img alt="ACS" className="xl:w-35" src={icon} />
-                        </div>
-                      </div>
-                    </Link>
-                    <div className="border-b border-primary/50 w-full m-0 p-0"></div>
-                    <Link
-                      to="/register"
-                      className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
-                    >
-                      <div className="flex w-[240px]">
-                        Register
-                        <div className="icon ml-auto mt-2">
-                          <img alt="ACS" className="xl:w-35" src={icon} />
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Links to display when clicked */}
