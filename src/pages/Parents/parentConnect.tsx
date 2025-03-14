@@ -1,260 +1,543 @@
-import { useState, useRef, useEffect } from "react";
-import io, { Socket } from "socket.io-client";
-import Button from "../../base-components/Button";
-import { FormInput, FormLabel, FormSelect } from "../../base-components/Form";
-import Lucide from "../../base-components/Lucide";
-import Notification, {
-  NotificationElement,
-} from "../../base-components/Notification";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
+import { io, Socket } from "socket.io-client";
+import { motion, AnimatePresence } from "framer-motion";
 import { useForm, SubmitHandler } from "react-hook-form";
+import Lucide from "../../base-components/Lucide";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import * as ApiService from "../../services/auth";
-import Conversation from "./Conversation";
-import Messages from "./Messages";
-import { useAuth } from "../../contexts/Auth";
+
+// Types (unchanged)
 interface Message {
+  id?: string;
   sender: string;
+  senderModel: string;
+  receiver: string;
+  receiverModel: string;
   message: string;
-  timestamp: string;
+  createdAt: Date;
+  isEdited?: boolean;
 }
 
-interface Parent {
-  _id: string;
-  first_name: string;
-  last_name: string;
+interface ChatHead {
+  id: { chatPartnerId: string; chatPartnerModel: string };
+  lastMessage: string;
+  lastMessageAt: Date;
+  unreadCount: number;
+  avatar?: string;
+  name?: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  avatar: string;
+  status: "online" | "offline" | "away";
 }
 
 interface FormData {
-  parent: string;
   content: string;
 }
 
-// value previously stored
-const auth = localStorage.getItem("@AuthData");
+// Socket Setup (unchanged)
+const auth = JSON.parse(localStorage.getItem("@AuthData") || "{}");
+const user: User = {
+  id: auth.user?._id || "",
+  name:
+    `${auth.user?.first_name || ""} ${auth.user?.last_name || ""}`.trim() ||
+    "User",
+  avatar:
+    auth.user?.avatar ||
+    "https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png",
+  status: "online",
+};
 
-let auth_data: { user?: any } = auth ? JSON.parse(auth) : {}; // Ensure `auth_data` is always an object
-let user = auth_data.user || null; // Default to `null` if `user` is missing
-
-// Set the default Authorization header for axios
-
-// Now use the token to authenticate the socket connection
 const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
   transports: ["websocket"],
-  auth: {
-    token: `Bearer ${user?.token}`, // Use the token from localStorage
-  },
+  auth: { token: `Bearer ${auth.user?.token}` },
 });
-console.log(user);
-console.log(socket);
 
-interface User {
-  name: string;
-  avatar: string;
-  status: string;
-}
+// MessageBubble Component (unchanged)
+const MessageBubble: React.FC<{
+  message: Message;
+  isOwnMessage: boolean;
+  onClick?: (message: Message) => void;
+}> = React.memo(({ message, isOwnMessage, onClick }) => {
+  const formattedTime = useMemo(
+    () =>
+      new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+      }).format(new Date(message.createdAt)),
+    [message.createdAt]
+  );
 
-function Main() {
-  const [messages, setMessages] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
-  const notify = useRef<NotificationElement>();
-  const { register, handleSubmit, reset } = useForm<FormData>();
-  const [parents, setParents] = useState<Parent[]>([]);
-  const [parentLoading, setParentLoading] = useState<boolean>(true);
-  const [selectedParent, setSelectedParent] = useState<string>("");
-  const [chatHeads, setChatHeads] = useState<any>([]);
-  const auth = localStorage.getItem("@AuthData");
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} mb-4`}
+      onClick={() => onClick?.(message)}
+    >
+      {!isOwnMessage && (
+        <img
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-3 mt-1 flex-shrink-0 object-cover"
+          src={user?.avatar}
+          alt="avatar"
+          loading="lazy"
+        />
+      )}
+      <div
+        className={`max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl shadow-sm transition-all duration-200 hover:shadow-md ${
+          isOwnMessage
+            ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-br-none"
+            : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-none"
+        }`}
+      >
+        <p className="text-xs sm:text-sm break-words">{message.message}</p>
+        <div className="flex items-center justify-end mt-1 space-x-1">
+          {message.isEdited && (
+            <span className="text-xs text-gray-300">Edited</span>
+          )}
+          <span className="text-xs text-gray-400">{formattedTime}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
 
-  let auth_data: { user?: any } = auth ? JSON.parse(auth) : {}; // Ensure `auth_data` is always an object
-  let user: any = auth_data.user || null; // Default to `null` if `user` is missing
-  const getParents = async () => {
-    setLoading(true);
-
-    try {
-      const response = await ApiService.getParents({
-        page: 1,
-        limit: 10000,
-        search: "",
+// ConversationItem Component (unchanged)
+const ConversationItem: React.FC<{
+  chat: ChatHead;
+  isSelected: boolean;
+  onClick: () => void;
+}> = React.memo(({ chat, isSelected, onClick }) => {
+  const formattedTime = useMemo(() => {
+    const date = new Date(chat.lastMessageAt);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    if (diff < 24 * 60 * 60 * 1000) {
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
       });
-      setParents(response.data);
-      setParentLoading(false);
-    } catch (error: any) {
-      setMessage("Ooops failed to load");
-      setParentLoading(false);
+    }
+    return date.toLocaleDateString();
+  }, [chat.lastMessageAt]);
+
+  const baseClasses =
+    "flex items-center p-2 sm:p-3 my-1 rounded-xl transition-all duration-200 cursor-pointer";
+  const activeClasses = isSelected
+    ? "bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900 dark:to-indigo-900 shadow-md"
+    : "bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700";
+
+  return (
+    <div className={`${baseClasses} ${activeClasses}`} onClick={onClick}>
+      <div className="relative flex-shrink-0">
+        <img
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+          src={chat.avatar || user.avatar}
+          alt={`${chat.name || chat.id.chatPartnerModel}'s avatar`}
+          loading="lazy"
+        />
+        {chat.unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-medium w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full">
+            {chat.unreadCount > 9 ? "9+" : chat.unreadCount}
+          </span>
+        )}
+      </div>
+      <div className="flex-1 min-w-0 px-2 sm:px-3">
+        <div className="flex items-baseline justify-between">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+            {chat.name || chat.id.chatPartnerModel}
+          </h3>
+          <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 ml-2">
+            {/* {formattedTime} */}
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate max-w-[150px] sm:max-w-[180px]">
+            {chat.lastMessage}
+          </p>
+          {chat.unreadCount > 0 && !isSelected && (
+            <span className="bg-purple-500 text-white text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-full ml-2 flex-shrink-0">
+              {chat.unreadCount}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// Main Component
+const MessagingPage: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatHeads, setChatHeads] = useState<ChatHead[]>([]);
+  const [selectedChatId, setSelectedChatId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<FormData>();
+
+  // Scroll to bottom function
+  const scrollToBottom = useCallback(() => {
+    if (messagesContainerRef.current && messagesEndRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesEndRef.current.offsetTop,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  const fetchChatHeads = useCallback(async () => {
+    try {
+      const response = await ApiService.getChatheads();
+      setChatHeads(
+        response.chatHeads.map((ch: any) => ({
+          id: ch._id,
+          lastMessage: ch.lastMessage,
+          lastMessageAt: new Date(ch.lastMessageAt),
+          unreadCount: ch.unreadCount,
+          avatar: ch.avatar,
+          name: ch.name,
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to load conversations:", error);
+    }
+  }, []);
+
+  const fetchMessages = useCallback(async () => {
+    if (!selectedChatId) return;
+    setIsLoading(true);
+    try {
+      const response = await ApiService.getMessageParent({
+        parent: selectedChatId,
+      });
+      setMessages(
+        response.data.map((msg: any) => ({
+          ...msg,
+          createdAt: new Date(msg.createdAt || msg.createdAt),
+        }))
+      );
+      setTimeout(scrollToBottom, 0); // Scroll after DOM update
+    } catch (error) {
+      console.error("Failed to load messages:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedChatId, scrollToBottom]);
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    if (!selectedChatId) return;
+    const newMessage: Message = {
+      sender: user.id,
+      senderModel: "Parent",
+      receiver: selectedChatId,
+      receiverModel: "Parent",
+      message: data.content,
+      createdAt: new Date(),
+    };
+    try {
+      // Add message to state immediately for instant UI update
+      setMessages((prev) => [...prev, newMessage]);
+      scrollToBottom(); // Scroll to new message
+      reset(); // Clear input
+      // Send message to server in the background
+      await ApiService.sendMessageParent(newMessage);
+      // Optionally update chat heads
+      setChatHeads((prev) =>
+        prev.map((ch) =>
+          ch.id.chatPartnerId === selectedChatId
+            ? {
+                ...ch,
+                lastMessage: newMessage.message,
+                lastMessageAt: newMessage.createdAt,
+              }
+            : ch
+        )
+      );
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      // Optionally remove the message from state if sending fails
+      setMessages((prev) => prev.filter((msg) => msg !== newMessage));
     }
   };
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
-    socket.emit("register", { userId: user._id, userType: "parent" });
-
+    socket.emit("register", { userId: user.id, userType: "parent" });
     socket.on("receiveMessage", (newMessage: Message) => {
-      console.log(newMessage);
-      // fetchMessages();
-
-      setMessages((prev: any) => [...prev, newMessage]);
+      if (
+        newMessage.receiver === selectedChatId ||
+        newMessage.sender === selectedChatId
+      ) {
+        setMessages((prev) => [
+          ...prev,
+          { ...newMessage, createdAt: new Date(newMessage.createdAt) },
+        ]);
+        scrollToBottom();
+        // Update chat heads
+        setChatHeads((prev) =>
+          prev.map((ch) =>
+            ch.id.chatPartnerId === newMessage.sender
+              ? {
+                  ...ch,
+                  lastMessage: newMessage.message,
+                  lastMessageAt: newMessage.createdAt,
+                  unreadCount:
+                    selectedChatId === newMessage.sender
+                      ? ch.unreadCount
+                      : ch.unreadCount + 1,
+                }
+              : ch
+          )
+        );
+        if (!audioRef.current) {
+          audioRef.current = new Audio("/audio/notification.mp3");
+        }
+        audioRef.current.play();
+      }
     });
 
     return () => {
+      socket.off("receiveMessage");
       socket.disconnect();
     };
-  }, []);
-
-  const fetchMessages = async () => {
-    setLoading(true);
-    try {
-      console.log("fetching");
-      const response = await ApiService.getMessageParent({
-        parent: selectedParent,
-      });
-      console.log(response);
-      setMessages(response.data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      setMessage("Failed to load messages");
-      notify.current?.showToast();
-    }
-  };
-  const fetchChat = async () => {
-    setLoading(true);
-    try {
-      console.log("fetching");
-      const response = await ApiService.getChatheads();
-      console.log(response);
-      setChatHeads(response.chatHeads);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      setMessage("Failed to load messages");
-      notify.current?.showToast();
-    }
-  };
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    setLoading(true);
-    try {
-      const newMessage = {
-        sender: user._id,
-        senderModel: "Parent",
-        receiver: selectedParent, // Use selected parent
-        receiverModel: "Parent",
-        message: data.content,
-      };
-      console.log(newMessage);
-      const response = await ApiService.sendMessageParent(newMessage);
-
-      fetchMessages();
-
-      reset();
-      setLoading(false);
-      setMessage("Message sent successfully");
-      notify.current?.showToast();
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-      setMessage("Failed to send message");
-      notify.current?.showToast();
-    }
-  };
-  useEffect(() => {
-    getParents();
-    fetchChat();
-  }, []);
+  }, [selectedChatId, scrollToBottom]);
 
   useEffect(() => {
-    fetchMessages();
-    console.log(selectedParent);
-  }, [selectedParent]);
+    fetchChatHeads();
+  }, [fetchChatHeads]);
+
+  useEffect(() => {
+    if (selectedChatId) {
+      fetchMessages(); // Only fetch messages when chat is selected
+    }
+  }, [selectedChatId, fetchMessages]);
+
+  const filteredChatHeads = chatHeads.filter((chat) =>
+    (chat.name || chat.id.chatPartnerModel)
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <>
-      <div className="">
-        <div className="flex bg-white dark:bg-gray-900">
-          <div className="w-80 h-screen dark:bg-gray-800 bg-gray-100 p-2 hidden md:block">
-            <div className="h-[80vh] overflow-y-auto">
-              <div className="text-xl font-extrabold text-gray-600 dark:text-gray-200 p-3">
-                Chikaa
-              </div>
-              <div className="search-chat flex p-3">
-                <input
-                  className="input text-gray-700 dark:text-gray-200 text-sm p-3 focus:outline-none bg-gray-200 dark:bg-gray-700  w-full rounded-l-md"
-                  type="text"
-                  placeholder="Search Messages"
-                />
-                <div className="bg-gray-200 dark:bg-gray-700 flex justify-center items-center pr-3 text-gray-400 rounded-r-md">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+    <div className="h-[calc(100vh-120px)] flex flex-col bg-gray-100 dark:bg-gray-900 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex flex-1 overflow-hidden"
+      >
+        {/* Mobile Sidebar Toggle */}
+        <button
+          className="md:hidden p-2 fixed top-2 left-2 z-50 bg-purple-600 text-white rounded-lg"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <Lucide icon={isSidebarOpen ? "X" : "Menu"} className="w-6 h-6" />
+        </button>
+
+        {/* Sidebar */}
+        <div
+          className={`fixed md:static inset-y-0 left-0 w-72 bg-white dark:bg-gray-800 shadow-lg transform ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 transition-transform duration-300 z-40 flex flex-col`}
+        >
+          <div className="p-4 border-b dark:border-gray-700">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+              Chikaa
+            </h1>
+            {/* <div className="mt-3 flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
+              <Lucide icon="Search" className="w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search conversations..."
+                className="flex-1 bg-transparent ml-2 text-sm text-gray-700 dark:text-gray-200 focus:outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div> */}
+          </div>
+          <div className="flex-1 overflow-y-auto p-2">
+            <AnimatePresence>
+              {isLoading ? (
+                <motion.div
+                  className="flex justify-center items-center h-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </motion.div>
+              ) : filteredChatHeads.length > 0 ? (
+                filteredChatHeads.map((chat) => (
+                  <motion.div
+                    key={chat.id.chatPartnerId}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    <ConversationItem
+                      chat={chat}
+                      isSelected={selectedChatId === chat.id.chatPartnerId}
+                      onClick={() => {
+                        setSelectedChatId(chat.id.chatPartnerId);
+                        setIsSidebarOpen(false);
+                      }}
                     />
-                  </svg>
+                  </motion.div>
+                ))
+              ) : (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-gray-500 dark:text-gray-400 text-center py-8"
+                >
+                  No conversations yet
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Messages Area */}
+        <div className="flex-1 flex flex-col">
+          {selectedChatId ? (
+            <>
+              <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900 min-h-0">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-gray-800 dark:to-gray-900 p-4 shadow-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <img
+                        className="w-12 h-12 rounded-full border-2 border-white object-cover"
+                        src={
+                          chatHeads.find(
+                            (ch) => ch.id.chatPartnerId === selectedChatId
+                          )?.avatar || user.avatar
+                        }
+                        alt="avatar"
+                        loading="lazy"
+                      />
+                      <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white bg-green-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-white text-lg font-semibold truncate">
+                        {chatHeads.find(
+                          (ch) => ch.id.chatPartnerId === selectedChatId
+                        )?.name || "User"}
+                      </h2>
+                      <p className="text-gray-200 text-sm">Online</p>
+                    </div>
+                    <button
+                      className="md:hidden p-2 text-white"
+                      onClick={() => setIsSidebarOpen(true)}
+                    >
+                      <Lucide icon="Menu" className="w-6 h-6" />
+                    </button>
+                  </div>
+                </div>
+                {/* Messages Container */}
+                <div
+                  ref={messagesContainerRef}
+                  className="flex-1 overflow-y-auto p-4"
+                  style={{ scrollBehavior: "smooth" }}
+                >
+                  <AnimatePresence>
+                    {isLoading ? (
+                      <motion.div
+                        className="flex justify-center items-center h-full"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
+                        <LoadingIcon
+                          icon="spinning-circles"
+                          className="w-8 h-8"
+                        />
+                      </motion.div>
+                    ) : messages.length === 0 ? (
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-gray-500 dark:text-gray-400 text-center py-8"
+                      >
+                        No messages yet
+                      </motion.p>
+                    ) : (
+                      messages.map((message) => (
+                        <MessageBubble
+                          key={message.id || message.createdAt.toString()}
+                          message={message}
+                          isOwnMessage={message.sender === user.id}
+                          onClick={(msg) =>
+                            console.log("Message clicked:", msg)
+                          }
+                        />
+                      ))
+                    )}
+                  </AnimatePresence>
+                  <div ref={messagesEndRef} className="p-8" />
                 </div>
               </div>
-              <div className="text-lg font-semibol text-gray-600 dark:text-gray-200 p-3">
-                Recent
-              </div>
-              <Conversation
-                chatHeads={chatHeads}
-                onSelectChatHead={setSelectedParent}
-              />
-            </div>
-          </div>
-          <div className="flex-grow h-[80vh] p-2 rounded-md">
-            <Messages messages={messages} user={user} />
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-              <div className="h-15 p-3 rounded-xl rounded-tr-none rounded-tl-none bg-gray-100 dark:bg-gray-800">
-                <div className="flex items-center">
-                  <input
-                    {...register("content")}
-                    className="text-gray-700 dark:text-gray-200 text-sm p-5 focus:outline-none bg-gray-100 dark:bg-gray-800 flex-grow rounded-l-md"
-                    type="text"
-                    placeholder="Type your message ..."
+
+              {/* Message Input */}
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700"
+              >
+                <div className="flex items-center gap-2">
+                  <textarea
+                    {...register("content", { required: true })}
+                    placeholder="Type your message..."
+                    className="flex-1 p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[48px] max-h-[150px] resize-y overflow-y-auto"
+                    disabled={isSubmitting}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit(onSubmit)();
+                      }
+                    }}
                   />
-                  <button className="bg-gray-100 dark:bg-gray-800 text-gray-400 rounded-r-md p-3">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                      />
-                    </svg>
+                  <button
+                    type="submit"
+                    className="p-3 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors disabled:bg-gray-400"
+                    disabled={isSubmitting}
+                  >
+                    <Lucide icon="Send" className="w-5 h-5" />
                   </button>
                 </div>
-              </div>
-            </form>
-          </div>
+              </form>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-gray-500 dark:text-gray-400 text-lg"
+              >
+                Select a conversation to start messaging
+              </motion.p>
+            </div>
+          )}
         </div>
-      </div>
-
-      <Notification
-        options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
-        className="flex"
-      >
-        <Lucide icon="CheckCircle" className="text-success" />
-        <div className="ml-4 mr-4">
-          <div className="font-medium">Success</div>
-          <div className="mt-1 text-slate-500">{message}</div>
-        </div>
-      </Notification>
-    </>
+      </motion.div>
+    </div>
   );
-}
+};
 
-export default Main;
+export default MessagingPage;

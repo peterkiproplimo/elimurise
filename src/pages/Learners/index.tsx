@@ -147,16 +147,22 @@ function Main() {
   useEffect(() => {
     socket.emit("register", { userId: user._id, userType: "parent" });
 
-    socket.on("receiveMessage", (newMessage: any) => {
-      fetchMessages();
-
+    const handleReceiveMessage = (newMessage: any) => {
+      //fetchMessages();
       setMessages((prev: any) => [...prev, newMessage]);
-    });
+      if (!audioRef.current) {
+        audioRef.current = new Audio("/audio/notification.mp3");
+      }
+      audioRef.current.play();
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
 
     return () => {
-      socket.disconnect();
+      socket.off("receiveMessage", handleReceiveMessage); // Remove event listener but keep the socket open
     };
   }, []);
+
   const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
       replace: true,
@@ -226,7 +232,7 @@ function Main() {
 
       reset();
       setLoading(false);
-      setMessage("Message sent successfully");
+      // setMessage("Message sent successfully");
       notify.current?.showToast();
     } catch (error) {
       setLoading(false);
@@ -782,6 +788,28 @@ function Main() {
     onSubmitMesage(content); // Call function with the message
     setContent(""); // Clear input after sending
   };
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Function to always scroll to the bottom
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); // Instant scroll
+  };
+
+  useEffect(() => {
+    scrollToBottom(); // Scroll to bottom on message update
+
+    // Play sound for new messages from others
+    // if (
+    //   messages.length > 0 &&
+    //   messages[messages.length - 1].sender !== user._id
+    // ) {
+    //   if (!audioRef.current) {
+    //     audioRef.current = new Audio("/audio/notification.mp3");
+    //   }
+    //   audioRef.current.play();
+    // }
+  }, [messages]);
 
   return (
     <>
@@ -810,17 +838,17 @@ function Main() {
 
         {/* Chat Window */}
         {isOpen && (
-          <div className="w-80 bg-white rounded-lg shadow-xl flex flex-col h-[400px]">
+          <div className="w-80 bg-white rounded-xl shadow-2xl flex flex-col h-[400px] font-sans">
             {/* Chat Header */}
-            <div className="bg-blue-500 text-white p-3 rounded-t-lg flex justify-between items-center">
-              <span className="font-semibold">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-4 rounded-t-xl flex justify-between items-center">
+              <span className="font-medium text-lg">
                 {selectedParent
                   ? `Chat with ${selectedParent?.first_name} ${selectedParent?.last_name}`
                   : "Messages"}
               </span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:text-gray-200"
+                className="p-1 hover:bg-blue-700 rounded-full transition-colors"
               >
                 <svg
                   className="w-5 h-5"
@@ -839,43 +867,58 @@ function Main() {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 p-3 overflow-y-auto">
+            <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
               {messages.map((msg: any, index: any) => (
                 <div
                   key={index}
-                  className={`mb-2 ${
-                    msg.sender === user.id ? "text-right" : "text-left"
+                  className={`mb-4 flex ${
+                    msg.sender === user._id ? "justify-end" : "justify-start"
                   }`}
                 >
-                  <span
-                    className={`inline-block p-2 rounded-lg ${
-                      msg.sender === user.id
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {msg.message}
-                  </span>
+                  <div className="max-w-[70%]">
+                    <div
+                      className={`p-3 rounded-2xl shadow-sm ${
+                        msg.sender === user._id
+                          ? "bg-blue-500 text-white rounded-br-md"
+                          : "bg-white text-gray-800 rounded-bl-md border border-gray-200"
+                      }`}
+                    >
+                      {msg.message}
+                    </div>
+                    <span
+                      className={`text-xs mt-1 block ${
+                        msg.sender === user._id
+                          ? "text-right text-gray-500"
+                          : "text-left text-gray-400"
+                      }`}
+                    >
+                      {new Date(msg.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Message Input */}
-            <div className="p-3 border-t">
+            <div className="p-4 border-t bg-white rounded-b-xl">
               <div className="flex gap-2">
                 <input
                   type="text"
                   name="content"
                   value={content}
                   onChange={handleChange}
-                  className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 p-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
                   placeholder="Type a message..."
-                  onKeyDown={(e) => e.key === "Enter" && handleSend()} // Send on Enter key
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 />
                 <button
                   onClick={handleSend}
-                  disabled={loading || !message.trim()}
-                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg disabled:opacity-50"
+                  disabled={loading || !content.trim()}
+                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full disabled:opacity-50 transition-colors"
                 >
                   <svg
                     className="w-5 h-5"

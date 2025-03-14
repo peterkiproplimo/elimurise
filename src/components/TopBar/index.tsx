@@ -36,23 +36,23 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
     const el = document.querySelectorAll("html")[0];
     darkMode ? el.classList.add("dark") : el.classList.remove("dark");
   };
-  useEffect(() => {
-    // Function to fetch notifications
-    const fetchNotifications = () => {
-      getParentNotifications();
-    };
+  // useEffect(() => {
+  //   // Function to fetch notifications
+  //   const fetchNotifications = () => {
+  //     getParentNotifications();
+  //   };
 
-    // Call initially
-    fetchNotifications();
+  //   // Call initially
+  //   fetchNotifications();
 
-    // Set interval to call every minute
-    const interval = setInterval(() => {
-      fetchNotifications();
-    }, 1000); // 60000ms = 1 minute
+  //   // Set interval to call every minute
+  //   // const interval = setInterval(() => {
+  //   //   fetchNotifications();
+  //   // }, 1000); // 60000ms = 1 minute
 
-    // Cleanup function to clear interval when component unmounts
-    return () => clearInterval(interval);
-  }, []);
+  //   // Cleanup function to clear interval when component unmounts
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const dismissParentNotifications = async (id: any) => {
     const type = localStorage.getItem("type");

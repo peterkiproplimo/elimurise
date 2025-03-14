@@ -133,13 +133,6 @@ const initialState: SideMenuState = {
       subMenu: [
         {
           icon: "Activity",
-          pathname: "/home/message",
-          title: "Parents",
-          ignore: false,
-          // ignore: !hasPermission("grading-system", "read"),
-        },
-        {
-          icon: "Activity",
           pathname: "/home/notice-board",
           title: "Notices",
           ignore: false,
