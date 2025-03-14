@@ -290,7 +290,7 @@ function Main() {
   //     notify.current?.showToast();
   //   }
   // };
-  const onSubmitMesage = async (e?: FormEvent) => {
+  const onSubmitMesage = async (e?: any) => {
     // if (e) e.preventDefault();
     if (!content.trim() && attachments.length === 0) return;
 
@@ -741,7 +741,10 @@ function Main() {
     if (selectedParent && isOpen) fetchMessages();
   }, [selectedParent, isOpen]);
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+    // messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "instant" as ScrollBehavior,
+    });
   }, [messages]);
   const openChat = (parent: any) => {
     setSelectedParent(parent);
@@ -964,37 +967,43 @@ function Main() {
                         <div className="mt-2 space-y-2">
                           {msg.attachments && msg.attachments.length > 0 && (
                             <div className="mt-2 space-y-2">
-                              {msg.attachments.map((attachment, idx) => (
-                                <div
-                                  key={idx}
-                                  className="flex items-center gap-2"
-                                >
-                                  {attachment.fileType.startsWith("image/") ? (
-                                    <img
-                                      src={`${C.IMG_URL}${attachment.url}`}
-                                      alt={attachment.fileName}
-                                      className="max-w-[200px] rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity duration-200"
-                                      onClick={() =>
-                                        openZoom(
-                                          `${C.IMG_URL}${attachment.url}`
-                                        )
-                                      }
-                                    />
-                                  ) : (
-                                    <a
-                                      href={`${C.IMG_URL}${attachment.url}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-white-500 hover:underline text-sm flex items-center gap-1"
-                                    >
-                                      <Paperclip className="w-4 h-4" />
-                                      {attachment.fileName} (
-                                      {(attachment.fileSize / 1024).toFixed(2)}{" "}
-                                      KB)
-                                    </a>
-                                  )}
-                                </div>
-                              ))}
+                              {msg.attachments.map(
+                                (attachment: any, idx: any) => (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center gap-2"
+                                  >
+                                    {attachment.fileType.startsWith(
+                                      "image/"
+                                    ) ? (
+                                      <img
+                                        src={`${C.IMG_URL}${attachment.url}`}
+                                        alt={attachment.fileName}
+                                        className="max-w-[200px] rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                                        onClick={() =>
+                                          openZoom(
+                                            `${C.IMG_URL}${attachment.url}`
+                                          )
+                                        }
+                                      />
+                                    ) : (
+                                      <a
+                                        href={`${C.IMG_URL}${attachment.url}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-white-500 hover:underline text-sm flex items-center gap-1"
+                                      >
+                                        <Paperclip className="w-4 h-4" />
+                                        {attachment.fileName} (
+                                        {(attachment.fileSize / 1024).toFixed(
+                                          2
+                                        )}{" "}
+                                        KB)
+                                      </a>
+                                    )}
+                                  </div>
+                                )
+                              )}
                             </div>
                           )}
 
