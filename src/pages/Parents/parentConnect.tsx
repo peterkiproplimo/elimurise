@@ -11,7 +11,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Lucide from "../../base-components/Lucide";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import * as ApiService from "../../services/auth";
-
+import { IMG_URL } from "../../utils/constants";
 // Types
 interface Message {
   id?: string;
@@ -19,7 +19,13 @@ interface Message {
   senderModel: string;
   receiver: string;
   receiverModel: string;
-  message: string;
+  message?: string; // Optional to allow attachment-only messages
+  attachments?: {
+    url: string;
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+  }[];
   createdAt: Date;
   isEdited?: boolean;
 }
@@ -42,6 +48,7 @@ interface User {
 
 interface FormData {
   content: string;
+  attachments?: FileList;
 }
 
 // Socket Setup
@@ -76,7 +83,15 @@ const MessageBubble: React.FC<{
       }).format(new Date(message.createdAt)),
     [message.createdAt]
   );
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
+  const openZoom = (imageUrl: string) => {
+    setZoomedImage(imageUrl);
+  };
+
+  const closeZoom = () => {
+    setZoomedImage(null);
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -102,7 +117,61 @@ const MessageBubble: React.FC<{
             : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-none"
         }`}
       >
-        <p className="text-xs sm:text-sm break-words">{message.message}</p>
+        {message.message && (
+          <p className="text-xs sm:text-sm break-words">{message.message}</p>
+        )}
+        {message.attachments && message.attachments.length > 0 && (
+          <div className="mt-2 space-y-2">
+            {message.attachments.map((attachment, index) => (
+              <div className="flex items-center gap-2">
+                {attachment.fileType.startsWith("image/") ? (
+                  <img
+                    src={`${IMG_URL}${attachment.url}`}
+                    alt={attachment.fileName}
+                    className="max-w-[150px] sm:max-w-[200px] rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                    onClick={() => openZoom(`${IMG_URL}${attachment.url}`)}
+                  />
+                ) : (
+                  <a
+                    href={`${IMG_URL}${attachment.url}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline text-xs sm:text-sm flex items-center gap-1"
+                  >
+                    <Lucide icon="Paperclip" className="w-4 h-4" />
+                    {attachment.fileName} (
+                    {(attachment.fileSize / 1024).toFixed(2)} KB)
+                  </a>
+                )}
+
+                {zoomedImage && (
+                  <div
+                    className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+                    onClick={closeZoom}
+                  >
+                    <div
+                      className="relative max-w-[90vw] max-h-[90vh] overflow-auto"
+                      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
+                    >
+                      <img
+                        src={zoomedImage}
+                        alt="Zoomed image"
+                        className="w-full h-auto rounded-lg shadow-lg transform transition-transform duration-200 hover:scale-125"
+                      />
+                      <button
+                        className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
+                        onClick={closeZoom}
+                        aria-label="Close zoom"
+                      >
+                        <Lucide icon="X" className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
         <div className="flex items-center justify-end mt-1 space-x-1">
           {message.isEdited && (
             <span className="text-[10px] sm:text-xs text-gray-300">Edited</span>
@@ -116,7 +185,7 @@ const MessageBubble: React.FC<{
   );
 });
 
-// ConversationItem Component
+// ConversationItem Component (unchanged)
 const ConversationItem: React.FC<{
   chat: ChatHead;
   isSelected: boolean;
@@ -185,12 +254,14 @@ const MessagingPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatHeads, setChatHeads] = useState<ChatHead[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [attachments, setAttachments] = useState<File[]>([]); // New state for attachments
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     register,
     handleSubmit,
@@ -262,35 +333,64 @@ const MessagingPage: React.FC = () => {
   }, [selectedChatId, scrollToBottom]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    if (!selectedChatId) return;
+    if (!selectedChatId || (!data.content && attachments.length === 0)) return;
+
+    const formData = new FormData();
+    formData.append("sender", user.id);
+    formData.append("senderModel", "Parent");
+    formData.append("receiver", selectedChatId);
+    formData.append("receiverModel", "Parent");
+    formData.append("message", data.content || "");
+    attachments.forEach((file) => formData.append("attachments", file));
+
     const newMessage: Message = {
       sender: user.id,
       senderModel: "Parent",
       receiver: selectedChatId,
       receiverModel: "Parent",
-      message: data.content,
+      message: data.content || "",
+      attachments: attachments.map((file) => ({
+        url: URL.createObjectURL(file), // Temporary URL for local preview
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+      })),
       createdAt: new Date(),
     };
+
     try {
       setMessages((prev) => [...prev, newMessage]);
       scrollToBottom();
       reset();
-      await ApiService.sendMessageParent(newMessage);
+      setAttachments([]);
+      await ApiService.sendMessageParent(formData);
+
       setChatHeads((prev) =>
         prev.map((ch) =>
           ch.id.chatPartnerId === selectedChatId
             ? {
                 ...ch,
-                lastMessage: newMessage.message,
+                lastMessage: newMessage.message || "Attachment sent",
                 lastMessageAt: newMessage.createdAt,
               }
             : ch
         )
       );
+      fetchMessages();
     } catch (error) {
       console.error("Failed to send message:", error);
       setMessages((prev) => prev.filter((msg) => msg !== newMessage));
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    setAttachments((prev) => [...prev, ...files]);
+    if (fileInputRef.current) fileInputRef.current.value = ""; // Reset input
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -312,7 +412,7 @@ const MessagingPage: React.FC = () => {
             ch.id.chatPartnerId === newMessage.sender
               ? {
                   ...ch,
-                  lastMessage: newMessage.message,
+                  lastMessage: newMessage.message || "Attachment received",
                   lastMessageAt: newMessage.createdAt,
                   unreadCount:
                     selectedChatId === newMessage.sender
@@ -325,7 +425,9 @@ const MessagingPage: React.FC = () => {
         if (!audioRef.current) {
           audioRef.current = new Audio("/audio/notification.mp3");
         }
-        audioRef.current.play();
+        audioRef.current
+          .play()
+          .catch((err) => console.error("Audio error:", err));
       }
     });
 
@@ -343,11 +445,10 @@ const MessagingPage: React.FC = () => {
       fetchMessages();
     }
   }, [selectedChatId, fetchMessages]);
+
   useEffect(() => {
     if (messagesContainerRef.current && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({
-        behavior: "instant" as ScrollBehavior,
-      });
+      messagesEndRef.current.scrollIntoView({ behavior: "instant" });
     }
   }, [selectedChatId, messages]);
 
@@ -364,7 +465,7 @@ const MessagingPage: React.FC = () => {
         animate={{ opacity: 1 }}
         className="flex flex-1 overflow-hidden relative"
       >
-        {/* Sidebar (Chat Heads) - Visible by default on mobile */}
+        {/* Sidebar (Chat Heads) */}
         <div
           ref={sidebarRef}
           className={`fixed inset-0 w-full md:w-72 xs:md:w-80 bg-white dark:bg-gray-800 shadow-lg transform ${
@@ -401,7 +502,7 @@ const MessagingPage: React.FC = () => {
                       chat={chat}
                       isSelected={selectedChatId === chat.id.chatPartnerId}
                       onClick={() => {
-                        console.log("Chat selected:", chat.id.chatPartnerId); // Debug
+                        console.log("Chat selected:", chat.id.chatPartnerId);
                         setSelectedChatId(chat.id.chatPartnerId);
                       }}
                     />
@@ -421,7 +522,7 @@ const MessagingPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Messages Area - Hidden by default on mobile */}
+        {/* Messages Area */}
         <div
           className={`fixed inset-0 flex flex-col md:flex-1 md:static transform ${
             selectedChatId
@@ -431,16 +532,13 @@ const MessagingPage: React.FC = () => {
         >
           {selectedChatId && (
             <>
-              <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900 min-h-0 ">
-                {/* Header with Back Button */}
+              <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900 min-h-0">
+                {/* Header */}
                 <div className="bg-gradient-to-r mt-[60px] md:mt-0 from-purple-600 to-indigo-600 dark:from-gray-800 dark:to-gray-900 p-3 xs:p-4 shadow-lg flex items-center justify-between">
                   <div className="flex items-center space-x-2 xs:space-x-3">
                     <button
                       className="text-white p-1"
-                      onClick={() => {
-                        console.log("Back to chat list"); // Debug
-                        setSelectedChatId("");
-                      }}
+                      onClick={() => setSelectedChatId("")}
                     >
                       <Lucide icon="ArrowLeft" className="w-5 h-5" />
                     </button>
@@ -467,6 +565,7 @@ const MessagingPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
                 {/* Messages Container */}
                 <div
                   ref={messagesContainerRef}
@@ -474,9 +573,24 @@ const MessagingPage: React.FC = () => {
                 >
                   <AnimatePresence>
                     {isLoading ? (
-                      <motion.div>{/* Loading spinner unchanged */}</motion.div>
+                      <motion.div
+                        className="flex justify-center items-center h-full"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
+                        <LoadingIcon
+                          icon="spinning-circles"
+                          className="w-8 h-8"
+                        />
+                      </motion.div>
                     ) : messages.length === 0 ? (
-                      <motion.p>{/* No messages text unchanged */}</motion.p>
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-gray-500 dark:text-gray-400 text-center py-8"
+                      >
+                        No messages yet
+                      </motion.p>
                     ) : (
                       messages.map((message) => (
                         <MessageBubble
@@ -497,13 +611,58 @@ const MessagingPage: React.FC = () => {
               {/* Message Input */}
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="p-3 xs:p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700"
+                encType="multipart/form-data"
+                className="p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700"
               >
-                <div className="flex items-center gap-2">
+                {/* Attachment Previews */}
+                {attachments.length > 0 && (
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    <AnimatePresence>
+                      {attachments.map((file, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="relative flex items-center bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+                        >
+                          <Lucide
+                            icon={
+                              file.type.startsWith("image/") ? "Image" : "File"
+                            }
+                            className="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2"
+                          />
+                          <span className="text-sm text-gray-700 dark:text-gray-300 truncate max-w-[100px] sm:max-w-[140px]">
+                            {file.name}
+                          </span>
+                          <motion.button
+                            type="button"
+                            onClick={() => removeAttachment(index)}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="ml-2 text-red-500 hover:text-red-600 transition-colors duration-200"
+                            aria-label={`Remove ${file.name}`}
+                          >
+                            <Lucide icon="X" className="w-4 h-4" />
+                          </motion.button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                )}
+
+                {/* Input Area */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="relative flex items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl p-2 shadow-sm border border-gray-200 dark:border-gray-700 focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-transparent transition-all duration-300"
+                >
                   <textarea
-                    {...register("content", { required: true })}
+                    {...register("content")}
                     placeholder="Type your message..."
-                    className="flex-1 p-2 xs:p-3 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[40px] xs:min-h-[48px] max-h-[120px] xs:max-h-[150px] resize-y overflow-y-auto text-sm xs:text-base"
+                    className="flex-1 p-2 bg-transparent text-gray-900 dark:text-white text-sm sm:text-base resize-none min-h-[40px] max-h-[100px] overflow-y-auto focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200"
                     disabled={isSubmitting}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
@@ -512,14 +671,33 @@ const MessagingPage: React.FC = () => {
                       }
                     }}
                   />
-                  <button
-                    type="submit"
-                    className="p-2 xs:p-3 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors disabled:bg-gray-400"
-                    disabled={isSubmitting}
-                  >
-                    <Lucide icon="Send" className="w-4 h-4 xs:w-5 xs:h-5" />
-                  </button>
-                </div>
+                  <div className="flex items-center gap-2 pr-2">
+                    <motion.label
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="p-1 text-gray-500 hover:text-purple-500 cursor-pointer transition-colors duration-200"
+                    >
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        multiple
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      <Lucide icon="Paperclip" className="w-5 h-5" />
+                    </motion.label>
+                    <motion.button
+                      type="submit"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="p-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full disabled:bg-gray-400 transition-all duration-300"
+                      disabled={isSubmitting}
+                      aria-label="Send message"
+                    >
+                      <Lucide icon="Send" className="w-5 h-5" />
+                    </motion.button>
+                  </div>
+                </motion.div>
               </form>
             </>
           )}

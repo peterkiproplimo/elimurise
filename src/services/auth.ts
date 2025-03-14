@@ -752,7 +752,9 @@ export async function getBehaviour() {
 export async function sendMessage(data: any) {
   try {
     console.log(data);
-    let res = await axios.post(c.MESSAGE + "/send", data);
+    let res = await axios.post(c.MESSAGE + "/send", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return res.data;
   } catch (e) {
     throw handler(e);

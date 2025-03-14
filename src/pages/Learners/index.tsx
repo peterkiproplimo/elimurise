@@ -2,6 +2,7 @@ import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
 import PassportUpload from "./profilephoto";
+import { X, Paperclip, Send } from "lucide-react"; // Using Lucide icons for a modern look
 import {
   FormCheck,
   FormInput,
@@ -125,43 +126,92 @@ function Main() {
   const [messages, setMessages] = useState<any>([]);
   const [loadings, setLoading] = useState<boolean>(false);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
-
-  const location = useLocation();
-  const fetchMessages = async () => {
-    setLoading(true);
-    try {
-      console.log(selectedParent);
-      const response = await ApiService.getMessage({
-        parent: selectedParent._id,
-      });
-      console.log(response);
-      setMessages(response.data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      // setMessage("Failed to load messages");
-      // notify.current?.showToast();
-    }
+  interface ChatComponentProps {
+    user: { _id: string };
+    selectedParent: {
+      _id: string;
+      first_name: string;
+      last_name: string;
+    } | null;
+    socket: any; // Replace with your socket type (e.g., Socket from "socket.io-client")
+  }
+  interface ChatComponentProps {
+    user: { _id: string };
+    selectedParent: {
+      _id: string;
+      first_name: string;
+      last_name: string;
+    } | null;
+    socket: any; // Replace with your socket type (e.g., Socket from "socket.io-client")
+  }
+  interface Message {
+    sender: string;
+    receiver: string;
+    message?: string;
+    attachments?: {
+      url: string;
+      fileName: string;
+      fileType: string;
+      fileSize: number;
+    }[];
+    createdAt: string;
+  }
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const location = useLocation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const handleFileChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files ? Array.from(e.target.files) : [];
+  //   setAttachments((prev) => [...prev, ...files]);
+  //   if (fileInputRef.current) fileInputRef.current.value = ""; // Reset input
+  // };
+  const handleFileChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    setAttachments((prev) => [...prev, ...files]);
+  };
+
+  // const fetchMessages = async () => {
+  //   setLoading(true);
+  //   try {
+  //     console.log(selectedParent);
+  //     const response = await ApiService.getMessage({
+  //       parent: selectedParent._id,
+  //     });
+  //     console.log(response);
+  //     setMessages(response.data);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     // setMessage("Failed to load messages");
+  //     // notify.current?.showToast();
+  //   }
+  // };
+
   useEffect(() => {
+    if (!socket) return;
+
     socket.emit("register", { userId: user._id, userType: "parent" });
 
-    const handleReceiveMessage = (newMessage: any) => {
-      //fetchMessages();
+    const handleReceiveMessage = (newMessage: Message) => {
       setMessages((prev: any) => [...prev, newMessage]);
       if (!audioRef.current) {
         audioRef.current = new Audio("/audio/notification.mp3");
       }
-      audioRef.current.play();
+      audioRef.current
+        .play()
+        .catch((err) => console.error("Audio play failed:", err));
     };
 
     socket.on("receiveMessage", handleReceiveMessage);
 
+    // Cleanup function
     return () => {
-      socket.off("receiveMessage", handleReceiveMessage); // Remove event listener but keep the socket open
+      socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, []);
+  }, [socket, user._id]);
 
   const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
@@ -215,29 +265,72 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-  const onSubmitMesage = async (data: any) => {
+  // const onSubmitMesage = async (data: any) => {
+  //   setLoading(true);
+  //   try {
+  //     const newMessage = {
+  //       sender: user._id,
+  //       senderModel: "Parent",
+  //       receiver: selectedParent?._id, // Use selected parent
+  //       receiverModel: "Parent",
+  //       message: data,
+  //     };
+  //     const response = await ApiService.sendMessage(newMessage);
+
+  //     // socket.emit("sendMessage", newMessage);
+  //     fetchMessages();
+
+  //     reset();
+  //     setLoading(false);
+  //     // setMessage("Message sent successfully");
+  //     notify.current?.showToast();
+  //   } catch (error) {
+  //     setLoading(false);
+  //     setMessage("Failed to send message");
+  //     notify.current?.showToast();
+  //   }
+  // };
+  const onSubmitMesage = async (e?: FormEvent) => {
+    // if (e) e.preventDefault();
+    if (!content.trim() && attachments.length === 0) return;
+
     setLoading(true);
     try {
-      const newMessage = {
-        sender: user._id,
-        senderModel: "Parent",
-        receiver: selectedParent?._id, // Use selected parent
-        receiverModel: "Parent",
-        message: data,
-      };
-      const response = await ApiService.sendMessage(newMessage);
+      const formData = new FormData();
+      formData.append("sender", user._id);
+      formData.append("senderModel", "Parent");
+      formData.append("receiver", selectedParent?._id ?? "");
+      formData.append("receiverModel", "Parent");
+      formData.append("message", content || "");
 
-      // socket.emit("sendMessage", newMessage);
+      attachments.forEach((file: any) => formData.append("attachments", file));
+      console.log(attachments);
+      const response = await ApiService.sendMessage(formData);
+
       fetchMessages();
-
-      reset();
+      setContent("");
+      setAttachments([]);
       setLoading(false);
-      // setMessage("Message sent successfully");
       notify.current?.showToast();
     } catch (error) {
+      console.error("Failed to send message:", error);
       setLoading(false);
-      setMessage("Failed to send message");
       notify.current?.showToast();
+    }
+  };
+
+  const fetchMessages = async () => {
+    if (!selectedParent) return;
+    setLoading(true);
+    try {
+      const response = await ApiService.getMessage({
+        parent: selectedParent._id,
+      });
+      setMessages(response.data as Message[]);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+      setLoading(false);
     }
   };
   const onSubmit = async (event: any) => {
@@ -645,9 +738,11 @@ function Main() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<any>(null);
   useEffect(() => {
-    fetchMessages();
-  }, [selectedParent]);
-
+    if (selectedParent && isOpen) fetchMessages();
+  }, [selectedParent, isOpen]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+  }, [messages]);
   const openChat = (parent: any) => {
     setSelectedParent(parent);
     setIsOpen(true);
@@ -811,85 +906,131 @@ function Main() {
     // }
   }, [messages]);
 
+  const triggerFileInput = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("fileInputRef.current:", fileInputRef.current);
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+
+  const openZoom = (imageUrl: string) => {
+    setZoomedImage(imageUrl);
+  };
+
+  const closeZoom = () => {
+    setZoomedImage(null);
+  };
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50">
-        {/* Chat Toggle Button */}
-        {/* {!isOpen && (
-          <button
-            onClick={() => setIsOpen(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-all duration-300"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-              />
-            </svg>
-          </button>
-        )} */}
-
-        {/* Chat Window */}
+      <div className="fixed bottom-6 right-6 z-50">
         {isOpen && (
-          <div className="w-80 bg-white rounded-xl shadow-2xl flex flex-col h-[400px] font-sans">
+          <div className="w-[450px] h-[600px] bg-white rounded-2xl shadow-xl flex flex-col font-sans overflow-hidden border border-gray-100">
             {/* Chat Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-4 rounded-t-xl flex justify-between items-center">
-              <span className="font-medium text-lg">
+            <div className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-4 flex justify-between items-center">
+              <span className="font-semibold text-xl tracking-tight">
                 {selectedParent
-                  ? `Chat with ${selectedParent?.first_name} ${selectedParent?.last_name}`
+                  ? `Chat with ${selectedParent.first_name} ${selectedParent.last_name}`
                   : "Messages"}
               </span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-blue-700 rounded-full transition-colors"
+                className="p-2 hover:bg-indigo-700 rounded-full transition-colors"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+            <div className="flex-1 p-5 overflow-y-auto bg-gray-50 space-y-4">
               {messages.map((msg: any, index: any) => (
                 <div
                   key={index}
-                  className={`mb-4 flex ${
+                  className={`flex ${
                     msg.sender === user._id ? "justify-end" : "justify-start"
                   }`}
                 >
-                  <div className="max-w-[70%]">
+                  <div className="max-w-[75%] group">
                     <div
-                      className={`p-3 rounded-2xl shadow-sm ${
+                      className={`p-4 rounded-2xl shadow-md transition-all ${
                         msg.sender === user._id
-                          ? "bg-blue-500 text-white rounded-br-md"
-                          : "bg-white text-gray-800 rounded-bl-md border border-gray-200"
+                          ? "bg-indigo-500 text-white"
+                          : "bg-white text-gray-800 border border-gray-200"
                       }`}
                     >
-                      {msg.message}
+                      {msg.message && <p className="text-sm">{msg.message}</p>}
+                      {msg.attachments?.length > 0 && (
+                        <div className="mt-2 space-y-2">
+                          {msg.attachments && msg.attachments.length > 0 && (
+                            <div className="mt-2 space-y-2">
+                              {msg.attachments.map((attachment, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center gap-2"
+                                >
+                                  {attachment.fileType.startsWith("image/") ? (
+                                    <img
+                                      src={`${C.IMG_URL}${attachment.url}`}
+                                      alt={attachment.fileName}
+                                      className="max-w-[200px] rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                                      onClick={() =>
+                                        openZoom(
+                                          `${C.IMG_URL}${attachment.url}`
+                                        )
+                                      }
+                                    />
+                                  ) : (
+                                    <a
+                                      href={`${C.IMG_URL}${attachment.url}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-white-500 hover:underline text-sm flex items-center gap-1"
+                                    >
+                                      <Paperclip className="w-4 h-4" />
+                                      {attachment.fileName} (
+                                      {(attachment.fileSize / 1024).toFixed(2)}{" "}
+                                      KB)
+                                    </a>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Zoom Modal */}
+                          {zoomedImage && (
+                            <div
+                              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+                              onClick={closeZoom}
+                            >
+                              <div
+                                className="relative max-w-[90vw] max-h-[90vh] overflow-auto"
+                                onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
+                              >
+                                <img
+                                  src={zoomedImage}
+                                  alt="Zoomed image"
+                                  className="w-full h-auto rounded-lg shadow-lg transform transition-transform duration-200 hover:scale-125"
+                                />
+                                <button
+                                  className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
+                                  onClick={closeZoom}
+                                  aria-label="Close zoom"
+                                >
+                                  <X className="w-5 h-5" />
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <span
-                      className={`text-xs mt-1 block ${
+                      className={`text-xs mt-1 block opacity-0 group-hover:opacity-100 transition-opacity ${
                         msg.sender === user._id
-                          ? "text-right text-gray-500"
-                          : "text-left text-gray-400"
+                          ? "text-right text-gray-400"
+                          : "text-left text-gray-500"
                       }`}
                     >
                       {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -904,38 +1045,74 @@ function Main() {
             </div>
 
             {/* Message Input */}
-            <div className="p-4 border-t bg-white rounded-b-xl">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  name="content"
-                  value={content}
-                  onChange={handleChange}
-                  className="flex-1 p-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
-                  placeholder="Type a message..."
-                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                />
-                <button
-                  onClick={handleSend}
-                  disabled={loading || !content.trim()}
-                  className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full disabled:opacity-50 transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            <form
+              onSubmit={(e: FormEvent) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              encType="multipart/form-data"
+              className="p-4 bg-white border-t border-gray-100"
+            >
+              {/* File Previews */}
+              {attachments.length > 0 && (
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {attachments.map((file, index) => (
+                    <div
+                      key={index}
+                      className="relative flex items-center bg-gray-100 p-2 rounded-lg shadow-sm"
+                    >
+                      <span className="text-sm text-gray-700 truncate max-w-[120px]">
+                        {file.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(index)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    name="content"
+                    value={content}
+                    onChange={handleChange}
+                    className="w-full p-3 pr-12 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50 text-sm placeholder-gray-400"
+                    placeholder="Type a message..."
+                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                  />
+                  <label className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      multiple
+                      onChange={handleFileChanges} // Fixed to singular "handleFileChange"
+                      className="hidden"
                     />
-                  </svg>
+                    <Paperclip
+                      className="w-5 h-5 text-gray-500 hover:text-indigo-500 cursor-pointer"
+                      onClick={(e: any) => {
+                        e.stopPropagation();
+                        triggerFileInput(e);
+                      }}
+                    />
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-indigo-500 hover:bg-indigo-600 text-white p-3 rounded-full disabled:opacity-50 transition-colors"
+                >
+                  <Send className="w-5 h-5" />
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         )}
       </div>
