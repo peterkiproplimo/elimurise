@@ -1055,7 +1055,7 @@ function Main() {
 
             {/* Message Input */}
             <form
-              onSubmit={(e: FormEvent) => {
+              onSubmit={(e: any) => {
                 e.preventDefault();
                 handleSend();
               }}
