@@ -39,7 +39,6 @@ function NoticeBoard() {
   const [priority, setPriority] = useState<string>("normal");
   const [status, setStatus] = useState<string>("draft");
   const [recipients, setRecipients] = useState<string[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNotices = async () => {
@@ -57,108 +56,263 @@ function NoticeBoard() {
     fetchNotices();
   }, []);
 
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setLoading(true);
+    try {
+      const noticeData = {
+        ...data,
+        message: editorContent,
+        noticeDate,
+        publishOn,
+        expiresOn,
+        priority,
+        status,
+        recipients,
+      };
+      setMessage("Notice created successfully!");
+      notify.current?.showToast();
+      setShowForm(false);
+      reset();
+      setEditorContent("");
+      setNoticeDate(new Date());
+      setPublishOn(new Date());
+      setExpiresOn(null);
+      setPriority("normal");
+      setStatus("draft");
+      const response = await ApiService.getNotificeBoardParent({});
+      setNotices(response.data);
+    } catch (error) {
+      setMessage("Failed to create notice");
+      notify.current?.showToast();
+    }
+    setLoading(false);
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "bg-red-100 border-red-500 text-red-800";
+      case "normal":
+        return "bg-blue-100 border-blue-500 text-blue-800";
+      case "low":
+        return "bg-green-100 border-green-500 text-green-800";
+      default:
+        return "bg-gray-100 border-gray-500 text-gray-800";
+    }
+  };
+
+  // Function to check if a notice is "new" (within 3 days)
+  const isNewNotice = (publishOn: string | Date) => {
+    const noticeDate = new Date(publishOn);
+    const currentDate = new Date();
+    const diffInMs = currentDate.getTime() - noticeDate.getTime();
+    const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+    return diffInDays <= 3; // True if within 3 days
+  };
+
+  // Find the most recent notice
+  const latestNotice = notices.reduce((latest, current) => {
+    return new Date(current.publishOn) > new Date(latest.publishOn)
+      ? current
+      : latest;
+  }, notices[0]);
+
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Notice Board</h2>
-        {/* <Button variant="primary" onClick={() => setShowForm(true)}>
-          Add Notice
-        </Button> */}
-      </div>
-      {showForm && (
-        <form className="space-y-4 bg-gray-50 p-5 rounded-lg shadow">
-          <FormLabel>Title</FormLabel>
-          <FormInput
-            {...register("title")}
-            type="text"
-            placeholder="Enter title"
-          />
-
-          <FormLabel>Message</FormLabel>
-          <ClassicEditor value={editorContent} onChange={setEditorContent} />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <FormLabel>Notice Date</FormLabel>
-              <DatePicker
-                selected={noticeDate}
-                onChange={setNoticeDate}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div>
-              <FormLabel>Publish On</FormLabel>
-              <DatePicker
-                selected={publishOn}
-                onChange={setPublishOn}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-            <div>
-              <FormLabel>Expiration Date</FormLabel>
-              <DatePicker
-                selected={expiresOn}
-                onChange={setExpiresOn}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-          </div>
-
-          <FormLabel>Priority</FormLabel>
-          <FormSelect
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 flex items-center">
+            <Lucide icon="Bell" className="w-8 h-8 mr-2 text-blue-600" />
+            Notice Board
+          </h2>
+          <Button
+            variant="primary"
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2"
           >
-            <option value="low">Low</option>
-            <option value="normal">Normal</option>
-            <option value="high">High</option>
-          </FormSelect>
+            <Lucide icon="Plus" className="w-5 h-5" />
+            {showForm ? "Hide Form" : "Add Notice"}
+          </Button>
+        </div>
 
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setShowForm(false)}>
-              Cancel
-            </Button>
-            <Button type="submit">Save Notice</Button>
+        {/* Notice Form */}
+        {showForm && (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="bg-white p-6 rounded-xl shadow-lg mb-8 space-y-6"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <FormLabel className="text-gray-700 font-medium">
+                  Title
+                </FormLabel>
+                <FormInput
+                  {...register("title", { required: true })}
+                  type="text"
+                  placeholder="Enter notice title"
+                  className="w-full p-3 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <FormLabel className="text-gray-700 font-medium">
+                  Priority
+                </FormLabel>
+                <FormSelect
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="w-full p-3 border-gray-200 rounded-lg"
+                >
+                  <option value="low">Low</option>
+                  <option value="normal">Normal</option>
+                  <option value="high">High</option>
+                </FormSelect>
+              </div>
+            </div>
+
+            <div>
+              <FormLabel className="text-gray-700 font-medium">
+                Message
+              </FormLabel>
+              <ClassicEditor
+                value={editorContent}
+                onChange={setEditorContent}
+                className="border-gray-200 rounded-lg"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <FormLabel className="text-gray-700 font-medium">
+                  Notice Date
+                </FormLabel>
+                <DatePicker
+                  selected={noticeDate}
+                  onChange={setNoticeDate}
+                  className="w-full p-3 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <FormLabel className="text-gray-700 font-medium">
+                  Publish On
+                </FormLabel>
+                <DatePicker
+                  selected={publishOn}
+                  onChange={setPublishOn}
+                  className="w-full p-3 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <FormLabel className="text-gray-700 font-medium">
+                  Expires On
+                </FormLabel>
+                <DatePicker
+                  selected={expiresOn}
+                  onChange={setExpiresOn}
+                  className="w-full p-3 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholderText="Optional"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline-secondary"
+                onClick={() => setShowForm(false)}
+                className="flex items-center gap-2"
+              >
+                <Lucide icon="X" className="w-4 h-4" />
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={loading}
+                className="flex items-center gap-2"
+              >
+                {loading ? (
+                  <LoadingIcon icon="spinning-circles" className="w-4 h-4" />
+                ) : (
+                  <Lucide icon="Save" className="w-4 h-4" />
+                )}
+                Save Notice
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {/* Notices List */}
+        {loading && !notices.length ? (
+          <div className="flex justify-center items-center h-64">
+            <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
           </div>
-        </form>
-      )}
-      <div className="overflow-x-auto mt-6">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-          <thead>
-            <tr className="bg-gray-100 border-b">
-              <th className="p-3 text-left">#</th>
-              <th className="p-3 text-left">Title</th>
-              <th className="p-3 text-left">Message</th>
-              <th className="p-3 text-left">Priority</th>
-              <th className="p-3 text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {notices.map((notice, index) => (
-              <tr key={notice._id} className="border-b hover:bg-gray-50">
-                <td className="p-3">{index + 1}</td>
-                <td className="p-3">{notice.title}</td>
-                <td
-                  className="p-3 truncate"
+        ) : notices.length === 0 ? (
+          <div className="text-center py-10 text-gray-500">
+            No notices available at this time.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {notices.map((notice) => (
+              <div
+                key={notice._id}
+                className={`p-5 rounded-xl shadow-md border-l-4 ${getPriorityColor(
+                  notice.priority
+                )} transition-all hover:shadow-lg relative`}
+              >
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {notice.title}
+                  </h3>
+                  <div className="flex gap-2">
+                    {notice === latestNotice &&
+                      isNewNotice(notice.publishOn) && (
+                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                          <Lucide icon="Star" className="w-3 h-3 mr-1" />
+                          New
+                        </span>
+                      )}
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        notice.status === "published"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {notice.status.charAt(0).toUpperCase() +
+                        notice.status.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className="mt-2 text-sm text-gray-700"
                   dangerouslySetInnerHTML={{ __html: notice.message }}
-                ></td>
-                <td className="p-3 capitalize">{notice.priority}</td>
-                <td className="p-3 capitalize">{notice.status}</td>
-              </tr>
+                />
+                <div className="mt-4 text-xs text-gray-500 flex justify-between">
+                  <span>
+                    Published: {new Date(notice.publishOn).toLocaleDateString()}
+                  </span>
+                  {notice.expiresOn && (
+                    <span>
+                      Expires: {new Date(notice.expiresOn).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        )}
+
+        {/* Notification */}
+        <Notification
+          options={{ duration: 3000 }}
+          getRef={(el) => {
+            notify.current = el;
+          }}
+          className="flex items-center gap-2 bg-blue-500 text-white p-3 rounded-lg shadow-lg"
+        >
+          <Lucide icon="Info" className="w-5 h-5" />
+          {message}
+        </Notification>
       </div>
-      <Notification
-        options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
-        className="flex"
-        // ref={notify}
-      >
-        {message}
-      </Notification>
     </div>
   );
 }

@@ -165,35 +165,7 @@ function Main() {
         <div className="col-span-12 2xl:col-span-9">
           <div className="grid grid-cols-12 gap-6">
             {/* BEGIN: Notification */}
-            <div className="col-span-12 mt-6 -mb-6 ">
-              {/* <Alert
-                variant="primary"
-                dismissible
-                className="flex items-center mb-6 box dark:border-darkmode-600"
-              >
-                {({ dismiss }) => (
-                  <>
-                    <span>
-                      Introducing new dashboard! Download now at
-                      <a
-                        href="https://themeforest.net/item/midone-jquery-tailwindcss-html-admin-template/26366820"
-                        className="ml-1 underline"
-                        target="blank"
-                      >
-                        themeforest.net
-                      </a>
-                      .
-                    </span>
-                    <Alert.DismissButton
-                      className="text-white"
-                      onClick={dismiss}
-                    >
-                      <Lucide icon="X" className="w-4 h-4" />
-                    </Alert.DismissButton>
-                  </>
-                )}
-              </Alert> */}
-            </div>
+            <div className="col-span-12 mt-6 -mb-6 "></div>
             {/* BEGIN: Notification */}
             {/* BEGIN: General Report */}
             <div className="col-span-12 mt-2 lg:col-span-12 xl:col-span-12">

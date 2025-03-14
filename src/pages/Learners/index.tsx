@@ -44,7 +44,7 @@ let auth_data = auth ? JSON.parse(auth) : null; // Prevents JSON.parse(null) err
 
 let user = auth_data?.user;
 
-const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
+const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
   transports: ["websocket"],
   auth: {
     token: `Bearer ${user?.token}`, // Use the token from localStorage
