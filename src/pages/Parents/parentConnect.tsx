@@ -317,7 +317,7 @@ const MessagingPage: React.FC = () => {
 
     return () => {
       socket.off("receiveMessage");
-      socket.disconnect();
+      // socket.disconnect();
     };
   }, [selectedChatId, scrollToBottom]);
 
