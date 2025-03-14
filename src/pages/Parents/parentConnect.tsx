@@ -344,9 +344,11 @@ const MessagingPage: React.FC = () => {
     }
   }, [selectedChatId, fetchMessages]);
   useEffect(() => {
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
-    }, 0);
+    if (messagesContainerRef.current && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "instant" as ScrollBehavior,
+      });
+    }
   }, [selectedChatId, messages]);
 
   const filteredChatHeads = chatHeads.filter((chat) =>
