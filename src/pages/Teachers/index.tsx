@@ -747,7 +747,7 @@ function Main() {
                               href="#"
                               onClick={(e: any) => {
                                 e.preventDefault();
-                                navigate("/home/teacher/" + teacher?._id);
+                                navigate("/home/teachers/" + teacher?._id);
                               }}
                               className="font-medium whitespace-nowrap"
                             >

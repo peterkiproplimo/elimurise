@@ -42,7 +42,7 @@ function NoticeBoard() {
   const [roles, setRoles] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Fetch Notices
+  // Fetch Notices and Roles (unchanged logic)
   const fetchNotices = async () => {
     setLoading(true);
     try {
@@ -55,7 +55,6 @@ function NoticeBoard() {
     setLoading(false);
   };
 
-  // Fetch Roles (for Recipients)
   const fetchRoles = async () => {
     try {
       const response = await ApiService.getRole({});
@@ -85,7 +84,7 @@ function NoticeBoard() {
       recipients.forEach((id) => formData.append("recipients[]", id));
 
       if (editingId) {
-        // await ApiService.updateNotice(editingId, formData);
+        await ApiService.updateNotificeBoard(editingId, formData);
       } else {
         await ApiService.createNotificeBoard(formData);
       }
@@ -95,7 +94,6 @@ function NoticeBoard() {
       setMessage("Notice saved successfully");
       notify.current?.showToast();
     } catch (error) {
-      console.log(error);
       setMessage("Failed to save notice");
       notify.current?.showToast();
     }
@@ -145,73 +143,77 @@ function NoticeBoard() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-100 p-6">
       {showForm ? (
-        <div className="mt-5 p-6 bg-white shadow-md rounded-lg">
+        <div className=" mx-auto mt-10 p-8 bg-white rounded-xl shadow-2xl transform transition-all duration-300">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            {editingId ? "Edit Notice" : "Create New Notice"}
+          </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Title
               </label>
               <input
-                {...register("title")}
+                {...register("title", { required: true })}
                 type="text"
-                placeholder="Enter title"
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter notice title"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Message
               </label>
               <ClassicEditor
                 value={editorContent}
                 onChange={setEditorContent}
+                className="bg-gray-50 border border-gray-200 rounded-lg"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Notice Date
-              </label>
-              <DatePicker
-                selected={noticeDate}
-                onChange={setNoticeDate}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Notice Date
+                </label>
+                <DatePicker
+                  selected={noticeDate}
+                  onChange={setNoticeDate}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Publish On
+                </label>
+                <DatePicker
+                  selected={publishOn}
+                  onChange={setPublishOn}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Expires On
+                </label>
+                <DatePicker
+                  selected={expiresOn}
+                  onChange={setExpiresOn}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Publish On
-              </label>
-              <DatePicker
-                selected={publishOn}
-                onChange={setPublishOn}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Expiration Date
-              </label>
-              <DatePicker
-                selected={expiresOn}
-                onChange={setExpiresOn}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Priority
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
               >
                 <option value="low">Low</option>
                 <option value="normal">Normal</option>
@@ -219,17 +221,35 @@ function NoticeBoard() {
               </select>
             </div>
 
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+              >
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </div>
+
             <div className="flex space-x-4">
               <button
                 type="submit"
-                className="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition"
+                disabled={loading}
+                className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition duration-200 flex items-center justify-center"
               >
-                {editingId ? "Update" : "Add"} Notice
+                {loading ? (
+                  <LoadingIcon icon="oval" className="w-5 h-5 mr-2" />
+                ) : null}
+                {editingId ? "Update Notice" : "Add Notice"}
               </button>
               <button
                 type="button"
                 onClick={resetForm}
-                className="w-full px-4 py-2 bg-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-400 transition"
+                className="w-full px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 focus:ring-4 focus:ring-gray-300 transition duration-200"
               >
                 Cancel
               </button>
@@ -237,35 +257,82 @@ function NoticeBoard() {
           </form>
         </div>
       ) : (
-        <div className="mt-5 p-5 box">
-          <div className="flex items-center mt-8">
-            <h2 className="mr-auto text-lg font-medium">Notice Board</h2>
-            <Button variant="primary" onClick={() => setShowForm(true)}>
+        <div className=" mx-auto mt-10 bg-white rounded-xl shadow-2xl p-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-gray-800">Notice Board</h2>
+            <Button
+              variant="primary"
+              onClick={() => setShowForm(true)}
+              className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200"
+            >
+              <Lucide icon="Plus" className="w-5 h-5 mr-2" />
               Add Notice
             </Button>
           </div>
-          <div className="overflow-x-auto mt-6">
-            <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow">
-              <thead>
-                <tr className="bg-gray-100 border-b">
-                  <th className="p-3 text-left">#</th>
-                  <th className="p-3 text-left">Title</th>
-                  <th className="p-3 text-left">Message</th>
-                  <th className="p-3 text-left">Priority</th>
-                  <th className="p-3 text-left">Status</th>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-indigo-50">
+                <tr className="text-sm font-semibold text-gray-700">
+                  <th className="p-4">#</th>
+                  <th className="p-4">Title</th>
+                  <th className="p-4">Message</th>
+                  <th className="p-4">Priority</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {notices.map((notice, index) => (
-                  <tr key={notice._id} className="border-b hover:bg-gray-50">
-                    <td className="p-3">{index + 1}</td>
-                    <td className="p-3">{notice.title}</td>
+                  <tr
+                    key={notice._id}
+                    className="border-b hover:bg-gray-50 transition duration-150"
+                  >
+                    <td className="p-4">{index + 1}</td>
+                    <td className="p-4 font-medium text-gray-800">
+                      {notice.title}
+                    </td>
                     <td
-                      className="p-3 truncate"
+                      className="p-4 text-gray-600 truncate max-w-md"
                       dangerouslySetInnerHTML={{ __html: notice.message }}
                     ></td>
-                    <td className="p-3 capitalize">{notice.priority}</td>
-                    <td className="p-3 capitalize">{notice.status}</td>
+                    <td className="p-4">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          notice.priority === "high"
+                            ? "bg-red-100 text-red-800"
+                            : notice.priority === "normal"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {notice.priority}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          notice.status === "published"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {notice.status}
+                      </span>
+                    </td>
+                    <td className="p-4 flex space-x-2">
+                      <button
+                        onClick={() => handleEdit(notice)}
+                        className="p-2 text-indigo-600 hover:text-indigo-800 transition"
+                      >
+                        <Lucide icon="Edit" className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(notice._id)}
+                        className="p-2 text-red-600 hover:text-red-800 transition"
+                      >
+                        <Lucide icon="Trash" className="w-5 h-5" />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -279,12 +346,15 @@ function NoticeBoard() {
         getRef={(el) => {
           notify.current = el;
         }}
-        className="flex"
-        // ref={notify}
+        className="flex items-center bg-indigo-500 text-white rounded-lg shadow-lg p-4"
       >
+        <Lucide
+          icon={message.includes("Failed") ? "AlertCircle" : "CheckCircle"}
+          className="w-5 h-5 mr-2"
+        />
         {message}
       </Notification>
-    </>
+    </div>
   );
 }
 

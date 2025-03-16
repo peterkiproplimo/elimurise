@@ -544,6 +544,17 @@ export const getNotificeBoard = async (data: any) => {
 export const createNotificeBoard = async (data: any) => {
   try {
     let res = await axios.post(c.SCHOOL_PATH + "/noticeboard", data);
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const updateNotificeBoard = async (id: any, data: any) => {
+  try {
+    let res = await axios.put(c.SCHOOL_PATH + "/noticeboard/" + id, data);
+
     return res.data;
   } catch (e) {
     throw handler(e);

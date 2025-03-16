@@ -242,7 +242,7 @@ function Router() {
           element: <Teachers />,
         },
         {
-          path: "teacher/:id",
+          path: "teachers/:id",
           // element: <TeacherProfile />,
 
           element: <GradeUserAssignment />,

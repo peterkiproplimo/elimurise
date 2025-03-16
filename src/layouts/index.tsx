@@ -97,9 +97,6 @@ function Layout() {
       <MobileMenu />
       {/* <TopBar layout="side-menu" /> */}
       <div className="flex overflow-hidden">
-        {/* BEGIN: Side Menu */}
-        {/* w-full fixed bg-primary/90 z-[60] border-b border-white/[0.08] -mt-5 -mx-3 sm:-mx-8 mb-6 dark:bg-darkmode-800/90 md:hidden */}
-        {/* <nav className="w-[105px] bg-primary/90 xl:w-[260px] px-5 pb-16 overflow-x-hidden z-50 pt-10 -mt-4 hidden md:block"> */}
         <nav
           className={`w-[105px] scrollbar-hidden h-full xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md hidden md:block fixed border-b border-white/[0.08] mb-6 dark:bg-darkmode-800/90 ${
             school?.primaryColor ? "" : "bg-primary"
@@ -118,14 +115,6 @@ function Layout() {
           </div>
           <hr className="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent"></hr>
           <ul className="pt-10">
-            {/* {JSON.stringify(
-              formattedMenu.filter(
-                (menuDetails: any) =>
-                  !menuDetails.ignore ||
-                  (menuDetails.subMenu && menuDetails.subMenu.length > 0)
-              )
-            )} */}
-            {/* BEGIN: First Child */}
             {formattedMenu
               .filter(
                 (menuDetails: any) =>
@@ -259,14 +248,6 @@ function Layout() {
             "before:content-[''] before:w-full  before:block",
           ])}
         >
-          {/* <div
-          className={clsx([
-            "max-w-full md:max-w-none rounded-[30px] md:rounded-none px-4 md:px-[22px] min-w-0 min-h-screen bg-slate-100 flex-1 md:pt-20 pb-10 mt-5 md:mt-1 relative dark:bg-darkmode-700",
-            "before:content-[''] before:w-full before:h-px before:block",
-          ])}
-        ></div> */}
-          {/* jj */}
-
           <div className="hidden md:block">
             <TopBar layout="side-menu" />
           </div>
@@ -278,72 +259,7 @@ function Layout() {
               "before:content-[''] before:w-full before:h-px before:block",
             ])}
           >
-            {/* <div
-              id="page-header box bg-white"
-              className="box bg-white p-4 border-b border-gray-200"
-            >
-              <div className="flex flex-col md:flex-row items-center justify-between">
-                <div className="flex items-center">
-                  <h4 className="flex items-center text-lg font-semibold text-gray-800">
-                    <i className="mr-2 text-blue-600">+</i>
-                    <span></span>
-                  </h4>
-                  <a href="#" className="ml-auto md:hidden text-gray-500">
-                    <i className="text-lg">•••</i>
-                  </a>
-                </div>
-
-                <div className="hidden md:flex justify-center mt-4 md:mt-0">
-                  <a
-                    href="http://127.0.0.1:8000/super_admin/settings"
-                    className="text-gray-700 flex items-center space-x-2"
-                  >
-                    <i className="text-blue-500">⬇️</i>
-                    <span className="font-semibold">
-                      Current Session: {user?.school?.current_session}
-                    </span>
-                  </a>
-                </div>
-              </div>
-            </div> */}
-            {/* <div className="text-right">
-              <b>Current Session: {user?.school?.current_session}</b>
-            </div> */}
-            {/* <div className="sweet-loading">
-              {loading ? (
-                <div className="fixed inset-0 bg-black bg-opacity-20 flex justify-center items-center z-50">
-                  <ScaleLoader
-                    color={color}
-                    loading={loading}
-                    width={20}
-                    height={100}
-                    radius={150}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                  />
-                </div>
-              ) : ( */}
             <Outlet />
-            {/* )} */}
-            {/* </div> */}
-            {/* 
-            <Joyride
-              steps={currentSteps}
-              run={runTour}
-              continuous
-              scrollToFirstStep
-              showSkipButton
-              callback={(data) => {
-                console.log(data);
-                if (data.status === "finished" || data.action === "close") {
-                  // End the tour
-                  handleStepChange(Infinity);
-                } else if (data.action === "update") {
-                  // Navigate steps
-                  handleStepChange(data.index + 1);
-                }
-              }}
-            /> */}
           </div>
         </div>
         {/* END: Content */}

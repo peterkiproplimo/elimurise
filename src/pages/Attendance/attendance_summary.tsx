@@ -1,20 +1,40 @@
 import { useState, useEffect } from "react";
 import { FormLabel, FormSelect } from "../../base-components/Form";
 import * as ApiService from "../../services/auth";
-import { CheckCircle, XCircle } from "lucide-react"; // Import Lucide icons
+import { CheckCircle, XCircle } from "lucide-react";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import jsPDF from "jspdf"; // Import jsPDF for PDF generation
-import Tooltip from "../../base-components/ToolTip"; // Import the Tooltip component
+import jsPDF from "jspdf";
+import "jspdf-autotable"; // For table support in jsPDF
+import Button from "../../base-components/Button"; // Assuming a premium Button component
+
+// Constants
+const CURRENT_DATE = new Date();
+const DEFAULT_SUMMARY = {
+  learnersData: [],
+  dailySummary: [],
+};
+
+// Utility to format attendance status
+const getAttendanceStatus = (morning: boolean, afternoon: boolean) => {
+  return morning && afternoon
+    ? "X"
+    : !morning && !afternoon
+    ? "oo"
+    : morning
+    ? "/o"
+    : "o/";
+};
 
 function AttendanceForm() {
-  const [grades, setGrades] = useState([]);
-  const [streams, setStreams] = useState([]);
+  const [grades, setGrades] = useState<any[]>([]);
+  const [streams, setStreams] = useState<any[]>([]);
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedStream, setSelectedStream] = useState("");
-  const [attendanceSummary, setAttendanceSummary] = useState<any>({
-    learnersData: [],
-    dailySummary: [],
-  });
+  const [selectedMonth, setSelectedMonth] = useState(
+    CURRENT_DATE.getMonth() + 1
+  ); // 1-based
+  const [selectedYear, setSelectedYear] = useState(CURRENT_DATE.getFullYear());
+  const [attendanceSummary, setAttendanceSummary] = useState(DEFAULT_SUMMARY);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,51 +45,59 @@ function AttendanceForm() {
     if (selectedStream) {
       fetchAttendanceSummary();
     }
-  }, [selectedStream]);
+  }, [selectedStream, selectedMonth, selectedYear]);
 
   const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-    setGrades(response.data);
+    try {
+      const response = await ApiService.getGrades({ page: 1 });
+      setGrades(response.data);
+    } catch (error) {
+      console.error("Failed to fetch grades:", error);
+    }
   };
 
-  const getStreams = async (gradeId: any) => {
-    const response = await ApiService.getStream({ page: 1, grade: gradeId });
-    setStreams(response.data);
+  const getStreams = async (gradeId: string) => {
+    try {
+      const response = await ApiService.getStream({ page: 1, grade: gradeId });
+      setStreams(response.data);
+    } catch (error) {
+      console.error("Failed to fetch streams:", error);
+    }
   };
 
   const fetchAttendanceSummary = async () => {
     if (!selectedGrade || !selectedStream) return;
 
     setLoading(true);
-    const response = await ApiService.getAttendanceMonthlySummary({
-      year: "2025",
-      month: "2", // Change this as needed for dynamic month/year
-      stream: selectedStream,
-    });
+    try {
+      const response = await ApiService.getAttendanceMonthlySummary({
+        year: selectedYear.toString(),
+        month: selectedMonth.toString().padStart(2, "0"),
+        stream: selectedStream,
+      });
 
-    // Process attendance data for learners
-    const learnersData = response?.data?.attendanceSummary.map(
-      (learnerData: any) => {
-        const learnerName = `${learnerData.learner.first_name} ${learnerData.learner.last_name}`;
-        const attendanceDates = Object.keys(learnerData.attendance);
-        return {
-          learnerName,
-          gender: learnerData.learner.gender,
-          attendance: attendanceDates.map((date) => ({
-            date,
-            morning: learnerData.attendance[date].morning,
-            morning_reason: learnerData.attendance[date].morning_reason,
-            afternoon_reason: learnerData.attendance[date].afternoon_reason,
-            afternoon: learnerData.attendance[date].afternoon,
-            day: date,
-          })),
-        };
-      }
-    );
+      const learnersData = response?.data?.attendanceSummary.map(
+        (learnerData: any) => {
+          const learnerName = `${learnerData.learner.first_name} ${learnerData.learner.last_name}`;
+          const attendanceDates = Object.keys(learnerData.attendance);
+          return {
+            learnerName,
+            gender: learnerData.learner.gender,
+            attendance: attendanceDates.map((date) => ({
+              date,
+              morning: learnerData.attendance[date].morning,
+              morning_reason: learnerData.attendance[date].morning_reason,
+              afternoon_reason: learnerData.attendance[date].afternoon_reason,
+              afternoon: learnerData.attendance[date].afternoon,
+              day: date,
+            })),
+          };
+        }
+      );
 
-    // Process daily attendance summary
-    const dailySummary = Object.keys(response?.data?.dailyAttendance || {}).map(
-      (day) => {
+      const dailySummary = Object.keys(
+        response?.data?.dailyAttendance || {}
+      ).map((day) => {
         const dayData = response.data.dailyAttendance[day];
         return {
           day,
@@ -78,273 +106,339 @@ function AttendanceForm() {
           absentMorning: dayData.absentMorning,
           absentAfternoon: dayData.absentAfternoon,
         };
-      }
-    );
+      });
 
-    setAttendanceSummary({ learnersData, dailySummary });
-    setLoading(false);
+      setAttendanceSummary({ learnersData, dailySummary });
+    } catch (error) {
+      console.error("Failed to fetch attendance summary:", error);
+      setAttendanceSummary(DEFAULT_SUMMARY);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Function to handle PDF export
   const exportToPDF = () => {
-    const doc = new jsPDF();
-
-    // Title
-    doc.setFontSize(16);
-    doc.text("Attendance Summary", 14, 16);
-
-    // Add table headers
-    let yOffset = 20;
-    doc.setFontSize(12);
-    doc.text("#", 14, yOffset);
-    doc.text("Learner", 30, yOffset);
-    attendanceSummary.learnersData[0]?.attendance.forEach(
-      (entry: any, idx: any) => {
-        doc.text(entry.day, 50 + idx * 30, yOffset);
-      }
+    const doc = new jsPDF({ orientation: "landscape" });
+    const monthName = new Date(selectedYear, selectedMonth - 1).toLocaleString(
+      "default",
+      { month: "long" }
     );
-    yOffset += 10;
 
-    // Add table content
-    attendanceSummary.learnersData.forEach((entry: any, index: any) => {
-      doc.text((index + 1).toString(), 14, yOffset);
-      doc.text(entry.learnerName, 30, yOffset);
-      entry.attendance.forEach((attend: any, idx: any) => {
-        const status =
-          attend.morning && attend.afternoon
-            ? "X"
-            : !attend.morning && !attend.afternoon
-            ? "oo"
-            : attend.morning && !attend.afternoon
-            ? "/o"
-            : "o/";
+    // Premium Header
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(33, 37, 41); // Gray-800
+    doc.text(`Attendance Summary - ${monthName} ${selectedYear}`, 14, 20);
 
-        doc.text(status, 50 + idx * 30, yOffset);
-      });
-      yOffset += 10;
+    // Table Headers
+    const headers = [
+      "#",
+      "Learner",
+      "Gender",
+      ...(attendanceSummary.learnersData[0]?.attendance.map(
+        (e: any) => e.day
+      ) || []),
+    ];
+    const body = attendanceSummary.learnersData.map(
+      (entry: any, index: number) => [
+        index + 1,
+        entry.learnerName,
+        entry.gender.charAt(0),
+        ...entry.attendance.map((attend: any) =>
+          getAttendanceStatus(attend.morning, attend.afternoon)
+        ),
+      ]
+    );
+
+    // Summary Rows
+    const summaryRows = [
+      [
+        "",
+        "Present: Afternoon",
+        "",
+        ...attendanceSummary.dailySummary.map((s: any) => s.presentAfternoon),
+      ],
+      [
+        "",
+        "Present: Morning",
+        "",
+        ...attendanceSummary.dailySummary.map((s: any) => s.presentMorning),
+      ],
+      [
+        "",
+        "Total",
+        "",
+        ...attendanceSummary.dailySummary.map(
+          (s: any) => s.presentMorning + s.presentAfternoon
+        ),
+      ],
+    ];
+
+    // Premium Table Styling
+    (doc as any).autoTable({
+      head: [headers],
+      body: [...body, ...summaryRows],
+      startY: 30,
+      theme: "striped",
+      headStyles: {
+        fillColor: [34, 197, 94], // Green-500
+        textColor: [255, 255, 255],
+        fontSize: 11,
+        halign: "center",
+        fontStyle: "bold",
+      },
+      bodyStyles: {
+        fontSize: 10,
+        halign: "center",
+        textColor: [55, 65, 81], // Gray-700
+      },
+      alternateRowStyles: {
+        fillColor: [243, 244, 246], // Gray-100
+      },
     });
 
-    // Save the PDF
-    doc.save("attendance-summary.pdf");
+    // Footer
+    const finalY = (doc as any).lastAutoTable.finalY;
+    doc.setFontSize(9);
+    doc.setTextColor(107, 114, 128); // Gray-500
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, finalY + 10);
+
+    doc.save(`attendance-summary-${monthName}-${selectedYear}.pdf`);
   };
 
-  // Function to handle printing
   const printReport = () => {
     window.print();
   };
 
   return (
-    <div className="w-full">
-      <div className="w-full p-4">
-        <h2 className="text-2xl font-bold text-gray-800">Attendance Summary</h2>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-darkmode-900 dark:to-darkmode-800 p-6 xl:p-8">
+      <div className="max-w-7xl mx-auto bg-white dark:bg-darkmode-700 rounded-2xl shadow-xl overflow-hidden">
+        <div className="p-6">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+            Attendance Summary
+            <CheckCircle className="ml-2 w-6 h-6 text-green-500" />
+          </h2>
 
-        {/* Grade and Stream Selection */}
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <FormLabel className="block text-sm font-medium text-gray-700">
-              Grade
-            </FormLabel>
-            <FormSelect
-              value={selectedGrade}
-              onChange={(e) => {
-                setSelectedGrade(e.target.value);
-                getStreams(e.target.value);
-              }}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="">Select Grade</option>
-              {grades.map((grade: any) => (
-                <option key={grade._id} value={grade._id}>
-                  {grade.name}
-                </option>
-              ))}
-            </FormSelect>
-          </div>
-
-          <div>
-            <FormLabel className="block text-sm font-medium text-gray-700">
-              Stream
-            </FormLabel>
-            <FormSelect
-              value={selectedStream}
-              onChange={(e) => setSelectedStream(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="">Select Stream</option>
-              {streams.map((stream: any) => (
-                <option key={stream._id} value={stream._id}>
-                  {stream.name}
-                </option>
-              ))}
-            </FormSelect>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          {loading ? (
-            <div className="flex justify-center">
-              <LoadingIcon
-                icon="spinning-circles"
-                color="gray"
-                className="w-6 h-6"
-              />
+          {/* Filters */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+            <div>
+              <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Grade
+              </FormLabel>
+              <FormSelect
+                value={selectedGrade}
+                onChange={(e) => {
+                  setSelectedGrade(e.target.value);
+                  getStreams(e.target.value);
+                  setSelectedStream("");
+                }}
+                required
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-darkmode-600 border border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+              >
+                <option value="">Select Grade</option>
+                {grades.map((grade) => (
+                  <option key={grade._id} value={grade._id}>
+                    {grade.name}
+                  </option>
+                ))}
+              </FormSelect>
             </div>
-          ) : (
-            <div className="">
-              <table className="w-full table-auto border border-gray-300 bg-white">
-                <thead>
-                  <tr>
-                    <th className="border border-gray-300 text-left p-2">#</th>
-                    <th className="border border-gray-300 text-left p-2">
-                      Learner
-                    </th>
-                    <th className="border border-gray-300 text-left p-2">
-                      Gender
-                    </th>
 
-                    {attendanceSummary.learnersData.length > 0 &&
-                      attendanceSummary.learnersData[0].attendance.map(
+            <div>
+              <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Stream
+              </FormLabel>
+              <FormSelect
+                value={selectedStream}
+                onChange={(e) => setSelectedStream(e.target.value)}
+                required
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-darkmode-600 border border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+              >
+                <option value="">Select Stream</option>
+                {streams.map((stream) => (
+                  <option key={stream._id} value={stream._id}>
+                    {stream.name}
+                  </option>
+                ))}
+              </FormSelect>
+            </div>
+
+            <div>
+              <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Month
+              </FormLabel>
+              <FormSelect
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-darkmode-600 border border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
+              >
+                {Array.from({ length: 12 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {new Date(0, i).toLocaleString("default", {
+                      month: "long",
+                    })}
+                  </option>
+                ))}
+              </FormSelect>
+            </div>
+          </div>
+
+          {/* Attendance Table */}
+          <div className="bg-gray-50 dark:bg-darkmode-600 rounded-xl p-6 shadow-inner">
+            {loading ? (
+              <div className="flex justify-center">
+                <LoadingIcon
+                  icon="spinning-circles"
+                  className="w-8 h-8 text-gray-500"
+                />
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full table-auto border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-green-500 to-teal-500 text-white">
+                      <th className="px-4 py-3 text-left text-sm font-semibold">
+                        #
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">
+                        Learner
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-semibold">
+                        Gender
+                      </th>
+                      {attendanceSummary.learnersData[0]?.attendance.map(
                         (entry: any) => (
                           <th
                             key={entry.date}
-                            className="border border-gray-300 text-center p-2"
+                            className="px-4 py-3 text-center text-sm font-semibold"
                           >
                             {entry.day}
                           </th>
                         )
                       )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {attendanceSummary.learnersData.length > 0 ? (
-                    <>
-                      {attendanceSummary.learnersData.map(
-                        (entry: any, index: any) => (
-                          <tr key={index} className="hover:bg-gray-50">
-                            <td className="border border-gray-300 p-2">
-                              {index + 1}
-                            </td>
-                            <td className="border border-gray-300 p-2">
-                              {entry.learnerName}
-                            </td>
-                            <td className="border border-gray-300 p-2">
-                              {entry.gender.charAt(0)}
-                            </td>
-
-                            {entry.attendance.map((attend: any, idx: any) => (
-                              <td
-                                key={idx}
-                                className="border border-gray-300 text-center p-2 relative group"
-                              >
-                                <span className="text-black-500">
-                                  {
-                                    attend.morning && attend.afternoon
-                                      ? "X" // Full Day
-                                      : !attend.morning && !attend.afternoon
-                                      ? "oo" // Absent
-                                      : attend.morning && !attend.afternoon
-                                      ? "/o" // Half Day (Morning)
-                                      : "o/" // Half Day (Afternoon)
-                                  }
-                                </span>
-                                {/* Tooltip only if absent */}
-                                {(!attend.morning || !attend.afternoon) && (
-                                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-md">
-                                    {attend.morning_reason ||
-                                      attend.afternoon_reason ||
-                                      "No reason provided"}
-                                  </div>
-                                )}
+                    </tr>
+                  </thead>
+                  <tbody className="text-gray-700 dark:text-gray-300">
+                    {attendanceSummary.learnersData.length > 0 ? (
+                      <>
+                        {attendanceSummary.learnersData.map(
+                          (entry: any, index: number) => (
+                            <tr
+                              key={index}
+                              className="hover:bg-gray-100 dark:hover:bg-darkmode-500"
+                            >
+                              <td className="px-4 py-3">{index + 1}</td>
+                              <td className="px-4 py-3">{entry.learnerName}</td>
+                              <td className="px-4 py-3">
+                                {entry.gender.charAt(0)}
                               </td>
-                            ))}
-                          </tr>
-                        )
-                      )}
-
-                      <tr>
-                        <td className="border border-gray-300 p-2"></td>
-                        <td className="border border-gray-300 p-2" colSpan={2}>
-                          <b>Present: Afternoon</b>
-                        </td>
-                        {attendanceSummary.dailySummary.map(
-                          (summary: any, index: any) => (
-                            <td
-                              key={index}
-                              className="border border-gray-300 text-center p-2"
-                            >
-                              <b> {summary.presentAfternoon}</b>
-                            </td>
+                              {entry.attendance.map(
+                                (attend: any, idx: number) => (
+                                  <td
+                                    key={idx}
+                                    className="px-4 py-3 text-center relative group"
+                                  >
+                                    {attend.morning && attend.afternoon ? (
+                                      <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                                    ) : !attend.morning && !attend.afternoon ? (
+                                      <XCircle className="w-5 h-5 text-red-500 mx-auto" />
+                                    ) : (
+                                      <span className="text-gray-500">
+                                        {getAttendanceStatus(
+                                          attend.morning,
+                                          attend.afternoon
+                                        )}
+                                      </span>
+                                    )}
+                                    {(!attend.morning || !attend.afternoon) && (
+                                      <div className="absolute z-10 left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-md">
+                                        {attend.morning_reason ||
+                                          attend.afternoon_reason ||
+                                          "No reason provided"}
+                                      </div>
+                                    )}
+                                  </td>
+                                )
+                              )}
+                            </tr>
                           )
                         )}
-                      </tr>
-                      <tr>
-                        <td className="border border-gray-300 p-2"></td>
-                        <td className="border border-gray-300 p-2" colSpan={2}>
-                          <b>Present: Morning</b>
-                        </td>
-                        {attendanceSummary.dailySummary.map(
-                          (summary: any, index: any) => (
-                            <td
-                              key={index}
-                              className="border border-gray-300 text-center p-2"
-                            >
-                              <b> {summary.presentMorning}</b>
-                            </td>
-                          )
-                        )}
-                      </tr>
-                      <tr>
-                        <td className="border border-gray-300 p-2"></td>
-                        <td className="border border-gray-300 p-2" colSpan={2}>
-                          <b>Total</b>
-                        </td>
-                        {attendanceSummary.dailySummary.map(
-                          (summary: any, index: any) => (
-                            <td
-                              key={index}
-                              className="border border-gray-300 text-center p-2"
-                            >
-                              <b>
+                        <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
+                          <td className="px-4 py-3" colSpan={3}>
+                            Present: Afternoon
+                          </td>
+                          {attendanceSummary.dailySummary.map(
+                            (summary: any, index: number) => (
+                              <td key={index} className="px-4 py-3 text-center">
+                                {summary.presentAfternoon}
+                              </td>
+                            )
+                          )}
+                        </tr>
+                        <tr className="font-medium">
+                          <td className="px-4 py-3" colSpan={3}>
+                            Present: Morning
+                          </td>
+                          {attendanceSummary.dailySummary.map(
+                            (summary: any, index: number) => (
+                              <td key={index} className="px-4 py-3 text-center">
+                                {summary.presentMorning}
+                              </td>
+                            )
+                          )}
+                        </tr>
+                        <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
+                          <td className="px-4 py-3" colSpan={3}>
+                            Total
+                          </td>
+                          {attendanceSummary.dailySummary.map(
+                            (summary: any, index: number) => (
+                              <td key={index} className="px-4 py-3 text-center">
                                 {summary.presentMorning +
                                   summary.presentAfternoon}
-                              </b>
-                            </td>
-                          )
-                        )}
+                              </td>
+                            )
+                          )}
+                        </tr>
+                      </>
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={
+                            attendanceSummary.learnersData[0]?.attendance
+                              .length + 3 || 3
+                          }
+                          className="py-4 text-center text-gray-500 dark:text-gray-400"
+                        >
+                          No attendance data available
+                        </td>
                       </tr>
-                    </>
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={attendanceSummary.learnersData.length + 1} // Adjust the colspan based on the number of attendance entries
-                        className="py-4 text-center text-gray-500"
-                      >
-                        No attendance data available.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
 
-              {/* Export Buttons */}
-              <div className="mt-4 flex justify-end gap-4">
-                <button
-                  onClick={exportToPDF}
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  Export to PDF
-                </button>
-                <button
-                  onClick={printReport}
-                  className="px-4 py-2 bg-green-600 text-white rounded"
-                >
-                  Print
-                </button>
+                {/* Action Buttons */}
+                <div className="mt-6 flex justify-end gap-4">
+                  <Button
+                    variant="primary"
+                    onClick={exportToPDF}
+                    disabled={loading || !selectedStream}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition-all duration-200"
+                  >
+                    Export to PDF
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={printReport}
+                    disabled={loading || !selectedStream}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow-md transition-all duration-200"
+                  >
+                    Print
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
