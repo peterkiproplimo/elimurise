@@ -373,10 +373,10 @@ function Main() {
       );
       const pagination = response.pagination;
       setPagination({
-        current_page: pagination.current_page,
+        current_page: Number(pagination.current_page),
         total: pagination.total,
         total_pages: pagination.total_pages,
-        per_page: pagination.per_page,
+        per_page: Number(pagination.per_page),
       });
       setLearners(response.data);
     } catch (error) {
@@ -1846,57 +1846,135 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                  <div className="flex flex-wrap items-center col-span-12 sm:flex-nowrap gap-4 mt-6">
+                    {/* Pagination */}
+                    <div className="flex items-center w-full sm:w-auto sm:mr-auto">
+                      <nav className="flex items-center space-x-1">
+                        {/* Previous Button */}
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                          className="py-2 px-4 rounded-md"
+                          disabled={page === 1}
+                          className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 disabled:bg-gray-200 disabled:text-gray-400 transition-colors duration-200"
                         >
-                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                          <Lucide icon="ChevronLeft" className="w-5 h-5" />
                         </button>
-                        {_.times(pagination.total_pages).map((page, key) =>
-                          page + 1 == pagination.current_page ? (
+
+                        {/* Page Numbers with Ellipsis */}
+                        {pagination.total_pages <= 7 ? (
+                          // Show all pages if total_pages <= 7
+                          _.times(pagination.total_pages).map((_, index) => {
+                            const pageNum = index + 1;
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => setPage(pageNum)}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                  pageNum === pagination.current_page
+                                    ? "bg-indigo-600 text-white shadow-md"
+                                    : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          })
+                        ) : (
+                          // Show limited pages with ellipsis for larger counts
+                          <>
+                            {/* First Page */}
                             <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 bg-white rounded-md"
+                              onClick={() => setPage(1)}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                1 === pagination.current_page
+                                  ? "bg-indigo-600 text-white shadow-md"
+                                  : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                              }`}
                             >
-                              {page + 1}
+                              1
                             </button>
-                          ) : (
+
+                            {/* Ellipsis or nearby pages */}
+                            {pagination.current_page > 3 && (
+                              <span className="px-4 py-2 text-gray-500">
+                                ...
+                              </span>
+                            )}
+
+                            {/* Dynamic middle pages */}
+                            {_.range(
+                              Math.max(2, pagination.current_page - 1),
+                              Math.min(
+                                pagination.total_pages,
+                                pagination.current_page + 2
+                              )
+                            ).map((pageNum) => (
+                              <button
+                                key={pageNum}
+                                onClick={() => setPage(pageNum)}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                  pageNum === pagination.current_page
+                                    ? "bg-indigo-600 text-white shadow-md"
+                                    : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            ))}
+
+                            {/* Ellipsis or last pages */}
+                            {pagination.current_page <
+                              pagination.total_pages - 2 && (
+                              <span className="px-4 py-2 text-gray-500">
+                                ...
+                              </span>
+                            )}
+
+                            {/* Last Page */}
                             <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 rounded-md"
+                              onClick={() => setPage(pagination.total_pages)}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                pagination.total_pages ===
+                                pagination.current_page
+                                  ? "bg-indigo-600 text-white shadow-md"
+                                  : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                              }`}
                             >
-                              {page + 1}
+                              {pagination.total_pages}
                             </button>
-                          )
+                          </>
                         )}
+
+                        {/* Next Button */}
                         <button
                           onClick={() =>
                             setPage(
-                              page < pagination.total_pages ? page + 1 : 1
+                              page < pagination.total_pages
+                                ? page + 1
+                                : pagination.total_pages
                             )
                           }
-                          className="py-2 px-4 rounded-md"
+                          disabled={page === pagination.total_pages}
+                          className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 disabled:bg-gray-200 disabled:text-gray-400 transition-colors duration-200"
                         >
-                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                          <Lucide icon="ChevronRight" className="w-5 h-5" />
                         </button>
-                      </Pagination>
-                      <div className="text-slate-500">
-                        <span className="mr-3">Total {pagination.total}</span>
-                        <FormSelect
-                          className="w-30 mt-3 !box sm:mt-0"
-                          onChange={(e) => setLimit(parseInt(e.target.value))}
-                        >
-                          <option value={10}>10/page</option>
-                          <option value={25}>25/page</option>
-                          <option value={50}>50/page</option>
-                          <option value={100}>100/page</option>
-                        </FormSelect>
-                      </div>
+                      </nav>
+                    </div>
+
+                    {/* Total and Limit Selector */}
+                    <div className="flex items-center space-x-4 text-gray-600">
+                      <span className="text-sm font-medium">
+                        Total: {pagination.total}
+                      </span>
+                      <FormSelect
+                        className="w-32 py-2 text-sm bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                        onChange={(e) => setLimit(parseInt(e.target.value))}
+                      >
+                        <option value={10}>10 / page</option>
+                        <option value={25}>25 / page</option>
+                        <option value={50}>50 / page</option>
+                        <option value={100}>100 / page</option>
+                      </FormSelect>
                     </div>
                   </div>
                 </>

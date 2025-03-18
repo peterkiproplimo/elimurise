@@ -22,13 +22,14 @@ import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import Dropzone from "../../base-components/Dropzone";
 import { useAuth } from "../../contexts/Auth";
 
 function Users() {
   const [dialog, setDialog] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmResetPassword, setConfirmResetPassword] = useState(false); // New state for reset password confirmation
   const deleteButtonRef = useRef(null);
+  const resetPasswordButtonRef = useRef(null); // Ref for reset password button
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState<any>({});
   const [selectGroup, setGroup] = useState([""]);
@@ -38,7 +39,7 @@ function Users() {
   const [loading, isLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const { authData } = useAuth();
+  const { authData, hasPermission } = useAuth();
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -48,20 +49,16 @@ function Users() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const [next_page, setNextPage] = useState(1);
-  const [previous_page, setPreviousPage] = useState(1);
-  const { hasPermission } = useAuth();
-  // Success notification
   const notify = useRef<NotificationElement>();
+
   const schema = yup
     .object({
-      // tenant: yup.string().required("Conference is required"),
       firstname: yup.string().required("First name is required"),
       lastname: yup.string().required("Last name is required"),
       email: yup
         .string()
         .required("Email is required")
-        .email("Email must be a valid"),
+        .email("Email must be valid"),
       phone: yup.string().required("Phone Number is required"),
       password: yup.string().required("Password is required"),
     })
@@ -70,7 +67,6 @@ function Users() {
   const {
     register,
     trigger,
-
     getValues,
     reset,
     formState: { errors },
@@ -78,9 +74,11 @@ function Users() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
   useEffect(() => {
     getRole();
   }, []);
+
   useEffect(() => {
     getUsers();
   }, [search, limit, page]);
@@ -91,7 +89,6 @@ function Users() {
       search: search,
       limit: limit,
     });
-
     const pagination = res.pagination;
     setPagination({
       current_page: pagination.current_page,
@@ -101,21 +98,41 @@ function Users() {
     });
     setUsers(res.data);
   };
+
   const getRole = async () => {
     let res = await ApiService.getRole({ page: "", search: "", limit: "" });
-    console.log(res);
     setRoles(res.data);
   };
 
   const activateUser = async (data: any) => {
     isLoading(true);
     let res = await ApiService.activateorDeactivateUsers(data);
-
     getUsers();
     setConfirmDelete(false);
-
     isLoading(false);
+    setSuccess(true);
+    setMessage(res.message || "User status updated successfully");
+    notify.current?.showToast();
   };
+
+  const resetPassword = async (user: any) => {
+    isLoading(true);
+    try {
+      const res = await ApiService.addEmailOTP({ email: user.email }); // Assuming API endpoint
+      getUsers();
+      setConfirmResetPassword(false);
+      isLoading(false);
+      setSuccess(true);
+      setMessage(res.message || "Password reset triggered successfully");
+      notify.current?.showToast();
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message || "Failed to trigger password reset");
+      notify.current?.showToast();
+    }
+  };
+
   const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
@@ -123,14 +140,13 @@ function Users() {
       isLoading(true);
       try {
         const data = await getValues();
-        console.log(data);
         let res = await ApiService.createUser(data);
         getUsers();
         await reset();
         isLoading(false);
         setDialog(false);
         setSuccess(true);
-        // setMessage(res.message);
+        setMessage(res.message || "User created successfully");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -140,14 +156,14 @@ function Users() {
       }
     }
   };
+
   const editRecord = (record: any) => {
     setIsEditMode(true);
     setGroup(record.groups);
-    console.log(record);
     reset({ ...record, role: record?.role?._id });
-
     setDialog(true);
   };
+
   const deleteRecord = async () => {
     isLoading(true);
     try {
@@ -165,6 +181,7 @@ function Users() {
       notify.current?.showToast();
     }
   };
+
   const cancel = (record: any) => {
     setGroup([""]);
     reset({ name: "" });
@@ -174,10 +191,10 @@ function Users() {
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium ">Users</h2>
+      <h2 className="mt-1 text-lg font-medium">Users</h2>
       <div className="grid grid-cols-12 gap-6 mt-5">
         {hasPermission("users", "create") && (
-          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
+          <div className="flex flex-wrap items-center col-span-12 mt-2 xl:flex-nowrap">
             <Button
               className="mr-2 shadow-md user-button"
               onClick={(event: React.MouseEvent) => {
@@ -233,13 +250,10 @@ function Users() {
             </div>
           </div>
         )}
-        <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+        <div className="col-span-12 overflow-auto 2xl:overflow-visible">
           <Table className="border-spacing-y-[10px] border-separate -mt-2">
             <Table.Thead>
               <Table.Tr>
-                {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                  <FormCheck.Input type="checkbox" />
-                </Table.Th> */}
                 <Table.Th className="border-b-0 whitespace-nowrap">
                   First Name
                 </Table.Th>
@@ -266,9 +280,6 @@ function Users() {
             <Table.Tbody>
               {users.map((user: any, key) => (
                 <Table.Tr key={key} className="">
-                  {/* <Table.Td className="first:rounded-l-md last:rounded-r-md w-10 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <FormCheck.Input type="checkbox" />
-                  </Table.Td> */}
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {user.firstname}
                   </Table.Td>
@@ -278,14 +289,12 @@ function Users() {
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {user.phone}
                   </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md  bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {user.email}
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     {user?.role?.name}
-                    {/* {authData?.user?.email} */}
                   </Table.Td>
-
                   <Table.Td className="first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                     <div
                       className={
@@ -298,7 +307,7 @@ function Users() {
                     </div>
                   </Table.Td>
                   <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    {(authData as { user: { email: string } })?.user?.email !=
+                    {(authData as { user: { email: string } })?.user?.email !==
                       user?.email && (
                       <div className="flex items-center justify-center">
                         <Menu>
@@ -317,7 +326,6 @@ function Users() {
                             {hasPermission("users", "update") && (
                               <Menu.Item
                                 onClick={() => {
-                                  // active(user)
                                   setUser(user);
                                   setConfirmDelete(true);
                                 }}
@@ -326,11 +334,17 @@ function Users() {
                                 {user.status !== 1 ? "Activate" : "Deactivate"}
                               </Menu.Item>
                             )}
-
-                            {/* <Menu.Item>
-                            <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
-                            Email Credentials
-                          </Menu.Item> */}
+                            {hasPermission("users", "update") && (
+                              <Menu.Item
+                                onClick={() => {
+                                  setUser(user);
+                                  setConfirmResetPassword(true);
+                                }}
+                              >
+                                <Lucide icon="Lock" className="w-4 h-4 mr-2" />{" "}
+                                Reset Password
+                              </Menu.Item>
+                            )}
                           </Menu.Items>
                         </Menu>
                       </div>
@@ -341,61 +355,58 @@ function Users() {
             </Table.Tbody>
           </Table>
         </div>
-        {/* END: Data List */}
-        {/* END: Data List */}
-        <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-          <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-            <Pagination className="w-full sm:w-auto sm:mr-auto">
-              <button
-                onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                className="py-2 px-4 rounded-md"
-              >
-                <Lucide icon="ChevronLeft" className="w-4 h-4" />
-              </button>
-              {_.times(pagination.total_pages).map((page, key) =>
-                page + 1 == pagination.current_page ? (
-                  <button
-                    onClick={() => setPage(page + 1)}
-                    key={key}
-                    className="py-2 px-4 bg-white rounded-md"
-                  >
-                    {page + 1}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setPage(page + 1)}
-                    key={key}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    {page + 1}
-                  </button>
-                )
-              )}
-              <button
-                onClick={() =>
-                  setPage(page < pagination.total_pages ? page + 1 : 1)
-                }
-                className="py-2 px-4 rounded-md"
-              >
-                <Lucide icon="ChevronRight" className="w-4 h-4" />
-              </button>
-            </Pagination>
-            <div className="text-slate-500">
-              <span className="mr-3">Total {pagination.total}</span>
-              <FormSelect
-                className="w-30 mt-3 !box sm:mt-0"
-                onChange={(e) => setLimit(parseInt(e.target.value))}
-              >
-                <option value={10}>10/page</option>
-                <option value={25}>25/page</option>
-                <option value={50}>50/page</option>
-                <option value={100}>100/page</option>
-              </FormSelect>
-            </div>
+        <div className="flex flex-wrap items-center col-span-12 sm:flex-row sm:flex-nowrap tt">
+          <Pagination className="w-full sm:w-auto sm:mr-auto">
+            <button
+              onClick={() => setPage(page > 1 ? page - 1 : 1)}
+              className="py-2 px-4 rounded-md"
+            >
+              <Lucide icon="ChevronLeft" className="w-4 h-4" />
+            </button>
+            {_.times(pagination.total_pages).map((page, key) =>
+              page + 1 === pagination.current_page ? (
+                <button
+                  onClick={() => setPage(page + 1)}
+                  key={key}
+                  className="py-2 px-4 bg-white rounded-md"
+                >
+                  {page + 1}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setPage(page + 1)}
+                  key={key}
+                  className="py-2 px-4 rounded-md"
+                >
+                  {page + 1}
+                </button>
+              )
+            )}
+            <button
+              onClick={() =>
+                setPage(page < pagination.total_pages ? page + 1 : 1)
+              }
+              className="py-2 px-4 rounded-md"
+            >
+              <Lucide icon="ChevronRight" className="w-4 h-4" />
+            </button>
+          </Pagination>
+          <div className="text-slate-500">
+            <span className="mr-3">Total {pagination.total}</span>
+            <FormSelect
+              className="w-30 mt-3 !box sm:mt-0"
+              onChange={(e) => setLimit(parseInt(e.target.value))}
+            >
+              <option value={10}>10/page</option>
+              <option value={25}>25/page</option>
+              <option value={50}>50/page</option>
+              <option value={100}>100/page</option>
+            </FormSelect>
           </div>
         </div>
-        {/* END: Pagination */}
       </div>
+
+      {/* User Creation/Edit Dialog */}
       <Dialog
         staticBackdrop
         size="lg"
@@ -409,7 +420,6 @@ function Users() {
           <form className="validate-form" onSubmit={onSubmit}>
             <Dialog.Title>
               <h2 className="mr-auto text-base font-medium">
-                {" "}
                 {isEditMode ? "Edit User" : "New User"}
               </h2>
               <a
@@ -440,21 +450,6 @@ function Users() {
                   </div>
                 )}
               </div>
-
-              {/* <FormLabel htmlFor="modal-form-1">User Type</FormLabel> */}
-              {/* <FormSelect
-                // className="w-30 mt-3 !box sm:mt-0"
-                // onChange={(e) => setLimit(parseInt(e.target.value))}
-                >
-                  <option value={10}>Select Type</option>
-
-                  <option value={10}>Class Manager</option>
-                  <option value={25}>H/Teacher</option>
-                  <option value={50}>Subject Lead</option>
-                  <option value={100}>C Coodinator</option>
-                  <option value={100}>D/H Teacher</option>
-                  <option value={100}>D/Head Teacher</option>
-                </FormSelect> */}
               <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-6">Role</FormLabel>
                 <FormSelect {...register("role")} name="role">
@@ -487,37 +482,6 @@ function Users() {
                   </div>
                 )}
               </div>
-
-              {/* <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Role</FormLabel>
-                <FormSelect {...register("role")} name="role">
-                  {roles.map((role: any, key) => (
-                    <option key={key} value={role._id}>
-                      {role.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.role && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.role.message === "string" &&
-                      errors.role.message}
-                  </div>
-                )}
-              </div> */}
-              {/* <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Country</FormLabel>
-                <FormSelect
-                  {...register("country")}
-                  name="country"
-                  value={"Kenya"}
-                >
-                  {countries.map((country, key) => (
-                    <option key={key} value={country.name}>
-                      {country.name}
-                    </option>
-                  ))}
-                </FormSelect>
-              </div> */}
               <div className="col-span-12 sm:col-span-6">
                 <FormLabel htmlFor="modal-form-1">Phone Number</FormLabel>
                 <FormInput
@@ -594,7 +558,8 @@ function Users() {
           </form>
         </Dialog.Panel>
       </Dialog>
-      {/* BEGIN: Delete Confirmation Modal */}
+
+      {/* Activate/Deactivate Confirmation Dialog */}
       <Dialog
         open={confirmDelete}
         onClose={() => {
@@ -609,10 +574,10 @@ function Users() {
               className="w-16 h-16 mx-auto mt-3 text-danger"
             />
             <div className="mt-5 text-3xl">Are you sure?</div>
-            {/* <div className="mt-2 text-slate-500">
-              Do you want to{user.status !== 1 ? "Activate" : "Deactivate"} user? <br />
-             
-            </div> */}
+            <div className="mt-2 text-slate-500">
+              Do you want to {user.status !== 1 ? "activate" : "deactivate"}{" "}
+              this user?
+            </div>
           </div>
           <div className="px-5 pb-8 text-center">
             <Button
@@ -626,7 +591,7 @@ function Users() {
               Cancel
             </Button>
             <Button
-              onClick={(data: any) => activateUser(user)}
+              onClick={() => activateUser(user)}
               variant="danger"
               type="button"
               className="w-24"
@@ -644,7 +609,59 @@ function Users() {
           </div>
         </Dialog.Panel>
       </Dialog>
-      {/* END: Delete Confirmation Modal */}
+
+      {/* Reset Password Confirmation Dialog */}
+      <Dialog
+        open={confirmResetPassword}
+        onClose={() => {
+          setConfirmResetPassword(false);
+        }}
+        initialFocus={resetPasswordButtonRef}
+      >
+        <Dialog.Panel>
+          <div className="p-5 text-center">
+            <Lucide
+              icon="Lock"
+              className="w-16 h-16 mx-auto mt-3 text-indigo-600"
+            />
+            <div className="mt-5 text-3xl">Reset Password</div>
+            <div className="mt-2 text-slate-500">
+              Are you sure you want to trigger a password reset for <br />
+              <strong>{user.email}</strong>?
+            </div>
+          </div>
+          <div className="px-5 pb-8 text-center">
+            <Button
+              variant="outline-secondary"
+              type="button"
+              onClick={() => {
+                setConfirmResetPassword(false);
+              }}
+              className="w-24 mr-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => resetPassword(user)}
+              variant="primary"
+              type="button"
+              className="w-24 bg-indigo-600 hover:bg-indigo-700"
+              ref={resetPasswordButtonRef}
+            >
+              Yes
+              {loading && (
+                <LoadingIcon
+                  icon="spinning-circles"
+                  color="white"
+                  className="w-4 h-4 ml-2"
+                />
+              )}
+            </Button>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+
+      {/* Notification */}
       <Notification
         getRef={(el) => {
           notify.current = el;
