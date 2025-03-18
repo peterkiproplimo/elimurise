@@ -145,6 +145,7 @@ function Main() {
     socket: any; // Replace with your socket type (e.g., Socket from "socket.io-client")
   }
   interface Message {
+    learner: string;
     sender: string;
     receiver: string;
     message?: string;
@@ -297,8 +298,10 @@ function Main() {
     setLoading(true);
     try {
       const formData = new FormData();
+      formData.append("learner", learner._id);
+
       formData.append("sender", user._id);
-      formData.append("senderModel", "Parent");
+      formData.append("senderModel", "PortalUser");
       formData.append("receiver", selectedParent?._id ?? "");
       formData.append("receiverModel", "Parent");
       formData.append("message", content || "");
@@ -325,6 +328,7 @@ function Main() {
     try {
       const response = await ApiService.getMessage({
         parent: selectedParent._id,
+        learner: learner._id,
       });
       setMessages(response.data as Message[]);
       setLoading(false);

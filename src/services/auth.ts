@@ -783,7 +783,9 @@ export async function sendMessageParent(data: any) {
 export async function getMessage(data: any) {
   try {
     console.log(data);
-    let res = await axios.get(c.MESSAGE + "/" + data.parent);
+    let res = await axios.get(c.MESSAGE + "/" + data.parent, {
+      params: data,
+    });
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -792,7 +794,9 @@ export async function getMessage(data: any) {
 export async function getMessageParent(data: any) {
   try {
     console.log(data);
-    let res = await axios.get(c.MESSAGE_PARENT + "/" + data.parent);
+    let res = await axios.get(c.MESSAGE_PARENT + "/" + data.parent, {
+      params: data,
+    });
     return res.data;
   } catch (e) {
     throw handler(e);

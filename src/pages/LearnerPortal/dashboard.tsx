@@ -191,7 +191,7 @@ function Main() {
                           Hello {learner?.first_name}, Welcome Back!
                         </h2>
                         <p className="text-gray-800 mb-0 text-lg">
-                          Always stay updated in your learner's portal!
+                          Always stay updated on your child's academic progress!
                         </p>
                       </div>
                     </div>

@@ -12,14 +12,16 @@ import Lucide from "../../base-components/Lucide";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import * as ApiService from "../../services/auth";
 import { IMG_URL } from "../../utils/constants";
+
 // Types
 interface Message {
   id?: string;
+  learner?: string; // Add learner field to tie messages to a specific learner
   sender: string;
   senderModel: string;
   receiver: string;
   receiverModel: string;
-  message?: string; // Optional to allow attachment-only messages
+  message?: string;
   attachments?: {
     url: string;
     fileName: string;
@@ -31,12 +33,15 @@ interface Message {
 }
 
 interface ChatHead {
-  id: { chatPartnerId: string; chatPartnerModel: string };
+  id: string; // learnerId
+  learnerName: string;
+  streamName: string;
+  classManagerId: string;
+  classManagerName: string;
   lastMessage: string;
-  lastMessageAt: Date;
+  lastMessageAt: Date | null;
   unreadCount: number;
   avatar?: string;
-  name?: string;
 }
 
 interface User {
@@ -85,13 +90,9 @@ const MessageBubble: React.FC<{
   );
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
-  const openZoom = (imageUrl: string) => {
-    setZoomedImage(imageUrl);
-  };
+  const openZoom = (imageUrl: string) => setZoomedImage(imageUrl);
+  const closeZoom = () => setZoomedImage(null);
 
-  const closeZoom = () => {
-    setZoomedImage(null);
-  };
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -105,7 +106,7 @@ const MessageBubble: React.FC<{
       {!isOwnMessage && (
         <img
           className="w-6 h-6 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 mt-1 flex-shrink-0 object-cover"
-          src={user?.avatar}
+          src={user.avatar}
           alt="avatar"
           loading="lazy"
         />
@@ -123,7 +124,7 @@ const MessageBubble: React.FC<{
         {message.attachments && message.attachments.length > 0 && (
           <div className="mt-2 space-y-2">
             {message.attachments.map((attachment, index) => (
-              <div className="flex items-center gap-2">
+              <div key={index} className="flex items-center gap-2">
                 {attachment.fileType.startsWith("image/") ? (
                   <img
                     src={`${IMG_URL}${attachment.url}`}
@@ -143,33 +144,32 @@ const MessageBubble: React.FC<{
                     {(attachment.fileSize / 1024).toFixed(2)} KB)
                   </a>
                 )}
-
-                {zoomedImage && (
-                  <div
-                    className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-                    onClick={closeZoom}
-                  >
-                    <div
-                      className="relative max-w-[90vw] max-h-[90vh] overflow-auto"
-                      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
-                    >
-                      <img
-                        src={zoomedImage}
-                        alt="Zoomed image"
-                        className="w-full h-auto rounded-lg shadow-lg transform transition-transform duration-200 hover:scale-125"
-                      />
-                      <button
-                        className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
-                        onClick={closeZoom}
-                        aria-label="Close zoom"
-                      >
-                        <Lucide icon="X" className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
+          </div>
+        )}
+        {zoomedImage && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            onClick={closeZoom}
+          >
+            <div
+              className="relative max-w-[90vw] max-h-[90vh] overflow-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={zoomedImage}
+                alt="Zoomed image"
+                className="w-full h-auto rounded-lg shadow-lg transform transition-transform duration-200 hover:scale-125"
+              />
+              <button
+                className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
+                onClick={closeZoom}
+                aria-label="Close zoom"
+              >
+                <Lucide icon="X" className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         )}
         <div className="flex items-center justify-end mt-1 space-x-1">
@@ -185,13 +185,14 @@ const MessageBubble: React.FC<{
   );
 });
 
-// ConversationItem Component (unchanged)
+// ConversationItem Component
 const ConversationItem: React.FC<{
   chat: ChatHead;
   isSelected: boolean;
   onClick: () => void;
 }> = React.memo(({ chat, isSelected, onClick }) => {
   const formattedTime = useMemo(() => {
+    if (!chat.lastMessageAt) return "";
     const date = new Date(chat.lastMessageAt);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -216,7 +217,7 @@ const ConversationItem: React.FC<{
         <img
           className="w-10 h-10 xs:w-12 xs:h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
           src={chat.avatar || user.avatar}
-          alt={`${chat.name || chat.id.chatPartnerModel}'s avatar`}
+          alt={`${chat.learnerName}'s avatar`}
           loading="lazy"
         />
         {chat.unreadCount > 0 && (
@@ -228,21 +229,21 @@ const ConversationItem: React.FC<{
       <div className="flex-1 min-w-0 px-2 xs:px-3">
         <div className="flex items-baseline justify-between">
           <h3 className="text-sm xs:text-base font-semibold text-gray-900 dark:text-white truncate">
-            {chat.name || chat.id.chatPartnerModel}
+            {chat.learnerName}
           </h3>
           <span className="text-[10px] xs:text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 ml-2">
             {formattedTime}
           </span>
         </div>
+        <p className="text-xs xs:text-sm text-gray-600 dark:text-gray-300">
+          {chat.streamName} - {chat.classManagerName}
+        </p>
         <div className="flex items-center justify-between">
           <p className="text-xs xs:text-sm text-gray-600 dark:text-gray-300 truncate max-w-[120px] xs:max-w-[150px] sm:max-w-[180px]">
-            {chat.lastMessage}
+            {chat.lastMessage === "No messages"
+              ? "No messages yet"
+              : chat.lastMessage}
           </p>
-          {chat.unreadCount > 0 && !isSelected && (
-            <span className="bg-purple-500 text-white text-[10px] xs:text-xs font-medium px-1 xs:px-1.5 py-0.5 rounded-full ml-2 flex-shrink-0">
-              {chat.unreadCount}
-            </span>
-          )}
         </div>
       </div>
     </div>
@@ -253,15 +254,16 @@ const ConversationItem: React.FC<{
 const MessagingPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatHeads, setChatHeads] = useState<ChatHead[]>([]);
-  const [selectedChatId, setSelectedChatId] = useState<string>("");
+  const [selectedChatId, setSelectedChatId] = useState<string>(""); // Now learnerId
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [attachments, setAttachments] = useState<File[]>([]); // New state for attachments
+  const [attachments, setAttachments] = useState<File[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const {
     register,
     handleSubmit,
@@ -269,7 +271,6 @@ const MessagingPage: React.FC = () => {
     formState: { isSubmitting },
   } = useForm<FormData>();
 
-  // Handle clicks outside sidebar on mobile
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (
@@ -298,12 +299,15 @@ const MessagingPage: React.FC = () => {
       const response = await ApiService.getChatheads();
       setChatHeads(
         response.chatHeads.map((ch: any) => ({
-          id: ch._id,
+          id: ch.learnerId,
+          learnerName: ch.learnerName,
+          streamName: ch.streamName,
+          classManagerId: ch.classManagerId,
+          classManagerName: ch.classManagerName.trim() || "Not assigned",
           lastMessage: ch.lastMessage,
-          lastMessageAt: new Date(ch.lastMessageAt),
+          lastMessageAt: ch.lastMessageAt ? new Date(ch.lastMessageAt) : null,
           unreadCount: ch.unreadCount,
           avatar: ch.avatar,
-          name: ch.name,
         }))
       );
     } catch (error) {
@@ -316,12 +320,14 @@ const MessagingPage: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await ApiService.getMessageParent({
-        parent: selectedChatId,
+        learner: selectedChatId,
+        parent: user.id,
       });
+      console.log("Messages response:", response);
       setMessages(
         response.data.map((msg: any) => ({
           ...msg,
-          createdAt: new Date(msg.createdAt || msg.createdAt),
+          createdAt: new Date(msg.createdAt),
         }))
       );
       setTimeout(scrollToBottom, 0);
@@ -335,22 +341,27 @@ const MessagingPage: React.FC = () => {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (!selectedChatId || (!data.content && attachments.length === 0)) return;
 
+    const selectedChat = chatHeads.find((ch) => ch.id === selectedChatId);
+    if (!selectedChat) return;
+
     const formData = new FormData();
+    formData.append("learner", selectedChatId);
     formData.append("sender", user.id);
     formData.append("senderModel", "Parent");
-    formData.append("receiver", selectedChatId);
-    formData.append("receiverModel", "Parent");
+    formData.append("receiver", selectedChat.classManagerId);
+    formData.append("receiverModel", "PortalUser");
     formData.append("message", data.content || "");
     attachments.forEach((file) => formData.append("attachments", file));
 
     const newMessage: Message = {
+      learner: selectedChatId,
       sender: user.id,
       senderModel: "Parent",
-      receiver: selectedChatId,
-      receiverModel: "Parent",
+      receiver: selectedChat.classManagerId,
+      receiverModel: "PortalUser",
       message: data.content || "",
       attachments: attachments.map((file) => ({
-        url: URL.createObjectURL(file), // Temporary URL for local preview
+        url: URL.createObjectURL(file),
         fileName: file.name,
         fileType: file.type,
         fileSize: file.size,
@@ -364,10 +375,20 @@ const MessagingPage: React.FC = () => {
       reset();
       setAttachments([]);
       await ApiService.sendMessageParent(formData);
-
+      // socket.emit("sendMessage", {
+      //   learner: selectedChatId,
+      //   receiver: selectedChat.classManagerId,
+      //   message: data.content || "",
+      //   attachments: attachments.map((file) => ({
+      //     url: URL.createObjectURL(file),
+      //     fileName: file.name,
+      //     fileType: file.type,
+      //     fileSize: file.size,
+      //   })),
+      // });
       setChatHeads((prev) =>
         prev.map((ch) =>
-          ch.id.chatPartnerId === selectedChatId
+          ch.id === selectedChatId
             ? {
                 ...ch,
                 lastMessage: newMessage.message || "Attachment sent",
@@ -376,7 +397,6 @@ const MessagingPage: React.FC = () => {
             : ch
         )
       );
-      fetchMessages();
     } catch (error) {
       console.error("Failed to send message:", error);
       setMessages((prev) => prev.filter((msg) => msg !== newMessage));
@@ -386,22 +406,17 @@ const MessagingPage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     setAttachments((prev) => [...prev, ...files]);
-    if (fileInputRef.current) fileInputRef.current.value = ""; // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const removeAttachment = (index: number) => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
   useEffect(() => {
     socket.emit("register", { userId: user.id, userType: "parent" });
     socket.on("receiveMessage", (newMessage: Message) => {
-      if (
-        newMessage.receiver === selectedChatId ||
-        newMessage.sender === selectedChatId
-      ) {
+      if (newMessage.learner === selectedChatId) {
         setMessages((prev) => [
           ...prev,
           { ...newMessage, createdAt: new Date(newMessage.createdAt) },
@@ -409,15 +424,15 @@ const MessagingPage: React.FC = () => {
         scrollToBottom();
         setChatHeads((prev) =>
           prev.map((ch) =>
-            ch.id.chatPartnerId === newMessage.sender
+            ch.id === newMessage.learner
               ? {
                   ...ch,
                   lastMessage: newMessage.message || "Attachment received",
                   lastMessageAt: newMessage.createdAt,
                   unreadCount:
-                    selectedChatId === newMessage.sender
-                      ? ch.unreadCount
-                      : ch.unreadCount + 1,
+                    newMessage.receiver === user.id
+                      ? ch.unreadCount + 1
+                      : ch.unreadCount,
                 }
               : ch
           )
@@ -441,23 +456,17 @@ const MessagingPage: React.FC = () => {
   }, [fetchChatHeads]);
 
   useEffect(() => {
-    if (selectedChatId) {
-      fetchMessages();
-    }
+    if (selectedChatId) fetchMessages();
   }, [selectedChatId, fetchMessages]);
 
   useEffect(() => {
     if (messagesContainerRef.current && messagesEndRef.current) {
-      messagesEndRef.current?.scrollIntoView({
-        behavior: "instant" as ScrollBehavior,
-      });
+      messagesEndRef.current.scrollIntoView({ behavior: "instant" });
     }
   }, [selectedChatId, messages]);
 
   const filteredChatHeads = chatHeads.filter((chat) =>
-    (chat.name || chat.id.chatPartnerModel)
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
+    chat.learnerName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -478,7 +487,7 @@ const MessagingPage: React.FC = () => {
         >
           <div className="p-3 xs:p-4 border-b dark:border-gray-700 flex items-center justify-between">
             <h1 className="text-lg xs:text-xl font-bold text-gray-900 dark:text-white">
-              Chikaa
+              Conversations
             </h1>
           </div>
           <div className="flex-1 overflow-y-auto p-2 xs:p-3 touch-action-pan-y">
@@ -494,7 +503,7 @@ const MessagingPage: React.FC = () => {
               ) : filteredChatHeads.length > 0 ? (
                 filteredChatHeads.map((chat) => (
                   <motion.div
-                    key={chat.id.chatPartnerId}
+                    key={chat.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
@@ -502,10 +511,10 @@ const MessagingPage: React.FC = () => {
                   >
                     <ConversationItem
                       chat={chat}
-                      isSelected={selectedChatId === chat.id.chatPartnerId}
+                      isSelected={selectedChatId === chat.id}
                       onClick={() => {
-                        console.log("Chat selected:", chat.id.chatPartnerId);
-                        setSelectedChatId(chat.id.chatPartnerId);
+                        console.log("Chat selected:", chat.id);
+                        setSelectedChatId(chat.id);
                       }}
                     />
                   </motion.div>
@@ -548,9 +557,8 @@ const MessagingPage: React.FC = () => {
                       <img
                         className="w-10 h-10 xs:w-12 xs:h-12 rounded-full border-2 border-white object-cover"
                         src={
-                          chatHeads.find(
-                            (ch) => ch.id.chatPartnerId === selectedChatId
-                          )?.avatar || user.avatar
+                          chatHeads.find((ch) => ch.id === selectedChatId)
+                            ?.avatar || user.avatar
                         }
                         alt="avatar"
                         loading="lazy"
@@ -559,11 +567,20 @@ const MessagingPage: React.FC = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h2 className="text-white text-base xs:text-lg font-semibold truncate">
-                        {chatHeads.find(
-                          (ch) => ch.id.chatPartnerId === selectedChatId
-                        )?.name || "User"}
+                        {chatHeads.find((ch) => ch.id === selectedChatId)
+                          ?.learnerName || "Learner"}
                       </h2>
-                      <p className="text-gray-200 text-xs xs:text-sm">Online</p>
+                      <p className="text-gray-200 text-xs xs:text-sm">
+                        {
+                          chatHeads.find((ch) => ch.id === selectedChatId)
+                            ?.streamName
+                        }{" "}
+                        -{" "}
+                        {
+                          chatHeads.find((ch) => ch.id === selectedChatId)
+                            ?.classManagerName
+                        }
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -616,7 +633,6 @@ const MessagingPage: React.FC = () => {
                 encType="multipart/form-data"
                 className="p-4 bg-white dark:bg-gray-800 border-t dark:border-gray-700"
               >
-                {/* Attachment Previews */}
                 {attachments.length > 0 && (
                   <div className="mb-4 flex flex-wrap gap-2">
                     <AnimatePresence>
@@ -654,7 +670,6 @@ const MessagingPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* Input Area */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

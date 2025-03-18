@@ -215,11 +215,75 @@ function AttendanceForm() {
                 Attendance List
               </h3>
               {loading ? (
-                <div className="space-y-4">
-                  {[...Array(5)].map((_, index) => (
+                <div className="bg-gray-50 dark:bg-darkmode-600 rounded-xl p-4 shadow-inner">
+                  <div className="grid grid-cols-4 gap-4 bg-indigo-100 dark:bg-darkmode-500 p-3 rounded-lg mb-4">
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                      Learner's Name
+                    </div>
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                      Admission No.
+                    </div>
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
+                      <Button
+                        variant="soft"
+                        onClick={() =>
+                          markAll(
+                            "morning",
+                            !attendanceList.every(
+                              (item: any) => item.attendanceDetails?.morning
+                            )
+                          )
+                        }
+                        className={`text-xs px-3 py-1 rounded-lg flex items-center transition-all duration-200 ${
+                          attendanceList.every(
+                            (item: any) => item.attendanceDetails?.morning
+                          )
+                            ? "bg-green-500 text-white hover:bg-green-600"
+                            : "bg-red-500 text-white hover:bg-red-600"
+                        }`}
+                      >
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        {attendanceList.every(
+                          (item: any) => item.attendanceDetails?.morning
+                        )
+                          ? "All Present"
+                          : "All Absent"}{" "}
+                        (AM)
+                      </Button>
+                    </div>
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
+                      <Button
+                        variant="soft"
+                        onClick={() =>
+                          markAll(
+                            "afternoon",
+                            !attendanceList.every(
+                              (item: any) => item.attendanceDetails?.afternoon
+                            )
+                          )
+                        }
+                        className={`text-xs px-3 py-1 rounded-lg flex items-center transition-all duration-200 ${
+                          attendanceList.every(
+                            (item: any) => item.attendanceDetails?.afternoon
+                          )
+                            ? "bg-green-500 text-white hover:bg-green-600"
+                            : "bg-red-500 text-white hover:bg-red-600"
+                        }`}
+                      >
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        {attendanceList.every(
+                          (item: any) => item.attendanceDetails?.afternoon
+                        )
+                          ? "All Present"
+                          : "All Absent"}{" "}
+                        (PM)
+                      </Button>
+                    </div>
+                  </div>
+                  {[...Array(50)].map((_, index) => (
                     <div
                       key={index}
-                      className="h-16 bg-gray-200 dark:bg-darkmode-600 rounded-lg animate-pulse"
+                      className="bg-gray-50 dark:bg-darkmode-600 rounded-xl p-4 shadow-inner"
                     />
                   ))}
                 </div>
