@@ -548,7 +548,7 @@ function Main() {
                         ).map((pg) => (
                           <Button
                             key={pg}
-                            variant={pg === page ? "primary" : "soft"}
+                            // variant={pg === page ? "primary" : "soft"}
                             onClick={() => handlePageChange(pg)}
                             className={`min-w-[2.5rem] py-2 px-3 rounded-lg transition-all duration-200 ${
                               pg === page
@@ -631,7 +631,7 @@ function Main() {
 
       <Notification
         options={{ duration: 3000 }}
-        getRef={(el) => (notify.current = el)}
+        // getRef={(el) => (notify.current = el)}
         className="flex items-center p-4 rounded-lg shadow-lg bg-white dark:bg-darkmode-600"
       >
         <Lucide
