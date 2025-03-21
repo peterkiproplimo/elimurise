@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, RefObject } from "react";
 import Button from "../../base-components/Button";
 import { FormInput, FormLabel, FormSelect } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
@@ -15,33 +15,68 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import Pagination from "../../base-components/Pagination";
 import { useAuth } from "../../contexts/Auth";
 
+// Interfaces
+interface Grade {
+  _id: string;
+  name: string;
+}
+
+interface User {
+  _id: string;
+  firstname: string;
+  lastname: string;
+}
+
+interface Stream {
+  _id: string;
+  name: string;
+  grade: Grade;
+  class_manager: User;
+  section_head: User;
+}
+
+interface PaginationData {
+  current_page: number;
+  total: number;
+  total_pages: number;
+  per_page: number;
+}
+
+interface FormData {
+  name: string;
+  grade: string;
+  class_manager: string;
+  section_head: string;
+  _id?: string;
+}
+
 // Constants
 const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 const DEFAULT_LIMIT = 10;
 
 function Main() {
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const deleteButtonRef = useRef(null);
-  const [grades, setGrades] = useState<any[]>([]);
-  const [streams, setStreams] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const deleteButtonRef: RefObject<HTMLButtonElement> = useRef(null);
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [streams, setStreams] = useState<Stream[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [recordId, setRecordId] = useState<string | null>(null);
-  const [dialog, setDialog] = useState(false);
-  const [grade, setGrade] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [dialog, setDialog] = useState<boolean>(false);
+  const [grade, setGrade] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const [success, setSuccess] = useState<boolean | null>(null);
-  const [message, setMessage] = useState("");
-  const [pagination, setPagination] = useState({
+  const [message, setMessage] = useState<string>("");
+  const [pagination, setPagination] = useState<PaginationData>({
     current_page: 1,
     total: 0,
     total_pages: 1,
     per_page: DEFAULT_LIMIT,
   });
-  const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(DEFAULT_LIMIT);
-  const [page, setPage] = useState(1);
-  const notify = useRef<NotificationElement>();
+  const [search, setSearch] = useState<string>("");
+  const [limit, setLimit] = useState<number>(DEFAULT_LIMIT);
+  const [page, setPage] = useState<number>(1);
+  const notify = useRef<NotificationElement>(null);
   const { hasPermission } = useAuth();
 
   const schema = yup
@@ -59,7 +94,7 @@ function Main() {
     getValues,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
@@ -68,7 +103,7 @@ function Main() {
     Promise.all([getGrades(), getUsers(), getStreams()]);
   }, [search, page, limit, grade]);
 
-  const getGrades = async () => {
+  const getGrades = async (): Promise<void> => {
     try {
       const response = await ApiService.getGrades({ page: 1 });
       setGrades(response.data || []);
@@ -77,16 +112,16 @@ function Main() {
     }
   };
 
-  const getUsers = async () => {
+  const getUsers = async (): Promise<void> => {
     try {
-      const res = await ApiService.getUsers({ page: 1, limit: 1000 }); // Fetch all users (adjust limit as needed)
+      const res = await ApiService.getUsers({ page: 1, limit: 1000 });
       setUsers(res.data || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     }
   };
 
-  const getStreams = async () => {
+  const getStreams = async (): Promise<void> => {
     setLoading(true);
     try {
       const response = await ApiService.getStream({
@@ -110,7 +145,9 @@ function Main() {
     }
   };
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
     const result = await trigger();
     if (result && !loading) {
@@ -141,7 +178,7 @@ function Main() {
     }
   };
 
-  const deleteRecord = async () => {
+  const deleteRecord = async (): Promise<void> => {
     if (!recordId) return;
     setLoading(true);
     try {
@@ -160,41 +197,41 @@ function Main() {
     }
   };
 
-  const editRecord = (record: any) => {
+  const editRecord = (record: Stream): void => {
     setIsEditMode(true);
     setRecordId(record._id);
     reset({
       _id: record._id,
       name: record.name,
       grade: record.grade._id,
-      class_manager: record?.class_manager?._id,
-      section_head: record?.section_head?._id,
+      class_manager: record.class_manager?._id || "",
+      section_head: record.section_head?._id || "",
     });
     setDialog(true);
   };
 
-  const cancel = () => {
+  const cancel = (): void => {
     reset({ name: "", grade: "", class_manager: "", section_head: "" });
     setDialog(false);
     setIsEditMode(false);
   };
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = (newPage: number): void => {
     if (newPage >= 1 && newPage <= pagination.total_pages) {
       setPage(newPage);
     }
   };
 
+  // JSX remains mostly the same, with type safety from above definitions
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-darkmode-900 dark:to-darkmode-800 p-6 xl:p-8">
-      <div className=" mx-auto bg-white dark:bg-darkmode-700 rounded-2xl shadow-xl overflow-hidden">
+      <div className="mx-auto bg-white dark:bg-darkmode-700 rounded-2xl shadow-xl overflow-hidden">
         <div className="p-6">
           {dialog ? (
             <>
-              {/* Dialog Header */}
               <div className="flex items-center mb-6">
                 <Button
-                  variant="soft"
+                  //
                   onClick={cancel}
                   className="mr-4 bg-gray-100 dark:bg-darkmode-600 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-darkmode-500 rounded-full p-2 transition-all duration-200"
                 >
@@ -205,7 +242,6 @@ function Main() {
                 </h2>
               </div>
 
-              {/* Form */}
               <form onSubmit={onSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -336,7 +372,6 @@ function Main() {
             </>
           ) : (
             <>
-              {/* Main Content */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                   Streams
@@ -356,7 +391,6 @@ function Main() {
                 )}
               </div>
 
-              {/* Filters */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
                 <div className="relative w-full sm:w-64 text-gray-500">
                   <FormInput
@@ -391,7 +425,6 @@ function Main() {
                 </FormSelect>
               </div>
 
-              {/* Streams Table */}
               {loading ? (
                 <div className="flex justify-center items-center h-64">
                   <LoadingIcon
@@ -461,7 +494,7 @@ function Main() {
                             <div className="flex items-center justify-center gap-3">
                               {hasPermission("streams", "update") && (
                                 <Button
-                                  variant="soft"
+                                  //
                                   onClick={() => editRecord(stream)}
                                   className="text-success hover:text-indigo-600 transition-colors duration-200"
                                 >
@@ -474,7 +507,6 @@ function Main() {
                               )}
                               {hasPermission("streams", "delete") && (
                                 <Button
-                                  variant="soft"
                                   onClick={() => {
                                     setRecordId(stream._id);
                                     setConfirmDelete(true);
@@ -495,7 +527,6 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  {/* Pagination */}
                   <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-sm text-gray-600 dark:text-gray-300">
                       Showing {(page - 1) * limit + 1} to{" "}
@@ -505,7 +536,6 @@ function Main() {
                     <div className="flex items-center gap-4">
                       <Pagination className="flex items-center gap-2">
                         <Button
-                          variant="soft"
                           onClick={() => handlePageChange(page - 1)}
                           disabled={page === 1}
                           className="p-2 bg-gray-100 dark:bg-darkmode-600 rounded-lg hover:bg-gray-200 dark:hover:bg-darkmode-500 transition-all duration-200"
@@ -530,10 +560,9 @@ function Main() {
                           </Button>
                         ))}
                         <Button
-                          variant="soft"
                           onClick={() => handlePageChange(page + 1)}
                           disabled={page === pagination.total_pages}
-                          className="p- Alert2 bg-gray-100 dark:bg-darkmode-600 rounded-lg hover:bg-gray-200 dark:hover:bg-darkmode-500 transition-all duration-200"
+                          className="p-2 bg-gray-100 dark:bg-darkmode-600 rounded-lg hover:bg-gray-200 dark:hover:bg-darkmode-500 transition-all duration-200"
                         >
                           <Lucide icon="ChevronRight" className="w-4 h-4" />
                         </Button>
@@ -559,7 +588,6 @@ function Main() {
             </>
           )}
 
-          {/* Delete Confirmation Dialog */}
           <Dialog
             open={confirmDelete}
             onClose={() => setConfirmDelete(false)}
@@ -601,7 +629,6 @@ function Main() {
         </div>
       </div>
 
-      {/* Notification */}
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => (notify.current = el)}
