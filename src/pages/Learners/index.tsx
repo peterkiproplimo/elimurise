@@ -20,6 +20,8 @@ import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../contexts/Auth";
+
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search } from "lucide-react";
@@ -40,6 +42,8 @@ interface TableRow {
 
 function Main() {
   // const [confirmDelete, setConfirmDelete] = useState(false);
+  const { hasPermission } = useAuth();
+
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
@@ -462,8 +466,9 @@ function Main() {
     setGroup(record?.groups);
     setPhoto(record?.photo);
     setGrade(record?.stream?.grade?._id);
-    setGuardianIdNo(record?.guardian?.email);
-    setGuardianIdNo2(record?.guardian2?.email);
+
+    // setGuardianIdNo(record?.guardian?.email);
+    // setGuardianIdNo2(record?.guardian2?.email);
     reset({
       ...record,
       image: "",
@@ -1769,73 +1774,76 @@ function Main() {
                                     <i className="icon-eye mr-2"></i> View
                                     Profile
                                   </Menu.Item>
-                                  {is_admin() && (
-                                    <>
-                                      {" "}
-                                      <Menu.Item
-                                        onClick={(e: any) => {
-                                          e.preventDefault();
-                                          editRecord(learner);
-                                        }}
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                      >
-                                        <i className="icon-eye mr-2"></i> Edit
-                                        Profile
-                                      </Menu.Item>
-                                      <Menu.Item
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                        onClick={() => {
-                                          setApproveTranfer({
-                                            learners: [
-                                              {
-                                                id: learner._id,
-                                                status: "P",
-                                              },
-                                            ],
-                                            from_stream: learner.stream._id,
-                                            from_grade: learner.grade._id,
-                                            from_session:
-                                              learner.current_session,
-                                            next_session:
-                                              learner.current_session,
-                                          });
-                                          setApproveDialog(true);
-                                        }}
-                                      >
-                                        {/* <Lucide
+
+                                  {hasPermission("learners", "update") && (
+                                    <Menu.Item
+                                      onClick={(e: any) => {
+                                        e.preventDefault();
+                                        editRecord(learner);
+                                      }}
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    >
+                                      <i className="icon-eye mr-2"></i> Edit
+                                      Profile
+                                    </Menu.Item>
+                                  )}
+
+                                  {hasPermission("enrollment", "promote") && (
+                                    <Menu.Item
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                      onClick={() => {
+                                        setApproveTranfer({
+                                          learners: [
+                                            {
+                                              id: learner._id,
+                                              status: "P",
+                                            },
+                                          ],
+                                          from_stream: learner.stream._id,
+                                          from_grade: learner.grade._id,
+                                          from_session: learner.current_session,
+                                          next_session: learner.current_session,
+                                        });
+                                        setApproveDialog(true);
+                                      }}
+                                    >
+                                      {/* <Lucide
                                             icon="CheckSquare"
                                             className="w-4 h-4 mr-1"
                                           />{" "} */}
-                                        <i className="icon-eye mr-2"></i>
-                                        Transfer
-                                      </Menu.Item>
-                                      {(learner.status === "D" ||
-                                        learner.status === "P") && (
-                                        <Menu.Item
-                                          onClick={(e: any) => {
-                                            e.preventDefault();
-                                            disableRecord(learner._id);
-                                            // assuming you meant disableRecord instead of disbaleRecord
-                                          }}
-                                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                        >
-                                          <i className="icon-eye mr-2"></i>
-                                          {learner.status === "D"
-                                            ? "Enable "
-                                            : "Deactivate "}
-                                        </Menu.Item>
-                                      )}
+                                      <i className="icon-eye mr-2"></i>
+                                      Transfer
+                                    </Menu.Item>
+                                  )}
+                                  {(learner.status === "D" ||
+                                    learner.status === "P") &&
+                                    hasPermission("learners", "delete") && (
                                       <Menu.Item
                                         onClick={(e: any) => {
                                           e.preventDefault();
-                                          setRecordId(learner._id);
-                                          setViewMore(true);
+                                          disableRecord(learner._id);
+                                          // assuming you meant disableRecord instead of disbaleRecord
                                         }}
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                       >
-                                        <i className="icon-eye mr-2"></i> Delete
+                                        <i className="icon-eye mr-2"></i>
+                                        {learner.status === "D"
+                                          ? "Enable "
+                                          : "Deactivate "}
                                       </Menu.Item>
-                                    </>
+                                    )}
+
+                                  {hasPermission("learners", "delete") && (
+                                    <Menu.Item
+                                      onClick={(e: any) => {
+                                        e.preventDefault();
+                                        setRecordId(learner._id);
+                                        setViewMore(true);
+                                      }}
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    >
+                                      <i className="icon-eye mr-2"></i> Delete
+                                    </Menu.Item>
                                   )}
                                 </Menu.Items>
                               </Menu>
