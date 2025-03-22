@@ -171,3 +171,6 @@
     background-color: theme("colors.darkmode.800");
   }
 }
+.tom-select-dropdown {
+  z-index: 1000 !important;
+}

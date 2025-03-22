@@ -15,7 +15,7 @@ export interface Menu {
 export interface SideMenuState {
   menu: Array<Menu | "divider">;
 }
-const authDataSerialized = await localStorage.getItem("@AuthData");
+const authDataSerialized = localStorage.getItem("@AuthData");
 const _authData: any = JSON.parse(authDataSerialized || "{}");
 
 const permissions = _authData?.user?.role?.permissions || {};

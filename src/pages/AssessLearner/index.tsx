@@ -43,7 +43,6 @@ function Main() {
   const [grades, setGrades] = useState([]);
   const [levels, setLevels] = useState([]);
   const [learningAreas, setLearningAreas] = useState([]);
-  // const [permissions] = useState(['create', 'read-feed', 'update-feed', 'delete-feed', 'create-resource', 'read-resource', 'update-resource', 'delete-resource', 'create-user', 'read-user', 'update-user', 'delete-user', 'create-vendor', 'read-vendor', 'update-vendor', 'delete-vendor', 'create-speaker', 'read-speaker', 'update-speaker', 'delete-speaker', 'create-exhibitor', 'read-exhibitor', 'update-exhibitor', 'delete-exhibitor',  'create-place', 'read-place', 'update-place', 'delete-place', 'create-conference', 'read-conference', 'update-conference', 'delete-conference', 'create-theme', 'read-theme', 'update-theme', 'delete-theme', 'create-tag', 'read-tag', 'update-tag', 'delete-tag', 'create-event', 'read-event', 'update-event', 'delete-event', 'create-booking', 'read-booking', 'update-booking', 'cancel-booking', 'create-bus-schedule', 'read-bus-schedule', 'update-bus-schedule', 'delete-bus-schedule', 'manage-security-settings', 'update-policy']);
   const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
@@ -87,18 +86,6 @@ function Main() {
   };
   const [academic_terms, setTerms] = useState([]);
 
-  // const [selectedStrand, setSelectedStrand] = useState(
-  //   state_strand?._id || ""
-  // );
-
-  // const [strandFilter, setStrandFilter] = useState({
-  //   grade: "",
-  //   learning_area: "",
-  //   term: "",
-  // });
-  // useState(() => {
-  //   console.log(selectedSubStrand);
-  // }, []);
   const [strandFilter, updateStrandFilter] = useState(() => {
     const savedState = localStorage.getItem("strandFilter");
     return initialState;
@@ -130,7 +117,6 @@ function Main() {
     trigger,
     getValues,
     reset,
-
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -172,9 +158,9 @@ function Main() {
 
   useEffect(() => {
     getGrades();
-    // getLevels();
     getLearningAreas();
   }, []);
+
   const getStreams = async (selectedValue: any) => {
     setStreams([]);
     const response = await ApiService.getStream({
@@ -183,6 +169,7 @@ function Main() {
     });
     setStreams(response.data);
   };
+
   const getStrands = async () => {
     if (strandFilter.grade && strandFilter.term) {
       const response = await ApiService.getStrands(
@@ -199,9 +186,9 @@ function Main() {
 
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
-
     setGrades(response.data);
   };
+
   const getLearningAreas = async () => {
     const response = await ApiService.getLearningAreas({});
     setLearningAreas(response.data);
@@ -224,6 +211,7 @@ function Main() {
     );
     setSubstrand(response.data);
   };
+
   useEffect(() => {
     fetchIndicator();
   }, [selectedSubStrand]);
@@ -231,33 +219,20 @@ function Main() {
   const handleSubStrandChange = async (data: any) => {
     console.log(data);
     setSelectedSubStrand(data);
-    // setSubstrand(data);
-
-    // console.log(selectedSubStrand);
-    // console.log(substrand);
-
-    // ///call substrands for this strand
-    // let res = await ApiService.getSubstrandByStrand(selectedValue);
-    // setSubstrands([]);
-    // setSubstrands(res.data);
   };
 
   const handleStrandChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const selectedValue = event.target.value;
-    // await setSelectedStrand(selectedValue);
     setSubstrands([]);
     setStrand(selectedValue);
-    // ///call substrands for this strand
     let res = await ApiService.getSubstrandByStrand(
       { limit: 10000 },
       selectedValue
     );
     console.log(res.data);
-
     setSubstrands(res.data);
-    // You might want to fetch filtered data here
   };
 
   const deleteRecord = async () => {
@@ -282,7 +257,6 @@ function Main() {
     setGroup(record.groups);
     reset(record);
     reset({ ...record, learning_area: record.learning_area._id });
-
     console.log(record);
     setDialog(true);
   };
@@ -293,9 +267,9 @@ function Main() {
     reset(record);
     setDialog(false);
   };
+
   useEffect(() => {
     getStrands();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strandFilter, search, page, limit]);
 
   const handleGradeChange = async (
@@ -310,8 +284,8 @@ function Main() {
       grade: selectedValue,
     });
     getStreams(selectedValue);
-    // You might want to fetch filtered data here
   };
+
   const handleLearningAreaChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -321,7 +295,6 @@ function Main() {
       ...strandFilter,
       learning_area: selectedValue,
     });
-    // You might want to fetch filtered data here
   };
 
   const handleTermChange = async (
@@ -333,21 +306,17 @@ function Main() {
       ...strandFilter,
       term: selectedValue,
     });
-    // You might want to fetch filtered data here
   };
+
   const handleHasThemeChange = async (event: any) => {
     const isChecked = event.target.checked;
     setStrands([]);
     setHasTheme(isChecked);
-    // You might want to fetch filtered data here
   };
+
   const [rows, setRows] = useState<TableRow[]>([
     { no: 1, strandName: "Example Strand" },
   ]);
-  // useEffect(() => {
-
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [indicator]);
 
   const generateAssessment = async (indicator: any) => {
     const data = { indicator, term: selectedTerm, stream, adm_no };
@@ -355,13 +324,6 @@ function Main() {
     try {
       let res = await ApiService.getAssessmentLerners(data);
       setEnrollments(res);
-      // const pagination = res.pagination;
-      // setPagination({
-      //   current_page: pagination.current_page,
-      //   total: pagination.total,
-      //   total_pages: pagination.total_pages,
-      //   per_page: pagination.per_page,
-      // });
       setDialog(true);
       isLoading(false);
     } catch (error: any) {
@@ -372,6 +334,7 @@ function Main() {
       notify.current?.showToast();
     }
   };
+
   const handleInputChange = async (data: any) => {
     if (data.score > 4) {
       return false;
@@ -386,7 +349,6 @@ function Main() {
       learner: data?.learner?._id,
     };
     console.log(data);
-
     console.log(assessment);
     let res = await ApiService.createAssessment(assessment);
     console.log(assessment);
@@ -394,17 +356,14 @@ function Main() {
     generateAssessment(indicator);
     fetchIndicator();
   };
+
   const publishIndicator = async () => {
     let res = await ApiService.toggleIdicatorStatus(indicator, {
       term: selectedTerm,
       stream: stream,
     });
-    // console.log(assessment);
-    // console.log(res);
-    // generateAssessment(indicator);
-    // fetchIndicator();
   };
-  publishIndicator;
+
   const getDescriptionColor = (score: any) => {
     switch (score) {
       case 4:
@@ -425,23 +384,135 @@ function Main() {
       no: rows.length + 1,
       strandName: "New Strand",
     };
-
     setRows([...rows, newRow]);
   };
+
   const [formData, setFormData] = useState({ score: 1 });
+
+  // Loading states for backend-fetched selects
+  const [isGradesLoading, setIsGradesLoading] = useState(false);
+  const [isStreamsLoading, setIsStreamsLoading] = useState(false);
+  const [isLearningAreasLoading, setIsLearningAreasLoading] = useState(false);
+  const [isStrandsLoading, setIsStrandsLoading] = useState(false);
+  const [isSubstrandsLoading, setIsSubstrandsLoading] = useState(false);
+
+  // Updated API calls with loading states
+  const getGradesUpdated = async () => {
+    setIsGradesLoading(true);
+    try {
+      const response = await ApiService.getGrades({ page: 1 });
+      setGrades(response.data);
+    } finally {
+      setIsGradesLoading(false);
+    }
+  };
+
+  const getLearningAreasUpdated = async () => {
+    setIsLearningAreasLoading(true);
+    try {
+      const response = await ApiService.getLearningAreas({});
+      setLearningAreas(response.data);
+    } finally {
+      setIsLearningAreasLoading(false);
+    }
+  };
+
+  const getStreamsUpdated = async (selectedValue: any) => {
+    setIsStreamsLoading(true);
+    try {
+      setStreams([]);
+      const response = await ApiService.getStream({
+        page: 1,
+        grade: selectedValue,
+      });
+      setStreams(response.data);
+    } finally {
+      setIsStreamsLoading(false);
+    }
+  };
+
+  const getStrandsUpdated = async () => {
+    if (strandFilter.grade && strandFilter.term) {
+      setIsStrandsLoading(true);
+      try {
+        const response = await ApiService.getStrands(
+          {
+            page: page,
+            search: search,
+            limit: 1000,
+          },
+          strandFilter
+        );
+        setStrands(response.data);
+      } finally {
+        setIsStrandsLoading(false);
+      }
+    }
+  };
+
+  const getSubstrandsUpdated = async (selectedValue: string) => {
+    setIsSubstrandsLoading(true);
+    try {
+      setSubstrands([]);
+      let res = await ApiService.getSubstrandByStrand(
+        { limit: 10000 },
+        selectedValue
+      );
+      setSubstrands(res.data);
+    } finally {
+      setIsSubstrandsLoading(false);
+    }
+  };
+
+  // Update effect and handlers to use new API calls
+  useEffect(() => {
+    getGradesUpdated();
+    getLearningAreasUpdated();
+  }, []);
+
+  const handleGradeChangeUpdated = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStream("");
+    setStrands([]);
+    await setStrandFilter({
+      learning_area: "",
+      term: "",
+      grade: selectedValue,
+    });
+    getStreamsUpdated(selectedValue);
+  };
+
+  const handleLearningAreaChangeUpdated = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setStrands([]);
+    await setStrandFilter({
+      ...strandFilter,
+      learning_area: selectedValue,
+    });
+  };
+
+  const handleStrandChangeUpdated = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = event.target.value;
+    setSubstrands([]);
+    setStrand(selectedValue);
+    getSubstrandsUpdated(selectedValue);
+  };
+
+  useEffect(() => {
+    getStrandsUpdated();
+  }, [strandFilter, search, page, limit]);
 
   return (
     <>
       {dialog ? (
         <>
-          {/* path: 'strand',
-        populate: {
-            path: 'learning_area',
-            populate: {
-                path: 'grade_id'
-            }
-        } */}
-          <form className="mt-5 p-5  validate-form  " onSubmit={onSubmit}>
+          <form className="mt-5 p-5 validate-form" onSubmit={onSubmit}>
             <div className="assessment-header">
               <h2 className="text-xl flex items-center font-semibold mb-5">
                 <a
@@ -456,7 +527,7 @@ function Main() {
                 </a>{" "}
                 Assessment Score Entry Form
               </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg ">
+              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-sm">
                 <div className="meta-row flex items-center mb-2">
                   <label className="font-semibold text-md text-gray-700">
                     Grade:
@@ -486,7 +557,6 @@ function Main() {
                     Substrand:
                   </label>
                   <span className="text-md text-gray-800 ml-2">
-                    {/* {substrand?.name} */}
                     <div
                       className="font-medium inline-block richtext"
                       dangerouslySetInnerHTML={{
@@ -503,7 +573,7 @@ function Main() {
                     {
                       substrand?.indicators
                         .flat()
-                        .find((ind: any) => ind._id === indicator).description
+                        .find((ind: any) => ind._id === indicator)?.description
                     }
                   </span>
                 </div>
@@ -521,21 +591,20 @@ function Main() {
                 </div>
                 <div className="meta-row flex items-center col-span-2 mt-0.5">
                   <Loader className="text-success animate-spin mr-2" />
-
                   <span className="text-sm text-success font-medium">
                     (Auto-saving)
                   </span>
                 </div>
               </div>
             </div>
-            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
-              <div className="flex flex-wrap  col-span-12 mt-2  xl:flex-nowrap">
+            <div className="col-span-12 overflow-auto 2xl:overflow-visible">
+              <div className="flex flex-wrap col-span-12 mt-2 xl:flex-nowrap">
                 <div className="hidden mx-auto md:block text-slate-500 mt-5"></div>
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3 ">
+                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3">
                   <div className="relative w-56 text-slate-500">
                     <FormInput
                       type="text"
-                      className="w-56 pr-10 !box"
+                      className="w-56 pr-10 !box rounded-lg"
                       placeholder="Adm No..."
                       onChange={(e) => setAdmNo(e.target.value)}
                     />
@@ -549,22 +618,22 @@ function Main() {
               <Table className="border-spacing-y-[3px] border-separate mt-2">
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[20px] ">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[20px]">
                       No
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[150px] ">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px]">
                       ADM No
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px] ">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px]">
                       NEMIS NO.
                     </Table.Th>
-                    <Table.Th className="border-b-1 whitespace-nowrap w-[300px] ">
+                    <Table.Th className="border-b-1 whitespace-nowrap w-[300px]">
                       NAME
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
+                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[100px]">
                       Score
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-wrap ">
+                    <Table.Th className="text-left border-b-1 whitespace-wrap">
                       DESCRIPTION
                     </Table.Th>
                   </Table.Tr>
@@ -576,22 +645,17 @@ function Main() {
                         {key + 1}
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="flex items-center  ">
+                        <span className="flex items-center">
                           {assessment?.learner?.adm_no}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="flex items-center  ">
+                        <span className="flex items-center">
                           {assessment?.learner?.nemis_no}
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <div className="flex">
-                          {/* <img
-                            src={logo}
-                            alt="Learner"
-                            className="w-12 h-12   "
-                          /> */}
                           <div className="ml-4">
                             {assessment?.learner?.first_name}{" "}
                             {assessment?.learner?.last_name}{" "}
@@ -599,12 +663,11 @@ function Main() {
                           </div>
                         </div>
                       </Table.Td>
-
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <FormInput
                           {...register("score[" + key + "]")}
                           type="number"
-                          className={`form-control  w-[100px] ${
+                          className={`form-control w-[100px] ${
                             getValues("score") ? "is-invalid" : ""
                           }`}
                           defaultValue={assessment?.assessmentDetails?.score}
@@ -613,7 +676,7 @@ function Main() {
                           onChange={(e) => {
                             const enteredValue = parseInt(e.target.value);
                             if (enteredValue > 4) {
-                              e.target.value = "4"; // Set the value to the maximum allowed
+                              e.target.value = "4";
                             }
                             handleInputChange({
                               score: e.target.value,
@@ -623,13 +686,12 @@ function Main() {
                         />
                       </Table.Td>
                       <Table.Td
-                        className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  ${getDescriptionColor(
+                        className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ${getDescriptionColor(
                           assessment?.assessmentDetails?.score
                         )}`}
                       >
                         <span>
                           <b>
-                            {" "}
                             {assessment?.assessmentDetails?.score == 4
                               ? "Exceeding Expectation: " +
                                 assessment?.learner?.first_name
@@ -645,7 +707,7 @@ function Main() {
                             {assessment?.assessmentDetails?.score == 1
                               ? "Below Expectation: " +
                                 assessment?.learner?.first_name
-                              : ""}{" "}
+                              : ""}
                           </b>{" "}
                           {assessment?.assessmentDetails?.description
                             ? assessment.assessmentDetails.description
@@ -664,42 +726,36 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium flex flex-wrap">
             {learningArea?.name}
           </h2>
-          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+          <div className="box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400 rounded-lg shadow-sm">
             <h2 className="mr-auto text-base font-medium border-b p-2">
               Learners Details
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-5">
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel
-                  htmlFor="modal-form-6"
-                  onClick={(e) => {
-                    alert("hello");
-                  }}
-                >
-                  Grade
-                </FormLabel>
+              <div className="col-span-12 sm:col-span-2 relative">
+                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
                   name="grade"
                   value={strandFilter.grade}
-                  onChange={(event) => handleGradeChange(event)}
+                  onChange={handleGradeChangeUpdated}
+                  className="rounded-lg hover:border-blue-500"
                 >
-                  <option
-                    onClick={(e) => {
-                      alert("hello");
-                    }}
-                  >
-                    Select Grade
-                  </option>
+                  <option>Select Grade</option>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
                     </option>
                   ))}
                 </FormSelect>
+                {isGradesLoading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    className="absolute right-2 top-10 w-4 h-4 text-blue-500"
+                  />
+                )}
                 {errors.grade && (
                   <div className="mt-2 text-danger">
                     {typeof errors.grade.message === "string" &&
@@ -707,22 +763,28 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-2 relative">
                 <FormLabel htmlFor="modal-form-6">Stream</FormLabel>
                 <FormSelect
                   {...register("stream")}
                   name="stream"
                   value={stream}
                   onChange={(event) => setStream(event.target.value)}
+                  className="rounded-lg hover:border-blue-500"
                 >
                   <option>Select Stream</option>
-
                   {streams.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
                     </option>
                   ))}
                 </FormSelect>
+                {isStreamsLoading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    className="absolute right-2 top-10 w-4 h-4 text-blue-500"
+                  />
+                )}
                 {errors.grade && (
                   <div className="mt-2 text-danger">
                     {typeof errors.grade.message === "string" &&
@@ -736,19 +798,14 @@ function Main() {
                   name="stream"
                   value={selectedTerm}
                   onChange={(event: any) => setSelectedTerm(event)}
+                  className="rounded-lg hover:border-blue-500"
                 >
                   <option>Select Academic Term</option>
-                  {/* <option>Select Term</option> */}
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
                     </option>
                   ))}
-                  {/* {.map((term: any, key) => (
-                    <option key={key} value={term._id}>
-                      {term.name}
-                    </option>
-                  ))} */}
                 </TomSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
@@ -763,7 +820,7 @@ function Main() {
               Assessment Details
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-2 relative">
                 <FormLabel
                   htmlFor="modal-form-6"
                   className="block text-sm font-medium text-gray-700"
@@ -774,8 +831,8 @@ function Main() {
                   {...register("learning_area")}
                   value={strandFilter.learning_area}
                   name="learning_area"
-                  onChange={handleLearningAreaChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  onChange={handleLearningAreaChangeUpdated}
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
                   <option>Select Learning Area</option>
                   {learningAreas
@@ -788,6 +845,12 @@ function Main() {
                       </option>
                     ))}
                 </FormSelect>
+                {isLearningAreasLoading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    className="absolute right-2 top-10 w-4 h-4 text-blue-500"
+                  />
+                )}
                 {errors.learning_area && (
                   <div className="mt-2 text-sm text-red-600">
                     {typeof errors.learning_area.message === "string" &&
@@ -808,7 +871,7 @@ function Main() {
                   value={strandFilter.term}
                   name="term"
                   onChange={handleTermChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
                   <option>Select Term</option>
                   {terms.map((term: any, key) => (
@@ -825,7 +888,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-2">
+              <div className="col-span-12 sm:col-span-2 relative">
                 <FormLabel
                   htmlFor="modal-form-6"
                   className="block text-sm font-medium text-gray-700"
@@ -836,8 +899,8 @@ function Main() {
                   {...register("strand")}
                   name="strand"
                   value={strand}
-                  onChange={handleStrandChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  onChange={handleStrandChangeUpdated}
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
                   <option>Select Strand</option>
                   {strands.map((strand: any, key) => (
@@ -851,6 +914,12 @@ function Main() {
                     </option>
                   ))}
                 </FormSelect>
+                {isStrandsLoading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    className="absolute right-2 top-10 w-4 h-4 text-blue-500"
+                  />
+                )}
                 {errors.theme && (
                   <div className="mt-2 text-sm text-red-600">
                     {typeof errors.theme.message === "string" &&
@@ -859,7 +928,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-12 sm:col-span-4">
+              <div className="col-span-12 sm:col-span-4 relative">
                 <FormLabel
                   htmlFor="modal-form-6"
                   className="block text-sm font-medium text-gray-700"
@@ -871,7 +940,7 @@ function Main() {
                   value={selectedSubStrand}
                   name="substrand"
                   onChange={handleSubStrandChange}
-                  className="mt-1  w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
                   <option>Select Substrand</option>
                   {substrands.map((substrand: any, key: any) => (
@@ -885,6 +954,12 @@ function Main() {
                     </option>
                   ))}
                 </TomSelect>
+                {isSubstrandsLoading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    className="absolute right-2 top-10 w-4 h-4 text-blue-500"
+                  />
+                )}
                 {errors.theme && (
                   <div className="mt-2 text-sm text-red-600">
                     {typeof errors.theme.message === "string" &&
@@ -999,7 +1074,7 @@ function Main() {
                   onClick={() => {
                     setConfirmDelete(false);
                   }}
-                  className="w-24 mr-1"
+                  className="w-24 mr-1 rounded-lg"
                 >
                   Cancel
                 </Button>
@@ -1007,7 +1082,7 @@ function Main() {
                   onClick={() => deleteRecord()}
                   variant="danger"
                   type="button"
-                  className="w-24"
+                  className="w-24 rounded-lg"
                   ref={deleteButtonRef}
                 >
                   Delete
@@ -1023,7 +1098,7 @@ function Main() {
         getRef={(el) => {
           notify.current = el;
         }}
-        className="flex"
+        className="flex rounded-lg shadow-md"
       >
         <Lucide
           icon={success ? "CheckCircle" : "XCircle"}
