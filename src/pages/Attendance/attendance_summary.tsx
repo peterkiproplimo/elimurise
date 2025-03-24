@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { FormLabel, FormSelect } from "../../base-components/Form";
-import * as ApiService from "../../services/auth";
+import * as ApiService from "../../services/auth"; // Adjust import based on your service file
 import { CheckCircle, XCircle } from "lucide-react";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import jsPDF from "jspdf";
@@ -9,13 +9,59 @@ import Button from "../../base-components/Button"; // Assuming a premium Button 
 
 // Constants
 const CURRENT_DATE = new Date();
-const DEFAULT_SUMMARY = {
+const DEFAULT_SUMMARY: AttendanceSummary = {
   learnersData: [],
   dailySummary: [],
 };
 
+// Interfaces
+interface Grade {
+  _id: string;
+  name: string;
+}
+
+interface Stream {
+  _id: string;
+  name: string;
+}
+
+interface AttendanceData {
+  date: string;
+  morning: boolean;
+  morning_reason: string | null;
+  afternoon: boolean;
+  afternoon_reason: string | null;
+  day: string;
+}
+
+interface LearnerData {
+  learnerName: string;
+  gender: string;
+  attendance: AttendanceData[];
+}
+
+interface DailySummary {
+  day: string;
+  presentMorning: number;
+  presentAfternoon: number;
+  absentMorning: number;
+  absentAfternoon: number;
+}
+
+interface AttendanceSummary {
+  learnersData: LearnerData[];
+  dailySummary: DailySummary[];
+}
+
+interface GenderAnalysis {
+  maleMorning: { [day: string]: number };
+  femaleMorning: { [day: string]: number };
+  maleAfternoon: { [day: string]: number };
+  femaleAfternoon: { [day: string]: number };
+}
+
 // Utility to format attendance status
-const getAttendanceStatus = (morning: boolean, afternoon: boolean) => {
+const getAttendanceStatus = (morning: boolean, afternoon: boolean): string => {
   return morning && afternoon
     ? "X"
     : !morning && !afternoon
@@ -26,16 +72,19 @@ const getAttendanceStatus = (morning: boolean, afternoon: boolean) => {
 };
 
 function AttendanceForm() {
-  const [grades, setGrades] = useState<any[]>([]);
-  const [streams, setStreams] = useState<any[]>([]);
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [selectedStream, setSelectedStream] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState(
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [streams, setStreams] = useState<Stream[]>([]);
+  const [selectedGrade, setSelectedGrade] = useState<string>("");
+  const [selectedStream, setSelectedStream] = useState<string>("");
+  const [selectedMonth, setSelectedMonth] = useState<number>(
     CURRENT_DATE.getMonth() + 1
   ); // 1-based
-  const [selectedYear, setSelectedYear] = useState(CURRENT_DATE.getFullYear());
-  const [attendanceSummary, setAttendanceSummary] = useState(DEFAULT_SUMMARY);
-  const [loading, setLoading] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<number>(
+    CURRENT_DATE.getFullYear()
+  );
+  const [attendanceSummary, setAttendanceSummary] =
+    useState<AttendanceSummary>(DEFAULT_SUMMARY);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     getGrades();
@@ -47,25 +96,25 @@ function AttendanceForm() {
     }
   }, [selectedStream, selectedMonth, selectedYear]);
 
-  const getGrades = async () => {
+  const getGrades = async (): Promise<void> => {
     try {
       const response = await ApiService.getGrades({ page: 1 });
-      setGrades(response.data);
+      setGrades(response.data as Grade[]);
     } catch (error) {
       console.error("Failed to fetch grades:", error);
     }
   };
 
-  const getStreams = async (gradeId: string) => {
+  const getStreams = async (gradeId: string): Promise<void> => {
     try {
       const response = await ApiService.getStream({ page: 1, grade: gradeId });
-      setStreams(response.data);
+      setStreams(response.data as Stream[]);
     } catch (error) {
       console.error("Failed to fetch streams:", error);
     }
   };
 
-  const fetchAttendanceSummary = async () => {
+  const fetchAttendanceSummary = async (): Promise<void> => {
     if (!selectedGrade || !selectedStream) return;
 
     setLoading(true);
@@ -76,8 +125,8 @@ function AttendanceForm() {
         stream: selectedStream,
       });
 
-      const learnersData = response?.data?.attendanceSummary.map(
-        (learnerData: any) => {
+      const learnersData: LearnerData[] =
+        response?.data?.attendanceSummary.map((learnerData: any) => {
           const learnerName = `${learnerData.learner.first_name} ${learnerData.learner.last_name}`;
           const attendanceDates = Object.keys(learnerData.attendance);
           return {
@@ -92,10 +141,9 @@ function AttendanceForm() {
               day: date,
             })),
           };
-        }
-      );
+        }) || [];
 
-      const dailySummary = Object.keys(
+      const dailySummary: DailySummary[] = Object.keys(
         response?.data?.dailyAttendance || {}
       ).map((day) => {
         const dayData = response.data.dailyAttendance[day];
@@ -117,7 +165,36 @@ function AttendanceForm() {
     }
   };
 
-  const exportToPDF = () => {
+  // Gender-based analysis function
+  const getGenderAnalysis = (): GenderAnalysis => {
+    const analysis: GenderAnalysis = {
+      maleMorning: {},
+      femaleMorning: {},
+      maleAfternoon: {},
+      femaleAfternoon: {},
+    };
+
+    attendanceSummary.learnersData.forEach((learner) => {
+      learner.attendance.forEach((attend) => {
+        const day = attend.day;
+        if (learner.gender.toLowerCase() === "male") {
+          analysis.maleMorning[day] =
+            (analysis.maleMorning[day] || 0) + (attend.morning ? 1 : 0);
+          analysis.maleAfternoon[day] =
+            (analysis.maleAfternoon[day] || 0) + (attend.afternoon ? 1 : 0);
+        } else if (learner.gender.toLowerCase() === "female") {
+          analysis.femaleMorning[day] =
+            (analysis.femaleMorning[day] || 0) + (attend.morning ? 1 : 0);
+          analysis.femaleAfternoon[day] =
+            (analysis.femaleAfternoon[day] || 0) + (attend.afternoon ? 1 : 0);
+        }
+      });
+    });
+
+    return analysis;
+  };
+
+  const exportToPDF = (): void => {
     const doc = new jsPDF({ orientation: "landscape" });
     const monthName = new Date(selectedYear, selectedMonth - 1).toLocaleString(
       "default",
@@ -131,45 +208,81 @@ function AttendanceForm() {
     doc.text(`Attendance Summary - ${monthName} ${selectedYear}`, 14, 20);
 
     // Table Headers
-    const headers = [
+    const headers: string[] = [
       "#",
       "Learner",
       "Gender",
-      ...(attendanceSummary.learnersData[0]?.attendance.map(
-        (e: any) => e.day
-      ) || []),
+      ...(attendanceSummary.learnersData[0]?.attendance.map((e) => e.day) ||
+        []),
     ];
-    const body = attendanceSummary.learnersData.map(
-      (entry: any, index: number) => [
+    const body: (string | number)[][] = attendanceSummary.learnersData.map(
+      (entry, index) => [
         index + 1,
         entry.learnerName,
         entry.gender.charAt(0),
-        ...entry.attendance.map((attend: any) =>
+        ...entry.attendance.map((attend) =>
           getAttendanceStatus(attend.morning, attend.afternoon)
         ),
       ]
     );
 
     // Summary Rows
-    const summaryRows = [
+    const summaryRows: (string | number)[][] = [
       [
         "",
         "Present: Afternoon",
         "",
-        ...attendanceSummary.dailySummary.map((s: any) => s.presentAfternoon),
+        ...attendanceSummary.dailySummary.map((s) => s.presentAfternoon),
       ],
       [
         "",
         "Present: Morning",
         "",
-        ...attendanceSummary.dailySummary.map((s: any) => s.presentMorning),
+        ...attendanceSummary.dailySummary.map((s) => s.presentMorning),
       ],
       [
         "",
         "Total",
         "",
         ...attendanceSummary.dailySummary.map(
-          (s: any) => s.presentMorning + s.presentAfternoon
+          (s) => s.presentMorning + s.presentAfternoon
+        ),
+      ],
+    ];
+
+    // Gender Analysis Rows
+    const genderAnalysis = getGenderAnalysis();
+    const genderRows: (string | number)[][] = [
+      [
+        "",
+        "Male: Morning",
+        "",
+        ...attendanceSummary.dailySummary.map(
+          (s) => genderAnalysis.maleMorning[s.day] || 0
+        ),
+      ],
+      [
+        "",
+        "Male: Afternoon",
+        "",
+        ...attendanceSummary.dailySummary.map(
+          (s) => genderAnalysis.maleAfternoon[s.day] || 0
+        ),
+      ],
+      [
+        "",
+        "Female: Morning",
+        "",
+        ...attendanceSummary.dailySummary.map(
+          (s) => genderAnalysis.femaleMorning[s.day] || 0
+        ),
+      ],
+      [
+        "",
+        "Female: Afternoon",
+        "",
+        ...attendanceSummary.dailySummary.map(
+          (s) => genderAnalysis.femaleAfternoon[s.day] || 0
         ),
       ],
     ];
@@ -177,7 +290,7 @@ function AttendanceForm() {
     // Premium Table Styling
     (doc as any).autoTable({
       head: [headers],
-      body: [...body, ...summaryRows],
+      body: [...body, ...summaryRows, ...genderRows],
       startY: 30,
       theme: "striped",
       headStyles: {
@@ -206,7 +319,7 @@ function AttendanceForm() {
     doc.save(`attendance-summary-${monthName}-${selectedYear}.pdf`);
   };
 
-  const printReport = () => {
+  const printReport = (): void => {
     window.print();
   };
 
@@ -227,7 +340,7 @@ function AttendanceForm() {
               </FormLabel>
               <FormSelect
                 value={selectedGrade}
-                onChange={(e) => {
+                onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                   setSelectedGrade(e.target.value);
                   getStreams(e.target.value);
                   setSelectedStream("");
@@ -250,7 +363,9 @@ function AttendanceForm() {
               </FormLabel>
               <FormSelect
                 value={selectedStream}
-                onChange={(e) => setSelectedStream(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                  setSelectedStream(e.target.value)
+                }
                 required
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-darkmode-600 border border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
               >
@@ -269,7 +384,9 @@ function AttendanceForm() {
               </FormLabel>
               <FormSelect
                 value={selectedMonth}
-                onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                  setSelectedMonth(Number(e.target.value))
+                }
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-darkmode-600 border border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-2 focus:ring-green-500 transition-all duration-200"
               >
                 {Array.from({ length: 12 }, (_, i) => (
@@ -307,7 +424,7 @@ function AttendanceForm() {
                         Gender
                       </th>
                       {attendanceSummary.learnersData[0]?.attendance.map(
-                        (entry: any) => (
+                        (entry) => (
                           <th
                             key={entry.date}
                             className="px-4 py-3 text-center text-sm font-semibold"
@@ -321,54 +438,125 @@ function AttendanceForm() {
                   <tbody className="text-gray-700 dark:text-gray-300">
                     {attendanceSummary.learnersData.length > 0 ? (
                       <>
-                        {attendanceSummary.learnersData.map(
-                          (entry: any, index: number) => (
-                            <tr
-                              key={index}
-                              className="hover:bg-gray-100 dark:hover:bg-darkmode-500"
-                            >
-                              <td className="px-4 py-3">{index + 1}</td>
-                              <td className="px-4 py-3">{entry.learnerName}</td>
-                              <td className="px-4 py-3">
-                                {entry.gender.charAt(0)}
+                        {attendanceSummary.learnersData.map((entry, index) => (
+                          <tr
+                            key={index}
+                            className="hover:bg-gray-100 dark:hover:bg-darkmode-500"
+                          >
+                            <td className="px-4 py-3">{index + 1}</td>
+                            <td className="px-4 py-3">{entry.learnerName}</td>
+                            <td className="px-4 py-3">
+                              {entry.gender.charAt(0)}
+                            </td>
+                            {entry.attendance.map((attend, idx) => (
+                              <td
+                                key={idx}
+                                className="px-4 py-3 text-center relative group"
+                              >
+                                {attend.morning && attend.afternoon ? (
+                                  <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                                ) : !attend.morning && !attend.afternoon ? (
+                                  <XCircle className="w-5 h-5 text-red-500 mx-auto" />
+                                ) : (
+                                  <span className="text-gray-500">
+                                    {getAttendanceStatus(
+                                      attend.morning,
+                                      attend.afternoon
+                                    )}
+                                  </span>
+                                )}
+                                {(!attend.morning || !attend.afternoon) && (
+                                  <div className="absolute z-10 left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-md">
+                                    {attend.morning_reason ||
+                                      attend.afternoon_reason ||
+                                      "No reason provided"}
+                                  </div>
+                                )}
                               </td>
-                              {entry.attendance.map(
-                                (attend: any, idx: number) => (
-                                  <td
-                                    key={idx}
-                                    className="px-4 py-3 text-center relative group"
-                                  >
-                                    {attend.morning && attend.afternoon ? (
-                                      <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
-                                    ) : !attend.morning && !attend.afternoon ? (
-                                      <XCircle className="w-5 h-5 text-red-500 mx-auto" />
-                                    ) : (
-                                      <span className="text-gray-500">
-                                        {getAttendanceStatus(
-                                          attend.morning,
-                                          attend.afternoon
-                                        )}
-                                      </span>
-                                    )}
-                                    {(!attend.morning || !attend.afternoon) && (
-                                      <div className="absolute z-10 left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-md">
-                                        {attend.morning_reason ||
-                                          attend.afternoon_reason ||
-                                          "No reason provided"}
-                                      </div>
-                                    )}
-                                  </td>
-                                )
-                              )}
-                            </tr>
-                          )
-                        )}
+                            ))}
+                          </tr>
+                        ))}
+                        {(() => {
+                          const genderAnalysis = getGenderAnalysis();
+                          return (
+                            <>
+                              <tr className="font-medium">
+                                <td className="px-4 py-3" colSpan={3}>
+                                  Boys: Morning
+                                </td>
+                                {attendanceSummary.dailySummary.map(
+                                  (summary, index) => (
+                                    <td
+                                      key={index}
+                                      className="px-4 py-3 text-center"
+                                    >
+                                      {genderAnalysis.maleMorning[
+                                        summary.day
+                                      ] || 0}
+                                    </td>
+                                  )
+                                )}
+                              </tr>
+                              <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
+                                <td className="px-4 py-3" colSpan={3}>
+                                  Boys: Afternoon
+                                </td>
+                                {attendanceSummary.dailySummary.map(
+                                  (summary, index) => (
+                                    <td
+                                      key={index}
+                                      className="px-4 py-3 text-center"
+                                    >
+                                      {genderAnalysis.maleAfternoon[
+                                        summary.day
+                                      ] || 0}
+                                    </td>
+                                  )
+                                )}
+                              </tr>
+                              <tr className="font-medium">
+                                <td className="px-4 py-3" colSpan={3}>
+                                  Girls: Morning
+                                </td>
+                                {attendanceSummary.dailySummary.map(
+                                  (summary, index) => (
+                                    <td
+                                      key={index}
+                                      className="px-4 py-3 text-center"
+                                    >
+                                      {genderAnalysis.femaleMorning[
+                                        summary.day
+                                      ] || 0}
+                                    </td>
+                                  )
+                                )}
+                              </tr>
+                              <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
+                                <td className="px-4 py-3" colSpan={3}>
+                                  Girls: Afternoon
+                                </td>
+                                {attendanceSummary.dailySummary.map(
+                                  (summary, index) => (
+                                    <td
+                                      key={index}
+                                      className="px-4 py-3 text-center"
+                                    >
+                                      {genderAnalysis.femaleAfternoon[
+                                        summary.day
+                                      ] || 0}
+                                    </td>
+                                  )
+                                )}
+                              </tr>
+                            </>
+                          );
+                        })()}
                         <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
                           <td className="px-4 py-3" colSpan={3}>
-                            Present: Afternoon
+                            Present Total: Afternoon
                           </td>
                           {attendanceSummary.dailySummary.map(
-                            (summary: any, index: number) => (
+                            (summary, index) => (
                               <td key={index} className="px-4 py-3 text-center">
                                 {summary.presentAfternoon}
                               </td>
@@ -377,10 +565,10 @@ function AttendanceForm() {
                         </tr>
                         <tr className="font-medium">
                           <td className="px-4 py-3" colSpan={3}>
-                            Present: Morning
+                            Present Total: Morning
                           </td>
                           {attendanceSummary.dailySummary.map(
-                            (summary: any, index: number) => (
+                            (summary, index) => (
                               <td key={index} className="px-4 py-3 text-center">
                                 {summary.presentMorning}
                               </td>
@@ -392,7 +580,7 @@ function AttendanceForm() {
                             Total
                           </td>
                           {attendanceSummary.dailySummary.map(
-                            (summary: any, index: number) => (
+                            (summary, index) => (
                               <td key={index} className="px-4 py-3 text-center">
                                 {summary.presentMorning +
                                   summary.presentAfternoon}
@@ -405,8 +593,8 @@ function AttendanceForm() {
                       <tr>
                         <td
                           colSpan={
-                            attendanceSummary.learnersData[0]?.attendance
-                              .length + 3 || 3
+                            (attendanceSummary.learnersData[0]?.attendance
+                              ?.length || 0) + 3
                           }
                           className="py-4 text-center text-gray-500 dark:text-gray-400"
                         >

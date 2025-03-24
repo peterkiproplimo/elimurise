@@ -225,7 +225,6 @@ function AttendanceForm() {
                     </div>
                     <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
                       <Button
-                        variant="soft"
                         onClick={() =>
                           markAll(
                             "morning",
@@ -253,7 +252,6 @@ function AttendanceForm() {
                     </div>
                     <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
                       <Button
-                        variant="soft"
                         onClick={() =>
                           markAll(
                             "afternoon",
@@ -299,7 +297,6 @@ function AttendanceForm() {
                     </div>
                     <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
                       <Button
-                        variant="soft"
                         onClick={() =>
                           markAll(
                             "morning",
@@ -327,7 +324,6 @@ function AttendanceForm() {
                     </div>
                     <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
                       <Button
-                        variant="soft"
                         onClick={() =>
                           markAll(
                             "afternoon",

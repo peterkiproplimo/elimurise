@@ -138,13 +138,13 @@ const initialState: SideMenuState = {
           ignore: false,
           // ignore: !hasPermission("grading-system", "read"),
         },
-        // {
-        //   icon: "Activity",
-        //   pathname: "/home/attendance_summary",
-        //   title: "Attendance Report",
-        //   ignore: false,
-        //   // ignore: !hasPermission("grading-system", "read"),
-        // },
+        {
+          icon: "Activity",
+          pathname: "/home/message",
+          title: "Inbox",
+          ignore: false,
+          // ignore: !hasPermission("grading-system", "read"),
+        },
         // {
         //   icon: "Activity",
         //   pathname: "/home/attendance_termly_summary",

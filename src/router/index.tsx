@@ -47,6 +47,8 @@ import SummativeAssess from "../pages/SummativeAssess";
 import SummativeReport from "../pages/SummativeReport";
 import SummativeDone from "../pages/SummativeTests/done-tests";
 import ParentConnect from "../pages/Parents/parentConnect";
+import ParentConnectAdmin from "../pages/Parents/parentConnectAdmin";
+
 import Noticesboard from "../pages/Parents/Noticeboard";
 import NoticesboardParent from "../pages/Parents/NoticeboardParent";
 
@@ -272,6 +274,10 @@ function Router() {
         {
           path: "learner/:id",
           element: <LearnerDetails />,
+        },
+        {
+          path: "message",
+          element: <ParentConnectAdmin />,
         },
       ],
     },

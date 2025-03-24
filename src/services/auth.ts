@@ -780,6 +780,16 @@ export async function sendMessageParent(data: any) {
     throw handler(e);
   }
 }
+
+export async function getAdminMessages(data: any) {
+  try {
+    console.log(data);
+    let res = await axios.get(c.MESSAGE + "/admin-messages/" + data.parentId);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 export async function getMessage(data: any) {
   try {
     console.log(data);
@@ -802,6 +812,14 @@ export async function getMessageParent(data: any) {
     throw handler(e);
   }
 }
+export async function getAdminParentChats() {
+  try {
+    let res = await axios.get(c.MESSAGE + "/chat-heads-admin");
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 export async function getChatheads() {
   try {
     let res = await axios.get(c.MESSAGE_PARENT + "/chat-heads");
@@ -810,6 +828,7 @@ export async function getChatheads() {
     throw handler(e);
   }
 }
+getAdminParentChats;
 export async function createBehaviour(data: any) {
   try {
     let res = await axios.post(c.BEHAVIOUR, data);

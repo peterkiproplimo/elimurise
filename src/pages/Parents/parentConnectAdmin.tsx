@@ -14,9 +14,8 @@ import * as ApiService from "../../services/auth";
 import { IMG_URL } from "../../utils/constants";
 
 // Types
-interface Message {
+interface AdminMessage {
   id?: string;
-  learner?: string; // Add learner field to tie messages to a specific learner
   sender: string;
   senderModel: string;
   receiver: string;
@@ -32,12 +31,9 @@ interface Message {
   isEdited?: boolean;
 }
 
-interface ChatHead {
-  id: string; // learnerId
-  learnerName: string;
-  streamName: string;
-  classManagerId: string;
-  classManagerName: string;
+interface ParentChatHead {
+  parentId: string;
+  parentName: string;
   lastMessage: string;
   lastMessageAt: Date | null;
   unreadCount: number;
@@ -48,6 +44,9 @@ interface User {
   id: string;
   name: string;
   avatar: string;
+  school: {
+    _id: string;
+  };
   status: "online" | "offline" | "away";
 }
 
@@ -62,11 +61,12 @@ const user: User = {
   id: auth.user?._id || "",
   name:
     `${auth.user?.first_name || ""} ${auth.user?.last_name || ""}`.trim() ||
-    "User",
+    "Admin",
   avatar:
     auth.user?.avatar ||
     "https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png",
   status: "online",
+  school: auth.user?.school,
 };
 
 const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
@@ -74,11 +74,11 @@ const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
   auth: { token: `Bearer ${auth.user?.token}` },
 });
 
-// MessageBubble Component
+// MessageBubble Component (unchanged)
 const MessageBubble: React.FC<{
-  message: Message;
+  message: AdminMessage;
   isOwnMessage: boolean;
-  onClick?: (message: Message) => void;
+  onClick?: (message: AdminMessage) => void;
 }> = React.memo(({ message, isOwnMessage, onClick }) => {
   const formattedTime = useMemo(
     () =>
@@ -100,7 +100,7 @@ const MessageBubble: React.FC<{
       exit={{ opacity: 0 }}
       className={`flex ${
         isOwnMessage ? "justify-end" : "justify-start"
-      } mb-2 sm:mb-4 touch-action-pan-y`}
+      } mb-2 sm:mb-4`}
       onClick={() => onClick?.(message)}
     >
       {!isOwnMessage && (
@@ -129,7 +129,7 @@ const MessageBubble: React.FC<{
                   <img
                     src={`${IMG_URL}${attachment.url}`}
                     alt={attachment.fileName}
-                    className="max-w-[150px] sm:max-w-[200px] rounded-lg shadow-sm cursor-pointer hover:opacity-90 transition-opacity duration-200"
+                    className="max-w-[150px] sm:max-w-[200px] rounded-lg shadow-sm cursor-pointer hover:opacity-90"
                     onClick={() => openZoom(`${IMG_URL}${attachment.url}`)}
                   />
                 ) : (
@@ -160,12 +160,11 @@ const MessageBubble: React.FC<{
               <img
                 src={zoomedImage}
                 alt="Zoomed image"
-                className="w-full h-auto rounded-lg shadow-lg transform transition-transform duration-200 hover:scale-125"
+                className="w-full h-auto rounded-lg shadow-lg"
               />
               <button
-                className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-colors"
+                className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700"
                 onClick={closeZoom}
-                aria-label="Close zoom"
               >
                 <Lucide icon="X" className="w-5 h-5" />
               </button>
@@ -185,9 +184,9 @@ const MessageBubble: React.FC<{
   );
 });
 
-// ConversationItem Component
-const ConversationItem: React.FC<{
-  chat: ChatHead;
+// ParentItem Component (unchanged)
+const ParentItem: React.FC<{
+  chat: ParentChatHead;
   isSelected: boolean;
   onClick: () => void;
 }> = React.memo(({ chat, isSelected, onClick }) => {
@@ -206,7 +205,7 @@ const ConversationItem: React.FC<{
   }, [chat.lastMessageAt]);
 
   const baseClasses =
-    "flex items-center p-2 xs:p-3 my-1 rounded-xl transition-all duration-200 cursor-pointer touch-action-manipulation";
+    "flex items-center p-2 xs:p-3 my-1 rounded-xl transition-all duration-200 cursor-pointer";
   const activeClasses = isSelected
     ? "bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900 dark:to-indigo-900 shadow-md"
     : "bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700";
@@ -217,7 +216,7 @@ const ConversationItem: React.FC<{
         <img
           className="w-10 h-10 xs:w-12 xs:h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
           src={chat.avatar || user.avatar}
-          alt={`${chat.learnerName}'s avatar`}
+          alt={`${chat.parentName}'s avatar`}
           loading="lazy"
         />
         {chat.unreadCount > 0 && (
@@ -229,15 +228,12 @@ const ConversationItem: React.FC<{
       <div className="flex-1 min-w-0 px-2 xs:px-3">
         <div className="flex items-baseline justify-between">
           <h3 className="text-sm xs:text-base font-semibold text-gray-900 dark:text-white truncate">
-            {chat.learnerName}
+            {chat.parentName}
           </h3>
           <span className="text-[10px] xs:text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 ml-2">
             {formattedTime}
           </span>
         </div>
-        <p className="text-xs xs:text-sm text-gray-600 dark:text-gray-300">
-          {chat.streamName} - {chat.classManagerName}
-        </p>
         <div className="flex items-center justify-between">
           <p className="text-xs xs:text-sm text-gray-600 dark:text-gray-300 truncate max-w-[120px] xs:max-w-[150px] sm:max-w-[180px]">
             {chat.lastMessage === "No messages"
@@ -251,14 +247,24 @@ const ConversationItem: React.FC<{
 });
 
 // Main Component
-const MessagingPage: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chatHeads, setChatHeads] = useState<ChatHead[]>([]);
-  const [selectedChatId, setSelectedChatId] = useState<string>(""); // Now learnerId
+const AdminMessagingPage: React.FC = () => {
+  const [messages, setMessages] = useState<AdminMessage[]>([]);
+  const [chatHeads, setChatHeads] = useState<ParentChatHead[]>([]);
+  const [allParents, setAllParents] = useState<
+    { parentId: string; parentName: string; avatar?: string }[]
+  >([]);
+  const [selectedParentId, setSelectedParentId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState<boolean>(false);
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    total: 0,
+    total_pages: 1,
+    per_page: 10,
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -296,35 +302,57 @@ const MessagingPage: React.FC = () => {
 
   const fetchChatHeads = useCallback(async () => {
     try {
-      const response = await ApiService.getChatheads();
+      const response = await ApiService.getAdminParentChats();
       setChatHeads(
         response.chatHeads.map((ch: any) => ({
-          id: ch.learnerId,
-          learnerName: ch.learnerName,
-          streamName: ch.streamName,
-          classManagerId: ch.classManagerId,
-          classManagerName: ch.classManagerName.trim() || "Not assigned",
+          parentId: ch.parentId,
+          parentName: ch.parentName,
           lastMessage: ch.lastMessage,
           lastMessageAt: ch.lastMessageAt ? new Date(ch.lastMessageAt) : null,
           unreadCount: ch.unreadCount,
-          avatar:
-            "https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png",
+          avatar: ch.avatar,
         }))
       );
     } catch (error) {
-      console.error("Failed to load conversations:", error);
+      console.error("Failed to load parent chats:", error);
     }
   }, []);
 
+  const fetchAllParents = useCallback(async () => {
+    try {
+      const response = await ApiService.getParents({
+        page: pagination.current_page,
+        limit: pagination.per_page,
+        search: searchQuery,
+        sortBy: "name",
+        sortOrder: "asc",
+      });
+      setAllParents(
+        response.data.map((p: any) => ({
+          parentId: p._id, // Assuming _id is the parent ID
+          parentName: `${p.first_name} ${p.last_name}`.trim(),
+          avatar: p.avatar,
+        }))
+      );
+      const pag = response.pagination;
+      setPagination({
+        current_page: pag.current_page,
+        total: pag.total,
+        total_pages: pag.total_pages,
+        per_page: pag.per_page,
+      });
+    } catch (error) {
+      console.error("Failed to load all parents:", error);
+    }
+  }, [pagination.current_page, pagination.per_page, searchQuery]);
+
   const fetchMessages = useCallback(async () => {
-    if (!selectedChatId) return;
+    if (!selectedParentId) return;
     setIsLoading(true);
     try {
-      const response = await ApiService.getMessageParent({
-        learner: selectedChatId,
-        parent: user.id,
+      const response = await ApiService.getAdminMessages({
+        parentId: selectedParentId,
       });
-      console.log("Messages response:", response);
       setMessages(
         response.data.map((msg: any) => ({
           ...msg,
@@ -337,29 +365,26 @@ const MessagingPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedChatId, scrollToBottom]);
+  }, [selectedParentId, scrollToBottom]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    if (!selectedChatId || (!data.content && attachments.length === 0)) return;
-
-    const selectedChat = chatHeads.find((ch) => ch.id === selectedChatId);
-    if (!selectedChat) return;
+    if (!selectedParentId || (!data.content && attachments.length === 0))
+      return;
 
     const formData = new FormData();
-    formData.append("learner", selectedChatId);
-    formData.append("sender", user.id);
-    formData.append("senderModel", "Parent");
-    formData.append("receiver", selectedChat.classManagerId);
-    formData.append("receiverModel", "PortalUser");
+    formData.append("sender", user?.school?._id);
+    formData.append("senderModel", "PortalUser");
+    formData.append("learner", user?.school?._id);
+    formData.append("receiver", selectedParentId);
+    formData.append("receiverModel", "Parent");
     formData.append("message", data.content || "");
     attachments.forEach((file) => formData.append("attachments", file));
-
-    const newMessage: Message = {
-      learner: selectedChatId,
-      sender: user.id,
-      senderModel: "Parent",
-      receiver: selectedChat.classManagerId,
-      receiverModel: "PortalUser",
+    console.log(user);
+    const newMessage: AdminMessage = {
+      sender: user?.school?._id,
+      senderModel: "PortalUser",
+      receiver: selectedParentId,
+      receiverModel: "Parent",
       message: data.content || "",
       attachments: attachments.map((file) => ({
         url: URL.createObjectURL(file),
@@ -375,29 +400,45 @@ const MessagingPage: React.FC = () => {
       scrollToBottom();
       reset();
       setAttachments([]);
-      await ApiService.sendMessageParent(formData);
-      // socket.emit("sendMessage", {
-      //   learner: selectedChatId,
-      //   receiver: selectedChat.classManagerId,
-      //   message: data.content || "",
-      //   attachments: attachments.map((file) => ({
-      //     url: URL.createObjectURL(file),
-      //     fileName: file.name,
-      //     fileType: file.type,
-      //     fileSize: file.size,
-      //   })),
-      // });
-      setChatHeads((prev) =>
-        prev.map((ch) =>
-          ch.id === selectedChatId
-            ? {
-                ...ch,
-                lastMessage: newMessage.message || "Attachment sent",
-                lastMessageAt: newMessage.createdAt,
-              }
-            : ch
-        )
-      );
+      await ApiService.sendMessage(formData);
+      socket.emit("admin message", {
+        parentId: selectedParentId,
+        message: data.content || "",
+        attachments: attachments.map((file) => ({
+          url: URL.createObjectURL(file),
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+        })),
+      });
+      setChatHeads((prev) => {
+        const existingChat = prev.find(
+          (ch) => ch.parentId === selectedParentId
+        );
+        if (existingChat) {
+          return prev.map((ch) =>
+            ch.parentId === selectedParentId
+              ? {
+                  ...ch,
+                  lastMessage: newMessage.message || "Attachment sent",
+                  lastMessageAt: newMessage.createdAt,
+                }
+              : ch
+          );
+        }
+        const parent = allParents.find((p) => p.parentId === selectedParentId);
+        return [
+          {
+            parentId: selectedParentId,
+            parentName: parent?.parentName || "Unknown Parent",
+            lastMessage: newMessage.message || "Attachment sent",
+            lastMessageAt: newMessage.createdAt,
+            unreadCount: 0,
+            avatar: parent?.avatar,
+          },
+          ...prev,
+        ];
+      });
     } catch (error) {
       console.error("Failed to send message:", error);
       setMessages((prev) => prev.filter((msg) => msg !== newMessage));
@@ -415,9 +456,12 @@ const MessagingPage: React.FC = () => {
   };
 
   useEffect(() => {
-    socket.emit("register", { userId: user.id, userType: "parent" });
-    socket.on("receiveMessage", (newMessage: Message) => {
-      if (newMessage.learner === selectedChatId) {
+    socket.emit("register", { userId: user?.school?._id, userType: "admin" });
+    socket.on("receiveMessage", (newMessage: AdminMessage) => {
+      if (
+        newMessage.receiver === user?.school?._id &&
+        newMessage.sender === selectedParentId
+      ) {
         setMessages((prev) => [
           ...prev,
           { ...newMessage, createdAt: new Date(newMessage.createdAt) },
@@ -425,15 +469,12 @@ const MessagingPage: React.FC = () => {
         scrollToBottom();
         setChatHeads((prev) =>
           prev.map((ch) =>
-            ch.id === newMessage.learner
+            ch.parentId === newMessage.sender
               ? {
                   ...ch,
                   lastMessage: newMessage.message || "Attachment received",
                   lastMessageAt: newMessage.createdAt,
-                  unreadCount:
-                    newMessage.receiver === user.id
-                      ? ch.unreadCount + 1
-                      : ch.unreadCount,
+                  unreadCount: ch.unreadCount + 1,
                 }
               : ch
           )
@@ -450,48 +491,60 @@ const MessagingPage: React.FC = () => {
     return () => {
       socket.off("receiveMessage");
     };
-  }, [selectedChatId, scrollToBottom]);
+  }, [selectedParentId, scrollToBottom]);
 
   useEffect(() => {
     fetchChatHeads();
-  }, [fetchChatHeads]);
+    fetchAllParents();
+  }, [fetchChatHeads, fetchAllParents, searchQuery]);
 
   useEffect(() => {
-    if (selectedChatId) fetchMessages();
-  }, [selectedChatId, fetchMessages]);
+    if (selectedParentId) fetchMessages();
+  }, [selectedParentId, fetchMessages]);
 
   useEffect(() => {
     if (messagesContainerRef.current && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "instant" });
     }
-  }, [selectedChatId, messages]);
+  }, [selectedParentId, messages]);
 
   const filteredChatHeads = chatHeads.filter((chat) =>
-    chat.learnerName.toLowerCase().includes(searchQuery.toLowerCase())
+    chat.parentName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredParentsForModal = allParents.filter((parent) =>
+    parent.parentName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="h-[calc(100vh-120px)] flex flex-col bg-gray-100 dark:bg-gray-900 overflow-hidden touch-action-manipulation">
+    <div className="h-[calc(100vh-120px)] flex flex-col bg-gray-100 dark:bg-gray-900 overflow-hidden relative">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="flex flex-1 overflow-hidden relative"
       >
-        {/* Sidebar (Chat Heads) */}
+        {/* Sidebar (Parent Chats) */}
         <div
           ref={sidebarRef}
           className={`fixed inset-0 w-full md:w-72 xs:md:w-80 bg-white dark:bg-gray-800 shadow-lg transform ${
-            selectedChatId
+            selectedParentId
               ? "translate-x-full md:translate-x-0"
               : "translate-x-0"
           } md:relative transition-transform duration-300 z-50 flex flex-col`}
         >
           <div className="p-3 xs:p-4 border-b dark:border-gray-700 flex items-center justify-between">
             <h1 className="text-lg xs:text-xl font-bold text-gray-900 dark:text-white">
-              Conversations
+              Parent Chats
             </h1>
+            <input
+              type="text"
+              placeholder="Search parents..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="p-1 rounded-lg border dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-sm"
+            />
           </div>
-          <div className="flex-1 overflow-y-auto p-2 xs:p-3 touch-action-pan-y">
+          <div className="flex-1 overflow-y-auto p-2 xs:p-3">
             <AnimatePresence>
               {isLoading ? (
                 <motion.div
@@ -504,19 +557,16 @@ const MessagingPage: React.FC = () => {
               ) : filteredChatHeads.length > 0 ? (
                 filteredChatHeads.map((chat) => (
                   <motion.div
-                    key={chat.id}
+                    key={chat.parentId}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <ConversationItem
+                    <ParentItem
                       chat={chat}
-                      isSelected={selectedChatId === chat.id}
-                      onClick={() => {
-                        console.log("Chat selected:", chat.id);
-                        setSelectedChatId(chat.id);
-                      }}
+                      isSelected={selectedParentId === chat.parentId}
+                      onClick={() => setSelectedParentId(chat.parentId)}
                     />
                   </motion.div>
                 ))
@@ -526,23 +576,30 @@ const MessagingPage: React.FC = () => {
                   animate={{ opacity: 1 }}
                   className="text-gray-500 dark:text-gray-400 text-center py-8"
                 >
-                  No conversations yet - Debug: chatHeads length:{" "}
-                  {chatHeads.length}
+                  No parent chats yet
                 </motion.p>
               )}
             </AnimatePresence>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsNewChatModalOpen(true)}
+              className="fixed bottom-6 right-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:from-purple-700 hover:to-indigo-700 z-50"
+            >
+              <Lucide icon="Plus" className="w-6 h-6" />
+            </motion.button>
           </div>
         </div>
 
         {/* Messages Area */}
         <div
           className={`fixed inset-0 flex flex-col md:flex-1 md:static transform ${
-            selectedChatId
+            selectedParentId
               ? "translate-x-0"
               : "-translate-x-full md:translate-x-0"
           } transition-transform duration-300 z-40`}
         >
-          {selectedChatId && (
+          {selectedParentId && (
             <>
               <div className="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900 min-h-0">
                 {/* Header */}
@@ -550,7 +607,7 @@ const MessagingPage: React.FC = () => {
                   <div className="flex items-center space-x-2 xs:space-x-3">
                     <button
                       className="text-white p-1"
-                      onClick={() => setSelectedChatId("")}
+                      onClick={() => setSelectedParentId("")}
                     >
                       <Lucide icon="ArrowLeft" className="w-5 h-5" />
                     </button>
@@ -558,8 +615,13 @@ const MessagingPage: React.FC = () => {
                       <img
                         className="w-10 h-10 xs:w-12 xs:h-12 rounded-full border-2 border-white object-cover"
                         src={
-                          chatHeads.find((ch) => ch.id === selectedChatId)
-                            ?.avatar || user.avatar
+                          chatHeads.find(
+                            (ch) => ch.parentId === selectedParentId
+                          )?.avatar ||
+                          allParents.find(
+                            (p) => p.parentId === selectedParentId
+                          )?.avatar ||
+                          user.avatar
                         }
                         alt="avatar"
                         loading="lazy"
@@ -568,20 +630,14 @@ const MessagingPage: React.FC = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h2 className="text-white text-base xs:text-lg font-semibold truncate">
-                        {chatHeads.find((ch) => ch.id === selectedChatId)
-                          ?.learnerName || "Learner"}
+                        {chatHeads.find(
+                          (ch) => ch.parentId === selectedParentId
+                        )?.parentName ||
+                          allParents.find(
+                            (p) => p.parentId === selectedParentId
+                          )?.parentName ||
+                          "Parent"}
                       </h2>
-                      <p className="text-gray-200 text-xs xs:text-sm">
-                        {
-                          chatHeads.find((ch) => ch.id === selectedChatId)
-                            ?.streamName
-                        }{" "}
-                        -{" "}
-                        {
-                          chatHeads.find((ch) => ch.id === selectedChatId)
-                            ?.classManagerName
-                        }
-                      </p>
                     </div>
                   </div>
                 </div>
@@ -589,7 +645,7 @@ const MessagingPage: React.FC = () => {
                 {/* Messages Container */}
                 <div
                   ref={messagesContainerRef}
-                  className="flex-1 overflow-y-auto p-3 xs:p-4 touch-action-pan-y"
+                  className="flex-1 overflow-y-auto p-3 xs:p-4"
                 >
                   <AnimatePresence>
                     {isLoading ? (
@@ -616,7 +672,7 @@ const MessagingPage: React.FC = () => {
                         <MessageBubble
                           key={message.id || message.createdAt.toString()}
                           message={message}
-                          isOwnMessage={message.sender === user.id}
+                          isOwnMessage={message.sender === user?.school?._id}
                           onClick={(msg) =>
                             console.log("Message clicked:", msg)
                           }
@@ -643,8 +699,7 @@ const MessagingPage: React.FC = () => {
                           initial={{ opacity: 0, scale: 0.9, y: 10 }}
                           animate={{ opacity: 1, scale: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.9, y: -10 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="relative flex items-center bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+                          className="relative flex items-center bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 p-2 rounded-xl shadow-sm"
                         >
                           <Lucide
                             icon={
@@ -660,8 +715,7 @@ const MessagingPage: React.FC = () => {
                             onClick={() => removeAttachment(index)}
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            className="ml-2 text-red-500 hover:text-red-600 transition-colors duration-200"
-                            aria-label={`Remove ${file.name}`}
+                            className="ml-2 text-red-500 hover:text-red-600"
                           >
                             <Lucide icon="X" className="w-4 h-4" />
                           </motion.button>
@@ -674,13 +728,12 @@ const MessagingPage: React.FC = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="relative flex items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl p-2 shadow-sm border border-gray-200 dark:border-gray-700 focus-within:ring-2 focus-within:ring-purple-400 focus-within:border-transparent transition-all duration-300"
+                  className="relative flex items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl p-2 shadow-sm border border-gray-200 dark:border-gray-700"
                 >
                   <textarea
                     {...register("content")}
                     placeholder="Type your message..."
-                    className="flex-1 p-2 bg-transparent text-gray-900 dark:text-white text-sm sm:text-base resize-none min-h-[40px] max-h-[100px] overflow-y-auto focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200"
+                    className="flex-1 p-2 bg-transparent text-gray-900 dark:text-white text-sm sm:text-base resize-none min-h-[40px] max-h-[100px] overflow-y-auto focus:outline-none placeholder-gray-400 dark:placeholder-gray-500"
                     disabled={isSubmitting}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
@@ -693,7 +746,7 @@ const MessagingPage: React.FC = () => {
                     <motion.label
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="p-1 text-gray-500 hover:text-purple-500 cursor-pointer transition-colors duration-200"
+                      className="p-1 text-gray-500 hover:text-purple-500 cursor-pointer"
                     >
                       <input
                         type="file"
@@ -708,9 +761,8 @@ const MessagingPage: React.FC = () => {
                       type="submit"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="p-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full disabled:bg-gray-400 transition-all duration-300"
+                      className="p-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full disabled:bg-gray-400"
                       disabled={isSubmitting}
-                      aria-label="Send message"
                     >
                       <Lucide icon="Send" className="w-5 h-5" />
                     </motion.button>
@@ -720,9 +772,75 @@ const MessagingPage: React.FC = () => {
             </>
           )}
         </div>
+
+        {/* Floating Start New Chat Button */}
+
+        {/* New Chat Modal */}
+        {isNewChatModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Start New Chat
+                </h2>
+                <button
+                  onClick={() => setIsNewChatModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
+                >
+                  <Lucide icon="X" className="w-5 h-5" />
+                </button>
+              </div>
+              <input
+                type="text"
+                placeholder="Search parents..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full p-2 mb-4 rounded-lg border dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-sm"
+              />
+              <div className="max-h-60 overflow-y-auto">
+                {filteredParentsForModal.length > 0 ? (
+                  filteredParentsForModal.map((parent) => (
+                    <div
+                      key={parent.parentId}
+                      className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                      onClick={() => {
+                        setSelectedParentId(parent.parentId);
+                        setIsNewChatModalOpen(false);
+                        setSearchQuery("");
+                      }}
+                    >
+                      <img
+                        className="w-10 h-10 rounded-full mr-3 object-cover"
+                        src={parent.avatar || user.avatar}
+                        alt={`${parent.parentName}'s avatar`}
+                      />
+                      <span className="text-sm text-gray-900 dark:text-white">
+                        {parent.parentName}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400 text-center">
+                    No parents found
+                  </p>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
 };
 
-export default MessagingPage;
+export default AdminMessagingPage;

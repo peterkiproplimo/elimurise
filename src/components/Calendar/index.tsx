@@ -79,9 +79,9 @@ const Calendar: React.FC<CalendarProps> = ({
               "#calendar-events"
             ) as HTMLElement;
             if (eventContainer && eventContainer.children.length === 1) {
-              document
-                .querySelector("#calendar-no-events")
-                ?.classNameList.remove("hidden");
+              // document
+              //   .querySelector("#calendar-no-events")
+              //   ?.classNameList.remove("hidden");
             }
           }
         }}
