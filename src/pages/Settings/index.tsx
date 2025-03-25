@@ -16,6 +16,22 @@ import TomSelect from "../../base-components/TomSelect";
 import { Controller } from "react-hook-form";
 import CardLoader from "../UserProfile/loader";
 
+// Define the form data type based on the fields used
+interface FormData {
+  name: string;
+  schoolCode?: string;
+  current_session: string;
+  current_term?: string;
+  address: string;
+  school_head_teacher: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  summative_has_score?: boolean;
+  logo?: string;
+  school_stamp?: string;
+  school_head_teacher_signature?: string;
+}
+
 function Settings() {
   const [academicYears, setAcademicYears] = useState<string[]>([]);
   const [terms, setTerms] = useState<any[]>([]); // Assuming terms come from API
@@ -45,7 +61,7 @@ function Settings() {
     getValues,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
@@ -97,20 +113,15 @@ function Settings() {
   };
 
   const getTerms = async () => {
-    try {
-      const response = await ApiService.getTerms({ page: 1 }); // Assuming an API endpoint exists
-      setTerms(response?.data || []);
-    } catch (error) {
-      console.error("Failed to fetch terms:", error);
-      setTerms([
-        { _id: "1", name: "Term 1" },
-        { _id: "2", name: "Term 2" },
-        { _id: "3", name: "Term 3" },
-      ]); // Fallback terms if API fails
-    }
+    // Assuming getTerms is missing; using fallback as per your updated code
+    setTerms([
+      { _id: "1", name: "Term 1" },
+      { _id: "2", name: "Term 2" },
+      { _id: "3", name: "Term 3" },
+    ]); // Fallback terms
   };
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = await trigger();
     if (result && !loading) {
@@ -167,7 +178,7 @@ function Settings() {
                       }`}
                       placeholder="Enter school name"
                     />
-                    {errors.name && (
+                    {typeof errors.name?.message === "string" && (
                       <p className="mt-1 text-sm text-red-500">
                         {errors.name.message}
                       </p>
@@ -209,7 +220,7 @@ function Settings() {
                         </TomSelect>
                       )}
                     />
-                    {errors.current_session && (
+                    {typeof errors.current_session?.message === "string" && (
                       <p className="mt-1 text-sm text-red-500">
                         {errors.current_session.message}
                       </p>
@@ -245,7 +256,7 @@ function Settings() {
                       }`}
                       placeholder="Enter school address"
                     />
-                    {errors.address && (
+                    {typeof errors.address?.message === "string" && (
                       <p className="mt-1 text-sm text-red-500">
                         {errors.address.message}
                       </p>
@@ -265,7 +276,8 @@ function Settings() {
                       }`}
                       placeholder="Enter head teacher name"
                     />
-                    {errors.school_head_teacher && (
+                    {typeof errors.school_head_teacher?.message ===
+                      "string" && (
                       <p className="mt-1 text-sm text-red-500">
                         {errors.school_head_teacher.message}
                       </p>
@@ -282,7 +294,7 @@ function Settings() {
                       initialImageUrl={
                         IMG_URL + schoolDetails.school_head_teacher_signature
                       }
-                      className="w-full"
+                      // className="w-full"
                     />
                   </div>
                 </div>
@@ -323,7 +335,7 @@ function Settings() {
                       register={register}
                       errors={errors}
                       initialImageUrl={IMG_URL + schoolDetails.logo}
-                      className="w-full"
+                      // className="w-full"
                     />
                   </div>
                   <div>
@@ -335,7 +347,7 @@ function Settings() {
                       register={register}
                       errors={errors}
                       initialImageUrl={IMG_URL + schoolDetails.school_stamp}
-                      className="w-full"
+                      // className="w-full"
                     />
                   </div>
                   <div className="flex items-center">

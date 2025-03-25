@@ -4,7 +4,7 @@ import { IMG_URL } from "../../utils/constants";
 
 interface PassportUploadProps {
   name: string;
-  register: UseFormRegister<FieldValues>;
+  register: any;
   errors: FieldErrors<FieldValues>;
   initialImageUrl?: string; // optional, since it might not be provided
 }

@@ -21,6 +21,8 @@ import Notification, {
   NotificationElement,
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../contexts/Auth";
+
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MessageCircle, Search } from "lucide-react";
@@ -53,6 +55,8 @@ const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
 });
 function Main() {
   // const [confirmDelete, setConfirmDelete] = useState(false);
+  const { hasPermission } = useAuth();
+
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
@@ -383,7 +387,7 @@ function Main() {
   };
   useEffect(() => {
     getGrades();
-    getParents();
+    // getParents();
   }, []);
   useEffect(() => {
     getStreams();
@@ -545,10 +549,10 @@ function Main() {
       );
       const pagination = response.pagination;
       setPagination({
-        current_page: pagination.current_page,
+        current_page: Number(pagination.current_page),
         total: pagination.total,
         total_pages: pagination.total_pages,
-        per_page: pagination.per_page,
+        per_page: Number(pagination.per_page),
       });
       setLearners(response.data);
     } catch (error) {
@@ -561,11 +565,13 @@ function Main() {
     setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
     setSortField(field);
   };
-  const getParents = async () => {
+  const getParents = async (search: any) => {
     const response = await ApiService.getParents({
       page: 1,
+      search,
     });
-    setParents(response.data);
+    // setParents(response.data);
+    return response.data;
   };
   const getStreams = async () => {
     const response = await ApiService.getStream({ grade: grade });
@@ -632,8 +638,9 @@ function Main() {
     setGroup(record?.groups);
     setPhoto(record?.photo);
     setGrade(record?.stream?.grade?._id);
-    setGuardianIdNo(record?.guardian?.email);
-    setGuardianIdNo2(record?.guardian2?.email);
+
+    // setGuardianIdNo(record?.guardian?.email);
+    // setGuardianIdNo2(record?.guardian2?.email);
     reset({
       ...record,
       image: "",
@@ -929,6 +936,9 @@ function Main() {
   const closeZoom = () => {
     setZoomedImage(null);
   };
+  const [activeTabLearner, setActiveTabLearner] = useState<
+    "learner" | "parent1" | "parent2"
+  >("learner");
   return (
     <>
       <div className="fixed bottom-6 right-6 z-50">
@@ -1131,35 +1141,30 @@ function Main() {
       </div>
       {dialog && !profile ? (
         <>
-          <div className="flex items-center mt-8 ">
+          {/* Enhanced Top Section */}
+          <div className="flex items-center bg-white  p-4 rounded-t-2xl shadow-lg">
             <a
               onClick={(event: React.MouseEvent) => {
                 event.preventDefault();
-                // cancel({ name: "" });
-
+                cancel({ name: "" });
                 setDialog(false);
                 setIsEditMode(false);
               }}
               href="#"
+              className="text-black hover:text-gray-200 transition-colors"
             >
-              <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+              <Lucide icon="ArrowLeft" className="w-6 h-6" />
             </a>
-            <h2 className="mr-auto text-lg font-medium">
+            <h2 className="ml-4 text-xl font-semibold text-black">
               {isEditMode ? "Edit Learner" : "New Learner"}
             </h2>
           </div>
-          <br />
-          <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
-            {/* {message && !success && (
-              <Alert
-                variant="soft-danger"
-                className="flex items-center mb-2"
-                dismissTimeout={9000}
-              >
-                <Lucide icon="AlertCircle" className="w-6 h-6 mr-2" /> {message}
-              </Alert>
-            )} */}
-            <div>
+          <form
+            className="mt-8 p-8 bg-white rounded-2xl shadow-xl  mx-auto border border-gray-100 animate-fade-in"
+            onSubmit={onSubmit}
+          >
+            {/* Close Button */}
+            <div className="absolute top-4 right-4">
               <a
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
@@ -1167,551 +1172,693 @@ function Main() {
                   setIsEditMode(false);
                   setDialog(false);
                 }}
-                className="absolute top-0 right-0 mt-3 mr-3"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 href="#"
-              ></a>
+              >
+                <Lucide icon="X" className="w-6 h-6" />
+              </a>
             </div>
-            <fieldset className="mt-5 p-5  box validate-form">
-              <legend className="text-lg font-semibold">Learner Details</legend>
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    First Name<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("first_name")}
-                    type="text"
-                    name="first_name"
-                    className={errors.first_name ? "border-danger" : ""}
-                    placeholder="First name"
-                  />
-                  {errors.first_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.first_name.message === "string" &&
-                        errors.first_name.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Middle Name<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("last_name")}
-                    type="text"
-                    name="last_name"
-                    className={errors.last_name ? "border-danger" : ""}
-                    placeholder="Last name"
-                  />
-                  {errors.last_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.last_name.message === "string" &&
-                        errors.last_name.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Surname</FormLabel>
-                  <FormInput
-                    {...register("surname")}
-                    type="text"
-                    name="surname"
-                    className={errors.surname ? "border-danger" : ""}
-                    placeholder="Surname"
-                  />
-                  {errors.surname && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.surname.message === "string" &&
-                        errors.surname.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-6 sm:col-span-4 py-2">
-                  <FormLabel htmlFor="modal-form-6">Gender</FormLabel>
-                  <FormSelect
-                    {...register("gender")}
-                    name="gender"
-                    // defaultValue={selectedLevel}
-                  >
-                    <option value={""}>Select Gender</option>
-                    <option value={"Male"}>Male</option>
-                    <option value={"Female"}>Female</option>
-                  </FormSelect>
-                  {errors.guardian2_relationship && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_relationship.message ===
-                        "string" && errors.guardian2_relationship.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Admission Number
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("adm_no")}
-                    type="text"
-                    name="adm_no"
-                    className={errors.adm_no ? "border-danger" : ""}
-                    placeholder="Admission no"
-                  />
-                  {errors.adm_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.adm_no.message === "string" &&
-                        errors.adm_no.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Assessment Number
-                    {/* <span className="text-danger ml-0.5">*</span> */}
-                  </FormLabel>
-                  <FormInput
-                    {...register("assessment_no")}
-                    type="number"
-                    name="assessment_no"
-                    className={errors.adm_no ? "border-danger" : ""}
-                    placeholder="Assessment No"
-                  />
-                  {errors.adm_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.adm_no.message === "string" &&
-                        errors.adm_no.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Nemis No</FormLabel>
-                  <FormInput
-                    {...register("nemis_no")}
-                    type="number"
-                    name="nemis_no"
-                    className={errors.nemis_no ? "border-danger" : ""}
-                    placeholder="Nemis no"
-                  />
-                  {errors.nemis_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.nemis_no.message === "string" &&
-                        errors.nemis_no.message}
-                    </div>
-                  )}
-                </div>
-                {!isEditMode && (
-                  <>
-                    {" "}
-                    <div className="col-span-4 sm:col-span-4">
-                      <FormLabel htmlFor="modal-form-6">
-                        Grade<span className="text-danger ml-0.5">*</span>
-                      </FormLabel>
-                      <TomSelect
-                        name="grade"
-                        value={grade}
-                        className={errors.grade ? "border-danger" : ""}
-                        onChange={(event: any) => {
-                          reset({ ...getValues(), grade: event });
-                          setGrade(event);
-                        }}
-                        disabled={isEditMode}
-                      >
-                        <option value={""} selected>
-                          Select Grade
-                        </option>
-                        {grades.map((grade: any, key) => (
-                          <option key={key} value={grade._id}>
-                            {grade.name}
+
+            {/* Tabs */}
+            <div className="flex border-b border-gray-200 mb-6">
+              <button
+                type="button"
+                className={`flex-1 py-3 px-4 text-center font-semibold text-sm transition-all ${
+                  activeTabLearner === "learner"
+                    ? "border-b-2 border-indigo-600 text-indigo-600"
+                    : "text-gray-500 hover:text-indigo-500"
+                }`}
+                onClick={() => setActiveTabLearner("learner")}
+              >
+                Learner Details
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-3 px-4 text-center font-semibold text-sm transition-all ${
+                  activeTabLearner === "parent1"
+                    ? "border-b-2 border-indigo-600 text-indigo-600"
+                    : "text-gray-500 hover:text-indigo-500"
+                }`}
+                onClick={() => setActiveTabLearner("parent1")}
+              >
+                Parent 1 Details
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-3 px-4 text-center font-semibold text-sm transition-all ${
+                  activeTabLearner === "parent2"
+                    ? "border-b-2 border-indigo-600 text-indigo-600"
+                    : "text-gray-500 hover:text-indigo-500"
+                }`}
+                onClick={() => setActiveTabLearner("parent2")}
+              >
+                Parent 2 Details
+              </button>
+            </div>
+
+            {/* Tab Content */}
+            <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+              {activeTabLearner === "learner" && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      First Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormInput
+                      {...register("first_name")}
+                      type="text"
+                      name="first_name"
+                      className={`mt-1 w-full rounded-lg border ${
+                        errors.first_name ? "border-red-500" : "border-gray-300"
+                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="First name"
+                    />
+                    {errors.first_name && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.first_name.message === "string" &&
+                          errors.first_name.message}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Middle Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormInput
+                      {...register("last_name")}
+                      type="text"
+                      name="last_name"
+                      className={`mt-1 w-full rounded-lg border ${
+                        errors.last_name ? "border-red-500" : "border-gray-300"
+                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="Last name"
+                    />
+                    {errors.last_name && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.last_name.message === "string" &&
+                          errors.last_name.message}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Surname
+                    </FormLabel>
+                    <FormInput
+                      {...register("surname")}
+                      type="text"
+                      name="surname"
+                      className={`mt-1 w-full rounded-lg border ${
+                        errors.surname ? "border-red-500" : "border-gray-300"
+                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="Surname"
+                    />
+                    {errors.surname && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.surname.message === "string" &&
+                          errors.surname.message}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <FormLabel
+                      className="text-sm font-medium text-gray-700"
+                      htmlFor="modal-form-6"
+                    >
+                      Gender
+                    </FormLabel>
+                    <FormSelect
+                      {...register("gender")}
+                      name="gender"
+                      className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </FormSelect>
+                    {errors.guardian2_relationship && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.guardian2_relationship.message ===
+                          "string" && errors.guardian2_relationship.message}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Admission Number <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormInput
+                      {...register("adm_no")}
+                      type="text"
+                      name="adm_no"
+                      className={`mt-1 w-full rounded-lg border ${
+                        errors.adm_no ? "border-red-500" : "border-gray-300"
+                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="Admission no"
+                    />
+                    {errors.adm_no && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.adm_no.message === "string" &&
+                          errors.adm_no.message}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Nemis No
+                    </FormLabel>
+                    <FormInput
+                      {...register("nemis_no")}
+                      type="number"
+                      name="nemis_no"
+                      className={`mt-1 w-full rounded-lg border ${
+                        errors.nemis_no ? "border-red-500" : "border-gray-300"
+                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="Nemis no"
+                    />
+                    {errors.nemis_no && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.nemis_no.message === "string" &&
+                          errors.nemis_no.message}
+                      </div>
+                    )}
+                  </div>
+                  {!isEditMode && (
+                    <>
+                      <div>
+                        <FormLabel
+                          className="text-sm font-medium text-gray-700"
+                          htmlFor="modal-form-6"
+                        >
+                          Grade <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <TomSelect
+                          name="grade"
+                          value={grade}
+                          className={`mt-1 w-full rounded-lg ${
+                            errors.grade ? "border-red-500" : "border-gray-300"
+                          }`}
+                          onChange={(event: any) => {
+                            reset({ ...getValues(), grade: event });
+                            setGrade(event);
+                          }}
+                          disabled={isEditMode}
+                        >
+                          <option value="" selected>
+                            Select Grade
                           </option>
-                        ))}
-                      </TomSelect>
-                      {errors.grade && (
-                        <div className="mt-2 text-danger">
-                          {typeof errors.grade.message === "string" &&
-                            errors.grade.message}
-                        </div>
-                      )}
-                    </div>
-                    <div className="col-span-12 sm:col-span-4">
-                      <FormLabel htmlFor="modal-form-6">
-                        Stream<span className="text-danger ml-0.5">*</span>
+                          {grades.map((grade: any, key) => (
+                            <option key={key} value={grade._id}>
+                              {grade.name}
+                            </option>
+                          ))}
+                        </TomSelect>
+                        {errors.grade && (
+                          <div className="mt-2 text-red-500 text-sm">
+                            {typeof errors.grade.message === "string" &&
+                              errors.grade.message}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <FormLabel
+                          className="text-sm font-medium text-gray-700"
+                          htmlFor="modal-form-6"
+                        >
+                          Stream <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormSelect
+                          {...register("stream")}
+                          name="stream"
+                          className={`mt-1 w-full rounded-lg border ${
+                            errors.stream ? "border-red-500" : "border-gray-300"
+                          } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                          disabled={isEditMode}
+                        >
+                          <option value="">Select Stream</option>
+                          {streams.map((stream: any, key) => (
+                            <option key={key} value={stream._id}>
+                              {stream.name}
+                            </option>
+                          ))}
+                        </FormSelect>
+                        {errors.stream && (
+                          <div className="mt-2 text-red-500 text-sm">
+                            {typeof errors.stream.message === "string" &&
+                              errors.stream.message}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                  <div>
+                    <FormLabel
+                      className="text-sm font-medium text-gray-700"
+                      htmlFor="modal-form-6"
+                    >
+                      Passport Photo
+                    </FormLabel>
+                    <PassportUpload
+                      name="image"
+                      register={register}
+                      errors={errors}
+                      initialImageUrl={c.IMG_URL + photo}
+                      // className="mt-1 w-full"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeTabLearner === "parent1" && (
+                <>
+                  <div className="mb-6">
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Search Parent <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <TomSelect
+                      {...register("guardian_id_no")}
+                      name="guardian_id_no"
+                      value={guardianIdNo}
+                      onChange={(event: any) => {
+                        reset({ ...getValues(), parent: event });
+                        setGuardianIdNo(event);
+                        handleGuardianIdNoBlur();
+                      }}
+                      className={`mt-1 w-full rounded-lg ${
+                        errors.guardian_id_no
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } focus:ring-2 focus:ring-indigo-500 transition-all bg-white shadow-sm`}
+                      options={{
+                        load: async (query: any, callback: any) => {
+                          const parents = await getParents(query);
+                          const options = parents
+                            .filter(
+                              (parent: any) => parent.email !== guardianIdNo2
+                            )
+                            .map((parent: any) => ({
+                              value: parent.email,
+                              text: `${parent.first_name} ${parent.last_name} - ${parent.email}`,
+                            }));
+                          callback(options);
+                        },
+                        placeholder: "Search for a parent by email...",
+                        loadThrottle: 300,
+                        maxOptions: 50,
+                      }}
+                    >
+                      <option value="">Select Email</option>
+                    </TomSelect>
+                    <FormInput
+                      {...register("guardian")}
+                      type="hidden"
+                      name="guardian"
+                      className={
+                        errors.guardian_id_no
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }
+                      placeholder="Parent ID number"
+                    />
+                    {errors.guardian_id_no && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.guardian_id_no.message === "string" &&
+                          errors.guardian_id_no.message}
+                      </div>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <FormLabel
+                        className="text-sm font-medium text-gray-700"
+                        htmlFor="modal-form-6"
+                      >
+                        Relationship
                       </FormLabel>
                       <FormSelect
-                        {...register("stream")}
-                        name="stream"
-                        className={errors.stream ? "border-danger" : ""}
-                        disabled={isEditMode}
+                        {...register("guardian_relationship")}
+                        name="guardian_relationship"
+                        className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
                       >
-                        <option value={""}>Select Stream</option>
-                        {streams.map((stream: any, key) => (
-                          <option key={key} value={stream._id}>
-                            {stream.name}
-                          </option>
-                        ))}
+                        <option value="">Select Relationship</option>
+                        <option value="Father">Father</option>
+                        <option value="Mother">Mother</option>
+                        <option value="Guardian">Guardian</option>
                       </FormSelect>
-                      {errors.stream && (
-                        <div className="mt-2 text-danger">
-                          {typeof errors.stream.message === "string" &&
-                            errors.stream.message}
+                      {errors.guardian_relationship && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian_relationship.message ===
+                            "string" && errors.guardian_relationship.message}
                         </div>
                       )}
                     </div>
-                    {/* <div className="col-span-12 sm:col-span-4"></div>
-                    <div className="col-span-12 sm:col-span-4"></div> */}
-                  </>
-                )}
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent First Name{" "}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian_first_name")}
+                        type="text"
+                        name="guardian_first_name"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian_first_name
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Parent First name"
+                        disabled
+                      />
+                      {errors.guardian_first_name && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian_first_name.message ===
+                            "string" && errors.guardian_first_name.message}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Surname
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian_surname")}
+                        type="text"
+                        name="guardian_surname"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian_surname
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Parent surname"
+                        disabled
+                      />
+                      {errors.guardian_surname && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian_surname.message ===
+                            "string" && errors.guardian_surname.message}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Last Name <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian_last_name")}
+                        type="text"
+                        name="guardian_last_name"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian_last_name
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Parent Last name"
+                        disabled
+                      />
+                      {errors.guardian_last_name && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian_last_name.message ===
+                            "string" && errors.guardian_last_name.message}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Email
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian_email")}
+                        type="text"
+                        name="guardian_email"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian_email
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Parent email"
+                        disabled
+                      />
+                      {errors.guardian_email && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian_email.message === "string" &&
+                            errors.guardian_email.message}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Phone
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian_phone")}
+                        type="text"
+                        name="guardian_phone"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian_phone
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Parent phone"
+                        disabled
+                      />
+                      {errors.guardian_phone && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian_phone.message === "string" &&
+                            errors.guardian_phone.message}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
 
-                <div className="col-span-12 sm:col-span-4">
-                  <FormLabel htmlFor="modal-form-6">Passport Photo</FormLabel>
-                  <PassportUpload
-                    name={"image"}
-                    register={register}
-                    errors={errors}
-                    initialImageUrl={c.IMG_URL + photo}
-                  />
-                </div>
-              </div>
-            </fieldset>
-            <fieldset className="mt-5 p-5  box validate-form">
-              <legend className="text-lg font-semibold">
-                Parent 1 Details
-              </legend>
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Parent Email
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <TomSelect
-                    {...register("guardian_id_no")}
-                    name="guardian_id_no"
-                    value={guardianIdNo}
-                    onChange={(event: any) => {
-                      reset({ ...getValues(), parent: event });
-                      setGuardianIdNo(event);
-                    }}
-                    className={errors.guardian_id_no ? "border-danger" : ""}
-                  >
-                    <option>Select Email</option>
-                    {parents
-                      .filter((parent: any) => parent.email !== guardianIdNo2)
-                      .map((parent: any, key) => (
-                        <option key={key} value={parent.email}>
-                          {parent?.first_name} {parent?.last_name} -{" "}
-                          {parent?.email}
-                        </option>
-                      ))}
-                  </TomSelect>
-                  <FormInput
-                    {...register("guardian")}
-                    type="hidden"
-                    name="guardian"
-                    className={errors.guardian_id_no ? "border-danger" : ""}
-                    placeholder="Parent ID number"
-                  />
-                  {errors.guardian_id_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_id_no.message === "string" &&
-                        errors.guardian_id_no.message}
+              {activeTabLearner === "parent2" && (
+                <>
+                  <div className="flex items-center mb-6">
+                    <div className="flex-1">
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Search Parent 2 <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <TomSelect
+                        {...register("guardian_id_no")}
+                        name="guardian_id_no"
+                        value={guardianIdNo}
+                        onChange={(event: any) => {
+                          reset({ ...getValues(), guardian2_id_no: event });
+                          setGuardianIdNo2(event);
+                          handleGuardianIdNoBlur2();
+                        }}
+                        className={`mt-1 w-full rounded-lg ${
+                          errors.guardian_id_no
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } focus:ring-2 focus:ring-indigo-500 transition-all bg-white shadow-sm`}
+                        options={{
+                          load: async (query: any, callback: any) => {
+                            const parents = await getParents(query);
+                            const options = parents
+                              .filter(
+                                (parent: any) => parent.email !== guardianIdNo
+                              )
+                              .map((parent: any) => ({
+                                value: parent.email,
+                                text: `${parent.first_name} ${parent.last_name} - ${parent.email}`,
+                              }));
+                            callback(options);
+                          },
+                          placeholder: "Search for a parent by email...",
+                          loadThrottle: 300,
+                          maxOptions: 50,
+                        }}
+                      >
+                        <option value="">Select Email</option>
+                      </TomSelect>
+                      <FormInput
+                        {...register("guardian2")}
+                        type="hidden"
+                        name="guardian2"
+                        className={
+                          errors.guardian2_id_no
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }
+                        placeholder="Second Parent ID number"
+                      />
+                      {errors.guardian2_id_no && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian2_id_no.message === "string" &&
+                            errors.guardian2_id_no.message}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="col-span-6 sm:col-span-4 py-2">
-                  <FormLabel htmlFor="modal-form-6">Relationship</FormLabel>
-                  <FormSelect
-                    {...register("guardian_relationship")}
-                    name="guardian_relationship"
-                    // defaultValue={selectedLevel}
-                  >
-                    <option value={""}>Select Relationship</option>
-                    <option value={"Father"}>Father</option>
-                    <option value={"Mother"}>Mother</option>
-                    <option value={"Guardian"}>Guardian</option>
-                  </FormSelect>
-                  {errors.guardian_relationship && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_relationship.message ===
-                        "string" && errors.guardian_relationship.message}
+                    <Lucide
+                      icon="Trash"
+                      className="w-5 h-5 text-red-500 hover:text-red-700 cursor-pointer transition-colors ml-4 mt-6"
+                      onClick={handleToggleParent2}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <FormLabel
+                        className="text-sm font-medium text-gray-700"
+                        htmlFor="modal-form-6"
+                      >
+                        Relationship
+                      </FormLabel>
+                      <FormSelect
+                        {...register("guardian2_relationship")}
+                        name="guardian2_relationship"
+                        className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                      >
+                        <option value="">Select Relationship</option>
+                        <option value="Father">Father</option>
+                        <option value="Mother">Mother</option>
+                        <option value="Guardian">Guardian</option>
+                      </FormSelect>
+                      {errors.guardian2_relationship && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian2_relationship.message ===
+                            "string" && errors.guardian2_relationship.message}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Parent First Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian_first_name")}
-                    type="text"
-                    name="guardian_first_name"
-                    className={
-                      errors.guardian_first_name ? "border-danger" : ""
-                    }
-                    placeholder="Parent First name"
-                    disabled
-                  />
-                  {errors.guardian_first_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_first_name.message === "string" &&
-                        errors.guardian_first_name.message}
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent First Name{" "}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian2_first_name")}
+                        type="text"
+                        name="guardian2_first_name"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian2_first_name
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Second Parent First name"
+                        disabled
+                      />
+                      {errors.guardian2_first_name && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian2_first_name.message ===
+                            "string" && errors.guardian2_first_name.message}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Parent Surname</FormLabel>
-                  <FormInput
-                    {...register("guardian_surname")}
-                    type="text"
-                    name="guardian_surname"
-                    className={errors.guardian_surname ? "border-danger" : ""}
-                    placeholder="Parent surname"
-                    disabled
-                  />
-                  {errors.guardian_surname && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_surname.message === "string" &&
-                        errors.guardian_surname.message}
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Surname
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian2_surname")}
+                        type="text"
+                        name="guardian2_surname"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian2_surname
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Second Parent surname"
+                        disabled
+                      />
+                      {errors.guardian2_surname && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian2_surname.message ===
+                            "string" && errors.guardian2_surname.message}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Parent Last Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian_last_name")}
-                    type="text"
-                    name="guardian_last_name"
-                    className={errors.guardian_last_name ? "border-danger" : ""}
-                    placeholder="Parent Last name"
-                    disabled
-                  />
-                  {errors.guardian_last_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_last_name.message === "string" &&
-                        errors.guardian_last_name.message}
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Last Name <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian2_last_name")}
+                        type="text"
+                        name="guardian2_last_name"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian2_last_name
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Second Parent Last name"
+                        disabled
+                      />
+                      {errors.guardian2_last_name && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian2_last_name.message ===
+                            "string" && errors.guardian2_last_name.message}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Email
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian2_email")}
+                        type="email"
+                        name="guardian2_email"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian2_email
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Second Parent email"
+                        disabled
+                      />
+                      {errors.guardian2_email && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian2_email.message === "string" &&
+                            errors.guardian2_email.message}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Parent Phone
+                      </FormLabel>
+                      <FormInput
+                        {...register("guardian2_phone")}
+                        type="text"
+                        name="guardian2_phone"
+                        className={`mt-1 w-full rounded-lg border ${
+                          errors.guardian2_phone
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        } bg-gray-100`}
+                        placeholder="Second Parent phone"
+                        disabled
+                      />
+                      {errors.guardian2_phone && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.guardian2_phone.message === "string" &&
+                            errors.guardian2_phone.message}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Parent Email</FormLabel>
-                  <FormInput
-                    {...register("guardian_email")}
-                    type="email"
-                    name="guardian_email"
-                    className={errors.guardian_email ? "border-danger" : ""}
-                    placeholder="Parent email"
-                    disabled
-                  />
-                  {errors.guardian_email && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_email.message === "string" &&
-                        errors.guardian_email.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Parent Phone</FormLabel>
-                  <FormInput
-                    {...register("guardian_phone")}
-                    type="text"
-                    name="guardian_phone"
-                    className={errors.guardian_phone ? "border-danger" : ""}
-                    placeholder="Parent phone"
-                    disabled
-                  />
-                  {errors.guardian_phone && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian_phone.message === "string" &&
-                        errors.guardian_phone.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </fieldset>
-            <fieldset className="mt-5 p-5 box validate-form">
-              <div className="flex items-center mb-4">
-                <legend className="text-lg font-semibold mr-4">
-                  Parent 2 Details
-                </legend>
-                <Lucide
-                  icon="Trash"
-                  className="w-4 h-4 cursor-pointer"
-                  onClick={handleToggleParent2} // Use onClick for the icon
-                />
-              </div>
-
-              <div className="grid grid-cols-12 gap-4 gap-y-3">
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Parent Email
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-
-                  <TomSelect
-                    {...register("guardian2_id_no")}
-                    name="guardian2_id_no"
-                    value={guardianIdNo2}
-                    onChange={(event: any) => {
-                      reset({ ...getValues(), guardian2_id_no: event });
-                      setGuardianIdNo2(event);
-                    }}
-                    className={errors.guardian2_id_no ? "border-danger" : ""}
-                  >
-                    <option>Select Email</option>
-                    {parents
-                      .filter((parent: any) => parent.email !== guardianIdNo)
-                      .map((parent: any, key) => (
-                        <option key={key} value={parent.email}>
-                          {parent?.email}
-                        </option>
-                      ))}
-                  </TomSelect>
-
-                  <FormInput
-                    {...register("guardian2")}
-                    type="hidden"
-                    name="guardian2"
-                    className={errors.guardian2_id_no ? "border-danger" : ""}
-                    placeholder="Second Parent ID number"
-                  />
-                  {errors.guardian2_id_no && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_id_no.message === "string" &&
-                        errors.guardian2_id_no.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-6 sm:col-span-4 py-2">
-                  <FormLabel htmlFor="modal-form-6">Relationship</FormLabel>
-                  <FormSelect
-                    {...register("guardian2_relationship")}
-                    name="guardian2_relationship"
-                  >
-                    <option value={""}>Select Relationship</option>
-                    <option value={"Father"}>Father</option>
-                    <option value={"Mother"}>Mother</option>
-                    <option value={"Guardian"}>Guardian</option>
-                  </FormSelect>
-                  {errors.guardian2_relationship && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_relationship.message ===
-                        "string" && errors.guardian2_relationship.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Parent First Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian2_first_name")}
-                    type="text"
-                    name="guardian2_first_name"
-                    className={
-                      errors.guardian2_first_name ? "border-danger" : ""
-                    }
-                    placeholder="Second Parent First name"
-                    disabled
-                  />
-                  {errors.guardian2_first_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_first_name.message ===
-                        "string" && errors.guardian2_first_name.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Parent Surname</FormLabel>
-                  <FormInput
-                    {...register("guardian2_surname")}
-                    type="text"
-                    name="guardian2_surname"
-                    className={errors.guardian2_surname ? "border-danger" : ""}
-                    placeholder="Second Parent surname"
-                    disabled
-                  />
-                  {errors.guardian2_surname && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_surname.message === "string" &&
-                        errors.guardian2_surname.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>
-                    Parent Last Name
-                    <span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormInput
-                    {...register("guardian2_last_name")}
-                    type="text"
-                    name="guardian2_last_name"
-                    className={
-                      errors.guardian2_last_name ? "border-danger" : ""
-                    }
-                    placeholder="Second Parent Last name"
-                    disabled
-                  />
-                  {errors.guardian2_last_name && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_last_name.message === "string" &&
-                        errors.guardian2_last_name.message}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Parent Email</FormLabel>
-                  <FormInput
-                    {...register("guardian2_email")}
-                    type="email"
-                    name="guardian2_email"
-                    className={errors.guardian2_email ? "border-danger" : ""}
-                    placeholder="Second Parent email"
-                    disabled
-                  />
-                  {errors.guardian2_email && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_email.message === "string" &&
-                        errors.guardian2_email.message}
-                    </div>
-                  )}
-                </div>
-                <div className="col-span-4 sm:col-span-4">
-                  <FormLabel>Parent Phone</FormLabel>
-                  <FormInput
-                    {...register("guardian2_phone")}
-                    type="text"
-                    name="guardian2_phone"
-                    className={errors.guardian2_phone ? "border-danger" : ""}
-                    placeholder="Second Parent phone"
-                    disabled
-                  />
-                  {errors.guardian2_phone && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.guardian2_phone.message === "string" &&
-                        errors.guardian2_phone.message}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </fieldset>
-
-            <div className="col-span-12 sm:col-span-12 mt-3">
+            {/* Buttons */}
+            <div className="mt-6 flex justify-end gap-4">
               <Button
                 type="button"
                 variant="outline-secondary"
-                onClick={() => {
-                  cancel({ name: "" });
-                }}
-                className="w-20 mr-1"
+                onClick={() => cancel({ name: "" })}
+                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all"
               >
                 Cancel
               </Button>
-              <Button variant="primary" type="submit" className="w-20">
+              <Button
+                variant="primary"
+                type="submit"
+                className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center disabled:bg-indigo-400"
+                disabled={loading}
+              >
                 Save
                 {loading && (
                   <LoadingIcon
@@ -2075,73 +2222,76 @@ function Main() {
                                     <i className="icon-eye mr-2"></i> View
                                     Profile
                                   </Menu.Item>
-                                  {is_admin() && (
-                                    <>
-                                      {" "}
-                                      <Menu.Item
-                                        onClick={(e: any) => {
-                                          e.preventDefault();
-                                          editRecord(learner);
-                                        }}
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                      >
-                                        <i className="icon-eye mr-2"></i> Edit
-                                        Profile
-                                      </Menu.Item>
-                                      <Menu.Item
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                        onClick={() => {
-                                          setApproveTranfer({
-                                            learners: [
-                                              {
-                                                id: learner._id,
-                                                status: "P",
-                                              },
-                                            ],
-                                            from_stream: learner.stream._id,
-                                            from_grade: learner.grade._id,
-                                            from_session:
-                                              learner.current_session,
-                                            next_session:
-                                              learner.current_session,
-                                          });
-                                          setApproveDialog(true);
-                                        }}
-                                      >
-                                        {/* <Lucide
+
+                                  {hasPermission("learners", "update") && (
+                                    <Menu.Item
+                                      onClick={(e: any) => {
+                                        e.preventDefault();
+                                        editRecord(learner);
+                                      }}
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    >
+                                      <i className="icon-eye mr-2"></i> Edit
+                                      Profile
+                                    </Menu.Item>
+                                  )}
+
+                                  {hasPermission("enrollment", "promote") && (
+                                    <Menu.Item
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                      onClick={() => {
+                                        setApproveTranfer({
+                                          learners: [
+                                            {
+                                              id: learner._id,
+                                              status: "P",
+                                            },
+                                          ],
+                                          from_stream: learner.stream._id,
+                                          from_grade: learner.grade._id,
+                                          from_session: learner.current_session,
+                                          next_session: learner.current_session,
+                                        });
+                                        setApproveDialog(true);
+                                      }}
+                                    >
+                                      {/* <Lucide
                                             icon="CheckSquare"
                                             className="w-4 h-4 mr-1"
                                           />{" "} */}
-                                        <i className="icon-eye mr-2"></i>
-                                        Transfer
-                                      </Menu.Item>
-                                      {(learner.status === "D" ||
-                                        learner.status === "P") && (
-                                        <Menu.Item
-                                          onClick={(e: any) => {
-                                            e.preventDefault();
-                                            disableRecord(learner._id);
-                                            // assuming you meant disableRecord instead of disbaleRecord
-                                          }}
-                                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                        >
-                                          <i className="icon-eye mr-2"></i>
-                                          {learner.status === "D"
-                                            ? "Enable "
-                                            : "Deactivate "}
-                                        </Menu.Item>
-                                      )}
+                                      <i className="icon-eye mr-2"></i>
+                                      Transfer
+                                    </Menu.Item>
+                                  )}
+                                  {(learner.status === "D" ||
+                                    learner.status === "P") &&
+                                    hasPermission("learners", "delete") && (
                                       <Menu.Item
                                         onClick={(e: any) => {
                                           e.preventDefault();
-                                          setRecordId(learner._id);
-                                          setViewMore(true);
+                                          disableRecord(learner._id);
+                                          // assuming you meant disableRecord instead of disbaleRecord
                                         }}
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                       >
-                                        <i className="icon-eye mr-2"></i> Delete
+                                        <i className="icon-eye mr-2"></i>
+                                        {learner.status === "D"
+                                          ? "Enable "
+                                          : "Deactivate "}
                                       </Menu.Item>
-                                    </>
+                                    )}
+
+                                  {hasPermission("learners", "delete") && (
+                                    <Menu.Item
+                                      onClick={(e: any) => {
+                                        e.preventDefault();
+                                        setRecordId(learner._id);
+                                        setViewMore(true);
+                                      }}
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    >
+                                      <i className="icon-eye mr-2"></i> Delete
+                                    </Menu.Item>
                                   )}
                                 </Menu.Items>
                               </Menu>
@@ -2152,57 +2302,135 @@ function Main() {
                     </Table.Tbody>
                   </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                  <div className="flex flex-wrap items-center col-span-12 sm:flex-nowrap gap-4 mt-6">
+                    {/* Pagination */}
+                    <div className="flex items-center w-full sm:w-auto sm:mr-auto">
+                      <nav className="flex items-center space-x-1">
+                        {/* Previous Button */}
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                          className="py-2 px-4 rounded-md"
+                          disabled={page === 1}
+                          className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 disabled:bg-gray-200 disabled:text-gray-400 transition-colors duration-200"
                         >
-                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                          <Lucide icon="ChevronLeft" className="w-5 h-5" />
                         </button>
-                        {_.times(pagination.total_pages).map((page, key) =>
-                          page + 1 == pagination.current_page ? (
+
+                        {/* Page Numbers with Ellipsis */}
+                        {pagination.total_pages <= 7 ? (
+                          // Show all pages if total_pages <= 7
+                          _.times(pagination.total_pages).map((_, index) => {
+                            const pageNum = index + 1;
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => setPage(pageNum)}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                  pageNum === pagination.current_page
+                                    ? "bg-indigo-600 text-white shadow-md"
+                                    : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          })
+                        ) : (
+                          // Show limited pages with ellipsis for larger counts
+                          <>
+                            {/* First Page */}
                             <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 bg-white rounded-md"
+                              onClick={() => setPage(1)}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                1 === pagination.current_page
+                                  ? "bg-indigo-600 text-white shadow-md"
+                                  : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                              }`}
                             >
-                              {page + 1}
+                              1
                             </button>
-                          ) : (
+
+                            {/* Ellipsis or nearby pages */}
+                            {pagination.current_page > 3 && (
+                              <span className="px-4 py-2 text-gray-500">
+                                ...
+                              </span>
+                            )}
+
+                            {/* Dynamic middle pages */}
+                            {_.range(
+                              Math.max(2, pagination.current_page - 1),
+                              Math.min(
+                                pagination.total_pages,
+                                pagination.current_page + 2
+                              )
+                            ).map((pageNum) => (
+                              <button
+                                key={pageNum}
+                                onClick={() => setPage(pageNum)}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                  pageNum === pagination.current_page
+                                    ? "bg-indigo-600 text-white shadow-md"
+                                    : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            ))}
+
+                            {/* Ellipsis or last pages */}
+                            {pagination.current_page <
+                              pagination.total_pages - 2 && (
+                              <span className="px-4 py-2 text-gray-500">
+                                ...
+                              </span>
+                            )}
+
+                            {/* Last Page */}
                             <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 rounded-md"
+                              onClick={() => setPage(pagination.total_pages)}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                                pagination.total_pages ===
+                                pagination.current_page
+                                  ? "bg-indigo-600 text-white shadow-md"
+                                  : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                              }`}
                             >
-                              {page + 1}
+                              {pagination.total_pages}
                             </button>
-                          )
+                          </>
                         )}
+
+                        {/* Next Button */}
                         <button
                           onClick={() =>
                             setPage(
-                              page < pagination.total_pages ? page + 1 : 1
+                              page < pagination.total_pages
+                                ? page + 1
+                                : pagination.total_pages
                             )
                           }
-                          className="py-2 px-4 rounded-md"
+                          disabled={page === pagination.total_pages}
+                          className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 disabled:bg-gray-200 disabled:text-gray-400 transition-colors duration-200"
                         >
-                          <Lucide icon="ChevronRight" className="w-4 h-4" />
+                          <Lucide icon="ChevronRight" className="w-5 h-5" />
                         </button>
-                      </Pagination>
-                      <div className="text-slate-500">
-                        <span className="mr-3">Total {pagination.total}</span>
-                        <FormSelect
-                          className="w-30 mt-3 !box sm:mt-0"
-                          onChange={(e) => setLimit(parseInt(e.target.value))}
-                        >
-                          <option value={10}>10/page</option>
-                          <option value={25}>25/page</option>
-                          <option value={50}>50/page</option>
-                          <option value={100}>100/page</option>
-                        </FormSelect>
-                      </div>
+                      </nav>
+                    </div>
+
+                    {/* Total and Limit Selector */}
+                    <div className="flex items-center space-x-4 text-gray-600">
+                      <span className="text-sm font-medium">
+                        Total: {pagination.total}
+                      </span>
+                      <FormSelect
+                        className="w-32 py-2 text-sm bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                        onChange={(e) => setLimit(parseInt(e.target.value))}
+                      >
+                        <option value={10}>10 / page</option>
+                        <option value={25}>25 / page</option>
+                        <option value={50}>50 / page</option>
+                        <option value={100}>100 / page</option>
+                      </FormSelect>
                     </div>
                   </div>
                 </>

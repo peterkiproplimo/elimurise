@@ -462,7 +462,9 @@ const MessagingPage: React.FC = () => {
 
   useEffect(() => {
     if (messagesContainerRef.current && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "instant" });
+      messagesEndRef.current.scrollIntoView({
+        behavior: "instant" as ScrollBehavior,
+      });
     }
   }, [selectedChatId, messages]);
 

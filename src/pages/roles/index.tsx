@@ -67,7 +67,7 @@ const MODULE_CONFIG: ModuleConfig = {
   roles: ["read", "create", "update", "delete"],
   school: ["read", "create", "update", "delete"],
   "grade-teacher-assignment": ["read", "create", "update", "delete"],
-  tests: ["read", "create", "update", "delete", "learner-report", "assess"],
+  tests: ["read", "create", "update", "delete", "learners-report", "assess"],
   "grading-system": ["read", "create", "update", "delete"],
   summative: ["read", "create", "update", "delete"],
   grades: ["read", "create", "update", "delete"],
