@@ -77,6 +77,7 @@ import Cookies from "../pages/Cookies";
 import AttendanceForm from "../pages/Attendance/attendance";
 import AttendanceSummary from "../pages/Attendance/attendance_summary";
 import AttendanceTermly from "../pages/Attendance/attendance_termly";
+import Timetable from "../pages/Timetable";
 
 //nn
 function Router() {
@@ -130,6 +131,10 @@ function Router() {
         {
           path: "tests",
           element: <SummativeTests />,
+        },
+        {
+          path: "timetable",
+          element: <Timetable />,
         },
         {
           path: "tests-done",
