@@ -20,28 +20,27 @@ import CardLoader from "../UserProfile/loader";
 function Settings() {
   const [academicYears, setAcademicYears] = useState<any>([]);
   const [schoolDetails, setSchoolDetails] = useState<any>({});
-  const schema = yup
-    .object({
-      // adm_no: yup.string().required("Adm.No is required"),
-    })
-    .required();
+  const signatoryRoles = [
+    "Chief Principal",
+    "Principal",
+    "Head Teacher",
+    "Deputy Principal",
+    "Deputy Head Teacher",
+  ]; // Define signatory role options
+
+  const schema = yup.object({}).required(); // No specific validation needed for these fields
 
   const [terms, setTerms] = useState([]);
-  const [currentAcademicYear, setCurrentAcademicYear] = useState("");
-  const [currentTerm, setCurrentTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
-
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const selectRef = useRef(null);
+  const notify = useRef<NotificationElement>(null);
 
-  const notify = useRef<NotificationElement>();
   const {
     control,
     register,
     trigger,
-    setValue,
     getValues,
     reset,
     formState: { errors },
@@ -49,6 +48,7 @@ function Settings() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
   useEffect(() => {
     const fetchData = async () => {
       await getSchoolDetails();
@@ -56,11 +56,10 @@ function Settings() {
     fetchData();
   }, []);
 
-  const generateAcademicYears = (currentYear: number) => {
+  const generateAcademicYears = (currentYear: any) => {
     const yearsBack = 5;
     const yearsForward = 7;
     const years = [];
-
     for (
       let i = currentYear - yearsBack;
       i <= currentYear + yearsForward;
@@ -68,8 +67,6 @@ function Settings() {
     ) {
       years.push(`${i}`);
     }
-    console.log("years", years);
-
     setAcademicYears(years);
   };
 
@@ -80,24 +77,26 @@ function Settings() {
       setSchoolDetails(response?.data);
       reset({
         ...response.data,
+        signatory_role: response?.data?.signatory_role || "Head Teacher", // Default to "Head Teacher" if not present
+        signatory_name: response?.data?.school_head_teacher, // Map existing head teacher name
+        signatory_signature: response?.data?.school_head_teacher_signature, // Map existing signature
         current_term: response?.data?.current_term,
         current_session: response?.data?.current_session,
       });
       setPageLoading(false);
-
       generateAcademicYears(Number(response?.data?.current_session));
     } catch (error) {
-      console.error("Failed to fetch academic years", error);
+      console.error("Failed to fetch school details", error);
     }
   };
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: any) => {
     event.preventDefault();
     const result = await trigger();
     if (result && !loading) {
       setLoading(true);
       try {
-        const data = await getValues();
+        const data = getValues();
         const response = await ApiService.setCurrentSettings(data);
         localStorage.setItem("school", JSON.stringify(response));
         window.location.reload();
@@ -116,16 +115,14 @@ function Settings() {
 
   return (
     <>
-      <h2 className="mt-1 text-lg font-medium ">Settings</h2>
+      <h2 className="mt-1 text-lg font-medium">Settings</h2>
       {pageLoading ? (
-        <>
-          <CardLoader />
-        </>
+        <CardLoader />
       ) : (
         <div className="grid grid-cols-12 gap-6 mt-2 setting-step-1">
           <div className="col-span-12">
-            <div className="  p-3">
-              <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
+            <div className="p-3">
+              <form className="mt-5 p-5 box validate-form" onSubmit={onSubmit}>
                 <fieldset className="mb-4">
                   <legend className="font-medium text-xl text-gray-700">
                     School Details
@@ -148,24 +145,12 @@ function Settings() {
                         type="text"
                         name="schoolCode"
                         disabled
-                        className={errors.name ? "border-danger" : ""}
-                        placeholder="School Name"
+                        className={errors.schoolCode ? "border-danger" : ""}
+                        placeholder="School Code"
                       />
                     </div>
                     <div className="col-span-12 md:col-span-6">
                       <FormLabel>Current Session</FormLabel>
-                      {/* <FormSelect
-                      // value={currentAcademicYear}
-                      {...register("current_year")}
-                      onChange={(e) => setCurrentAcademicYear(e.target.value)}
-                    >
-                      <option>Select Year</option>
-                      {academicYears.map((year: any, key: any) => (
-                        <option key={key} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </FormSelect> */}
                       <Controller
                         control={control}
                         name="current_session"
@@ -173,17 +158,12 @@ function Settings() {
                         render={({ field }) => (
                           <TomSelect
                             {...field}
-                            // options={counties.map((county: any) => ({
-                            //   value: county.name,
-                            //   label: county.name,
-                            // }))}
-                            onChange={(value: any) => {
-                              console.log(value);
-                              field.onChange(value);
-                            }}
-                            className={errors.county ? "border-danger" : ""}
+                            onChange={(value) => field.onChange(value)}
+                            className={
+                              errors.current_session ? "border-danger" : ""
+                            }
                           >
-                            <option value={""}>Select Session</option>
+                            <option value="">Select Session</option>
                             {academicYears.map((year: any, key: any) => (
                               <option key={key} value={year}>
                                 {year}
@@ -193,62 +173,73 @@ function Settings() {
                         )}
                       />
                     </div>
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>Address</FormLabel>
+                      <FormInput
+                        {...register("address")}
+                        type="text"
+                        name="address"
+                        className={errors.address ? "border-danger" : ""}
+                        placeholder="Address"
+                      />
+                    </div>
+                    {/* New Signatory Role Field */}
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>Signatory Role</FormLabel>
+                      <Controller
+                        control={control}
+                        name="signatory_role"
+                        render={({ field }) => (
+                          <TomSelect
+                            {...field}
+                            onChange={(value) => field.onChange(value)}
+                            className={
+                              errors.signatory_role ? "border-danger" : ""
+                            }
+                          >
+                            {signatoryRoles.map((role, index) => (
+                              <option key={index} value={role}>
+                                {role}
+                              </option>
+                            ))}
+                          </TomSelect>
+                        )}
+                      />
+                    </div>
+                    {/* Updated Signatory Name Field */}
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>Signatory Name</FormLabel>
+                      <FormInput
+                        {...register("signatory_name")}
+                        type="text"
+                        name="signatory_name"
+                        className={errors.signatory_name ? "border-danger" : ""}
+                        placeholder="Signatory Name"
+                      />
+                    </div>
+                    {/* Updated Signatory Signature Field */}
+                    <div className="col-span-12 md:col-span-6">
+                      <FormLabel>Signatory Signature</FormLabel>
+                      <PassportUpload
+                        name="signatory_signature"
+                        register={register}
+                        errors={errors}
+                        initialImageUrl={
+                          IMG_URL +
+                          (schoolDetails.signatory_signature ||
+                            schoolDetails.school_head_teacher_signature)
+                        }
+                      />
+                    </div>
                   </div>
                 </fieldset>
 
                 <div className="grid grid-cols-12 gap-4 gap-y-3">
-                  {/* <div className="col-span-12 md:col-span-6">
-                  <FormLabel>Current Term</FormLabel>
-                  <FormSelect
-                    {...register("current_term")}
-                    // value={currentTerm}
-                    onChange={(e) => setCurrentTerm(e.target.value)}
-                  >
-                    <option value={""}>Select Term</option>
-                    {terms.map((term: any, key: any) => (
-                      <option key={key} value={term._id}>
-                        {term.name}
-                      </option>
-                    ))}
-                  </FormSelect>
-                </div> */}
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>Address</FormLabel>
-                    <FormInput
-                      {...register("address")}
-                      type="text"
-                      name="address"
-                      className={errors.name ? "border-danger" : ""}
-                      placeholder="Address"
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>H/Teacher Name</FormLabel>
-                    <FormInput
-                      {...register("school_head_teacher")}
-                      type="text"
-                      name="school_head_teacher"
-                      className={errors.name ? "border-danger" : ""}
-                      placeholder="Head Teacher"
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>H/Teacher Signature</FormLabel>
-                    <PassportUpload
-                      name={"school_head_teacher_signature"}
-                      register={register}
-                      errors={errors}
-                      initialImageUrl={
-                        IMG_URL + schoolDetails.school_head_teacher_signature
-                      }
-                    />
-                  </div>
                   <div className="col-span-12 md:col-span-6">
                     <fieldset className="mb-5">
                       <legend className="font-medium text-lg text-gray-700">
                         Branding
                       </legend>
-
                       <div className="grid grid-cols-12 gap-4">
                         <div className="col-span-12 md:col-span-6">
                           <FormLabel>Primary Color</FormLabel>
@@ -258,7 +249,6 @@ function Settings() {
                             className="w-full h-10 cursor-pointer border rounded-md"
                           />
                         </div>
-
                         <div className="col-span-12 md:col-span-6">
                           <FormLabel>Secondary Color</FormLabel>
                           <input
@@ -276,38 +266,28 @@ function Settings() {
                       type="checkbox"
                       name="summative_has_score"
                       className={
-                        errors.name
+                        errors.summative_has_score
                           ? "border-danger w-5 h-5 mr-3"
                           : "w-5 h-5 mr-3"
                       }
-                      placeholder="Head Teacher"
                     />
                     <FormLabel>
-                      Summative Report With Score(Not Remended)
+                      Summative Report With Score (Not Recommended)
                     </FormLabel>
                     <div className="col-span-12 md:col-span-6">
                       <FormLabel>School Stamp</FormLabel>
                       <PassportUpload
-                        name={"school_stamp"}
+                        name="school_stamp"
                         register={register}
                         errors={errors}
                         initialImageUrl={IMG_URL + schoolDetails.school_stamp}
                       />
                     </div>
-
-                    {/* <span className="text-md text-gray-800 ml-2">
-                    <FormInput
-                      type="checkbox"
-                      className="w-5 h-5"
-                      // onChange={(e: any) => publishIndicator()}
-                    />
-                  </span> */}
                   </div>
-
                   <div className="col-span-12 md:col-span-6">
                     <FormLabel>Logo</FormLabel>
                     <PassportUpload
-                      name={"logo"}
+                      name="logo"
                       register={register}
                       errors={errors}
                       initialImageUrl={IMG_URL + schoolDetails.logo}
@@ -315,7 +295,6 @@ function Settings() {
                   </div>
                 </div>
 
-                {/* Additional fieldsets can be added here in a similar manner */}
                 <div className="col-span-12 mt-3">
                   <Button
                     variant="primary"
@@ -340,9 +319,9 @@ function Settings() {
       )}
       <Notification
         options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
+        // getRef={(el) => {
+        //   notify.current = el;
+        // }}
         className="flex"
       >
         <Lucide
