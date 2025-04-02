@@ -972,7 +972,46 @@ export const getLearningAreas = async (data: any) => {
     throw handler(e);
   }
 };
+export const getTimetable = async (data: any) => {
+  try {
+    let res = await axios.get(c.Timetable, {
+      // Removed "/generate" as this should fetch existing
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
+// New generateTimetable function
+export const generateTimetable = async (data: {
+  grade: string;
+  stream: string;
+  learningAreas: string[];
+}) => {
+  try {
+    await getData(); // Ensure authorization header is set
+    let res = await axios.post(`${c.Timetable}/generate`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+// Existing updateTimetablePeriod (unchanged, just showing context)
+export const updateTimetablePeriod = async (data) => {
+  try {
+    let res = await axios.put(`${c.Timetable}/period`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 export const getCounties = async (data: any) => {
   try {
     let res = await axios.get(c.COUNTIES, {

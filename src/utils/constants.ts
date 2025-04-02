@@ -33,6 +33,7 @@ export const MESSAGE = `${BASE_URL}portal/messages`;
 export const SCHOOL_PATH = `${BASE_URL}portal`;
 
 export const MESSAGE_PARENT = `${BASE_URL}learner/messages`;
+export const Timetable = `${BASE_URL}portal/timetable`;
 
 export const PARENTS = `${BASE_URL}portal/parents`;
 export const TEACHERS = `${BASE_URL}portal/teachers`;

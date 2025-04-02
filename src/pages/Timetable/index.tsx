@@ -2,119 +2,153 @@ import { useState, useEffect } from "react";
 import Button from "../../base-components/Button";
 import Table from "../../base-components/Table";
 import * as ApiService from "../../services/auth";
-import { stream } from "exceljs";
 
-const TIME_SLOTED = {
-  BREAK1: ["9:30 AM", "9:50 AM"],
-  BREAK2: ["11:00 AM", "11:30 AM"],
-  LUNCH: ["12:40 PM", "2:00 PM"],
-  COFFEE: ["2:35 PM", "3:10 PM"],
-};
-
-const SPECIAL_PERIODS = {
-  FRIDAY: { PPI: ["8:20 AM", "8:55 AM"] },
-  MONDAY: { ASSEMBLY: ["8:20 AM", "8:55 AM"] },
-};
-
+// Backend-aligned time slots (7 periods, including break)
 const TIME_SLOTS = [
-  ["8:20 AM", "8:55 AM"],
-  ["8:55 AM", "9:30 AM"],
-  TIME_SLOTED.BREAK1,
-  ["9:50 AM", "10:25 AM"],
-  ["10:25 AM", "11:00 AM"],
-  TIME_SLOTED.BREAK2,
-  ["11:30 AM", "12:05 PM"],
-  ["12:05 PM", "12:40 PM"],
-  TIME_SLOTED.LUNCH,
-  ["2:00 PM", "2:35 PM"],
-  TIME_SLOTED.COFFEE,
+  ["08:00", "08:40"], // Period 1
+  ["08:40", "09:20"], // Period 2
+  ["09:20", "10:00"], // Period 3
+  ["10:00", "10:20"], // Break
+  ["10:20", "11:00"], // Period 4
+  ["11:00", "11:40"], // Period 5
+  ["11:40", "12:20"], // Period 6
 ];
 
-const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+// Days of the week
+const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 function Timetable() {
-  const [grades, setGrades] = useState([]);
-  const [streams, setStreams] = useState([]);
-  const [learningAreas, setLearningAreas] = useState([]);
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [selectedStream, setSelectedStream] = useState("");
-  const [timetable, setTimetable] = useState(null);
+  const [gradeList, setGradeList] = useState([]);
+  const [streamList, setStreamList] = useState([]);
+  const [chosenGrade, setChosenGrade] = useState("");
+  const [chosenStream, setChosenStream] = useState("");
+  const [timetableData, setTimetableData] = useState(null);
+  const [availableActivities, setAvailableActivities] = useState([]);
 
+  // Fetch grades on mount
   useEffect(() => {
-    getGrades();
+    fetchGrades();
   }, []);
 
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-    setGrades(response.data);
-  };
-
-  const getStreams = async (grade) => {
-    setStreams([]);
-    setSelectedStream("");
-    const response = await ApiService.getStream({ page: 1, grade });
-    setStreams(response.data);
-  };
-
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({
-      limit: 100000,
-      grade: selectedGrade,
-    });
-    setLearningAreas(response.data);
-  };
-
-  const generateRandomTimetable = () => {
-    if (!learningAreas.length) return;
-
-    const schedule = {};
-
-    DAYS.forEach((day) => {
-      schedule[day] = TIME_SLOTS.map(([start, end]) => {
-        if (SPECIAL_PERIODS[day]) {
-          const special = Object.entries(SPECIAL_PERIODS[day]).find(
-            ([, [s, e]]) => s === start && e === end
-          );
-          if (special) return special[0];
-        }
-
-        const randomIndex = Math.floor(Math.random() * learningAreas.length);
-        return learningAreas[randomIndex]?.name || "Free";
-      });
-    });
-
-    setTimetable({ timeSlots: TIME_SLOTS, schedule });
-  };
-
-  const updateTimetableEntry = (day, periodIndex, newValue) => {
-    setTimetable((prev) => ({
-      ...prev,
-      schedule: {
-        ...prev.schedule,
-        [day]: prev.schedule[day].map((entry, i) =>
-          i === periodIndex ? newValue : entry
-        ),
-      },
-    }));
-  };
+  // Fetch timetable and activities when stream changes
   useEffect(() => {
-    getLearningAreas();
-  }, [selectedStream]);
+    if (chosenStream) {
+      fetchTimetable();
+      fetchActivities();
+    }
+  }, [chosenStream]);
+
+  const fetchGrades = async () => {
+    try {
+      const { data } = await ApiService.getGrades({ page: 1 });
+      setGradeList(data);
+    } catch (error) {
+      console.error("Failed to load grades:", error);
+    }
+  };
+
+  const fetchStreams = async (gradeId) => {
+    setStreamList([]);
+    setChosenStream("");
+    try {
+      const { data } = await ApiService.getStream({ page: 1, grade: gradeId });
+      setStreamList(data);
+    } catch (error) {
+      console.error("Failed to load streams:", error);
+    }
+  };
+
+  const fetchActivities = async () => {
+    try {
+      const { data } = await ApiService.getLearningAreas({
+        limit: 100000,
+        grade: chosenGrade,
+      });
+      setAvailableActivities(data);
+    } catch (error) {
+      console.error("Failed to load learning areas:", error);
+    }
+  };
+
+  const fetchTimetable = async () => {
+    try {
+      const response = await ApiService.getTimetable({
+        grade: chosenGrade,
+        stream: chosenStream,
+      });
+      setTimetableData({
+        timeSlots: TIME_SLOTS,
+        periods: response.periods || {},
+      });
+    } catch (error) {
+      console.error("Error loading timetable:", error);
+      const defaultPeriods = {};
+      WEEKDAYS.forEach((day) => {
+        defaultPeriods[day] = TIME_SLOTS.map(([begin, end]) => ({
+          begin,
+          end,
+          activity: "Free",
+          fixed: false,
+        }));
+      });
+      setTimetableData({ timeSlots: TIME_SLOTS, periods: defaultPeriods });
+    }
+  };
+
+  const createTimetable = async () => {
+    try {
+      const response = await ApiService.generateTimetable({
+        grade: chosenGrade,
+        stream: chosenStream,
+      });
+      setTimetableData({
+        timeSlots: TIME_SLOTS,
+        periods: response.periods || {},
+      });
+    } catch (error) {
+      console.error("Error creating timetable:", error);
+      const defaultPeriods = {};
+      WEEKDAYS.forEach((day) => {
+        defaultPeriods[day] = TIME_SLOTS.map(([begin, end]) => ({
+          begin,
+          end,
+          activity: "Free",
+          fixed: false,
+        }));
+      });
+      setTimetableData({ timeSlots: TIME_SLOTS, periods: defaultPeriods });
+    }
+  };
+
+  const modifyPeriod = async (day, slotIndex, newActivity) => {
+    try {
+      await ApiService.updateTimetablePeriod({
+        grade: chosenGrade,
+        stream: chosenStream,
+        day,
+        periodIndex: slotIndex,
+        activity: newActivity || "Free",
+      });
+      await fetchTimetable(); // Refresh timetable after update
+    } catch (error) {
+      console.error("Failed to update period:", error);
+    }
+  };
 
   return (
-    <div>
-      <h2 className="text-lg font-medium">Weekly Timetable</h2>
-      <div className="mt-4 flex space-x-4">
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Class Timetable</h2>
+      <div className="flex gap-4 mb-6">
         <select
-          className="border p-2 rounded"
-          value={selectedGrade}
+          className="border border-gray-300 rounded px-3 py-2"
+          value={chosenGrade}
           onChange={(e) => {
-            setSelectedGrade(e.target.value);
-            getStreams(e.target.value);
+            setChosenGrade(e.target.value);
+            fetchStreams(e.target.value);
           }}
         >
-          <option value="">Select Grade</option>
-          {grades.map((grade) => (
+          <option value="">Choose Grade</option>
+          {gradeList.map((grade) => (
             <option key={grade._id} value={grade._id}>
               {grade.name}
             </option>
@@ -122,83 +156,75 @@ function Timetable() {
         </select>
 
         <select
-          className="border p-2 rounded"
-          value={selectedStream}
-          onChange={(e) => setSelectedStream(e.target.value)}
-          disabled={!selectedGrade}
+          className="border border-gray-300 rounded px-3 py-2"
+          value={chosenStream}
+          onChange={(e) => setChosenStream(e.target.value)}
+          disabled={!chosenGrade}
         >
-          <option value="">Select Stream</option>
-          {streams.map((stream) => (
-            <option key={stream.id} value={stream.id}>
+          <option value="">Choose Stream</option>
+          {streamList.map((stream) => (
+            <option key={stream._id} value={stream._id}>
               {stream.name}
             </option>
           ))}
         </select>
 
         <Button
-          onClick={generateRandomTimetable}
-          disabled={!selectedGrade || !selectedStream}
+          onClick={createTimetable}
+          disabled={!chosenGrade || !chosenStream}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          Generate Timetable
+          Create Timetable
         </Button>
       </div>
 
-      {timetable && (
-        <div className="mt-5 overflow-x-auto">
-          <Table className="border-separate border-spacing-0">
-            <Table.Thead>
+      {timetableData && (
+        <div className="overflow-x-auto">
+          <Table className="w-full border border-gray-200">
+            <Table.Thead className="bg-gray-100">
               <Table.Tr>
-                <Table.Th className="sticky left-0 bg-white border-b border-r">
+                <Table.Th className="sticky left-0 z-10 bg-gray-100 border-b border-r border-gray-200 px-4 py-2">
                   Day
                 </Table.Th>
-                {TIME_SLOTS.map(([start, end], index) => (
+                {timetableData.timeSlots.map(([start, end], idx) => (
                   <Table.Th
-                    key={index}
-                    className="text-center border-b px-4 py-2 bg-gray-50"
+                    key={idx}
+                    className="border-b border-gray-200 px-4 py-2 text-center"
                   >
-                    {start} - {end}
+                    {start}–{end}
                   </Table.Th>
                 ))}
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {DAYS.map((day) => (
-                <Table.Tr key={day}>
-                  <Table.Td className="sticky left-0 bg-white border-b border-r px-4 py-2 font-semibold">
+              {WEEKDAYS.map((day) => (
+                <Table.Tr key={day} className="hover:bg-gray-50">
+                  <Table.Td className="sticky left-0 z-10 bg-white border-b border-r border-gray-200 px-4 py-2 font-medium">
                     {day}
                   </Table.Td>
-                  {timetable.timeSlots.map(([start, end], periodIndex) => (
+                  {timetableData.periods[day].map((period, index) => (
                     <Table.Td
-                      key={periodIndex}
-                      className="border-b text-center px-4 py-2"
+                      key={index}
+                      className="border-b border-gray-200 px-4 py-2 text-center"
                     >
-                      {SPECIAL_PERIODS[day] &&
-                      Object.values(SPECIAL_PERIODS[day]).some(
-                        ([s, e]) => s === start && e === end
-                      ) ? (
-                        <span className="font-semibold text-blue-600">
-                          {Object.keys(SPECIAL_PERIODS[day]).find(
-                            (key) => SPECIAL_PERIODS[day][key][0] === start
-                          )}
+                      {period.fixed ? (
+                        <span className="text-green-600 font-semibold">
+                          {period.activity}
                         </span>
                       ) : (
                         <select
-                          className="border p-1 rounded"
-                          value={timetable.schedule[day][periodIndex]}
+                          className="w-full border border-gray-300 rounded px-2 py-1"
+                          value={period.activity}
                           onChange={(e) =>
-                            updateTimetableEntry(
-                              day,
-                              periodIndex,
-                              e.target.value
-                            )
+                            modifyPeriod(day, index, e.target.value)
                           }
                         >
-                          {learningAreas.map((area) => (
-                            <option key={area._id} value={area.name}>
-                              {area.name}
+                          <option value="Free">Free</option>
+                          {availableActivities.map((activity) => (
+                            <option key={activity._id} value={activity.name}>
+                              {activity.name}
                             </option>
                           ))}
-                          <option value="Free">Free</option>
                         </select>
                       )}
                     </Table.Td>
