@@ -78,7 +78,7 @@ function Settings() {
       reset({
         ...response.data,
         signatory_role: response?.data?.signatory_role || "Head Teacher", // Default to "Head Teacher" if not present
-        signatory_name: response?.data?.school_head_teacher, // Map existing head teacher name
+        signatory_name: response?.data?.signatory_name, // Map existing head teacher name
         signatory_signature: response?.data?.school_head_teacher_signature, // Map existing signature
         current_term: response?.data?.current_term,
         current_session: response?.data?.current_session,
