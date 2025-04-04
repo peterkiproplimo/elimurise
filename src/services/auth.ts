@@ -1004,7 +1004,7 @@ export const generateTimetable = async (data: {
 };
 
 // Existing updateTimetablePeriod (unchanged, just showing context)
-export const updateTimetablePeriod = async (data) => {
+export const updateTimetablePeriod = async (data: any) => {
   try {
     let res = await axios.put(`${c.Timetable}/period`, data);
     return res.data;

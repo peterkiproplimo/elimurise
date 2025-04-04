@@ -37,7 +37,7 @@ function Main() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const notify = useRef();
+  const notify = useRef<NotificationElement>();
 
   // Form handling
   const {
@@ -131,7 +131,7 @@ function Main() {
       setSuccess(true);
       setMessage("Report generated successfully");
       notify.current?.showToast();
-    } catch (error) {
+    } catch (error: any) {
       setSuccess(false);
       setMessage(error.message);
       notify.current?.showToast();

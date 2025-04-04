@@ -237,7 +237,7 @@ function Main() {
                 {...register("learner")}
                 value={selectedLearner}
                 name="learner"
-                onChange={(value) => setSelectedLearner(value)}
+                onChange={(value: any) => setSelectedLearner(value)}
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Learner</option>
@@ -259,7 +259,8 @@ function Main() {
             </div>
             {errors.learner && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.learner.message}
+                {typeof errors.learner.message === "string" &&
+                  errors.learner.message}
               </div>
             )}
           </div>
@@ -277,7 +278,7 @@ function Main() {
                 {...register("grade")}
                 value={selectedAcademicYear}
                 name="grade"
-                onChange={(value) => setSelectedAcademicYear(value)}
+                onChange={(value: any) => setSelectedAcademicYear(value)}
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Grade</option>
@@ -296,7 +297,8 @@ function Main() {
             </div>
             {errors.grade && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.grade.message}
+                {typeof errors.grade.message === "string" &&
+                  errors.grade.message}
               </div>
             )}
           </div>
@@ -314,7 +316,7 @@ function Main() {
                 {...register("term")}
                 value={selectedTerm}
                 name="term"
-                onChange={(value) => setSelectedTerm(value)}
+                onChange={(value: any) => setSelectedTerm(value)}
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Term</option>
@@ -333,7 +335,7 @@ function Main() {
             </div>
             {errors.term && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.term.message}
+                {typeof errors.term.message === "string" && errors.term.message}
               </div>
             )}
           </div>
@@ -351,7 +353,7 @@ function Main() {
                 {...register("learning_area")}
                 value={selectedLearningArea}
                 name="learning_area"
-                onChange={(value) => setSelectedLearningArea(value)}
+                onChange={(value: any) => setSelectedLearningArea(value)}
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Learning Area</option>
@@ -370,7 +372,8 @@ function Main() {
             </div>
             {errors.learning_area && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.learning_area.message}
+                {typeof errors.learning_area.message === "string" &&
+                  errors.learning_area.message}
               </div>
             )}
           </div>
