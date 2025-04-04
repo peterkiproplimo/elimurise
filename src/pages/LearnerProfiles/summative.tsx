@@ -1,183 +1,114 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
-import {
-  FormCheck,
-  FormInput,
-  FormLabel,
-  FormSelect,
-  FormSwitch,
-  FormTextarea,
-} from "../../base-components/Form";
-import { Loader } from "lucide-react";
+import { FormLabel } from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
-import { Dialog, Menu } from "../../base-components/Headless";
-import Table from "../../base-components/Table";
-import * as ApiService from "../../services/auth";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import Notification, {
-  NotificationElement,
-} from "../../base-components/Notification";
+import Notification from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
-import * as C from "../../utils/constants";
-import Pagination from "../../base-components/Pagination";
-import { useLocation, useNavigate } from "react-router-dom";
-import fakerData from "../../utils/faker";
-import Tippy from "../../base-components/Tippy";
-import logo from "../../assets/images/student.jpeg";
-
-interface TableRow {
-  no: number;
-  strandName: string;
-}
+import * as ApiService from "../../services/auth";
+import { useLocation } from "react-router-dom";
 
 function Main() {
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const deleteButtonRef = useRef(null);
-  const [learningAreas, setLearningAreas] = useState([]);
-  const [academicYear, setAcademicYears] = useState<any>([]);
-  const [grade, setGrade] = useState<any>([]);
-
-  // const [terms, setTerms] = useState([]);
-  const [pdfUrl, setPdfUrl] = useState("");
+  // State for data
+  const [learners, setLearners] = useState([]);
+  const [grade, setGrade] = useState([]);
+  const [tests, setTests] = useState([]);
   const terms = [
     { _id: 1, name: "Term 1" },
     { _id: 2, name: "Term 2" },
     { _id: 3, name: "Term 3" },
   ];
-  const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(true);
-  const [success, setSuccess] = useState(true);
-  const [message, setMessage] = useState("");
 
-  const [strands, setStrands] = useState([]);
-  // const [learner, setLearner] = useState("");
-  const [substrand, setSubstrand] = useState<any>({});
-  const [indicator, setIndicator] = useState("");
-  const [selectedTerm, setSelectedTerm] = useState("");
-  const [selectedLeaningArea, setSelectedLearningArea] = useState("");
+  // State for selections
+  const [selectedLearner, setSelectedLearner] = useState("");
+  const [selectedLearnerObj, setSelectedLearnerObj] = useState({});
   const [selectedAcademicYear, setSelectedAcademicYear] = useState("");
-  const [selectedLearner, setSelectedLearner] = useState<any>("");
-  const [selectedLearnerObj, setSelectedLearnerObj] = useState<any>({});
-
+  const [selectedTerm, setSelectedTerm] = useState("");
   const [test, setTest] = useState("");
 
-  const [learners, setLearners] = useState<any>([]);
-  const [strand, setStrand] = useState("");
-  const [learnerReport, setLearnerReport] = useState<any>([]);
-  const [tests, setTests] = useState<any>([]);
-  const [yearFrom, setYearFrom] = useState(2020);
-  const [yearTo, setYearTo] = useState(2020);
+  // Loading states for selects
+  const [learnersLoading, setLearnersLoading] = useState(false);
+  const [gradesLoading, setGradesLoading] = useState(false);
+  const [testsLoading, setTestsLoading] = useState(false);
 
-  const [pagination, setPagination] = useState({
-    current_page: 1,
-    total: 0,
-    total_pages: 1,
-    per_page: 0,
-  });
-  const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
-  const [next_page, setNextPage] = useState(1);
-  const [previous_page, setPreviousPage] = useState(1);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const learningArea = location?.state?.data;
-  const initialState = {
-    grade: learningArea?.grade_id?._id || "na",
-    learning_area: learningArea?._id || "na",
-    term: learningArea?._id ? 1 : "na",
-  };
-  const schema = yup
-    .object({
-      first_name: yup.string().required("Firstname is required"),
-      last_name: yup.string().required("Lastname is required"),
-      surname: yup.string().required("Surname is required"),
-      // adm_no: yup.string().required("Adm.No is required"),
-    })
-    .required();
+  // State for notification and loading
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(true);
+  const [message, setMessage] = useState("");
+  const notify = useRef();
 
+  // Form handling
   const {
     register,
-    trigger,
-    getValues,
-    reset,
     formState: { errors },
-  } = useForm({
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
-  // const [selectedStrand, setSelectedStrand] = useState(
-  //   state_strand?._id || "na"
-  // );
+  } = useForm({ mode: "onChange" });
 
-  // const [strandFilter, setStrandFilter] = useState({
-  //   grade: "na",
-  //   learning_area: "na",
-  //   term: "na",
-  // });
-  // useState(() => {
-  //   console.log(selectedSubStrand);
-  // }, []);
+  // Location for learning area
+  const location = useLocation();
+  const learningArea = location?.state?.data;
 
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLeanerLeaningArea({
-      term: selectedTerm,
-      learner: selectedLearner,
-    });
-    setLearningAreas(response.data);
-  };
-  const generateAcademicYears = () => {
-    console.log(selectedLearnerObj);
-    const currentYear = new Date().getFullYear();
-    const yearsBack = 5;
-    const yearsForward = 7;
-    const years = [];
-
-    for (let i = Number(2020); i <= 2027; i++) {
-      years.push(`${i}-${i + 1}`);
-    }
-
-    setAcademicYears(years);
-  };
+  // Fetch learners on mount
   useEffect(() => {
-    getLeaners();
+    getLearners();
   }, []);
-  const getLeaners = async () => {
-    const response = await ApiService.parentDashboard();
 
-    setLearners(response.learners);
+  // Fetch grades when learner changes
+  useEffect(() => {
+    if (selectedLearner) getLearnerClasses();
+  }, [selectedLearner]);
+
+  // Fetch tests when dependencies change
+  useEffect(() => {
+    if (selectedLearner && selectedTerm && selectedAcademicYear) getTests();
+  }, [selectedLearner, selectedTerm, selectedAcademicYear]);
+
+  // API functions with loading states
+  const getLearners = async () => {
+    setLearnersLoading(true);
+    try {
+      const response = await ApiService.parentDashboard();
+      setLearners(response.learners);
+    } catch (error) {
+      console.error("Error fetching learners:", error);
+    } finally {
+      setLearnersLoading(false);
+    }
   };
-  const getLeanerClasses = async () => {
-    const response = await ApiService.leanerClasses({
-      learner: selectedLearner,
-    });
 
-    setGrade(response.data);
+  const getLearnerClasses = async () => {
+    if (!selectedLearner) return;
+    setGradesLoading(true);
+    try {
+      const response = await ApiService.leanerClasses({
+        learner: selectedLearner,
+      });
+      setGrade(response.data);
+    } catch (error) {
+      console.error("Error fetching learner classes:", error);
+    } finally {
+      setGradesLoading(false);
+    }
   };
 
   const getTests = async () => {
-    const response = await ApiService.getLeanerTests({
-      learner: selectedLearner,
-      term: selectedTerm,
-      session: selectedAcademicYear,
-    });
-
-    setTests(response.data);
+    if (!selectedLearner || !selectedTerm || !selectedAcademicYear) return;
+    setTestsLoading(true);
+    try {
+      const response = await ApiService.getLeanerTests({
+        learner: selectedLearner,
+        term: selectedTerm,
+        session: selectedAcademicYear,
+      });
+      setTests(response.data);
+    } catch (error) {
+      console.error("Error fetching tests:", error);
+    } finally {
+      setTestsLoading(false);
+    }
   };
-  useEffect(() => {
-    console.log(selectedLearnerObj);
-    getLeanerClasses();
-  }, [selectedLearner]);
-  useEffect(() => {
-    getTests();
 
-    // getLearningAreas();
-  }, [selectedTerm, selectedAcademicYear]);
-  const notify = useRef<NotificationElement>();
   const generateAssessment = async () => {
     const data = {
       term: selectedTerm,
@@ -185,279 +116,228 @@ function Main() {
       test,
       session: selectedAcademicYear,
     };
-    isLoading(true);
+    setLoading(true);
     try {
-      if (selectedLearner == "") {
-        throw Error("Select learner to continue");
-      } else if (selectedTerm == "") {
-        throw Error("Select term to continue");
-      } else if (test == "") {
-        throw Error("Select test to continue");
-      }
-      let res = await ApiService.getSummativeForParent(data);
+      if (!selectedLearner) throw new Error("Select learner to continue");
+      if (!selectedTerm) throw new Error("Select term to continue");
+      if (!test) throw new Error("Select test to continue");
+      const res = await ApiService.getSummativeForParent(data);
       const blob = new Blob([res], { type: "application/pdf" });
-      //   const url = URL.createObjectURL(blob);
-      //   isLoading(true);      const blob = new Blob([res], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-      const popup = window.open(
+      window.open(
         url,
-
         `width=${window.innerWidth},height=${window.innerHeight},scrollbars=no`
       );
-
-      setPdfUrl(url);
-      // setEnrollments(res);
-      // const pagination = res.pagination;
-      // setPagination({
-      //   current_page: pagination.current_page,
-      //   total: pagination.total,
-      //   total_pages: pagination.total_pages,
-      //   per_page: pagination.per_page,
-      // });
-      isLoading(false);
-    } catch (error: any) {
-      isLoading(false);
+      setSuccess(true);
+      setMessage("Report generated successfully");
+      notify.current?.showToast();
+    } catch (error) {
       setSuccess(false);
-      console.log(error);
       setMessage(error.message);
       notify.current?.showToast();
+    } finally {
+      setLoading(false);
     }
   };
-
-  const getDescriptionColor = (score: any) => {
-    switch (score) {
-      case 4:
-        return "text-green-700"; // Exceeding Expectation
-      case 3:
-        return "text-success"; // Meeting Expectation
-      case 2:
-        return "text-purple-600"; // Approaching Expectation
-      case 1:
-        return "text-orange-700"; // Below Expectation
-      default:
-        return "text-gray-600";
-    }
-  };
-
-  const [formData, setFormData] = useState({ score: 1 });
 
   return (
-    <>
-      {dialog ? (
-        <>
-          {/* path: 'strand',
-        populate: {
-            path: 'learning_area',
-            populate: {
-                path: 'grade_id'
-            }
-        } */}
-          <form className="mt-5 p-5  validate-form  ">
-            <div className="assessment-header">
-              <h2 className="text-xl flex items-center font-semibold mb-5">
-                <a
-                  onClick={(event: React.MouseEvent) => {
-                    event.preventDefault();
-
-                    setDialog(false);
-                  }}
-                  href="#"
-                >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-                </a>{" "}
-                Learner Report
-              </h2>
-              {/* <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Learning Area:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Strand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Substrand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Indicator:
-                  </label>
-                </div>
-                <div className="meta-row flex items-center col-span-2 mt-0.5">
-                  <Loader className="text-success animate-spin mr-2" />
-
-                  <span className="text-sm text-success font-medium">
-                    (Auto-saving)
-                  </span>
-                </div>
-              </div> */}
-            </div>
-          </form>
-        </>
-      ) : (
-        <>
-          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
-            {learningArea?.name}
-          </h2>
-          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-            <h2 className="mr-auto text-base font-medium border-b p-2">
-              Learner Report
-            </h2>
-            <div className="grid grid-cols-6 gap-2 mt-10">
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Learner</FormLabel>
-                <TomSelect
-                  {...register("learner")}
-                  value={selectedLearner}
-                  name="term"
-                  onChange={(event: any) => {
-                    const selectedId = event;
-                    const fullLearner = learners.find(
-                      (learner: any) => learner._id === selectedId
-                    );
-                    console.log(fullLearner);
-
-                    setSelectedLearner(selectedId); // Set the entire learner object
-                    setSelectedLearnerObj(fullLearner);
-                  }}
-                >
-                  <option value={""}>Select Learner</option>
-                  {learners
-                    .filter((learner: any) => learner.status !== "D")
-                    .map((learner: any) => (
-                      <option key={learner._id} value={learner._id}>
-                        {learner.adm_no}-{learner.first_name} {learner.surname}{" "}
-                        {learner.last_name}
-                      </option>
-                    ))}
-                </TomSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-2">
-                {/* {JSON.stringify(academicYear)} */}
-                <FormLabel htmlFor="modal-form-6">Grade </FormLabel>
-                <TomSelect
-                  {...register("grade")}
-                  value={selectedAcademicYear}
-                  name="grade"
-                  onChange={(event: any) => setSelectedAcademicYear(event)}
-                >
-                  <option value={""}>Select Grade</option>
-                  {grade.map((grade: any, key: any) => (
-                    <option key={key} value={grade.session}>
-                      {grade.grade}-{grade.stream}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-                <TomSelect
-                  {...register("term")}
-                  value={selectedTerm}
-                  name="term"
-                  onChange={(event: any) => setSelectedTerm(event)}
-                >
-                  <option value={""}>Select Term</option>
-                  {terms.map((term: any, key) => (
-                    <option key={key} value={term._id}>
-                      {term.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Test</FormLabel>
-                <TomSelect
-                  {...register("test")}
-                  value={test}
-                  name="test"
-                  onChange={(event: any) => setTest(event)}
-                >
-                  <option value={""}>Select Test</option>
-                  {tests.map((test: any, key: any) => (
-                    <option key={key} value={test._id}>
-                      {test.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div>
-
-              {/* {substrands.map((substrand: any, key: any) => (
-                <span>{substrand.name}</span>
-              ))} */}
-            </div>
-            <div className="p-5 mt-3  text-right">
-              <Button
-                onClick={() => generateAssessment()}
-                variant="primary"
-                type="button"
-                className="w-50 text-white"
+    <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 min-h-screen">
+      <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+        {learningArea?.name || "Learner Reports"}
+      </h2>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <h3 className="text-lg font-medium text-gray-700 dark:text-gray-200 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+          Generate Learner Report
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Learner Select */}
+          <div className="col-span-1">
+            <FormLabel
+              htmlFor="learner"
+              className="text-gray-600 dark:text-gray-300 font-medium mb-1"
+            >
+              Learner
+            </FormLabel>
+            <div className="relative">
+              <TomSelect
+                {...register("learner")}
+                value={selectedLearner}
+                name="learner"
+                onChange={(value) => {
+                  const selectedId = value;
+                  const fullLearner = learners.find(
+                    (l) => l._id === selectedId
+                  );
+                  setSelectedLearner(selectedId);
+                  setSelectedLearnerObj(fullLearner);
+                }}
+                className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
-                Generate Report
-              </Button>
+                <option value="">Select Learner</option>
+                {learners
+                  .filter((learner) => learner.status !== "D")
+                  .map((learner) => (
+                    <option key={learner._id} value={learner._id}>
+                      {learner.adm_no} - {learner.first_name} {learner.surname}{" "}
+                      {learner.last_name}
+                    </option>
+                  ))}
+              </TomSelect>
+              {learnersLoading && (
+                <LoadingIcon
+                  icon="spinning-circles"
+                  className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500"
+                />
+              )}
             </div>
+            {errors.learner && (
+              <div className="mt-1 text-red-500 text-sm">
+                {errors.learner.message}
+              </div>
+            )}
           </div>
 
-          {/* BEGIN: Delete Confirmation Modal */}
+          {/* Grade Select */}
+          <div className="col-span-1">
+            <FormLabel
+              htmlFor="grade"
+              className="text-gray-600 dark:text-gray-300 font-medium mb-1"
+            >
+              Grade
+            </FormLabel>
+            <div className="relative">
+              <TomSelect
+                {...register("grade")}
+                value={selectedAcademicYear}
+                name="grade"
+                onChange={(value) => setSelectedAcademicYear(value)}
+                className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+              >
+                <option value="">Select Grade</option>
+                {grade.map((g, key) => (
+                  <option key={key} value={g.session}>
+                    {g.grade}-{g.stream}
+                  </option>
+                ))}
+              </TomSelect>
+              {gradesLoading && (
+                <LoadingIcon
+                  icon="spinning-circles"
+                  className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500"
+                />
+              )}
+            </div>
+            {errors.grade && (
+              <div className="mt-1 text-red-500 text-sm">
+                {errors.grade.message}
+              </div>
+            )}
+          </div>
 
-          {/* END: Delete Confirmation Modal */}
-        </>
-      )}
+          {/* Term Select */}
+          <div className="col-span-1">
+            <FormLabel
+              htmlFor="term"
+              className="text-gray-600 dark:text-gray-300 font-medium mb-1"
+            >
+              Term
+            </FormLabel>
+            <TomSelect
+              {...register("term")}
+              value={selectedTerm}
+              name="term"
+              onChange={(value) => setSelectedTerm(value)}
+              className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+            >
+              <option value="">Select Term</option>
+              {terms.map((term) => (
+                <option key={term._id} value={term._id}>
+                  {term.name}
+                </option>
+              ))}
+            </TomSelect>
+            {errors.term && (
+              <div className="mt-1 text-red-500 text-sm">
+                {errors.term.message}
+              </div>
+            )}
+          </div>
+
+          {/* Test Select */}
+          <div className="col-span-1">
+            <FormLabel
+              htmlFor="test"
+              className="text-gray-600 dark:text-gray-300 font-medium mb-1"
+            >
+              Test
+            </FormLabel>
+            <div className="relative">
+              <TomSelect
+                {...register("test")}
+                value={test}
+                name="test"
+                onChange={(value) => setTest(value)}
+                className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+              >
+                <option value="">Select Test</option>
+                {tests.map((t, key) => (
+                  <option key={key} value={t._id}>
+                    {t.name}
+                  </option>
+                ))}
+              </TomSelect>
+              {testsLoading && (
+                <LoadingIcon
+                  icon="spinning-circles"
+                  className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500"
+                />
+              )}
+            </div>
+            {errors.test && (
+              <div className="mt-1 text-red-500 text-sm">
+                {errors.test.message}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Generate Button */}
+        <div className="mt-6 flex justify-end">
+          <Button
+            onClick={generateAssessment}
+            className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white px-6 py-2 rounded-lg shadow-md transition-all duration-200 flex items-center"
+            disabled={loading}
+          >
+            Generate Report
+            {loading && (
+              <LoadingIcon icon="spinning-circles" className="w-4 h-4 ml-2" />
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Notification */}
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {
           notify.current = el;
         }}
-        className="flex"
+        className="flex items-center bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4"
       >
         <Lucide
           icon={success ? "CheckCircle" : "XCircle"}
-          className={success ? "text-success" : "text-danger"}
+          className={`w-6 h-6 ${success ? "text-green-500" : "text-red-500"}`}
         />
-        <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Success" : "Failed"}</div>
-          <div className="mt-1 text-slate-500">{message}</div>
+        <div className="ml-4">
+          <div className="font-semibold text-gray-800 dark:text-gray-200">
+            {success ? "Success" : "Failed"}
+          </div>
+          <div className="text-gray-500 dark:text-gray-400 text-sm">
+            {message}
+          </div>
         </div>
       </Notification>
-    </>
+    </div>
   );
 }
 
