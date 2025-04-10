@@ -972,46 +972,115 @@ export const getLearningAreas = async (data: any) => {
     throw handler(e);
   }
 };
-export const getTimetable = async (data: any) => {
+export const getTimetables = async (filter: any) => {
   try {
-    let res = await axios.get(c.Timetable, {
-      // Removed "/generate" as this should fetch existing
-      params: data,
-    });
+    const res = await axios.get(`${c.Timetable}/timetable`, { params: filter });
     return res.data;
   } catch (e) {
     throw handler(e);
   }
 };
 
-// New generateTimetable function
-export const generateTimetable = async (data: {
-  grade: string;
-  stream: string;
-  learningAreas: string[];
-}) => {
-  try {
-    await getData(); // Ensure authorization header is set
-    let res = await axios.post(`${c.Timetable}/generate`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    return res.data;
-  } catch (e) {
-    throw handler(e);
-  }
-};
-
-// Existing updateTimetablePeriod (unchanged, just showing context)
+// Update a timetable entry by ID
 export const updateTimetablePeriod = async (data: any) => {
   try {
-    let res = await axios.put(`${c.Timetable}/period`, data);
+    console.log(data);
+    const res = await axios.post(`${c.Timetable}/timetable`, data);
     return res.data;
   } catch (e) {
     throw handler(e);
   }
 };
+
+// Fetch time slots with optional filters
+export const getTimeSlots = async (filter: any) => {
+  try {
+    const res = await axios.get(`${c.Timetable}/timeslot`, { params: filter });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+// Update a time slot by ID
+export const updateTimeSlot = async (id: any, data: any) => {
+  try {
+    const res = await axios.put(`${c.Timetable}/timeslot/${id}`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+// New TimeSlot CRUD functions
+export const createTimeSlot = async (data: any) => {
+  try {
+    const res = await axios.post(`${c.Timetable}/timeslot`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const deleteTimeSlot = async (id: any) => {
+  try {
+    const res = await axios.delete(`${c.Timetable}/timeslot/${id}`);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+// Fetch all special programs (with optional filters if needed in the future)
+export const getSpecialPrograms = async (filter: any = {}) => {
+  try {
+    const res = await axios.get(`${c.Timetable}/special-program`, {
+      params: filter,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+// Fetch a single special program by ID
+export const getSpecialProgramById = async (id: string) => {
+  try {
+    const res = await axios.get(`${c.Timetable}/special-program/${id}`);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+// Create a new special program
+export const createSpecialProgram = async (data: any) => {
+  try {
+    const res = await axios.post(`${c.Timetable}/special-program`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+// Update a special program by ID
+export const updateSpecialProgram = async (id: string, data: any) => {
+  try {
+    const res = await axios.put(`${c.Timetable}/special-program/${id}`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+// Delete a special program by ID
+export const deleteSpecialProgram = async (id: string) => {
+  try {
+    const res = await axios.delete(`${c.Timetable}/special-program/${id}`);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
 export const getCounties = async (data: any) => {
   try {
     let res = await axios.get(c.COUNTIES, {

@@ -39,7 +39,12 @@ const initialState: SideMenuState = {
       title: "Stream",
       ignore: !hasPermission("streams", "read"),
     },
-
+    {
+      icon: "Activity",
+      pathname: "/home/timetable",
+      title: "Timetable",
+      ignore: !hasPermission("streams", "read"),
+    },
     {
       icon: "GraduationCap",
       title: "Learners",

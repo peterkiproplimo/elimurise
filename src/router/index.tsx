@@ -77,6 +77,7 @@ import Cookies from "../pages/Cookies";
 import AttendanceForm from "../pages/Attendance/attendance";
 import AttendanceSummary from "../pages/Attendance/attendance_summary";
 import AttendanceTermly from "../pages/Attendance/attendance_termly";
+import Timetable from "../pages/Timetable";
 
 //nn
 function Router() {
@@ -108,11 +109,6 @@ function Router() {
         {
           path: "parents/:id",
           element: <ParentsProfile />,
-        },
-
-        {
-          path: "slots",
-          element: <TimetableSlots />,
         },
 
         {
