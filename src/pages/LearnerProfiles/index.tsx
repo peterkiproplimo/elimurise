@@ -51,6 +51,7 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
 
+  const [type, setType] = useState("");
   const [strands, setStrands] = useState([]);
   // const [learner, setLearner] = useState("");
   const [substrand, setSubstrand] = useState<any>({});
@@ -154,6 +155,7 @@ function Main() {
       learning_area: selectedLeaningArea,
       learner: selectedLearner,
       session: selectedAcademicYear,
+      type,
     };
     console.log(data);
 
@@ -222,215 +224,7 @@ function Main() {
   return (
     <>
       {dialog ? (
-        <>
-          {/* path: 'strand',
-        populate: {
-            path: 'learning_area',
-            populate: {
-                path: 'grade_id'
-            }
-        } */}
-          <form className="mt-5 p-5  validate-form  ">
-            <div className="assessment-header">
-              <h2 className="text-xl flex items-center font-semibold mb-5">
-                <a
-                  onClick={(event: React.MouseEvent) => {
-                    event.preventDefault();
-
-                    setDialog(false);
-                  }}
-                  href="#"
-                >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-                </a>{" "}
-                Learner Report
-              </h2>
-              {/* <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-md">
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Learning Area:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Strand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Substrand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Indicator:
-                  </label>
-                </div>
-                <div className="meta-row flex items-center col-span-2 mt-0.5">
-                  <Loader className="text-success animate-spin mr-2" />
-
-                  <span className="text-sm text-success font-medium">
-                    (Auto-saving)
-                  </span>
-                </div>
-              </div> */}
-            </div>
-            <div className="grid min-h-screen place-items-center bg-white-400 print:min-h-0 mt-5">
-              <main className="m-4 h-[297mm] w-[380mm] overflow-y-auto rounded-md bg-white p-8 shadow-lg print:m-0 print:h-screen print:w-screen print:rounded-none print:shadow-none">
-                <div className=" overflow-hidden  box">
-                  <div className="flex flex-col  text-center lg:flex-row justify-between sm:px-20 sm:pt-20 lg:pb-1 sm:text-left up-part">
-                    <div className="text-base text-slate-500lg:ml-auto lg:text-left flex">
-                      <div>
-                        <img
-                          src={logo}
-                          alt="Learner"
-                          className="w-32 h-32 mb-2"
-                        />
-                      </div>
-
-                      <div className="text-lg font-semibold text-primary ml-5">
-                        Name:
-                        <br />
-                        Adm No:
-                        <br />
-                        Year:
-                        <br />
-                        Term:
-                        <br />
-                      </div>
-                    </div>
-                    <div className="mt-2 topic">
-                      <div></div>
-                    </div>
-                  </div>
-                  <div className="px- py-2 sm:px-16 sm:py-20 mt-5">
-                    <div className="text-center font-bold text-xl mb-5">
-                      Performance Report
-                    </div>
-                    <Table className="border">
-                      <Table.Thead>
-                        <Table.Tr className="bg-secondary ">
-                          <Table.Th className="border-b-0 whitespace-nowrap">
-                            Strand
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
-                            Substrand
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
-                            Learning Area
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                            Indicator Description
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-left">
-                            Score
-                          </Table.Th>
-                          <Table.Th className="border-b-0 whitespace-nowrap text-center">
-                            Description
-                          </Table.Th>
-                        </Table.Tr>
-                      </Table.Thead>
-                      <Table.Tbody className="bg-white divide-y divide-gray-300 dark:divide-gray-700 dark:bg-gray-900 ">
-                        {learnerReport?.assessment?.map(
-                          (enrollment: any, index: any) => (
-                            <Table.Tr key={index} className="bg-secondary">
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.strand.name}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.substrand.name}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.learning_area.name}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.indicator_description}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.score}
-                              </Table.Td>
-                              <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                                {enrollment.description}
-                              </Table.Td>
-                            </Table.Tr>
-                          )
-                        )}
-                      </Table.Tbody>
-                    </Table>
-                    {loading && (
-                      <div className="flex flex-col items-center mt-5">
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          className="w-8 h-8"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </main>
-            </div>
-            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-              <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() =>
-                      setPage(page < pagination.total_pages ? page + 1 : 1)
-                    }
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div>
-            </div>
-          </form>
-        </>
+        <></>
       ) : (
         <>
           <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
@@ -441,6 +235,29 @@ function Main() {
               Learner Report
             </h2>
             <div className="grid grid-cols-6 gap-2 mt-10">
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Type</FormLabel>
+                <FormSelect
+                  value={type}
+                  onChange={(event) => {
+                    setType(event.target.value);
+                  }}
+                >
+                  <option value={""}>Select Type</option>
+
+                  <option value={"learner"}>Learner Report</option>
+                  <option value="learner-weakness">
+                    Learner's Area of Improvement
+                  </option>
+                  {/* <option value="learner-strength">Learner Strengths</option> */}
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Learner</FormLabel>
                 <TomSelect

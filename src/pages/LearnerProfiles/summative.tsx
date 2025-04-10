@@ -52,7 +52,8 @@ function Main() {
   const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-
+  const [stream, setStream] = useState("");
+  const [type, setType] = useState("");
   const [strands, setStrands] = useState([]);
   // const [learner, setLearner] = useState("");
   const [substrand, setSubstrand] = useState<any>({});
@@ -184,6 +185,7 @@ function Main() {
       learner: selectedLearner,
       test,
       session: selectedAcademicYear,
+      type,
     };
     isLoading(true);
     try {
@@ -319,6 +321,28 @@ function Main() {
             </h2>
             <div className="grid grid-cols-6 gap-2 mt-10">
               <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Type of Report</FormLabel>
+                <FormSelect
+                  value={type}
+                  onChange={(event) => {
+                    setStream("");
+                    setType(event.target.value);
+                  }}
+                >
+                  <option value={""}>Select Type Report</option>
+                  <option value={"learner"}>Single Asessment</option>
+                  <option value={"learner-comparison"}>
+                    Combined Termly Report
+                  </option>
+                </FormSelect>
+                {errors.grade && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.grade.message === "string" &&
+                      errors.grade.message}
+                  </div>
+                )}
+              </div>
+              <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Learner</FormLabel>
                 <TomSelect
                   {...register("learner")}
@@ -397,29 +421,30 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">Test</FormLabel>
-                <TomSelect
-                  {...register("test")}
-                  value={test}
-                  name="test"
-                  onChange={(event: any) => setTest(event)}
-                >
-                  <option value={""}>Select Test</option>
-                  {tests.map((test: any, key: any) => (
-                    <option key={key} value={test._id}>
-                      {test.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.term && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
-                  </div>
-                )}
-              </div>
-
+              {type != "learner-comparison" && (
+                <div className="col-span-12 sm:col-span-2">
+                  <FormLabel htmlFor="modal-form-6">Test</FormLabel>
+                  <TomSelect
+                    {...register("test")}
+                    value={test}
+                    name="test"
+                    onChange={(event: any) => setTest(event)}
+                  >
+                    <option value={""}>Select Test</option>
+                    {tests.map((test: any, key: any) => (
+                      <option key={key} value={test._id}>
+                        {test.name}
+                      </option>
+                    ))}
+                  </TomSelect>
+                  {errors.term && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.term.message === "string" &&
+                        errors.term.message}
+                    </div>
+                  )}
+                </div>
+              )}
               {/* {substrands.map((substrand: any, key: any) => (
                 <span>{substrand.name}</span>
               ))} */}

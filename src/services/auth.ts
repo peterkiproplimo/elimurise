@@ -982,7 +982,9 @@ export const getSummativeByLearners = async (data: any) => {
 };
 export const getSummativeForParent = async (data: any) => {
   try {
-    let res = await axios.get(c.PARENT + "/v1/summative", {
+    let type = data.type === "learner" ? "summative" : "assessments-comparison";
+
+    let res = await axios.get(c.PARENT + "/v1/" + type, {
       params: data,
       responseType: "arraybuffer",
     });
