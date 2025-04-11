@@ -30,6 +30,8 @@ interface FormData {
   logo?: string;
   school_stamp?: string;
   school_head_teacher_signature?: string;
+  signatory_role?: string; // Add this field to match the usage in the form
+  signatory_name?: string; // Add this field to fix the error
 }
 
 function Settings() {
@@ -67,7 +69,7 @@ function Settings() {
   useEffect(() => {
     const fetchData = async () => {
       setPageLoading(true);
-      await Promise.all([getSchoolDetails(), getTerms()]);
+      await Promise.all([getSchoolDetails()]);
       setPageLoading(false);
     };
     fetchData();
@@ -210,7 +212,7 @@ function Settings() {
                         render={({ field }) => (
                           <TomSelect
                             {...field}
-                            onChange={(value) => field.onChange(value)}
+                            onChange={(value: any) => field.onChange(value)}
                             className={
                               errors.signatory_role ? "border-danger" : ""
                             }

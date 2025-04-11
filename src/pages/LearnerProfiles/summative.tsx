@@ -9,7 +9,9 @@ import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
 import * as ApiService from "../../services/auth";
 import { useLocation } from "react-router-dom";
-
+import Notification, {
+  NotificationElement,
+} from "../../base-components/Notification";
 function Main() {
   // State for data
   const [learners, setLearners] = useState([]);
@@ -163,20 +165,20 @@ function Main() {
                 {...register("learner")}
                 value={selectedLearner}
                 name="learner"
-                onChange={(value) => {
+                onChange={(value: any) => {
                   const selectedId = value;
                   const fullLearner = learners.find(
-                    (l) => l._id === selectedId
+                    (l: any) => l._id === selectedId
                   );
                   setSelectedLearner(selectedId);
-                  setSelectedLearnerObj(fullLearner);
+                  setSelectedLearnerObj(fullLearner || {});
                 }}
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Learner</option>
                 {learners
-                  .filter((learner) => learner.status !== "D")
-                  .map((learner) => (
+                  .filter((learner: any) => learner.status !== "D")
+                  .map((learner: any) => (
                     <option key={learner._id} value={learner._id}>
                       {learner.adm_no} - {learner.first_name} {learner.surname}{" "}
                       {learner.last_name}
@@ -192,7 +194,7 @@ function Main() {
             </div>
             {errors.learner && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.learner.message}
+                {errors.learner?.message?.toString()}
               </div>
             )}
           </div>
@@ -210,11 +212,11 @@ function Main() {
                 {...register("grade")}
                 value={selectedAcademicYear}
                 name="grade"
-                onChange={(value) => setSelectedAcademicYear(value)}
+                onChange={(value: any) => setSelectedAcademicYear(value)}
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Grade</option>
-                {grade.map((g, key) => (
+                {grade.map((g: any, key: any) => (
                   <option key={key} value={g.session}>
                     {g.grade}-{g.stream}
                   </option>
@@ -229,7 +231,7 @@ function Main() {
             </div>
             {errors.grade && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.grade.message}
+                {errors.grade.message?.toString()}
               </div>
             )}
           </div>
@@ -246,7 +248,7 @@ function Main() {
               {...register("term")}
               value={selectedTerm}
               name="term"
-              onChange={(value) => setSelectedTerm(value)}
+              onChange={(value: any) => setSelectedTerm(value)}
               className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
             >
               <option value="">Select Term</option>
@@ -258,7 +260,7 @@ function Main() {
             </TomSelect>
             {errors.term && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.term.message}
+                {errors.term?.message?.toString()}
               </div>
             )}
           </div>
@@ -276,11 +278,11 @@ function Main() {
                 {...register("test")}
                 value={test}
                 name="test"
-                onChange={(value) => setTest(value)}
+                onChange={(value: any) => setTest(value)}
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Test</option>
-                {tests.map((t, key) => (
+                {tests.map((t: any, key) => (
                   <option key={key} value={t._id}>
                     {t.name}
                   </option>
@@ -295,7 +297,7 @@ function Main() {
             </div>
             {errors.test && (
               <div className="mt-1 text-red-500 text-sm">
-                {errors.test.message}
+                {errors.test?.message?.toString()}
               </div>
             )}
           </div>
