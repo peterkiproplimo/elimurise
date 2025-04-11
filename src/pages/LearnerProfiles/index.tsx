@@ -157,7 +157,6 @@ function Main() {
       session: selectedAcademicYear,
       type,
     };
-    console.log(data);
 
     isLoading(true);
     // try {
