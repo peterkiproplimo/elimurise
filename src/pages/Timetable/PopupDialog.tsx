@@ -1,5 +1,14 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, Dispatch, SetStateAction, ReactNode } from "react";
+
+// Define the props type
+type PopupDialogProps = {
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  title: string;
+  message: string;
+  type?: "info" | "error"; // Optional with default "info"
+};
 
 export default function PopupDialog({
   isOpen,
@@ -7,13 +16,13 @@ export default function PopupDialog({
   title,
   message,
   type = "info",
-}) {
-  const colors = {
+}: PopupDialogProps) {
+  const colors: Record<"info" | "error", string> = {
     info: "bg-blue-100 text-blue-800",
     error: "bg-red-100 text-red-800",
   };
 
-  const icons = {
+  const icons: Record<"info" | "error", ReactNode> = {
     info: (
       <svg
         className="w-6 h-6 text-blue-600"

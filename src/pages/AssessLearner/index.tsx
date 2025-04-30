@@ -1071,8 +1071,10 @@ function Main() {
                     className="absolute right-2 top-10 w-4 h-4 text-blue-500"
                   />
                 )}
-                {errors.grade && (
-                  <div className="mt-2 text-danger">{errors.grade.message}</div>
+                {errors.grade?.message && (
+                  <div className="mt-2 text-danger">
+                    {String(errors.grade.message)}
+                  </div>
                 )}
               </div>
               <div className="col-span-12 sm:col-span-2 relative">
@@ -1099,7 +1101,9 @@ function Main() {
                 )}
                 {errors.stream && (
                   <div className="mt-2 text-danger">
-                    {errors.stream.message}
+                    {typeof errors.stream.message === "string"
+                      ? errors.stream.message
+                      : ""}
                   </div>
                 )}
               </div>
@@ -1119,7 +1123,11 @@ function Main() {
                   ))}
                 </TomSelect>
                 {errors.term && (
-                  <div className="mt-2 text-danger">{errors.term.message}</div>
+                  <div className="mt-2 text-danger">
+                    {typeof errors.term.message === "string"
+                      ? errors.term.message
+                      : ""}
+                  </div>
                 )}
               </div>
             </div>
@@ -1157,7 +1165,9 @@ function Main() {
                 )}
                 {errors.learning_area && (
                   <div className="mt-2 text-sm text-red-600">
-                    {errors.learning_area.message}
+                    {typeof errors.learning_area.message === "string"
+                      ? errors.learning_area.message
+                      : ""}
                   </div>
                 )}
               </div>
@@ -1181,7 +1191,9 @@ function Main() {
                 </FormSelect>
                 {errors.term && (
                   <div className="mt-2 text-sm text-red-600">
-                    {errors.term.message}
+                    {typeof errors.term.message === "string"
+                      ? errors.term.message
+                      : ""}
                   </div>
                 )}
               </div>
@@ -1197,7 +1209,7 @@ function Main() {
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
                   <option value="">Select Strand</option>
-                  {strands.map((strand: any) => (
+                  {strands.map((strand) => (
                     <option key={strand._id} value={strand._id}>
                       <div
                         className="font-medium inline-block richtext"
@@ -1214,7 +1226,9 @@ function Main() {
                 )}
                 {errors.strand && (
                   <div className="mt-2 text-sm text-red-600">
-                    {errors.strand.message}
+                    {typeof errors.strand.message === "string"
+                      ? errors.strand.message
+                      : ""}
                   </div>
                 )}
               </div>
@@ -1230,7 +1244,7 @@ function Main() {
                   className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
                   <option value="">Select Substrand</option>
-                  {substrands.map((substrand: any) => (
+                  {substrands.map((substrand) => (
                     <option key={substrand._id} value={substrand._id}>
                       <div
                         className="font-medium inline-block richtext"
@@ -1247,7 +1261,9 @@ function Main() {
                 )}
                 {errors.substrand && (
                   <div className="mt-2 text-sm text-red-600">
-                    {errors.substrand.message}
+                    {typeof errors.substrand.message === "string"
+                      ? errors.substrand.message
+                      : ""}
                   </div>
                 )}
               </div>
@@ -1319,7 +1335,7 @@ function Main() {
               </Table>
               {errors.indicator && (
                 <div className="mt-3 text-sm text-red-600 dark:text-red-400">
-                  {errors.indicator.message}
+                  {String(errors.indicator.message)}
                 </div>
               )}
             </div>
@@ -1377,10 +1393,8 @@ function Main() {
       )}
       <Notification
         options={{ duration: 3000 }}
-        getRef={(el) => (notify.current = el)}
-        className
-        Ahead-of-the-Curve
-        lassName="flex rounded-lg shadow-md"
+        // getRef={(el) => (notify.current = el)}
+        className="flex rounded-lg shadow-md"
       >
         <Lucide
           icon={success ? "CheckCircle" : "XCircle"}

@@ -65,7 +65,11 @@ const Timetable: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [dialogContent, setDialogContent] = useState({
+  const [dialogContent, setDialogContent] = useState<{
+    title: string;
+    message: string;
+    type: "error" | "info" | undefined;
+  }>({
     title: "",
     message: "",
     type: "info",

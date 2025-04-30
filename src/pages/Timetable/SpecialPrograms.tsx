@@ -1,6 +1,7 @@
 // components/SpecialPrograms.tsx
 import React, { useState, useEffect } from "react";
 import * as ApiService from "../../services/auth";
+import { an } from "framer-motion/dist/types.d-B50aGbjN";
 
 const SpecialPrograms: React.FC = () => {
   const [specialPrograms, setSpecialPrograms] = useState<any[]>([]);
@@ -27,7 +28,7 @@ const SpecialPrograms: React.FC = () => {
       const data = await ApiService.getSpecialPrograms();
       setSpecialPrograms(data);
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -68,7 +69,7 @@ const SpecialPrograms: React.FC = () => {
         maxPerDay: "1",
       });
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -121,7 +122,7 @@ const SpecialPrograms: React.FC = () => {
       setEditingId(null);
       setEditProgram(null);
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -135,7 +136,7 @@ const SpecialPrograms: React.FC = () => {
       await ApiService.deleteSpecialProgram(id);
       setSpecialPrograms(specialPrograms.filter((p) => p._id !== id));
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);

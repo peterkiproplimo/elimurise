@@ -3,18 +3,65 @@ import * as ApiService from "../../services/auth";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
+interface TimeSlot {
+  _id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+  isFixed: boolean;
+}
+
+interface Stream {
+  name: string;
+  grade: string;
+}
+
+interface LearningArea {
+  name: string;
+}
+
+interface SpecialPeriod {
+  name: string;
+}
+
+interface Period {
+  type: string;
+  learning_area?: LearningArea;
+  specialPeriod?: SpecialPeriod;
+  stream?: Stream;
+}
+
+interface Session {
+  timeSlot: TimeSlot;
+  period: Period;
+}
+
+interface DayTimetable {
+  [day: string]: Session[];
+}
+
+interface TeacherTimetableResponse {
+  timetables: { timetable: DayTimetable }[];
+  timeSlots: TimeSlot[];
+  days: string[];
+  teacher?: { name: string };
+}
+
 const TeacherTimetable = () => {
-  const [timetables, setTimetables] = useState([]);
-  const [timeSlots, setTimeSlots] = useState([]);
-  const [days, setDays] = useState([]);
+  const [timetables, setTimetables] = useState<{ timetable: DayTimetable }[]>(
+    []
+  );
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [days, setDays] = useState<string[]>([]);
   const [teacherName, setTeacherName] = useState("");
   const [loading, setLoading] = useState(true);
-  const tableRef = useRef(null);
+  const tableRef = useRef<HTMLTableElement | null>(null);
 
   useEffect(() => {
     const fetchTimetable = async () => {
       try {
-        const response = await ApiService.getTimetableTeacher({});
+        const response: TeacherTimetableResponse =
+          await ApiService.getTimetableTeacher({});
         setTimetables(response.timetables || []);
         setTimeSlots(response.timeSlots || []);
         setDays(response.days || []);
@@ -30,6 +77,7 @@ const TeacherTimetable = () => {
 
   const exportToPDF = async () => {
     const table = tableRef.current;
+    if (!table) return;
     const canvas = await html2canvas(table, { scale: 2 });
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF({
@@ -56,6 +104,32 @@ const TeacherTimetable = () => {
     pdf.save(`Timetable_${teacherName}.pdf`);
   };
 
+  const getSpanInfo = (timeSlotId: string) => {
+    const periodDetails = days.map((day: string) => {
+      const periods = timetables
+        .flatMap(({ timetable }) =>
+          (timetable[day] || [])
+            .filter((s: Session) => s.timeSlot._id === timeSlotId)
+            .map((s) => s.period)
+        )
+        .filter((p) => p.type !== "Free");
+      return periods.length ? periods[0] : null;
+    });
+
+    const firstPeriod = periodDetails[0];
+    const isSameAcrossDays = periodDetails.every(
+      (period) =>
+        period &&
+        firstPeriod &&
+        period.type === firstPeriod.type &&
+        period.learning_area?.name === firstPeriod.learning_area?.name &&
+        period.specialPeriod?.name === firstPeriod.specialPeriod?.name &&
+        period.stream?.name === firstPeriod.stream?.name &&
+        period.stream?.grade === firstPeriod.stream?.grade
+    );
+    return { isSameAcrossDays, period: firstPeriod };
+  };
+
   if (loading)
     return <div className="text-center text-gray-500 p-4">Loading...</div>;
 
@@ -66,32 +140,6 @@ const TeacherTimetable = () => {
       </div>
     );
   }
-
-  const getSpanInfo = (timeSlotId: any) => {
-    const periodDetails = days.map((day: any) => {
-      const periods = timetables
-        .flatMap(({ timetable }) =>
-          timetable[day]
-            ?.filter((s: any) => s.timeSlot._id === timeSlotId)
-            .map((s) => s.period)
-        )
-        .filter((p) => p.type !== "Free");
-      return periods.length ? periods[0] : null;
-    });
-
-    const firstPeriod = periodDetails[0];
-    const isSameAcrossDays = periodDetails.every(
-      (period, idx) =>
-        period &&
-        periodDetails[idx] &&
-        period.type === firstPeriod?.type &&
-        period.learning_area?.name === firstPeriod?.learning_area?.name &&
-        period.specialPeriod?.name === firstPeriod?.specialPeriod?.name &&
-        period.stream?.name === firstPeriod?.stream?.name &&
-        period.stream?.grade === firstPeriod?.stream?.grade
-    );
-    return { isSameAcrossDays, period: firstPeriod };
-  };
 
   return (
     <div className="timetable-container p-4 max-w-full">
@@ -117,7 +165,7 @@ const TeacherTimetable = () => {
         <thead className="bg-gray-800 text-white uppercase text-xs tracking-wide">
           <tr>
             <th className="border border-gray-300 p-3 text-center">Day</th>
-            {timeSlots.map((ts: any) => (
+            {timeSlots.map((ts) => (
               <th
                 key={ts._id}
                 className="border border-gray-300 p-3 text-center whitespace-nowrap"
@@ -129,12 +177,12 @@ const TeacherTimetable = () => {
           </tr>
         </thead>
         <tbody>
-          {days.map((day: any, dayIndex) => (
+          {days.map((day, dayIndex) => (
             <tr key={day} className="bg-white even:bg-gray-50">
               <td className="border border-gray-300 p-3 font-semibold text-center text-gray-700">
                 {day.slice(0, 3)}
               </td>
-              {timeSlots.map((ts: any, slotIndex) => {
+              {timeSlots.map((ts, slotIndex) => {
                 if (ts.isFixed) {
                   if (dayIndex === 0) {
                     return (
@@ -144,7 +192,7 @@ const TeacherTimetable = () => {
                         className="border border-gray-300 w-[20px] bg-yellow-100 text-yellow-800 text-center font-semibold p-1"
                       >
                         <div
-                          className="transform rotate-90 text-xl font-bold "
+                          className="transform rotate-90 text-xl font-bold"
                           style={{ transformOrigin: "center" }}
                         >
                           {ts.name}
@@ -179,8 +227,8 @@ const TeacherTimetable = () => {
 
                 const periods = timetables
                   .flatMap(({ timetable }) =>
-                    timetable[day]
-                      ?.filter((s) => s.timeSlot._id === ts._id)
+                    (timetable[day] || [])
+                      .filter((s: Session) => s.timeSlot._id === ts._id)
                       .map((s) => s.period)
                   )
                   .filter((p) => p.type !== "Free");
