@@ -793,11 +793,10 @@ function Main() {
                   Publish:
                 </label>
                 <span className="text-md text-gray-800 ml-2">
-                  <FormCheck
+                  <FormInput
                     type="checkbox"
                     className="w-5 h-5"
-                    onChange={publishIndicator}
-                    disabled={!indicator || !selectedTerm || !stream}
+                    onChange={(e: any) => publishIndicator()}
                   />
                 </span>
               </div>
@@ -874,9 +873,7 @@ function Main() {
                         <FormInput
                           {...register(`score[${key}]`)}
                           type="number"
-                          className={`form-control w-[100px] ${
-                            errors.score?.[key] ? "is-invalid" : ""
-                          }`}
+                          className={`form-control w-[100px] `}
                           defaultValue={assessment?.assessmentDetails?.score}
                           max={4}
                           min={1}
