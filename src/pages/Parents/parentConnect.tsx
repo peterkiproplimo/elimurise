@@ -325,6 +325,7 @@ const MessagingPage: React.FC = () => {
         parent: user.id,
       });
       console.log("Messages response:", response);
+      fetchChatHeads();
       setMessages(
         response.data.map((msg: any) => ({
           ...msg,

@@ -980,6 +980,16 @@ export const getTimetables = async (filter: any) => {
     throw handler(e);
   }
 };
+export const getTimetableTeacher = async (filter: any) => {
+  try {
+    const res = await axios.get(`${c.Timetable}/timetable/teacher`, {
+      params: filter,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
 
 // Update a timetable entry by ID
 export const updateTimetablePeriod = async (data: any) => {
@@ -1303,6 +1313,8 @@ export const getSummativeByLearners = async (data: any) => {
     let type =
       data.type == "analysis-grade" || data.type == "analysis-stream"
         ? "/analysis"
+        : data.type == "analysis-stream-stream"
+        ? "/analysis-stream"
         : data.type == "learner-comparison"
         ? "-comparison"
         : data.type == "grade" || data.type == "stream"
@@ -1341,7 +1353,22 @@ export const getLearnerReport = async (data: any) => {
 };
 export const createAssessment = async (data: any) => {
   try {
-    let res = await axios.post(c.ASSESSMENT, data);
+    const isFormData = data instanceof FormData;
+    console.log("isFormData", isFormData);
+    if (isFormData) {
+      let res = await axios.post(c.ASSESSMENT, data, config);
+      return res.data;
+    } else {
+      let res = await axios.post(c.ASSESSMENT, data);
+      return res.data;
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const uploadFile = async (data: any) => {
+  try {
+    let res = await axios.post(c.ASSESSMENT + "/upload", data);
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -1639,6 +1666,16 @@ export async function getLeanerAssessmentReport(data: FieldValues) {
     let res = await axios.get(c.PARENT + "/v1/assessment/report", {
       params: data,
       responseType: "arraybuffer",
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getLeanerAssessmentReportUploads(data: FieldValues) {
+  try {
+    let res = await axios.get(c.PARENT + "/v1/assessment/with-uploads", {
+      params: data,
     });
     return res.data;
   } catch (e) {

@@ -405,7 +405,7 @@ function Main() {
         stream: stream,
         type: type,
       };
-    } else if (type == "analysis-grade") {
+    } else if (type == "analysis-grade" || type == "analysis-stream-stream") {
       data = {
         test: test,
         term: selectedTerm,
@@ -668,7 +668,9 @@ function Main() {
                   <option value={"learner-comparison"}>
                     Learner Termly Report
                   </option>
-
+                  <option value={"analysis-stream-stream"}>
+                    Stream Ranking Report
+                  </option>
                   <option value={"analysis-stream"}>
                     Stream Analysis Report
                   </option>

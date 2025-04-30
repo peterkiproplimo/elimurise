@@ -29,13 +29,42 @@ import { useTour } from "../../TourContext";
 import ContentLoader from "react-content-loader";
 import CardLoader from "../UserProfile/loader";
 
+// Define interfaces for timetable data
+interface TimeSlot {
+  _id: string;
+  startTime: string;
+  endTime: string;
+  isFixed?: boolean;
+  name?: string;
+}
+
+interface Period {
+  type: "learning_area" | "special" | "Free";
+  learning_area?: { name: string };
+  specialPeriod?: { name: string };
+  stream?: { name: string; grade: string };
+}
+
+interface TimetableDay {
+  [day: string]: Array<{ timeSlot: TimeSlot; period: Period }>;
+}
+
+interface Timetable {
+  timetable: TimetableDay;
+}
+
+interface UpcomingClass {
+  day: string;
+  timeSlot: TimeSlot;
+  period: Period;
+}
+
 function Main() {
   const { setRunTour } = useTour();
   const [pageLoading, setPageLoading] = useState(false);
-  const { hasPermission } = useAuth();
+  const { hasPermission, authData } = useAuth();
   interface Learner {
     first_name: string;
-    // Add other properties if needed
   }
   const [pagination, setPagination] = useState({
     current_page: 1,
@@ -43,8 +72,7 @@ function Main() {
     total_pages: 1,
     per_page: 10,
   });
-  const auth = useAuth();
-  const user = auth?.authData?.user as Learner;
+  const user = authData?.user as Learner;
   const [page, setPage] = useState(1);
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(true);
@@ -53,6 +81,8 @@ function Main() {
     data: [],
     labels: [],
   });
+  const [upcomingClasses, setUpcomingClasses] = useState<UpcomingClass[]>([]);
+  const [timetableLoading, setTimetableLoading] = useState(false);
 
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -61,27 +91,111 @@ function Main() {
     year: "numeric",
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     setRunTour(true);
     getDashboard();
+    if (!is_admin()) {
+      fetchUpcomingClasses();
+    }
   }, []);
 
   const getDashboard = async () => {
     isLoading(true);
-    let res = await ApiService.schoolDashboard();
-    isLoading(false);
-
-    const pagination = res.pagination;
-    setPagination({
-      current_page: pagination?.current_page,
-      total: pagination?.total,
-      total_pages: pagination?.total_pages,
-      per_page: pagination?.per_page,
-    });
-    setDashboards({ ...res.data });
-    isLoading(false);
+    try {
+      const res = await ApiService.schoolDashboard();
+      const pagination = res.pagination;
+      setPagination({
+        current_page: pagination?.current_page,
+        total: pagination?.total,
+        total_pages: pagination?.total_pages,
+        per_page: pagination?.per_page,
+      });
+      setDashboards({ ...res.data });
+    } catch (error) {
+      console.error("Error fetching dashboard:", error);
+    } finally {
+      isLoading(false);
+    }
   };
-  const navigate = useNavigate();
+
+  const fetchUpcomingClasses = async () => {
+    setTimetableLoading(true);
+    try {
+      const response = await ApiService.getTimetableTeacher({});
+      const timetables: Timetable[] = response.timetables || [];
+      const days: string[] = response.days || [];
+
+      // Get current day and time
+      const now = new Date();
+      const currentDay = now.toLocaleString("en-US", { weekday: "long" });
+      const currentTime = now.toTimeString().slice(0, 5); // HH:MM
+
+      // Filter upcoming classes
+      let upcoming: UpcomingClass[] = [];
+      const maxClasses = 3; // Show up to 3 upcoming classes
+
+      // First, try to find classes for today after the current time
+      if (days.includes(currentDay)) {
+        const todayClasses = timetables
+          .flatMap(({ timetable }) =>
+            timetable[currentDay]
+              ?.filter(
+                (slot) =>
+                  slot.period.type !== "Free" &&
+                  slot.timeSlot.startTime > currentTime
+              )
+              .map((slot) => ({
+                day: currentDay,
+                timeSlot: slot.timeSlot,
+                period: slot.period,
+              }))
+          )
+          .sort((a, b) =>
+            a.timeSlot.startTime.localeCompare(b.timeSlot.startTime)
+          );
+
+        upcoming = todayClasses.slice(0, maxClasses);
+      }
+
+      // If no classes today or need more, look for the next day's classes
+      if (upcoming.length < maxClasses) {
+        const nextDayIndex =
+          days.indexOf(currentDay) + 1 < days.length
+            ? days.indexOf(currentDay) + 1
+            : 0;
+        const nextDay = days[nextDayIndex];
+
+        if (nextDay) {
+          const nextDayClasses = timetables
+            .flatMap(({ timetable }) =>
+              timetable[nextDay]
+                ?.filter((slot) => slot.period.type !== "Free")
+                .map((slot) => ({
+                  day: nextDay,
+                  timeSlot: slot.timeSlot,
+                  period: slot.period,
+                }))
+            )
+            .sort((a, b) =>
+              a.timeSlot.startTime.localeCompare(b.timeSlot.startTime)
+            );
+
+          upcoming = [
+            ...upcoming,
+            ...nextDayClasses.slice(0, maxClasses - upcoming.length),
+          ];
+        }
+      }
+
+      setUpcomingClasses(upcoming);
+    } catch (error) {
+      console.error("Error fetching upcoming classes:", error);
+    } finally {
+      setTimetableLoading(false);
+    }
+  };
 
   return (
     <>
@@ -91,6 +205,7 @@ function Main() {
         </div>
       ) : is_admin() ? (
         <div className="grid grid-cols-12 gap-4 sm:gap-6">
+          {/* Admin dashboard content remains unchanged */}
           <div className="col-span-12 2xl:col-span-9">
             <div className="grid gap-4 sm:gap-6">
               <div className="col-span-12">
@@ -247,12 +362,12 @@ function Main() {
                         </div>
                       </div>
                     </div>
+                    {/* Other admin cards remain unchanged */}
                   </div>
                 )}
               </div>
               <div className="relative col-span-12 home-step-1">
                 <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 sm:gap-6">
-                  {/* Stacked Bar Chart */}
                   <div className="col-span-1 sm:col-span-4 box p-4 sm:p-6">
                     <div className="flex items-center justify-between h-10">
                       <h2 className="text-base sm:text-lg font-medium truncate">
@@ -261,15 +376,13 @@ function Main() {
                     </div>
                     <div className="mt-6 sm:mt-8 overflow-auto lg:overflow-visible">
                       <StackedBarChart
-                        height={250} // Reduced height for smaller screens
+                        height={250}
                         className="mt-4 -mb-6 w-full"
                         labels={dashboards?.learnerStreamWise?.labels}
                         data={dashboards?.learnerStreamWise?.values}
                       />
                     </div>
                   </div>
-
-                  {/* Parents Section */}
                   <div className="relative col-span-1 sm:col-span-2">
                     <div className="flex items-center h-10">
                       <h2 className="text-base sm:text-lg font-medium truncate">
@@ -368,7 +481,7 @@ function Main() {
                         <Tab.Panel>
                           <div className="relative">
                             <ReportDonutChart
-                              height={180} // Reduced height for smaller screens
+                              height={180}
                               className="mt-3 w-full"
                               learners={[
                                 {
@@ -487,7 +600,7 @@ function Main() {
                         <Tippy
                           as="div"
                           className="cursor-pointer bg-success py-1 sm:py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                          content="Total Teachers"
+                          content="Total Streams"
                         >
                           <Lucide
                             icon="ChevronUp"
@@ -560,7 +673,7 @@ function Main() {
                         <Tippy
                           as="div"
                           className="cursor-pointer bg-success py-1 sm:py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                          content="Total Teachers"
+                          content="Total Learning Areas"
                         >
                           <Lucide
                             icon="ChevronUp"
@@ -573,10 +686,74 @@ function Main() {
                       {dashboards.no_learning_areas}
                     </div>
                     <div className="mt-1 text-sm sm:text-base text-slate-500">
-                      Learning areas
+                      Learning Areas
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+            {/* New Upcoming Classes Section */}
+            <div className="mt-4 sm:mt-6">
+              <div className="flex items-center h-10">
+                <h2 className="text-base sm:text-lg font-medium truncate">
+                  Upcoming Classes
+                </h2>
+              </div>
+              <div className="mt-4 sm:mt-5 box p-4 sm:p-5">
+                {timetableLoading ? (
+                  <div className="text-center text-gray-500">
+                    Loading classes...
+                  </div>
+                ) : upcomingClasses.length > 0 ? (
+                  <div className="space-y-3">
+                    {upcomingClasses.map((classItem, index) => (
+                      <Tippy
+                        key={index}
+                        as="div"
+                        className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        content={`Grade: ${
+                          classItem.period.stream?.grade || "N/A"
+                        }, Stream: ${classItem.period.stream?.name || "N/A"}`}
+                        onClick={() => navigate("/home/timetable-teacher")} // Navigate to full timetable
+                      >
+                        <div className="flex-none w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                          <Lucide
+                            icon="Clock"
+                            className="w-5 h-5 text-teal-600"
+                          />
+                        </div>
+                        <div className="ml-4 flex-1 truncate">
+                          <div className="font-medium text-gray-800 truncate">
+                            {classItem.period.type === "learning_area"
+                              ? classItem.period.learning_area?.name
+                              : classItem.period.specialPeriod?.name || "Class"}
+                          </div>
+                          <div className="text-slate-500 text-xs mt-0.5">
+                            {classItem.day}, {classItem.timeSlot.startTime} -{" "}
+                            {classItem.timeSlot.endTime}
+                          </div>
+                        </div>
+                        <Lucide
+                          icon="ChevronRight"
+                          className="w-5 h-5 text-gray-500 ml-2"
+                        />
+                      </Tippy>
+                    ))}
+                    <a
+                      onClick={(event) => {
+                        event.preventDefault();
+                        navigate("/home/timetable-teacher");
+                      }}
+                      className="block w-full py-3 text-center bg-teal-500 text-white rounded-md hover:bg-teal-600 transition text-sm"
+                    >
+                      View Full Timetable
+                    </a>
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No upcoming classes scheduled.
+                  </div>
+                )}
               </div>
             </div>
           </div>

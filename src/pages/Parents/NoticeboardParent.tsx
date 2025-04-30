@@ -138,53 +138,57 @@ function NoticeBoard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {notices.map((notice) => (
-              <div
-                key={notice._id}
-                className={`p-5 rounded-xl shadow-md border-l-4 ${getPriorityColor(
-                  notice.priority
-                )} transition-all hover:shadow-lg relative`}
-              >
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {notice.title}
-                  </h3>
-                  <div className="flex gap-2">
-                    {notice === latestNotice &&
-                      isNewNotice(notice.publishOn) && (
-                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center">
-                          <Lucide icon="Star" className="w-3 h-3 mr-1" />
-                          New
-                        </span>
-                      )}
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        notice.status === "published"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      {notice.status.charAt(0).toUpperCase() +
-                        notice.status.slice(1)}
+            {notices
+              .filter((notice) => notice.status === "published")
+              .map((notice) => (
+                <div
+                  key={notice._id}
+                  className={`p-5 rounded-xl shadow-md border-l-4 ${getPriorityColor(
+                    notice.priority
+                  )} transition-all hover:shadow-lg relative`}
+                >
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {notice.title}
+                    </h3>
+                    <div className="flex gap-2">
+                      {notice === latestNotice &&
+                        isNewNotice(notice.publishOn) && (
+                          <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                            <Lucide icon="Star" className="w-3 h-3 mr-1" />
+                            New
+                          </span>
+                        )}
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          notice.status === "published"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        {notice.status.charAt(0).toUpperCase() +
+                          notice.status.slice(1)}
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    className="mt-2 text-sm text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: notice.message }}
+                  />
+                  <div className="mt-4 text-xs text-gray-500 flex justify-between">
+                    <span>
+                      Published:{" "}
+                      {new Date(notice.publishOn).toLocaleDateString()}
                     </span>
+                    {notice.expiresOn && (
+                      <span>
+                        Expires:{" "}
+                        {new Date(notice.expiresOn).toLocaleDateString()}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div
-                  className="mt-2 text-sm text-gray-700"
-                  dangerouslySetInnerHTML={{ __html: notice.message }}
-                />
-                <div className="mt-4 text-xs text-gray-500 flex justify-between">
-                  <span>
-                    Published: {new Date(notice.publishOn).toLocaleDateString()}
-                  </span>
-                  {notice.expiresOn && (
-                    <span>
-                      Expires: {new Date(notice.expiresOn).toLocaleDateString()}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
 

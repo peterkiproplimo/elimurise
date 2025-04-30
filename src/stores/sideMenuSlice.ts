@@ -33,18 +33,21 @@ const initialState: SideMenuState = {
       pathname: "/home",
       // ignore: !hasPermission("dashboard", "read"),
     },
+
     {
       icon: "Activity",
-      pathname: "/home/stream",
-      title: "Stream",
-      ignore: !hasPermission("streams", "read"),
+      pathname: "/home/timetable-teacher",
+      title: "My Timetable",
+      ignore: hasPermission("parents", "create"),
     },
+    //create route timetable-viewer
     {
       icon: "Activity",
-      pathname: "/home/timetable",
-      title: "Timetable",
-      ignore: !hasPermission("streams", "read"),
+      pathname: "/home/timetable-viewer",
+      title: "Master Timetable",
+      ignore: !hasPermission("parents", "create"),
     },
+
     {
       icon: "GraduationCap",
       title: "Learners",
@@ -239,34 +242,47 @@ const initialState: SideMenuState = {
       ignore: !hasPermission("subscrition", "read"),
     },
 
-    // {
-    //   icon: "Settings",
-    //   title: "Settings",
-    //   subMenu: [
-    // {
-    //   icon: "FileText",
-    //   pathname: "/home/academic",
-    //   title: "Year",
-    // },
-    // {
-    //   icon: "BarChart",
-    //   pathname: "/home/term",
-    //   title: "Term",
-    // },
-
     {
       icon: "Settings",
-      pathname: "/home/settings",
-      title: "System Settings",
-      ignore: !hasPermission("school", "read"),
+      title: "Settings",
+      subMenu: [
+        // {
+        //   icon: "FileText",
+        //   pathname: "/home/academic",
+        //   title: "Year",
+        // },
+        // {
+        //   icon: "BarChart",
+        //   pathname: "/home/term",
+        //   title: "Term",
+        // },
+        {
+          icon: "Activity",
+          pathname: "/home/stream",
+          title: "Stream",
+          ignore: !hasPermission("streams", "read"),
+        },
+        {
+          icon: "Activity",
+          pathname: "/home/timetable",
+          title: "Timetable Management",
+          // ignore: !hasPermission("streams", "read"),
+          ignore: !hasPermission("parents", "read"),
+        },
+        {
+          icon: "Settings",
+          pathname: "/home/settings",
+          title: "System Settings",
+          ignore: !hasPermission("school", "read"),
+        },
+
+        // {
+        //   icon: "User",
+        //   pathname: "/home/enrollment",
+        //   title: "Learner Enrollment",
+        // },
+      ],
     },
-    // {
-    //   icon: "User",
-    //   pathname: "/home/enrollment",
-    //   title: "Learner Enrollment",
-    // },
-    //   ],
-    // },
     {
       icon: "File",
       pathname: "/home/roles",
@@ -297,7 +313,7 @@ const teacherState: SideMenuState = {
   menu: [
     {
       icon: "Home",
-      title: "Dashboard",
+      title: "Dashboards",
       pathname: "/home",
     },
 
@@ -312,7 +328,15 @@ const teacherState: SideMenuState = {
       title: "Learning Area",
       pathname: "/home/grade",
     },
-
+    // {
+    //   path: "timetable-teacher",
+    //   element: <TimetableTeacher />,
+    // },
+    {
+      icon: "Activity",
+      pathname: "/home/timetable",
+      title: "Timetable",
+    },
     {
       icon: "Activity",
       pathname: "/home/assessment",
@@ -379,7 +403,7 @@ const parentState: SideMenuState = {
     },
     {
       icon: "Activity",
-      pathname: "/parent/message2",
+      pathname: "/parent/e-portifolio",
       title: "E-Portifolio",
       ignore: false,
       // ignore: !hasPermission("grading-system", "read"),

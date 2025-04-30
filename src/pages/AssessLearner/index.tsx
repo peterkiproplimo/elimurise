@@ -1,5 +1,4 @@
-import _ from "lodash";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import Button from "../../base-components/Button";
 import {
   FormCheck,
@@ -9,9 +8,9 @@ import {
   FormSwitch,
   FormTextarea,
 } from "../../base-components/Form";
-import { CheckSquare, Loader } from "lucide-react";
+import { CheckSquare, Loader, Upload, AlertCircle } from "lucide-react";
 import Lucide from "../../base-components/Lucide";
-import { Dialog, Menu } from "../../base-components/Headless";
+import { Dialog } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
 import * as ApiService from "../../services/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,47 +21,68 @@ import Notification, {
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import TomSelect from "../../base-components/TomSelect";
-import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
-import fakerData from "../../utils/faker";
-import Tippy from "../../base-components/Tippy";
-import logo from "../../assets/images/student.jpeg";
 import ProgressBar from "./ProgressBar";
+
+// Debounce utility
+const debounce = <T extends (...args: any[]) => void>(
+  func: T,
+  wait: number
+) => {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
 
 interface TableRow {
   no: number;
   strandName: string;
 }
 
+interface StrandFilter {
+  grade: string;
+  learning_area: string;
+  term: string;
+}
+
+interface Assessment {
+  learner: {
+    _id: string;
+    adm_no: string;
+    first_name: string;
+    last_name: string;
+    surname: string;
+  };
+  assessmentDetails: {
+    score: number;
+    method: string;
+    description: string;
+    uploadUrl: string | null;
+    published: boolean;
+    _id?: string;
+  };
+}
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const deleteButtonRef = useRef(null);
-  const [lastSaved, setLastSaved] = useState(null);
+  const deleteButtonRef = useRef<HTMLButtonElement>(null);
+  const notify = useRef<NotificationElement>(null);
 
-  const [grades, setGrades] = useState([]);
-  const [levels, setLevels] = useState([]);
-  const [learningAreas, setLearningAreas] = useState([]);
-  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
-  const [selectGroup, setGroup] = useState([""]);
-  const [selectPermission, setPermission] = useState([""]);
-  const [recordId, setRecordId] = useState(null);
-  const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(false);
-  const [success, setSuccess] = useState(true);
-  const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
-  const [hasTheme, setHasTheme] = useState(false);
-  const [strands, setStrands] = useState([]);
-  const [streams, setStreams] = useState([]);
-  const [substrands, setSubstrands] = useState([]);
+  const [grades, setGrades] = useState<any[]>([]);
+  const [learningAreas, setLearningAreas] = useState<any[]>([]);
+  const [strands, setStrands] = useState<any[]>([]);
+  const [streams, setStreams] = useState<any[]>([]);
+  const [substrands, setSubstrands] = useState<any[]>([]);
   const [stream, setStream] = useState("");
   const [substrand, setSubstrand] = useState<any>({});
   const [indicator, setIndicator] = useState("");
   const [selectedTerm, setSelectedTerm] = useState("");
   const [strand, setStrand] = useState("");
   const [selectedSubStrand, setSelectedSubStrand] = useState("");
-  const [enrollments, setEnrollments] = useState([]);
+  const [enrollments, setEnrollments] = useState<Assessment[]>([]);
   const [pagination, setPagination] = useState({
     current_page: 1,
     total: 0,
@@ -70,38 +90,65 @@ function Main() {
     per_page: 0,
   });
   const [search, setSearch] = useState("");
-
   const [adm_no, setAdmNo] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
-  const [next_page, setNextPage] = useState(1);
-  const [previous_page, setPreviousPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(true);
+  const [message, setMessage] = useState("");
+  const [dialog, setDialog] = useState(false);
+
+  const [assessmentMethods, setAssessmentMethods] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<{
+    [key: string]: File | null;
+  }>({});
+  const [saveStatus, setSaveStatus] = useState<{
+    [key: string]: "idle" | "saving" | "saved" | "error";
+  }>({});
+
+  const [isGradesLoading, setIsGradesLoading] = useState(false);
+  const [isStreamsLoading, setIsStreamsLoading] = useState(false);
+  const [isLearningAreasLoading, setIsLearningAreasLoading] = useState(false);
+  const [isStrandsLoading, setIsStrandsLoading] = useState(false);
+  const [isSubstrandsLoading, setIsSubstrandsLoading] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const learningArea = location?.state?.data;
-  const initialState = {
+
+  const initialState: StrandFilter = {
     grade: learningArea?.grade_id?._id || "",
     learning_area: learningArea?._id || "",
-    term: learningArea?._id ? 1 : "",
+    term: learningArea?._id ? "1" : "",
   };
-  const [academic_terms, setTerms] = useState([]);
 
-  const [strandFilter, updateStrandFilter] = useState(() => {
+  const [strandFilter, setStrandFilter] = useState<StrandFilter>(() => {
     const savedState = localStorage.getItem("strandFilter");
-    return initialState;
+    return savedState ? JSON.parse(savedState) : initialState;
   });
+
   const terms = [
-    { _id: 1, name: "Term 1" },
-    { _id: 2, name: "Term 2" },
-    { _id: 3, name: "Term 3" },
+    { _id: "1", name: "Term 1" },
+    { _id: "2", name: "Term 2" },
+    { _id: "3", name: "Term 3" },
   ];
+
+  const assessmentMethodOptions = [
+    "Observation",
+    "Portfolio",
+    "Written Test",
+    "Oral Assessment",
+    "Project",
+    "Practical Assessment",
+    "Journal Assessment",
+  ];
+
   interface ConfirmDialogProps {
     open: boolean;
     onConfirm: () => void;
     onCancel: () => void;
   }
-  // Success notification
-  const notify = useRef<NotificationElement>();
+
   const schema = yup
     .object({
       score: yup
@@ -113,6 +160,9 @@ function Main() {
             .min(1, "Minimum value is 1")
             .max(4, "Maximum value is 4")
         ),
+      assessmentMethod: yup
+        .array()
+        .of(yup.string().required("Assessment method is required")),
     })
     .required();
 
@@ -127,241 +177,415 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
-      isLoading(true);
-      try {
-        const data = await getValues();
-        await ApiService.createStrand(data);
-        await getStrands();
-        await reset();
-        isLoading(false);
-        setDialog(false);
-        setSuccess(true);
-        setMessage("Strand created successfully.");
-        notify.current?.showToast();
-      } catch (error: any) {
-        isLoading(false);
-        setSuccess(false);
-        setMessage(
-          error.message || "An error occurred while creating the role."
-        );
-        notify.current?.showToast();
-      }
+  const getEnrollments = useCallback(async () => {
+    if (!stream || !indicator) return;
+    setLoading(true);
+    try {
+      const enrollments = await ApiService.getEnrolments({ stream }, {});
+      setEnrollments(enrollments?.data || []);
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage(error.message || "Failed to fetch enrollments.");
+      notify.current?.showToast();
+    } finally {
+      setLoading(false);
     }
-  };
-  const getEnrollments = async () => {
-    // const enrollments = await ApiService.getEnrolments({ stream: stream }, {});
-    // setEnrollments(enrollments?.data);
-  };
-  useEffect(() => {
-    getEnrollments();
-  }, [indicator]);
+  }, [stream, indicator]);
 
-  useEffect(() => {
-    getGrades();
-    getLearningAreas();
+  const getGrades = useCallback(async () => {
+    setIsGradesLoading(true);
+    try {
+      const response = await ApiService.getGrades({ page: 1 });
+      setGrades(response.data || []);
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage(error.message || "Failed to fetch grades.");
+      notify.current?.showToast();
+    } finally {
+      setIsGradesLoading(false);
+    }
   }, []);
 
-  const getStreams = async (selectedValue: any) => {
-    setStreams([]);
-    const response = await ApiService.getStream({
-      page: 1,
-      grade: selectedValue,
-    });
-    setStreams(response.data);
-  };
+  const getLearningAreas = useCallback(async () => {
+    setIsLearningAreasLoading(true);
+    try {
+      const response = await ApiService.getLearningAreas({});
+      setLearningAreas(response.data || []);
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage(error.message || "Failed to fetch learning areas.");
+      notify.current?.showToast();
+    } finally {
+      setIsLearningAreasLoading(false);
+    }
+  }, []);
 
-  const getStrands = async () => {
-    if (strandFilter.grade && strandFilter.term) {
+  const getStreams = useCallback(async (grade: string) => {
+    if (!grade) return;
+    setIsStreamsLoading(true);
+    try {
+      const response = await ApiService.getStream({ page: 1, grade });
+      setStreams(response.data || []);
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage(error.message || "Failed to fetch streams.");
+      notify.current?.showToast();
+    } finally {
+      setIsStreamsLoading(false);
+    }
+  }, []);
+
+  const getStrands = useCallback(async () => {
+    if (!strandFilter.grade || !strandFilter.term) return;
+    setIsStrandsLoading(true);
+    try {
       const response = await ApiService.getStrands(
-        {
-          page: page,
-          search: search,
-          limit: 1000,
-        },
+        { page, search, limit: 1000 },
         strandFilter
       );
-      setStrands(response.data);
-    }
-  };
-
-  const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
-    setGrades(response.data);
-  };
-
-  const getLearningAreas = async () => {
-    const response = await ApiService.getLearningAreas({});
-    setLearningAreas(response.data);
-  };
-
-  useEffect(() => {
-    if (indicator) {
-      generateAssessment(indicator);
-    }
-  }, [adm_no]);
-
-  const setStrandFilter = (newFilter: any) => {
-    updateStrandFilter((prevFilter: any) => ({ ...prevFilter, ...newFilter }));
-  };
-
-  const fetchIndicator = async () => {
-    const response = await ApiService.getSingleSubstrand(
-      stream,
-      selectedSubStrand
-    );
-    setSubstrand(response.data);
-  };
-
-  useEffect(() => {
-    fetchIndicator();
-  }, [selectedSubStrand]);
-
-  const handleSubStrandChange = async (data: any) => {
-    console.log(data);
-    setSelectedSubStrand(data);
-  };
-
-  const handleStrandChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setSubstrands([]);
-    setStrand(selectedValue);
-    let res = await ApiService.getSubstrandByStrand(
-      { limit: 10000 },
-      selectedValue
-    );
-    console.log(res.data);
-    setSubstrands(res.data);
-  };
-
-  const deleteRecord = async () => {
-    isLoading(true);
-    try {
-      let res = await ApiService.deleteStrand(recordId);
-      getStrands();
-      isLoading(false);
-      setConfirmDelete(false);
-      setSuccess(true);
-      setMessage(res.message);
-      notify.current?.showToast();
+      setStrands(response.data || []);
     } catch (error: any) {
-      isLoading(false);
       setSuccess(false);
-      setMessage(error.message);
+      setMessage(error.message || "Failed to fetch strands.");
       notify.current?.showToast();
+    } finally {
+      setIsStrandsLoading(false);
     }
-  };
+  }, [strandFilter, page, search, limit]);
 
-  const editRecord = (record: any) => {
-    setGroup(record.groups);
-    reset(record);
-    reset({ ...record, learning_area: record.learning_area._id });
-    console.log(record);
-    setDialog(true);
-  };
-
-  const cancel = (record: any) => {
-    setGroup([""]);
-    setPermission([""]);
-    reset(record);
-    setDialog(false);
-  };
-
-  useEffect(() => {
-    getStrands();
-  }, [strandFilter, search, page, limit]);
-
-  const handleGradeChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStream("");
-    setStrands([]);
-    await setStrandFilter({
-      learning_area: "",
-      term: "",
-      grade: selectedValue,
-    });
-    getStreams(selectedValue);
-  };
-
-  const handleLearningAreaChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStrands([]);
-    await setStrandFilter({
-      ...strandFilter,
-      learning_area: selectedValue,
-    });
-  };
-
-  const handleTermChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStrands([]);
-    await setStrandFilter({
-      ...strandFilter,
-      term: selectedValue,
-    });
-  };
-
-  const handleHasThemeChange = async (event: any) => {
-    const isChecked = event.target.checked;
-    setStrands([]);
-    setHasTheme(isChecked);
-  };
-
-  const [rows, setRows] = useState<TableRow[]>([
-    { no: 1, strandName: "Example Strand" },
-  ]);
-
-  const generateAssessment = async (indicator: any) => {
-    const data = { indicator, term: selectedTerm, stream, adm_no };
-    isLoading(true);
+  const fetchIndicator = useCallback(async () => {
+    if (!stream || !selectedSubStrand) return;
+    setLoading(true);
     try {
-      let res = await ApiService.getAssessmentLerners(data);
-      setEnrollments(res);
-      setDialog(true);
-      isLoading(false);
+      const response = await ApiService.getSingleSubstrand(
+        stream,
+        selectedSubStrand
+      );
+      setSubstrand(response.data || {});
     } catch (error: any) {
-      isLoading(false);
       setSuccess(false);
-      console.log(error);
-      setMessage(error.message);
+      setMessage(error.message || "Failed to fetch indicator.");
+      notify.current?.showToast();
+    } finally {
+      setLoading(false);
+    }
+  }, [stream, selectedSubStrand]);
+
+  const generateAssessment = useCallback(
+    async (indicatorId: string) => {
+      if (
+        !stream ||
+        !selectedTerm ||
+        !strandFilter.learning_area ||
+        !indicatorId
+      ) {
+        setSuccess(false);
+        setMessage(
+          "Please select all required fields (Stream, Term, Learning Area, Indicator)."
+        );
+        notify.current?.showToast();
+        return;
+      }
+      setLoading(true);
+      try {
+        const data = {
+          indicator: indicatorId,
+          term: selectedTerm,
+          stream,
+          adm_no,
+        };
+        const res = await ApiService.getAssessmentLerners(data);
+        setEnrollments(res || []);
+        setAssessmentMethods(
+          res.map(
+            (assessment: Assessment) =>
+              assessment?.assessmentDetails?.method || ""
+          )
+        );
+        setDialog(true);
+      } catch (error: any) {
+        setSuccess(false);
+        setMessage(error.message || "Failed to generate assessment.");
+        notify.current?.showToast();
+      } finally {
+        setLoading(false);
+      }
+    },
+    [stream, selectedTerm, strandFilter.learning_area, adm_no]
+  );
+
+  // const handleInputChange = useCallback(
+  //   async (
+  //     assessment: Assessment,
+  //     index: number,
+  //     field: string,
+  //     value: any
+  //   ) => {
+  //     const learnerId = assessment?.learner?._id;
+  //     if (!learnerId) return;
+
+  //     if (field === "score" && (value > 4 || value < 1)) {
+  //       setSuccess(false);
+  //       setMessage("Score must be between 1 and 4.");
+  //       notify.current?.showToast();
+  //       return;
+  //     }
+
+  //     if (
+  //       field !== "description" &&
+  //       (!substrand?._id ||
+  //         !indicator ||
+  //         !selectedTerm ||
+  //         !strandFilter.learning_area ||
+  //         !strand ||
+  //         !learnerId)
+  //     ) {
+  //       setSuccess(false);
+  //       setMessage("Please ensure all required fields are selected.");
+  //       notify.current?.showToast();
+  //       return;
+  //     }
+
+  //     setSaveStatus((prev) => ({ ...prev, [learnerId]: "saving" }));
+
+  //     try {
+  //       let updatedAssessment: any = {
+  //         substrand: substrand?._id,
+  //         indicator,
+  //         term: selectedTerm,
+  //         learning_area: strandFilter.learning_area,
+  //         score:
+  //           field === "score"
+  //             ? Number(value)
+  //             : Number(assessment?.assessmentDetails?.score || 1),
+  //         strand,
+  //         learner: learnerId,
+  //         method:
+  //           field === "method"
+  //             ? value
+  //             : assessment?.assessmentDetails?.method || "Written Test",
+  //         description:
+  //           field === "description"
+  //             ? value
+  //             : assessment?.assessmentDetails?.description || "",
+  //         uploadUrl: assessment?.assessmentDetails?.uploadUrl || null,
+  //       };
+
+  //       if (field === "file" && value) {
+  //         const formData = new FormData();
+  //         formData.append("file", value);
+  //         formData.append(
+  //           "assessmentId",
+  //           assessment?.assessmentDetails?._id || ""
+  //         );
+  //         const uploadResponse = await ApiService.uploadFile(formData);
+  //         updatedAssessment.uploadUrl = uploadResponse.url;
+  //         setUploadedFiles((prev) => ({ ...prev, [learnerId]: value }));
+  //       }
+
+  //       await ApiService.createAssessment(updatedAssessment);
+  //       await generateAssessment(indicator);
+  //       await fetchIndicator();
+  //       setSaveStatus((prev) => ({ ...prev, [learnerId]: "saved" }));
+
+  //       setTimeout(() => {
+  //         setSaveStatus((prev) => ({ ...prev, [learnerId]: "idle" }));
+  //       }, 2000);
+  //     } catch (error: any) {
+  //       setSaveStatus((prev) => ({ ...prev, [learnerId]: "error" }));
+  //       setSuccess(false);
+  //       setMessage(error.message || "Failed to save assessment.");
+  //       notify.current?.showToast();
+  //     }
+  //   },
+  //   [
+  //     substrand,
+  //     indicator,
+  //     selectedTerm,
+  //     strandFilter.learning_area,
+  //     strand,
+  //     generateAssessment,
+  //     fetchIndicator,
+  //   ]
+  // );
+  const handleInputChange = async (
+    assessment: Assessment,
+    index: number,
+    field: string,
+    value: any
+  ) => {
+    const learnerId = assessment?.learner?._id;
+    if (!learnerId) return;
+
+    if (field === "score" && (value > 4 || value < 1)) {
+      setSuccess(false);
+      setMessage("Score must be between 1 and 4.");
+      notify.current?.showToast();
+      return;
+    }
+
+    if (
+      field !== "description" &&
+      (!substrand?._id ||
+        !indicator ||
+        !selectedTerm ||
+        !strandFilter.learning_area ||
+        !strand ||
+        !learnerId)
+    ) {
+      setSuccess(false);
+      setMessage("Please ensure all required fields are selected.");
+      notify.current?.showToast();
+      return;
+    }
+
+    setSaveStatus((prev) => ({ ...prev, [learnerId]: "saving" }));
+
+    try {
+      const updatedAssessment: any = {
+        substrand: substrand?._id,
+        indicator,
+        term: selectedTerm,
+        learning_area: strandFilter.learning_area,
+        score:
+          field === "score"
+            ? Number(value)
+            : Number(assessment?.assessmentDetails?.score || 1),
+        strand,
+        learner: learnerId,
+        method:
+          field === "method"
+            ? value
+            : assessment?.assessmentDetails?.method || "Written Test",
+        additionalDescription:
+          field === "description"
+            ? value
+            : assessment?.assessmentDetails?.description || "",
+      };
+
+      // Handle file upload
+      if (field === "file" && value) {
+        const formData = new FormData();
+        formData.append("file", value);
+        formData.append("learner", learnerId);
+        formData.append("term", selectedTerm);
+        formData.append("strand", strand);
+        formData.append("substrand", substrand?._id);
+        formData.append("indicator", indicator);
+        formData.append("learning_area", strandFilter.learning_area);
+        formData.append("score", updatedAssessment.score.toString());
+        formData.append("method", updatedAssessment.method);
+        formData.append(
+          "additionalDescription",
+          updatedAssessment.additionalDescription
+        );
+
+        const response = await ApiService.createAssessment(formData);
+        setUploadedFiles((prev) => ({ ...prev, [learnerId]: value }));
+        updatedAssessment.uploadUrl = response.uploadUrl;
+      } else {
+        // Regular assessment update without file
+        await ApiService.createAssessment(updatedAssessment);
+      }
+
+      await generateAssessment(indicator);
+      await fetchIndicator();
+      setSaveStatus((prev) => ({ ...prev, [learnerId]: "saved" }));
+
+      setTimeout(() => {
+        setSaveStatus((prev) => ({ ...prev, [learnerId]: "idle" }));
+      }, 2000);
+    } catch (error: any) {
+      setSaveStatus((prev) => ({ ...prev, [learnerId]: "error" }));
+      setSuccess(false);
+      setMessage(error.message || "Failed to save assessment.");
       notify.current?.showToast();
     }
   };
+  // const debouncedHandleInput = useMemo(
+  //   () =>
+  //     debounce(
+  //       (
+  //         assessment: Assessment,
+  //         index: number,
+  //         field: string,
+  //         value: string
+  //       ) => {
+  //         handleInputChange(assessment, index, field, value);
+  //       },
+  //       5000
+  //     ),
+  //   [handleInputChange]
+  // );
 
-  const handleInputChange = async (data: any) => {
-    if (data.score > 4) {
-      return false;
-    }
-    const assessment = {
-      substrand: substrand?._id,
-      indicator,
-      term: selectedTerm,
-      learning_area: strandFilter.learning_area,
-      score: Number(data.score),
-      strand: strand,
-      learner: data?.learner?._id,
-    };
-    console.log(data);
-    console.log(assessment);
-    let res = await ApiService.createAssessment(assessment);
-    console.log(assessment);
-    console.log(res);
-    generateAssessment(indicator);
-    fetchIndicator();
-  };
+  const handleGradeChange = useCallback(
+    async (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedValue = event.target.value;
+      setStream("");
+      setStrands([]);
+      setSelectedSubStrand("");
+      setSubstrands([]);
+      setIndicator("");
+      setStrandFilter((prev) => ({
+        ...prev,
+        grade: selectedValue,
+        learning_area: "",
+        term: "",
+      }));
+      await getStreams(selectedValue);
+    },
+    [getStreams]
+  );
 
-  const publishIndicator = async () => {
+  const handleLearningAreaChange = useCallback(
+    async (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedValue = event.target.value;
+      setStrands([]);
+      setSelectedSubStrand("");
+      setSubstrands([]);
+      setIndicator("");
+      setStrandFilter((prev) => ({ ...prev, learning_area: selectedValue }));
+    },
+    []
+  );
+
+  const handleTermChange = useCallback(
+    async (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedValue = event.target.value;
+      setStrands([]);
+      setStrandFilter((prev) => ({ ...prev, term: selectedValue }));
+      setSelectedTerm(selectedValue);
+    },
+    []
+  );
+
+  const handleStrandChange = useCallback(
+    async (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedValue = event.target.value;
+      setSubstrands([]);
+      setSelectedSubStrand("");
+      setIndicator("");
+      setStrand(selectedValue);
+      try {
+        const res = await ApiService.getSubstrandByStrand(
+          { limit: 10000 },
+          selectedValue
+        );
+        setSubstrands(res.data || []);
+      } catch (error: any) {
+        setSuccess(false);
+        setMessage(error.message || "Failed to fetch substrands.");
+        notify.current?.showToast();
+      }
+    },
+    []
+  );
+
+  const handleSubStrandChange = useCallback((value: string) => {
+    setSelectedSubStrand(value);
+  }, []);
+
+  const publishIndicator = useCallback(async () => {
     const confirmed = await new Promise((resolve) => {
       setConfirmDialog({
         open: true,
@@ -370,16 +594,28 @@ function Main() {
       });
     });
 
-    if (confirmed) {
-      let res = await ApiService.toggleIdicatorStatus(indicator, {
-        term: selectedTerm,
-        stream: stream,
-      });
-      generateAssessment(indicator);
+    if (confirmed && indicator && selectedTerm && stream) {
+      setLoading(true);
+      try {
+        await ApiService.toggleIdicatorStatus(indicator, {
+          term: selectedTerm,
+          stream,
+        });
+        await generateAssessment(indicator);
+        setSuccess(true);
+        setMessage("Indicator published successfully.");
+        notify.current?.showToast();
+      } catch (error: any) {
+        setSuccess(false);
+        setMessage(error.message || "Failed to publish indicator.");
+        notify.current?.showToast();
+      } finally {
+        setLoading(false);
+      }
     }
-  };
+  }, [indicator, selectedTerm, stream, generateAssessment]);
 
-  const [confirmDialog, setConfirmDialog] = useState({
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogProps>({
     open: false,
     onConfirm: () => {},
     onCancel: () => {},
@@ -400,7 +636,7 @@ function Main() {
           <div className="mt-5 text-3xl">Are you sure?</div>
           <div className="mt-2 text-slate-500">
             Once you publish, the results will be sent directly to the
-            individual parents and this action is irreversible . Please confirm
+            individual parents and this action is irreversible. Please confirm
             to continue or cancel to go back.
           </div>
         </div>
@@ -426,149 +662,53 @@ function Main() {
     </Dialog>
   );
 
-  const getDescriptionColor = (score: any) => {
+  const getDescriptionColor = (score: number) => {
     switch (score) {
       case 4:
-        return "text-green-700"; // Exceeding Expectation
+        return "text-green-700";
       case 3:
-        return "text-success"; // Meeting Expectation
+        return "text-success";
       case 2:
-        return "text-purple-600"; // Approaching Expectation
+        return "text-purple-600";
       case 1:
-        return "text-orange-700"; // Below Expectation
+        return "text-orange-700";
       default:
         return "text-gray-600";
     }
   };
 
-  const addRow = () => {
-    const newRow: TableRow = {
-      no: rows.length + 1,
-      strandName: "New Strand",
-    };
-    setRows([...rows, newRow]);
-  };
-
-  const [formData, setFormData] = useState({ score: 1 });
-
-  // Loading states for backend-fetched selects
-  const [isGradesLoading, setIsGradesLoading] = useState(false);
-  const [isStreamsLoading, setIsStreamsLoading] = useState(false);
-  const [isLearningAreasLoading, setIsLearningAreasLoading] = useState(false);
-  const [isStrandsLoading, setIsStrandsLoading] = useState(false);
-  const [isSubstrandsLoading, setIsSubstrandsLoading] = useState(false);
-
-  // Updated API calls with loading states
-  const getGradesUpdated = async () => {
-    setIsGradesLoading(true);
-    try {
-      const response = await ApiService.getGrades({ page: 1 });
-      setGrades(response.data);
-    } finally {
-      setIsGradesLoading(false);
-    }
-  };
-
-  const getLearningAreasUpdated = async () => {
-    setIsLearningAreasLoading(true);
-    try {
-      const response = await ApiService.getLearningAreas({});
-      setLearningAreas(response.data);
-    } finally {
-      setIsLearningAreasLoading(false);
-    }
-  };
-
-  const getStreamsUpdated = async (selectedValue: any) => {
-    setIsStreamsLoading(true);
-    try {
-      setStreams([]);
-      const response = await ApiService.getStream({
-        page: 1,
-        grade: selectedValue,
-      });
-      setStreams(response.data);
-    } finally {
-      setIsStreamsLoading(false);
-    }
-  };
-
-  const getStrandsUpdated = async () => {
-    if (strandFilter.grade && strandFilter.term) {
-      setIsStrandsLoading(true);
-      try {
-        const response = await ApiService.getStrands(
-          {
-            page: page,
-            search: search,
-            limit: 1000,
-          },
-          strandFilter
-        );
-        setStrands(response.data);
-      } finally {
-        setIsStrandsLoading(false);
-      }
-    }
-  };
-
-  const getSubstrandsUpdated = async (selectedValue: string) => {
-    setIsSubstrandsLoading(true);
-    try {
-      setSubstrands([]);
-      let res = await ApiService.getSubstrandByStrand(
-        { limit: 10000 },
-        selectedValue
-      );
-      setSubstrands(res.data);
-    } finally {
-      setIsSubstrandsLoading(false);
-    }
-  };
-
-  // Update effect and handlers to use new API calls
   useEffect(() => {
-    getGradesUpdated();
-    getLearningAreasUpdated();
-  }, []);
-
-  const handleGradeChangeUpdated = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStream("");
-    setStrands([]);
-    await setStrandFilter({
-      learning_area: "",
-      term: "",
-      grade: selectedValue,
-    });
-    getStreamsUpdated(selectedValue);
-  };
-
-  const handleLearningAreaChangeUpdated = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setStrands([]);
-    await setStrandFilter({
-      ...strandFilter,
-      learning_area: selectedValue,
-    });
-  };
-
-  const handleStrandChangeUpdated = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = event.target.value;
-    setSubstrands([]);
-    setStrand(selectedValue);
-    getSubstrandsUpdated(selectedValue);
-  };
+    getGrades();
+    getLearningAreas();
+  }, [getGrades, getLearningAreas]);
 
   useEffect(() => {
-    getStrandsUpdated();
-  }, [strandFilter, search, page, limit]);
+    getEnrollments();
+  }, [getEnrollments]);
+
+  useEffect(() => {
+    getStrands();
+  }, [getStrands]);
+
+  useEffect(() => {
+    fetchIndicator();
+  }, [fetchIndicator]);
+
+  useEffect(() => {
+    if (indicator && stream && selectedTerm && strandFilter.learning_area) {
+      generateAssessment(indicator);
+    }
+  }, [
+    indicator,
+    stream,
+    selectedTerm,
+    strandFilter.learning_area,
+    generateAssessment,
+  ]);
+
+  useEffect(() => {
+    localStorage.setItem("strandFilter", JSON.stringify(strandFilter));
+  }, [strandFilter]);
 
   return (
     <>
@@ -583,226 +723,329 @@ function Main() {
           setConfirmDialog({ ...confirmDialog, open: false });
         }}
       />
-      ;
       {dialog ? (
-        <>
-          <form className="mt-5 p-5 validate-form" onSubmit={onSubmit}>
-            <div className="assessment-header">
-              <h2 className="text-xl flex items-center font-semibold mb-5">
-                <a
-                  onClick={(event: React.MouseEvent) => {
-                    event.preventDefault();
-                    reset({ name: "" });
-                    setDialog(false);
-                  }}
-                  href="#"
-                >
-                  <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
-                </a>{" "}
-                Assessment Score Entry Form
-              </h2>
-              <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-sm">
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Grade:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.grade_id?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Learning Area:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.learning_area?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Strand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {substrand?.strand?.name}
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Substrand:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    <div
-                      className="font-medium inline-block richtext"
-                      dangerouslySetInnerHTML={{
-                        __html: substrand.name,
-                      }}
-                    ></div>
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Indicator:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    {
-                      substrand?.indicators
-                        .flat()
-                        .find((ind: any) => ind._id === indicator)?.description
-                    }
-                  </span>
-                </div>
-                <div className="meta-row flex items-center mb-2">
-                  <label className="font-semibold text-md text-gray-700">
-                    Publish:
-                  </label>
-                  <span className="text-md text-gray-800 ml-2">
-                    <FormInput
-                      type="checkbox"
-                      className="w-5 h-5"
-                      onChange={(e: any) => publishIndicator()}
-                    />
-                  </span>
-                </div>
-                <div className="meta-row flex items-center col-span-2 mt-0.5">
-                  <Loader className="text-success animate-spin mr-2" />
-                  <span className="text-sm text-success font-medium">
-                    (Auto-saving)
-                  </span>
+        <form className="mt-5 p-5 validate-form">
+          <div className="assessment-header">
+            <h2 className="text-xl flex items-center font-semibold mb-5">
+              <a
+                onClick={(event: React.MouseEvent) => {
+                  event.preventDefault();
+                  reset();
+                  setDialog(false);
+                }}
+                href="#"
+              >
+                <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
+              </a>
+              Assessment Score Entry Form
+            </h2>
+            <div className="meta-info grid grid-cols-2 gap-x-4 p-4 bg-white rounded-lg shadow-sm">
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Grade:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  {substrand?.strand?.learning_area?.grade_id?.name || "N/A"}
+                </span>
+              </div>
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Learning Area:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  {substrand?.strand?.learning_area?.name || "N/A"}
+                </span>
+              </div>
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Strand:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  {substrand?.strand?.name || "N/A"}
+                </span>
+              </div>
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Substrand:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  <div
+                    className="font-medium inline-block richtext"
+                    dangerouslySetInnerHTML={{
+                      __html: substrand.name || "N/A",
+                    }}
+                  />
+                </span>
+              </div>
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Indicator:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  {substrand?.indicators
+                    ?.flat()
+                    .find((ind: any) => ind._id === indicator)?.description ||
+                    "N/A"}
+                </span>
+              </div>
+              <div className="meta-row flex items-center mb-2">
+                <label className="font-semibold text-md text-gray-700">
+                  Publish:
+                </label>
+                <span className="text-md text-gray-800 ml-2">
+                  <FormCheck
+                    type="checkbox"
+                    className="w-5 h-5"
+                    onChange={publishIndicator}
+                    disabled={!indicator || !selectedTerm || !stream}
+                  />
+                </span>
+              </div>
+              <div className="meta-row flex items-center col-span-2 mt-0.5">
+                <Loader className="text-success animate-spin mr-2" />
+                <span className="text-sm text-success font-medium">
+                  (Auto-saving)
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="col-span-12 overflow-auto 2xl:overflow-visible">
+            <div className="flex flex-wrap col-span-12 mt-2 xl:flex-nowrap">
+              <div className="hidden mx-auto md:block text-slate-500 mt-5" />
+              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3">
+                <div className="relative w-56 text-slate-500">
+                  <FormInput
+                    type="text"
+                    className="w-56 pr-10 !box rounded-lg"
+                    placeholder="Adm No..."
+                    onChange={(e) => setAdmNo(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
                 </div>
               </div>
             </div>
-            <div className="col-span-12 overflow-auto 2xl:overflow-visible">
-              <div className="flex flex-wrap col-span-12 mt-2 xl:flex-nowrap">
-                <div className="hidden mx-auto md:block text-slate-500 mt-5"></div>
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3">
-                  <div className="relative w-56 text-slate-500">
-                    <FormInput
-                      type="text"
-                      className="w-56 pr-10 !box rounded-lg"
-                      placeholder="Adm No..."
-                      onChange={(e) => setAdmNo(e.target.value)}
-                    />
-                    <Lucide
-                      icon="Search"
-                      className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                    />
-                  </div>
-                </div>
-              </div>
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[20px]">
-                      No
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px]">
-                      ADM No
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px]">
-                      NEMIS NO.
-                    </Table.Th>
-                    <Table.Th className="border-b-1 whitespace-nowrap w-[300px]">
-                      NAME
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[100px]">
-                      Score
-                    </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-wrap">
-                      DESCRIPTION
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {enrollments.map((assessment: any, key) => (
+            <Table className="border-spacing-y-[3px] border-separate mt-2">
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap w-[20px]">
+                    No
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px]">
+                    ADM No
+                  </Table.Th>
+                  <Table.Th className="border-b-1 whitespace-nowrap w-[300px]">
+                    NAME
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap w-[100px]">
+                    Score
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px]">
+                    Assessment Method
+                  </Table.Th>
+                  <Table.Th className="text-left border-b-1 whitespace-wrap">
+                    DESCRIPTION
+                  </Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {enrollments.map((assessment, key) => {
+                  const learnerId = assessment?.learner?._id;
+                  return (
                     <Table.Tr key={key} className="">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         {key + 1}
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="flex items-center">
-                          {assessment?.learner?.adm_no}
-                        </span>
-                      </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md text-center bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="flex items-center">
-                          {assessment?.learner?.nemis_no}
-                        </span>
+                        {assessment?.learner?.adm_no || "N/A"}
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <div className="flex">
                           <div className="ml-4">
-                            {assessment?.learner?.first_name}{" "}
-                            {assessment?.learner?.last_name}{" "}
-                            {assessment?.learner?.surname}
+                            {`${assessment?.learner?.first_name || ""} ${
+                              assessment?.learner?.last_name || ""
+                            } ${assessment?.learner?.surname || ""}`}
                           </div>
                         </div>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <FormInput
-                          {...register("score[" + key + "]")}
+                          {...register(`score[${key}]`)}
                           type="number"
                           className={`form-control w-[100px] ${
-                            getValues("score") ? "is-invalid" : ""
+                            errors.score?.[key] ? "is-invalid" : ""
                           }`}
                           defaultValue={assessment?.assessmentDetails?.score}
                           max={4}
                           min={1}
                           disabled={assessment?.assessmentDetails?.published}
-                          onChange={(e) => {
-                            const enteredValue = parseInt(e.target.value);
-                            if (enteredValue > 4) {
-                              e.target.value = "4";
-                            }
-                            handleInputChange({
-                              score: e.target.value,
-                              ...assessment,
-                            });
-                          }}
+                          onChange={(e) =>
+                            handleInputChange(
+                              assessment,
+                              key,
+                              "score",
+                              e.target.value
+                            )
+                          }
                         />
+                      </Table.Td>
+                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                        <div className="flex items-center">
+                          <FormSelect
+                            {...register(`assessmentMethod[${key}]`)}
+                            className="w-[120px]"
+                            value={assessmentMethods[key] || ""}
+                            onChange={(e) => {
+                              const newMethods = [...assessmentMethods];
+                              newMethods[key] = e.target.value;
+                              setAssessmentMethods(newMethods);
+                              handleInputChange(
+                                assessment,
+                                key,
+                                "method",
+                                e.target.value
+                              );
+                            }}
+                            disabled={assessment?.assessmentDetails?.published}
+                          >
+                            <option value="">Select Method</option>
+                            {assessmentMethodOptions.map((method, idx) => (
+                              <option key={idx} value={method}>
+                                {method}
+                              </option>
+                            ))}
+                          </FormSelect>
+                          {[
+                            "Portfolio",
+                            "Project",
+                            "Journal Assessment",
+                            "Practical Assessment",
+                          ].includes(assessmentMethods[key]) && (
+                            <div className="ml-2">
+                              <label className="cursor-pointer">
+                                <Upload className="w-5 h-5 text-blue-500" />
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx,.jpg,.png"
+                                  className="hidden"
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      assessment,
+                                      key,
+                                      "file",
+                                      e.target.files?.[0] || null
+                                    )
+                                  }
+                                  disabled={
+                                    assessment?.assessmentDetails?.published
+                                  }
+                                />
+                              </label>
+                              {uploadedFiles[learnerId] && (
+                                <span className="text-xs text-green-600 ml-1">
+                                  Uploaded
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </Table.Td>
                       <Table.Td
                         className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ${getDescriptionColor(
                           assessment?.assessmentDetails?.score
                         )}`}
                       >
-                        <span>
-                          <b>
-                            {assessment?.assessmentDetails?.score == 4
-                              ? "Exceeding Expectation: " +
-                                assessment?.learner?.first_name
-                              : ""}
-                            {assessment?.assessmentDetails?.score == 3
-                              ? "Meeting Expectation: " +
-                                assessment?.learner?.first_name
-                              : ""}
-                            {assessment?.assessmentDetails?.score == 2
-                              ? "Approaching Expectation: " +
-                                assessment?.learner?.first_name
-                              : ""}
-                            {assessment?.assessmentDetails?.score == 1
-                              ? "Below Expectation: " +
-                                assessment?.learner?.first_name
-                              : ""}
-                          </b>{" "}
-                          {assessment?.assessmentDetails?.description
-                            ? assessment.assessmentDetails.description
-                                .charAt(0)
-                                .toLowerCase() +
-                              assessment.assessmentDetails.description.slice(1)
-                            : ""}
-                        </span>
+                        <div className="flex items-center">
+                          <FormTextarea
+                            className="w-full"
+                            value={
+                              assessment?.assessmentDetails?.description || ""
+                            }
+                            onBlur={(e) => {
+                              // Trigger your "exit edit" logic here
+                              console.log(
+                                "Finished editing description",
+                                assessment?.assessmentDetails?.description
+                              );
+                              handleInputChange(
+                                assessment,
+                                key,
+                                "description",
+                                assessment?.assessmentDetails?.description
+                              );
+
+                              // You can also update state, make an API call, etc.
+                            }}
+                            onChange={(e) => {
+                              e.target.style.height = "auto";
+                              e.target.style.height = `${e.target.scrollHeight}px`;
+                              setEnrollments((prev) =>
+                                prev.map((item, index) =>
+                                  index === key
+                                    ? {
+                                        ...item,
+                                        assessmentDetails: {
+                                          ...item.assessmentDetails,
+                                          description: e.target.value,
+                                        },
+                                      }
+                                    : item
+                                )
+                              );
+                            }}
+                            disabled={assessment?.assessmentDetails?.published}
+                          />
+                          <div className="ml-2 flex items-center">
+                            {saveStatus[learnerId] === "saving" && (
+                              <span className="text-xs text-gray-500 flex items-center">
+                                <Loader className="w-4 h-4 animate-spin mr-1" />
+                                Saving...
+                              </span>
+                            )}
+                            {saveStatus[learnerId] === "saved" && (
+                              <span className="text-xs text-green-600 flex items-center">
+                                <Lucide
+                                  icon="CheckCircle"
+                                  className="w-4 h-4 mr-1"
+                                />
+                                Saved
+                              </span>
+                            )}
+                            {saveStatus[learnerId] === "error" && (
+                              <span
+                                className="text-xs text-red-600 flex items-center cursor-pointer"
+                                onClick={() =>
+                                  handleInputChange(
+                                    assessment,
+                                    key,
+                                    "description",
+                                    assessment?.assessmentDetails?.description
+                                  )
+                                }
+                              >
+                                <Lucide
+                                  icon="XCircle"
+                                  className="w-4 h-4 mr-1"
+                                />
+                                Retry
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </Table.Td>
                     </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table>
-            </div>
-          </form>
-        </>
+                  );
+                })}
+              </Table.Tbody>
+            </Table>
+          </div>
+        </form>
       ) : (
         <>
           <h2 className="mt-5 text-xl font-medium flex flex-wrap">
-            {learningArea?.name}
+            {learningArea?.name || "N/A"}
           </h2>
           <div className="box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400 rounded-lg shadow-sm">
             <h2 className="mr-auto text-base font-medium border-b p-2">
@@ -815,12 +1058,12 @@ function Main() {
                   {...register("grade")}
                   name="grade"
                   value={strandFilter.grade}
-                  onChange={handleGradeChangeUpdated}
+                  onChange={handleGradeChange}
                   className="rounded-lg hover:border-blue-500"
                 >
-                  <option>Select Grade</option>
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
+                  <option value="">Select Grade</option>
+                  {grades.map((grade: any) => (
+                    <option key={grade._id} value={grade._id}>
                       {grade.name}
                     </option>
                   ))}
@@ -832,10 +1075,7 @@ function Main() {
                   />
                 )}
                 {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
+                  <div className="mt-2 text-danger">{errors.grade.message}</div>
                 )}
               </div>
               <div className="col-span-12 sm:col-span-2 relative">
@@ -847,10 +1087,10 @@ function Main() {
                   onChange={(event) => setStream(event.target.value)}
                   className="rounded-lg hover:border-blue-500"
                 >
-                  <option>Select Stream</option>
-                  {streams.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
+                  <option value="">Select Stream</option>
+                  {streams.map((stream: any) => (
+                    <option key={stream._id} value={stream._id}>
+                      {stream.name}
                     </option>
                   ))}
                 </FormSelect>
@@ -860,63 +1100,55 @@ function Main() {
                     className="absolute right-2 top-10 w-4 h-4 text-blue-500"
                   />
                 )}
-                {errors.grade && (
+                {errors.stream && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {errors.stream.message}
                   </div>
                 )}
               </div>
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <TomSelect
-                  name="stream"
+                  name="term"
                   value={selectedTerm}
-                  onChange={(event: any) => setSelectedTerm(event)}
+                  onChange={setSelectedTerm}
                   className="rounded-lg hover:border-blue-500"
                 >
-                  <option>Select Academic Term</option>
-                  {terms.map((term: any, key) => (
-                    <option key={key} value={term._id}>
+                  <option value="">Select Academic Term</option>
+                  {terms.map((term) => (
+                    <option key={term._id} value={term._id}>
                       {term.name}
                     </option>
                   ))}
                 </TomSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
+                {errors.term && (
+                  <div className="mt-2 text-danger">{errors.term.message}</div>
                 )}
               </div>
             </div>
-
             <h2 className="mr-auto text-base font-medium border-b p-2 mt-3">
               Assessment Details
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2 relative">
-                <FormLabel
-                  htmlFor="modal-form-6"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <FormLabel className="block text-sm font-medium text-gray-700">
                   Learning Area
                 </FormLabel>
                 <FormSelect
                   {...register("learning_area")}
                   value={strandFilter.learning_area}
                   name="learning_area"
-                  onChange={handleLearningAreaChangeUpdated}
+                  onChange={handleLearningAreaChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
-                  <option>Select Learning Area</option>
+                  <option value="">Select Learning Area</option>
                   {learningAreas
                     .filter(
                       (area: any) => area?.grade_id?._id === strandFilter?.grade
                     )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea?._id}>
-                        {filteredArea.name}
+                    .map((area: any) => (
+                      <option key={area._id} value={area._id}>
+                        {area.name}
                       </option>
                     ))}
                 </FormSelect>
@@ -928,17 +1160,12 @@ function Main() {
                 )}
                 {errors.learning_area && (
                   <div className="mt-2 text-sm text-red-600">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
+                    {errors.learning_area.message}
                   </div>
                 )}
               </div>
-
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel
-                  htmlFor="modal-form-6"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <FormLabel className="block text-sm font-medium text-gray-700">
                   Term
                 </FormLabel>
                 <FormSelect
@@ -948,44 +1175,37 @@ function Main() {
                   onChange={handleTermChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
-                  <option>Select Term</option>
-                  {terms.map((term: any, key) => (
-                    <option key={key} value={term._id}>
+                  <option value="">Select Term</option>
+                  {terms.map((term) => (
+                    <option key={term._id} value={term._id}>
                       {term.name}
                     </option>
                   ))}
                 </FormSelect>
                 {errors.term && (
                   <div className="mt-2 text-sm text-red-600">
-                    {typeof errors.term.message === "string" &&
-                      errors.term.message}
+                    {errors.term.message}
                   </div>
                 )}
               </div>
-
               <div className="col-span-12 sm:col-span-2 relative">
-                <FormLabel
-                  htmlFor="modal-form-6"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <FormLabel className="block text-sm font-medium text-gray-700">
                   Strand
                 </FormLabel>
                 <FormSelect
                   {...register("strand")}
                   name="strand"
                   value={strand}
-                  onChange={handleStrandChangeUpdated}
+                  onChange={handleStrandChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
-                  <option>Select Strand</option>
-                  {strands.map((strand: any, key) => (
-                    <option key={key} value={strand._id}>
+                  <option value="">Select Strand</option>
+                  {strands.map((strand: any) => (
+                    <option key={strand._id} value={strand._id}>
                       <div
                         className="font-medium inline-block richtext"
-                        dangerouslySetInnerHTML={{
-                          __html: strand.name,
-                        }}
-                      ></div>
+                        dangerouslySetInnerHTML={{ __html: strand.name }}
+                      />
                     </option>
                   ))}
                 </FormSelect>
@@ -995,19 +1215,14 @@ function Main() {
                     className="absolute right-2 top-10 w-4 h-4 text-blue-500"
                   />
                 )}
-                {errors.theme && (
+                {errors.strand && (
                   <div className="mt-2 text-sm text-red-600">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
+                    {errors.strand.message}
                   </div>
                 )}
               </div>
-
               <div className="col-span-12 sm:col-span-4 relative">
-                <FormLabel
-                  htmlFor="modal-form-6"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <FormLabel className="block text-sm font-medium text-gray-700">
                   Substrand
                 </FormLabel>
                 <TomSelect
@@ -1017,15 +1232,13 @@ function Main() {
                   onChange={handleSubStrandChange}
                   className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
-                  <option>Select Substrand</option>
-                  {substrands.map((substrand: any, key: any) => (
-                    <option key={key} value={substrand._id}>
+                  <option value="">Select Substrand</option>
+                  {substrands.map((substrand: any) => (
+                    <option key={substrand._id} value={substrand._id}>
                       <div
                         className="font-medium inline-block richtext"
-                        dangerouslySetInnerHTML={{
-                          __html: substrand.name,
-                        }}
-                      ></div>
+                        dangerouslySetInnerHTML={{ __html: substrand.name }}
+                      />
                     </option>
                   ))}
                 </TomSelect>
@@ -1035,10 +1248,9 @@ function Main() {
                     className="absolute right-2 top-10 w-4 h-4 text-blue-500"
                   />
                 )}
-                {errors.theme && (
+                {errors.substrand && (
                   <div className="mt-2 text-sm text-red-600">
-                    {typeof errors.theme.message === "string" &&
-                      errors.theme.message}
+                    {errors.substrand.message}
                   </div>
                 )}
               </div>
@@ -1064,14 +1276,14 @@ function Main() {
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                  {substrand?.indicators?.map((indicator: any, key: any) => (
+                  {substrand?.indicators?.map((indicator: any, key: number) => (
                     <Table.Tr
                       key={key}
                       className="hover:bg-gray-50 dark:hover:bg-darkmode-600 transition-colors"
                       onClick={() => setIndicator(indicator[0]?._id)}
                     >
                       <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
-                        {indicator[0]?.description}
+                        {indicator[0]?.description || "N/A"}
                       </Table.Td>
                       <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         <ProgressBar
@@ -1088,6 +1300,11 @@ function Main() {
                           variant="primary"
                           type="button"
                           className="w-28 text-white bg-blue-600 hover:bg-blue-700 transition-all rounded-lg py-2"
+                          disabled={
+                            !stream ||
+                            !selectedTerm ||
+                            !strandFilter.learning_area
+                          }
                         >
                           Assess
                           {loading && (
@@ -1103,31 +1320,24 @@ function Main() {
                   ))}
                 </Table.Tbody>
               </Table>
-              {errors.theme && (
+              {errors.indicator && (
                 <div className="mt-3 text-sm text-red-600 dark:text-red-400">
-                  {typeof errors.theme.message === "string" &&
-                    errors.theme.message}
+                  {errors.indicator.message}
                 </div>
               )}
             </div>
           </div>
-
           <Dialog
             staticBackdrop
             size="lg"
             open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
+            onClose={() => setDialog(false)}
           >
-            <Dialog.Panel></Dialog.Panel>
+            <Dialog.Panel />
           </Dialog>
-          {/* BEGIN: Delete Confirmation Modal */}
           <Dialog
             open={confirmDelete}
-            onClose={() => {
-              setConfirmDelete(false);
-            }}
+            onClose={() => setConfirmDelete(false)}
             initialFocus={deleteButtonRef}
           >
             <Dialog.Panel>
@@ -1146,15 +1356,16 @@ function Main() {
                 <Button
                   variant="outline-secondary"
                   type="button"
-                  onClick={() => {
-                    setConfirmDelete(false);
-                  }}
+                  onClick={() => setConfirmDelete(false)}
                   className="w-24 mr-1 rounded-lg"
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={() => deleteRecord()}
+                  onClick={() => {
+                    // Implement deleteRecord if needed
+                    setConfirmDelete(false);
+                  }}
                   variant="danger"
                   type="button"
                   className="w-24 rounded-lg"
@@ -1165,15 +1376,14 @@ function Main() {
               </div>
             </Dialog.Panel>
           </Dialog>
-          {/* END: Delete Confirmation Modal */}
         </>
       )}
       <Notification
         options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
-        className="flex rounded-lg shadow-md"
+        getRef={(el) => (notify.current = el)}
+        className
+        Ahead-of-the-Curve
+        lassName="flex rounded-lg shadow-md"
       >
         <Lucide
           icon={success ? "CheckCircle" : "XCircle"}

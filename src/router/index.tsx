@@ -66,6 +66,8 @@ import LearnersTransfers from "../pages/LearnerPortal/incoming_transfers";
 import Contact from "../pages/Contact";
 import LayoutRegister from "../layouts/register";
 import LearnerSummative from "../pages/LearnerProfiles/summative";
+import LearnerPortifolio from "../pages/LearnerProfiles/e-portfolio";
+
 import BehaviourCategory from "../pages/Behaviour/category";
 import BehaviourAssessment from "../pages/Behaviour/assessment";
 import Comment from "../pages/Behaviour/assessmentcomment";
@@ -78,6 +80,8 @@ import AttendanceForm from "../pages/Attendance/attendance";
 import AttendanceSummary from "../pages/Attendance/attendance_summary";
 import AttendanceTermly from "../pages/Attendance/attendance_termly";
 import Timetable from "../pages/Timetable";
+import TimetableTeacher from "../pages/Timetable/teacher";
+import TimetableViewer from "../pages/Timetable/Timetable_view";
 
 //nn
 function Router() {
@@ -202,7 +206,15 @@ function Router() {
           path: "term",
           element: <Term />,
         },
-
+        //TimetableTeacher
+        {
+          path: "timetable-teacher",
+          element: <TimetableTeacher />,
+        },
+        {
+          path: "timetable-viewer",
+          element: <TimetableViewer />,
+        },
         {
           path: "accountDetails",
           element: <AccountDetails />,
@@ -252,7 +264,7 @@ function Router() {
           path: "teachers/:id",
           // element: <TeacherProfile />,
 
-          // element: <GradeUserAssignment />,
+          element: <GradeUserAssignment />,
         },
         {
           path: "subscription",
@@ -308,6 +320,10 @@ function Router() {
           element: <Strands />,
         },
 
+        {
+          path: "e-portifolio",
+          element: <LearnerPortifolio />,
+        },
         {
           path: "report",
           element: <LearnerProfiles />,

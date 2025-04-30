@@ -106,7 +106,9 @@ const MessageBubble: React.FC<{
       {!isOwnMessage && (
         <img
           className="w-6 h-6 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 mt-1 flex-shrink-0 object-cover"
-          src={user.avatar}
+          src={
+            "https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png"
+          }
           alt="avatar"
           loading="lazy"
         />
@@ -215,7 +217,9 @@ const ParentItem: React.FC<{
       <div className="relative flex-shrink-0">
         <img
           className="w-10 h-10 xs:w-12 xs:h-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
-          src={chat.avatar || user.avatar}
+          src={
+            "https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png"
+          }
           alt={`${chat.parentName}'s avatar`}
           loading="lazy"
         />
@@ -353,6 +357,7 @@ const AdminMessagingPage: React.FC = () => {
       const response = await ApiService.getAdminMessages({
         parentId: selectedParentId,
       });
+      fetchChatHeads();
       setMessages(
         response.data.map((msg: any) => ({
           ...msg,
@@ -617,13 +622,7 @@ const AdminMessagingPage: React.FC = () => {
                       <img
                         className="w-10 h-10 xs:w-12 xs:h-12 rounded-full border-2 border-white object-cover"
                         src={
-                          chatHeads.find(
-                            (ch) => ch.parentId === selectedParentId
-                          )?.avatar ||
-                          allParents.find(
-                            (p) => p.parentId === selectedParentId
-                          )?.avatar ||
-                          user.avatar
+                          "https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png"
                         }
                         alt="avatar"
                         loading="lazy"

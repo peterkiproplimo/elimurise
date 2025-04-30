@@ -1,34 +1,50 @@
 import React, { useState, useEffect, useCallback } from "react";
 import * as ApiService from "../../services/auth";
-import { format, parse } from "date-fns";
+import { parse } from "date-fns";
 
 // Define interfaces for type safety
 interface TimeSlot {
   _id: string;
+  name?: string;
   startTime: string;
   endTime: string;
   slotNumber: string;
-  isAvailable: boolean;
+  isFixed: boolean;
 }
 
 interface NewTimeSlot {
+  name?: string;
   startTime: string;
   endTime: string;
   slotNumber: string;
-  isAvailable: boolean;
+  isFixed: boolean;
 }
 
 const TimeSlots: React.FC = () => {
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [newTimeSlot, setNewTimeSlot] = useState<NewTimeSlot>({
+    name: "",
     startTime: "",
     endTime: "",
     slotNumber: "",
-    isAvailable: true,
+    isFixed: true,
   });
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Predefined slot names from schema
+  const slotNames = [
+    "Break",
+    "Lunch",
+    "Period 1",
+    "Period 2",
+    "Period 3",
+    "Period 4",
+    "Period 5",
+    "Assembly",
+    "Recess",
+  ];
 
   // Fetch time slots with error handling
   const fetchTimeSlots = useCallback(async () => {
@@ -73,6 +89,14 @@ const TimeSlots: React.FC = () => {
       setError("End time must be after start time");
       return false;
     }
+    // if (newTimeSlot.isFixed && !slotNames.includes(newTimeSlot.name || "")) {
+    //   setError("Please select a valid slot name for fixed slots");
+    //   return false;
+    // }
+    // if (!newTimeSlot.isFixed && !newTimeSlot.name) {
+    //   setError("Please enter a name for non-fixed slots");
+    //   return false;
+    // }
     return true;
   };
 
@@ -90,10 +114,11 @@ const TimeSlots: React.FC = () => {
         )
       );
       setNewTimeSlot({
+        name: "",
         startTime: "",
         endTime: "",
         slotNumber: "",
-        isAvailable: true,
+        isFixed: true,
       });
       setError("");
     } catch (err) {
@@ -133,11 +158,21 @@ const TimeSlots: React.FC = () => {
     }
   };
 
-  const toggleAvailability = async (
-    id: string,
-    currentStatus: boolean
-  ): Promise<void> => {
-    await handleUpdate(id, { isAvailable: !currentStatus });
+  const handleEditClick = (ts: TimeSlot) => {
+    setEditingId(ts._id);
+    setNewTimeSlot({
+      name: ts.name || "",
+      startTime: ts.startTime,
+      endTime: ts.endTime,
+      slotNumber: ts.slotNumber,
+      isFixed: ts.isFixed,
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingId || !validateInput()) return;
+
+    await handleUpdate(editingId, newTimeSlot);
   };
 
   return (
@@ -146,7 +181,37 @@ const TimeSlots: React.FC = () => {
       {error && <div className="text-red-600 mb-4">{error}</div>}
 
       {/* Create/Edit Form */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-100 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6 p-4 bg-gray-100 rounded-lg">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={newTimeSlot.isFixed}
+            onChange={(e) =>
+              setNewTimeSlot({
+                ...newTimeSlot,
+                isFixed: e.target.checked,
+                name: e.target.checked ? "Period 1" : "",
+              })
+            }
+            className="mr-2"
+            disabled={isLoading}
+          />
+          Fixed Slot
+        </label>
+        {newTimeSlot.isFixed ? (
+          <input
+            type="text"
+            value={newTimeSlot.name || ""}
+            onChange={(e) =>
+              setNewTimeSlot({ ...newTimeSlot, name: e.target.value })
+            }
+            className="p-2 border rounded-md disabled:bg-gray-200"
+            placeholder="Program Name"
+            disabled={isLoading}
+          />
+        ) : (
+          <></>
+        )}
         <input
           type="time"
           value={newTimeSlot.startTime}
@@ -179,11 +244,15 @@ const TimeSlots: React.FC = () => {
           disabled={isLoading}
         />
         <button
-          onClick={handleCreate}
+          onClick={editingId ? handleSaveEdit : handleCreate}
           disabled={isLoading}
           className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {isLoading ? "Creating..." : "Create Time Slot"}
+          {isLoading
+            ? "Processing..."
+            : editingId
+            ? "Save"
+            : "Create Time Slot"}
         </button>
       </div>
 
@@ -205,14 +274,14 @@ const TimeSlots: React.FC = () => {
               {ts.startTime} - {ts.endTime}
               <br />
               <small
-                className={ts.isAvailable ? "text-green-600" : "text-red-600"}
+                className={ts.isFixed ? "text-blue-600" : "text-green-600"}
               >
-                Status: {ts.isAvailable ? "Available" : "Booked"}
+                {ts.isFixed ? `Fixed: ${ts.name}` : `Program: ${ts.name}`}
               </small>
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => setEditingId(ts._id)}
+                onClick={() => handleEditClick(ts)}
                 disabled={isLoading}
                 className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >

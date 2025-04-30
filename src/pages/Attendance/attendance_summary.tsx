@@ -230,19 +230,19 @@ function AttendanceForm() {
     const summaryRows: (string | number)[][] = [
       [
         "",
-        "Present: Afternoon",
+        "Total Learners Present Afternoon",
         "",
         ...attendanceSummary.dailySummary.map((s) => s.presentAfternoon),
       ],
       [
         "",
-        "Present: Morning",
+        "Total Learners Present Morning	",
         "",
         ...attendanceSummary.dailySummary.map((s) => s.presentMorning),
       ],
       [
         "",
-        "Total",
+        "Total Attendance",
         "",
         ...attendanceSummary.dailySummary.map(
           (s) => s.presentMorning + s.presentAfternoon
@@ -255,7 +255,7 @@ function AttendanceForm() {
     const genderRows: (string | number)[][] = [
       [
         "",
-        "Male: Morning",
+        "Boys present Morning",
         "",
         ...attendanceSummary.dailySummary.map(
           (s) => genderAnalysis.maleMorning[s.day] || 0
@@ -263,7 +263,7 @@ function AttendanceForm() {
       ],
       [
         "",
-        "Male: Afternoon",
+        "Boys present Afternoon",
         "",
         ...attendanceSummary.dailySummary.map(
           (s) => genderAnalysis.maleAfternoon[s.day] || 0
@@ -271,7 +271,7 @@ function AttendanceForm() {
       ],
       [
         "",
-        "Female: Morning",
+        "Girls present Morning",
         "",
         ...attendanceSummary.dailySummary.map(
           (s) => genderAnalysis.femaleMorning[s.day] || 0
@@ -279,7 +279,7 @@ function AttendanceForm() {
       ],
       [
         "",
-        "Female: Afternoon",
+        "Girls present Afternoon",
         "",
         ...attendanceSummary.dailySummary.map(
           (s) => genderAnalysis.femaleAfternoon[s.day] || 0
@@ -290,7 +290,7 @@ function AttendanceForm() {
     // Premium Table Styling
     (doc as any).autoTable({
       head: [headers],
-      body: [...body, ...summaryRows, ...genderRows],
+      body: [...body, ...genderRows, ...summaryRows],
       startY: 30,
       theme: "striped",
       headStyles: {
@@ -482,7 +482,7 @@ function AttendanceForm() {
                             <>
                               <tr className="font-medium">
                                 <td className="px-4 py-3" colSpan={3}>
-                                  Boys: Morning
+                                  Boys present Morning
                                 </td>
                                 {attendanceSummary.dailySummary.map(
                                   (summary, index) => (
@@ -499,7 +499,7 @@ function AttendanceForm() {
                               </tr>
                               <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
                                 <td className="px-4 py-3" colSpan={3}>
-                                  Boys: Afternoon
+                                  Boys present Afternoon
                                 </td>
                                 {attendanceSummary.dailySummary.map(
                                   (summary, index) => (
@@ -516,7 +516,7 @@ function AttendanceForm() {
                               </tr>
                               <tr className="font-medium">
                                 <td className="px-4 py-3" colSpan={3}>
-                                  Girls: Morning
+                                  Girls present Morning
                                 </td>
                                 {attendanceSummary.dailySummary.map(
                                   (summary, index) => (
@@ -533,7 +533,7 @@ function AttendanceForm() {
                               </tr>
                               <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
                                 <td className="px-4 py-3" colSpan={3}>
-                                  Girls: Afternoon
+                                  Girls present Afternoon
                                 </td>
                                 {attendanceSummary.dailySummary.map(
                                   (summary, index) => (
@@ -553,7 +553,7 @@ function AttendanceForm() {
                         })()}
                         <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
                           <td className="px-4 py-3" colSpan={3}>
-                            Present Total: Afternoon
+                            Total Learners Present Afternoon
                           </td>
                           {attendanceSummary.dailySummary.map(
                             (summary, index) => (
@@ -565,7 +565,7 @@ function AttendanceForm() {
                         </tr>
                         <tr className="font-medium">
                           <td className="px-4 py-3" colSpan={3}>
-                            Present Total: Morning
+                            Total Learners Present Morning
                           </td>
                           {attendanceSummary.dailySummary.map(
                             (summary, index) => (
@@ -577,7 +577,7 @@ function AttendanceForm() {
                         </tr>
                         <tr className="bg-gray-100 dark:bg-darkmode-500 font-medium">
                           <td className="px-4 py-3" colSpan={3}>
-                            Total
+                            Total Attendance
                           </td>
                           {attendanceSummary.dailySummary.map(
                             (summary, index) => (
