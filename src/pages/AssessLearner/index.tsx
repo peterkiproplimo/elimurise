@@ -132,7 +132,7 @@ function Main() {
     { _id: "2", name: "Term 2" },
     { _id: "3", name: "Term 3" },
   ];
-
+  const [assessmentMethod, setAssessmentMethod] = useState<string[]>([]);
   const assessmentMethodOptions = [
     "Observation",
     "Portfolio",
@@ -456,7 +456,7 @@ function Main() {
         method:
           field === "method"
             ? value
-            : assessment?.assessmentDetails?.method || "Written Test",
+            : assessment?.assessmentDetails?.method || assessmentMethod,
         additionalDescription:
           field === "description"
             ? value
@@ -1280,8 +1280,12 @@ function Main() {
                     <Table.Th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Description
                     </Table.Th>
+
                     <Table.Th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 text-left">
                       Assessment Progress
+                    </Table.Th>
+                    <Table.Th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 text-left">
+                      Assessment Method
                     </Table.Th>
                     <Table.Th className="py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Actions
@@ -1293,7 +1297,7 @@ function Main() {
                     <Table.Tr
                       key={key}
                       className="hover:bg-gray-50 dark:hover:bg-darkmode-600 transition-colors"
-                      onClick={() => setIndicator(indicator[0]?._id)}
+                      // onClick={() => setIndicator(indicator[0]?._id)}
                     >
                       <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         {indicator[0]?.description || "N/A"}
@@ -1305,8 +1309,35 @@ function Main() {
                         />
                       </Table.Td>
                       <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
+                        <FormSelect
+                          className="w-[120px]"
+                          value={indicator[0]?.assessmentMethod || ""}
+                          onChange={(e) => {
+                            setSubstrand((prev: any) => {
+                              if (!prev) return prev;
+                              const updatedIndicators = [...prev.indicators];
+                              updatedIndicators[key] = [
+                                {
+                                  ...indicator[0],
+                                  assessmentMethod: e.target.value,
+                                },
+                              ];
+                              return { ...prev, indicators: updatedIndicators };
+                            });
+                          }}
+                        >
+                          <option value="">Select Method</option>
+                          {assessmentMethodOptions.map((method, idx) => (
+                            <option key={idx} value={method}>
+                              {method}
+                            </option>
+                          ))}
+                        </FormSelect>
+                      </Table.Td>
+                      <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         <Button
                           onClick={() => {
+                            setAssessmentMethod(indicator[0]?.assessmentMethod);
                             setIndicator(indicator[0]?._id);
                             generateAssessment(indicator[0]?._id);
                           }}
