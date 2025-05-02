@@ -416,7 +416,7 @@ function Main() {
     value: any
   ) => {
     const learnerId = assessment?.learner?._id;
-    console.log("assessment", index, field, value);
+    console.log("assessment", learnerId);
 
     if (!learnerId) return;
 
@@ -477,11 +477,8 @@ function Main() {
         formData.append("learning_area", strandFilter.learning_area);
         formData.append("score", updatedAssessment.score.toString());
         formData.append("method", updatedAssessment.method);
-        formData.append(
-          "additionalDescription",
-          updatedAssessment.additionalDescription
-        );
-
+        formData.append("additionalDescription", updatedAssessment.description);
+        console.log(formData);
         const response = await ApiService.createAssessment(formData);
         setUploadedFiles((prev) => ({ ...prev, [learnerId]: value }));
         updatedAssessment.uploadUrl = response.uploadUrl;
