@@ -89,6 +89,7 @@ function Main() {
     total_pages: 1,
     per_page: 0,
   });
+  const [editingRow, setEditingRow] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [adm_no, setAdmNo] = useState("");
   const [limit, setLimit] = useState(10);
@@ -415,6 +416,8 @@ function Main() {
     value: any
   ) => {
     const learnerId = assessment?.learner?._id;
+    console.log("assessment", index, field, value);
+
     if (!learnerId) return;
 
     if (field === "score" && (value > 4 || value < 1)) {
@@ -423,7 +426,6 @@ function Main() {
       notify.current?.showToast();
       return;
     }
-
     if (
       field !== "description" &&
       (!substrand?._id ||
@@ -852,6 +854,8 @@ function Main() {
               <Table.Tbody>
                 {enrollments.map((assessment, key) => {
                   const learnerId = assessment?.learner?._id;
+                  const isEditing = editingRow === learnerId; // Track edit state per row
+
                   return (
                     <Table.Tr key={key} className="">
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -949,89 +953,134 @@ function Main() {
                           )}
                         </div>
                       </Table.Td>
-                      <Table.Td
-                        className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ${getDescriptionColor(
-                          assessment?.assessmentDetails?.score
-                        )}`}
-                      >
-                        <div className="flex items-center">
-                          <FormTextarea
-                            className="w-full"
-                            value={
-                              assessment?.assessmentDetails?.description || ""
-                            }
-                            onBlur={(e) => {
-                              // Trigger your "exit edit" logic here
-                              console.log(
-                                "Finished editing description",
-                                assessment?.assessmentDetails?.description
-                              );
-                              handleInputChange(
-                                assessment,
-                                key,
-                                "description",
-                                assessment?.assessmentDetails?.description
-                              );
-
-                              // You can also update state, make an API call, etc.
-                            }}
-                            onChange={(e) => {
-                              e.target.style.height = "auto";
-                              e.target.style.height = `${e.target.scrollHeight}px`;
-                              setEnrollments((prev) =>
-                                prev.map((item, index) =>
-                                  index === key
-                                    ? {
-                                        ...item,
-                                        assessmentDetails: {
-                                          ...item.assessmentDetails,
-                                          description: e.target.value,
-                                        },
-                                      }
-                                    : item
-                                )
-                              );
-                            }}
-                            disabled={assessment?.assessmentDetails?.published}
-                          />
-                          <div className="ml-2 flex items-center">
-                            {saveStatus[learnerId] === "saving" && (
-                              <span className="text-xs text-gray-500 flex items-center">
-                                <Loader className="w-4 h-4 animate-spin mr-1" />
-                                Saving...
-                              </span>
-                            )}
-                            {saveStatus[learnerId] === "saved" && (
-                              <span className="text-xs text-green-600 flex items-center">
-                                <Lucide
-                                  icon="CheckCircle"
-                                  className="w-4 h-4 mr-1"
-                                />
-                                Saved
-                              </span>
-                            )}
-                            {saveStatus[learnerId] === "error" && (
-                              <span
-                                className="text-xs text-red-600 flex items-center cursor-pointer"
-                                onClick={() =>
-                                  handleInputChange(
-                                    assessment,
-                                    key,
-                                    "description",
-                                    assessment?.assessmentDetails?.description
+                      {isEditing ? (
+                        <Table.Td
+                          className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ${getDescriptionColor(
+                            assessment?.assessmentDetails?.score
+                          )}`}
+                        >
+                          <div className="flex items-center">
+                            <FormTextarea
+                              className="w-full"
+                              value={
+                                assessment?.assessmentDetails?.description || ""
+                              }
+                              onBlur={() => {
+                                handleInputChange(
+                                  assessment,
+                                  key,
+                                  "description",
+                                  assessment?.assessmentDetails?.description
+                                );
+                                //  setEditingRow(null); // Exit edit mode after saving
+                              }}
+                              onChange={(e) => {
+                                e.target.style.height = "auto";
+                                e.target.style.height = `${e.target.scrollHeight}px`;
+                                setEnrollments((prev) =>
+                                  prev.map((item, index) =>
+                                    index === key
+                                      ? {
+                                          ...item,
+                                          assessmentDetails: {
+                                            ...item.assessmentDetails,
+                                            description: e.target.value,
+                                          },
+                                        }
+                                      : item
                                   )
-                                }
-                              >
-                                <Lucide
-                                  icon="XCircle"
-                                  className="w-4 h-4 mr-1"
-                                />
-                                Retry
-                              </span>
-                            )}
+                                );
+                              }}
+                              disabled={
+                                assessment?.assessmentDetails?.published
+                              }
+                            />
+                            <div className="ml-2 flex items-center">
+                              {saveStatus[learnerId] === "saving" && (
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <Loader className="w-4 h-4 animate-spin mr-1" />
+                                  Saving...
+                                </span>
+                              )}
+                              {saveStatus[learnerId] === "saved" && (
+                                <span className="text-xs text-green-600 flex items-center">
+                                  <Lucide
+                                    icon="CheckCircle"
+                                    className="w-4 h-4 mr-1"
+                                  />
+                                  Saved
+                                </span>
+                              )}
+                              {saveStatus[learnerId] === "error" && (
+                                <span
+                                  className="text-xs text-red-600 flex items-center cursor-pointer"
+                                  onClick={() =>
+                                    handleInputChange(
+                                      assessment,
+                                      key,
+                                      "description",
+                                      assessment?.assessmentDetails?.description
+                                    )
+                                  }
+                                >
+                                  <Lucide
+                                    icon="XCircle"
+                                    className="w-4 h-4 mr-1"
+                                  />
+                                  Retry
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </Table.Td>
+                        </Table.Td>
+                      ) : (
+                        <Table.Td
+                          className={`first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ${getDescriptionColor(
+                            assessment?.assessmentDetails?.score
+                          )}`}
+                        >
+                          <span>
+                            <b>
+                              {assessment?.assessmentDetails?.score == 4
+                                ? "Exceeding Expectation: " +
+                                  assessment?.learner?.first_name
+                                : ""}
+                              {assessment?.assessmentDetails?.score == 3
+                                ? "Meeting Expectation: " +
+                                  assessment?.learner?.first_name
+                                : ""}
+                              {assessment?.assessmentDetails?.score == 2
+                                ? "Approaching Expectation: " +
+                                  assessment?.learner?.first_name
+                                : ""}
+                              {assessment?.assessmentDetails?.score == 1
+                                ? "Below Expectation: " +
+                                  assessment?.learner?.first_name
+                                : ""}
+                            </b>{" "}
+                            {assessment?.assessmentDetails?.description
+                              ? assessment.assessmentDetails.description
+                                  .charAt(0)
+                                  .toLowerCase() +
+                                assessment.assessmentDetails.description.slice(
+                                  1
+                                )
+                              : ""}
+                            {!assessment?.assessmentDetails?.published && (
+                              <a
+                                href="#"
+                                className="ml-2 text-blue-600 hover:underline"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setEditingRow(learnerId);
+                                }}
+                              >
+                                Edit
+                              </a>
+                            )}
+                          </span>
+                        </Table.Td>
+                      )}
                     </Table.Tr>
                   );
                 })}
