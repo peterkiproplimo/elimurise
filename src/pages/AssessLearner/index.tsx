@@ -478,13 +478,15 @@ function Main() {
         formData.append("score", updatedAssessment.score.toString());
         formData.append("method", updatedAssessment.method);
         formData.append("additionalDescription", updatedAssessment.description);
-        console.log(formData);
+        // console.log(formData);
         const response = await ApiService.createAssessment(formData);
         setUploadedFiles((prev) => ({ ...prev, [learnerId]: value }));
         updatedAssessment.uploadUrl = response.uploadUrl;
       } else {
+        console.log(updatedAssessment);
         // Regular assessment update without file
         await ApiService.createAssessment(updatedAssessment);
+        setEditingRow(null); // Set the editing row to the current learnerId
       }
 
       await generateAssessment(indicator);
@@ -1383,6 +1385,10 @@ function Main() {
                       <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         <Button
                           onClick={() => {
+                            if (!indicator[0]?.assessmentMethod) {
+                              alert("Select Assessement Method");
+                              return;
+                            }
                             setAssessmentMethod(indicator[0]?.assessmentMethod);
                             setIndicator(indicator[0]?._id);
                             generateAssessment(indicator[0]?._id);
