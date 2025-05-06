@@ -131,7 +131,7 @@ function NoticeBoard() {
     if (!window.confirm("Are you sure you want to delete this notice?")) return;
     setLoading(true);
     try {
-      //await ApiService.deleteNotice(id);
+      await ApiService.deleteNotificeBoard(id);
       fetchNotices();
       setMessage("Notice deleted successfully");
       notify.current?.showToast();
@@ -219,6 +219,17 @@ function NoticeBoard() {
                 <option value="normal">Normal</option>
                 <option value="high">High</option>
               </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Attachment
+              </label>
+              <input
+                type="file"
+                accept="image/*,application/pdf"
+                onChange={(e) => setAttachment(e.target.files?.[0] || null)}
+                className="w-full px-4 py-2 border rounded-md bg-white"
+              />
             </div>
 
             <div>
@@ -346,7 +357,7 @@ function NoticeBoard() {
         getRef={(el) => {
           notify.current = el;
         }}
-        className="flex items-center bg-indigo-500 text-white rounded-lg shadow-lg p-4"
+        className="flex items-center bg-indigo-500 text-black rounded-lg shadow-lg p-4"
       >
         <Lucide
           icon={message.includes("Failed") ? "AlertCircle" : "CheckCircle"}

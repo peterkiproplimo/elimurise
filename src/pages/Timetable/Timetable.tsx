@@ -85,6 +85,7 @@ const Timetable: React.FC = () => {
   const [editSpecialProgram, setEditSpecialProgram] = useState<string>("");
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const tableRef = useRef<HTMLTableElement>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
 
   // Toggle dark/light mode
   const toggleDarkMode = () => {
@@ -261,6 +262,36 @@ const Timetable: React.FC = () => {
     }
   }, [selectedStream]);
 
+  // Handle delete timetable entry
+  const handleDelete = async (entryId: string) => {
+    try {
+      await ApiService.deleteTimetablePeriod(entryId);
+      const fetchTimetables = async () => {
+        try {
+          const filter = { stream: selectedStream };
+          const data = await ApiService.getTimetables(filter);
+          setTimetables(data || []);
+        } catch (err) {
+          setError((err as Error).message);
+        }
+      };
+      await fetchTimetables();
+      setError(null);
+      // Remove focus from select element
+      if (selectRef.current) {
+        selectRef.current.blur();
+      }
+      // Exit editing mode
+      setEditingCell(null);
+      setEditPeriodType("");
+      setEditLearningArea("");
+      setEditSpecialProgram("");
+    } catch (err) {
+      setShowDialog(true);
+      setError((err as Error).message);
+    }
+  };
+
   // Organize timetable into grid
   const organizeTimetable = (
     timetables: TimetableEntry[],
@@ -360,7 +391,6 @@ const Timetable: React.FC = () => {
         setTimetables([...timetables, updatedTimetable]);
       }
       setEditingCell(null);
-      setEditPeriodType("");
       setEditLearningArea("");
       setEditSpecialProgram("");
       setError(null);
@@ -393,14 +423,6 @@ const Timetable: React.FC = () => {
   if (loading) {
     return <div className="text-center text-gray-500 p-4">Loading...</div>;
   }
-
-  // if (!gridTimeSlots.length || !days.length) {
-  //   return (
-  //     <div className="text-center text-red-500 p-4">
-  //       No timetable data available
-  //     </div>
-  //   );
-  // }
 
   return (
     <div>
@@ -540,6 +562,7 @@ const Timetable: React.FC = () => {
                             editingCell?.slotId === slot._id ? (
                               <div className="flex flex-col space-y-2">
                                 <select
+                                  ref={selectRef}
                                   value={
                                     editPeriodType &&
                                     (editPeriodType === "learning_area"
@@ -604,6 +627,14 @@ const Timetable: React.FC = () => {
                                   >
                                     Cancel
                                   </button>
+                                  {cell?.id && (
+                                    <button
+                                      onClick={() => handleDelete(cell.id)}
+                                      className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             ) : (

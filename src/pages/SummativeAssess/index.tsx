@@ -510,9 +510,7 @@ function Main() {
                   <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[150px] ">
                     ADM No
                   </Table.Th>
-                  <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px] ">
-                    NEMIS NO.
-                  </Table.Th>
+
                   <Table.Th className="border-b-1 whitespace-nowrap w-[300px] ">
                     NAME
                   </Table.Th>
@@ -534,12 +532,6 @@ function Main() {
                     <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
                       <span className="flex items-center">
                         {assessment?.learner?.adm_no}
-                      </span>
-                    </Table.Td>
-
-                    <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
-                      <span className="flex items-center">
-                        {assessment?.learner?.nemis_no}
                       </span>
                     </Table.Td>
 

@@ -27,7 +27,7 @@ const TimeSlots: React.FC = () => {
     startTime: "",
     endTime: "",
     slotNumber: "",
-    isFixed: true,
+    isFixed: false,
   });
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);

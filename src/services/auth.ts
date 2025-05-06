@@ -562,7 +562,7 @@ export const updateNotificeBoard = async (id: any, data: any) => {
 };
 export const deleteNotificeBoard = async (data: any) => {
   try {
-    let res = await axios.delete(c.SCHOOL_PATH + "/noticeboard" + data);
+    let res = await axios.delete(c.SCHOOL_PATH + "/noticeboard/" + data);
     return res.data;
   } catch (e) {
     throw handler(e);
@@ -996,6 +996,15 @@ export const updateTimetablePeriod = async (data: any) => {
   try {
     console.log(data);
     const res = await axios.post(`${c.Timetable}/timetable`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+export const deleteTimetablePeriod = async (data: any) => {
+  try {
+    console.log(data);
+    const res = await axios.delete(`${c.Timetable}/timetable/${data}`);
     return res.data;
   } catch (e) {
     throw handler(e);

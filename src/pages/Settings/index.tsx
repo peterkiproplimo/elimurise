@@ -27,6 +27,7 @@ interface FormData {
   primaryColor?: string;
   secondaryColor?: string;
   summative_has_score?: boolean;
+  summative_has_pos?: boolean;
   logo?: string;
   school_stamp?: string;
   school_head_teacher_signature?: string;
@@ -294,15 +295,29 @@ function Settings() {
                     <FormLabel>
                       Summative Report With Score (Not Recommended)
                     </FormLabel>
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>School Stamp</FormLabel>
-                      <PassportUpload
-                        name="school_stamp"
-                        register={register}
-                        errors={errors}
-                        initialImageUrl={IMG_URL + schoolDetails.school_stamp}
-                      />
-                    </div>
+
+                    <FormInput
+                      {...register("summative_has_pos")}
+                      type="checkbox"
+                      name="summative_has_pos"
+                      className={
+                        errors.summative_has_score
+                          ? "border-danger w-5 h-5 mr-3"
+                          : "w-5 h-5 mr-3"
+                      }
+                    />
+                    <FormLabel>
+                      Summative Report Has Pos (Not Recommended)
+                    </FormLabel>
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
+                    <FormLabel>School Stamp</FormLabel>
+                    <PassportUpload
+                      name="school_stamp"
+                      register={register}
+                      errors={errors}
+                      initialImageUrl={IMG_URL + schoolDetails.school_stamp}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-6">
                     <FormLabel>Logo</FormLabel>

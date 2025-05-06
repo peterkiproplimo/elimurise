@@ -416,7 +416,7 @@ function Main() {
     value: any
   ) => {
     const learnerId = assessment?.learner?._id;
-    console.log("assessment", learnerId);
+    console.log("assessment", assessment);
 
     if (!learnerId) return;
 
@@ -444,6 +444,7 @@ function Main() {
     setSaveStatus((prev) => ({ ...prev, [learnerId]: "saving" }));
 
     try {
+      console.log(assessment);
       const updatedAssessment: any = {
         substrand: substrand?._id,
         indicator,
@@ -459,10 +460,8 @@ function Main() {
           field === "method"
             ? value
             : assessment?.assessmentDetails?.method || assessmentMethod,
-        additionalDescription:
-          field === "description"
-            ? value
-            : assessment?.assessmentDetails?.description || "",
+        description: assessment?.assessmentDetails?.description || "",
+        additionalDescription: assessment?.assessmentDetails?.description || "",
       };
 
       // Handle file upload
@@ -478,6 +477,8 @@ function Main() {
         formData.append("score", updatedAssessment.score.toString());
         formData.append("method", updatedAssessment.method);
         formData.append("additionalDescription", updatedAssessment.description);
+        formData.append("description", updatedAssessment.description);
+
         // console.log(formData);
         const response = await ApiService.createAssessment(formData);
         setUploadedFiles((prev) => ({ ...prev, [learnerId]: value }));
@@ -876,6 +877,14 @@ function Main() {
                         <FormInput
                           {...register(`score[${key}]`)}
                           type="number"
+                          onKeyDown={(e) => {
+                            // Allow numbers 1, 2, 3, 4, and backspace
+                            if (
+                              !["1", "2", "3", "4", "Backspace"].includes(e.key)
+                            ) {
+                              e.preventDefault();
+                            }
+                          }}
                           className={`form-control w-[100px] `}
                           defaultValue={assessment?.assessmentDetails?.score}
                           max={4}
