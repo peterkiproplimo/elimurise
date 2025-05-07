@@ -122,7 +122,7 @@ const TimeSlots: React.FC = () => {
       });
       setError("");
     } catch (err) {
-      setError("Failed to create time slot. Please try again.");
+      setError(err.message || "Failed to fetch time slots. Please try again.");
     } finally {
       setIsLoading(false);
     }
