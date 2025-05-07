@@ -121,7 +121,7 @@ const TimeSlots: React.FC = () => {
         isFixed: false,
       });
       setError("");
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Failed to fetch time slots. Please try again.");
     } finally {
       setIsLoading(false);
