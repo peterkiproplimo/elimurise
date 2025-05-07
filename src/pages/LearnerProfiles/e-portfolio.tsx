@@ -29,6 +29,7 @@ import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
 import { motion, AnimatePresence } from "framer-motion";
+import * as c from "../../utils/constants";
 
 interface TableRow {
   no: number;
@@ -387,16 +388,12 @@ function Main() {
                     {assessment.uploadUrl.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                       <Tippy content="Click to preview image">
                         <img
-                          src={
-                            "http://localhost:3000/portal" +
-                            assessment.uploadUrl
-                          }
+                          src={c.IMG_URL + "/" + assessment.uploadUrl}
                           alt={assessment.indicator_description}
                           className="w-32 h-32 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity duration-200"
                           onClick={() =>
                             setPreviewImage(
-                              "http://localhost:3000/portal" +
-                                assessment.uploadUrl
+                              c.IMG_URL + "/" + assessment.uploadUrl
                             )
                           }
                         />
@@ -404,10 +401,7 @@ function Main() {
                     ) : (
                       <Tippy content="Download file">
                         <a
-                          href={
-                            "http://localhost:3000/portal" +
-                            assessment.uploadUrl
-                          }
+                          href={c.IMG_URL + "/" + assessment.uploadUrl}
                           download
                           className="text-blue-600 dark:text-blue-400 hover:underline flex items-center space-x-2 p-2 bg-gray-100 dark:bg-gray-600 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors duration-200"
                         >
