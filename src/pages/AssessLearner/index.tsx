@@ -420,12 +420,12 @@ function Main() {
 
     if (!learnerId) return;
 
-    if (field === "score" && (value > 4 || value < 1)) {
-      setSuccess(false);
-      setMessage("Score must be between 1 and 4.");
-      notify.current?.showToast();
-      return;
-    }
+    // if (field === "score" && (value > 4 || value < 1)) {
+    //   setSuccess(false);
+    //   setMessage("Score must be between 1 and 4.");
+    //   notify.current?.showToast();
+    //   return;
+    // }
     if (
       field !== "description" &&
       (!substrand?._id ||
@@ -876,19 +876,34 @@ function Main() {
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                         <FormInput
                           {...register(`score[${key}]`)}
-                          type="number"
+                          type="text" // Use "text" to have better control over input length
                           onKeyDown={(e) => {
-                            // Allow numbers 1, 2, 3, 4, and backspace
-                            if (
-                              !["1", "2", "3", "4", "Backspace"].includes(e.key)
-                            ) {
+                            const allowedKeys = [
+                              "1",
+                              "2",
+                              "3",
+                              "4",
+                              "Backspace",
+                              "Tab",
+                              "ArrowLeft",
+                              "ArrowRight",
+                            ];
+                            if (!allowedKeys.includes(e.key)) {
                               e.preventDefault();
                             }
                           }}
-                          className={`form-control w-[100px] `}
+                          onInput={(e: any) => {
+                            const val = e.target.value;
+                            // Remove any non-allowed characters or extra digits
+                            if (!["1", "2", "3", "4"].includes(val)) {
+                              e.target.value = "";
+                            } else if (val.length > 1) {
+                              e.target.value = val[0]; // Trim to first allowed character
+                            }
+                          }}
+                          maxLength={1}
+                          className="form-control w-[100px]"
                           defaultValue={assessment?.assessmentDetails?.score}
-                          max={4}
-                          min={1}
                           disabled={assessment?.assessmentDetails?.published}
                           onChange={(e) =>
                             handleInputChange(
