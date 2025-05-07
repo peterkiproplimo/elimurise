@@ -28,7 +28,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
 import logo from "../../assets/images/student.jpeg";
-import debounce from "lodash.debounce"; // Ensure lodash.debounce is installed
+import debounce from "lodash.debounce"; // Ensure lodash.debounce is installedss
 
 interface TableRow {
   no: number;
