@@ -290,7 +290,7 @@ const TimeSlots: React.FC = () => {
               <small
                 className={ts.isFixed ? "text-blue-600" : "text-green-600"}
               >
-                {ts.isFixed ? `Fixed: ${ts.name}` : `Program: ${ts.name}`}
+                {ts.isFixed ? `Fixed: ${ts.name}` : ``}
               </small>
             </div>
             <div className="flex gap-2">
