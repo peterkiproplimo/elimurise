@@ -781,7 +781,7 @@ function Main() {
                               {hasPermission("teachers", "assign-grade") && (
                                 <Menu.Item
                                   onClick={() =>
-                                    navigate("/home/teacher/" + teacher?._id)
+                                    navigate("/home/teachers/" + teacher?._id)
                                   }
                                 >
                                   <Lucide
