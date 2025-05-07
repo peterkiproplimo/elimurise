@@ -98,7 +98,7 @@ function Main() {
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
   const [dialog, setDialog] = useState(false);
-
+  const [publish, setPublish] = useState(false);
   const [assessmentMethods, setAssessmentMethods] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<{
     [key: string]: File | null;
@@ -123,9 +123,10 @@ function Main() {
     term: learningArea?._id ? "1" : "",
   };
 
-  const [strandFilter, setStrandFilter] = useState<StrandFilter>(() => {
-    const savedState = localStorage.getItem("strandFilter");
-    return savedState ? JSON.parse(savedState) : initialState;
+  const [strandFilter, setStrandFilter] = useState<StrandFilter>({
+    grade: learningArea?.grade_id?._id || "",
+    learning_area: learningArea?._id || "",
+    term: learningArea?._id ? "1" : "",
   });
 
   const terms = [
@@ -149,6 +150,9 @@ function Main() {
     onConfirm: () => void;
     onCancel: () => void;
   }
+  useEffect(() => {
+    setAssessmentMethod([]);
+  }, []);
 
   const schema = yup
     .object({
@@ -296,13 +300,14 @@ function Main() {
           adm_no,
         };
         const res = await ApiService.getAssessmentLerners(data);
-        setEnrollments(res || []);
+        setEnrollments(res.data || []);
         setAssessmentMethods(
-          res.map(
+          res.data.map(
             (assessment: Assessment) =>
               assessment?.assessmentDetails?.method || ""
           )
         );
+        setPublish(res.published);
         setDialog(true);
       } catch (error: any) {
         setSuccess(false);
@@ -587,35 +592,40 @@ function Main() {
     setSelectedSubStrand(value);
   }, []);
 
-  const publishIndicator = useCallback(async () => {
-    const confirmed = await new Promise((resolve) => {
-      setConfirmDialog({
-        open: true,
-        onConfirm: () => resolve(true),
-        onCancel: () => resolve(false),
-      });
-    });
-
-    if (confirmed && indicator && selectedTerm && stream) {
-      setLoading(true);
-      try {
-        await ApiService.toggleIdicatorStatus(indicator, {
-          term: selectedTerm,
-          stream,
+  const publishIndicator = useCallback(
+    async (value: any) => {
+      const confirmed = await new Promise((resolve) => {
+        setConfirmDialog({
+          open: true,
+          onConfirm: () => resolve(true),
+          onCancel: () => resolve(false),
         });
-        await generateAssessment(indicator);
-        setSuccess(true);
-        setMessage("Indicator published successfully.");
-        notify.current?.showToast();
-      } catch (error: any) {
-        setSuccess(false);
-        setMessage(error.message || "Failed to publish indicator.");
-        notify.current?.showToast();
-      } finally {
-        setLoading(false);
+      });
+
+      if (confirmed && indicator && selectedTerm && stream) {
+        setLoading(true);
+        try {
+          await ApiService.toggleIdicatorStatus(indicator, {
+            term: selectedTerm,
+            stream,
+            publish: value,
+          });
+          setPublish(value);
+          await generateAssessment(indicator);
+          setSuccess(true);
+          setMessage("Indicator published successfully.");
+          notify.current?.showToast();
+        } catch (error: any) {
+          setSuccess(false);
+          setMessage(error.message || "Failed to publish indicator.");
+          notify.current?.showToast();
+        } finally {
+          setLoading(false);
+        }
       }
-    }
-  }, [indicator, selectedTerm, stream, generateAssessment]);
+    },
+    [indicator, selectedTerm, stream, generateAssessment]
+  );
 
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogProps>({
     open: false,
@@ -637,9 +647,10 @@ function Main() {
           />
           <div className="mt-5 text-3xl">Are you sure?</div>
           <div className="mt-2 text-slate-500">
-            Once you publish, the results will be sent directly to the
-            individual parents and this action is irreversible. Please confirm
-            to continue or cancel to go back.
+            {!publish
+              ? "Once you publish, the results will be sent directly to the individual parents, and this action is irreversible."
+              : "Once you unpublish, the results will no longer be accessible to parents, and this action is irreversible."}
+            Please confirm to continue or cancel to go back.
           </div>
         </div>
         <div className="px-5 pb-8 text-center">
@@ -657,7 +668,7 @@ function Main() {
             type="button"
             className="w-24"
           >
-            Publish
+            {publish ? "Unpublish" : "Publish"}
           </Button>
         </div>
       </Dialog.Panel>
@@ -792,13 +803,17 @@ function Main() {
               </div>
               <div className="meta-row flex items-center mb-2">
                 <label className="font-semibold text-md text-gray-700">
-                  Publish:
+                  {publish ? "Unpublish" : "Publish"}:
                 </label>
                 <span className="text-md text-gray-800 ml-2">
                   <FormInput
                     type="checkbox"
                     className="w-5 h-5"
-                    onChange={(e: any) => publishIndicator()}
+                    checked={publish}
+                    onChange={(e: any) => {
+                      // setPublish(e.target.checked);
+                      publishIndicator(e.target.checked);
+                    }}
                   />
                 </span>
               </div>
@@ -852,7 +867,7 @@ function Main() {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {enrollments.map((assessment, key) => {
+                {enrollments?.map((assessment, key) => {
                   const learnerId = assessment?.learner?._id;
                   const isEditing = editingRow === learnerId; // Track edit state per row
 
@@ -1413,6 +1428,7 @@ function Main() {
                               alert("Select Assessement Method");
                               return;
                             }
+                            setUploadedFiles({});
                             setAssessmentMethod(indicator[0]?.method);
                             setIndicator(indicator[0]?._id);
                             generateAssessment(indicator[0]?._id);
