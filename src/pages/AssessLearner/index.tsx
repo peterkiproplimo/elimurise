@@ -1383,7 +1383,7 @@ function Main() {
                       <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         <FormSelect
                           className="w-[120px]"
-                          value={indicator[0]?.assessmentMethod || ""}
+                          value={indicator[0]?.method || ""}
                           onChange={(e) => {
                             setSubstrand((prev: any) => {
                               if (!prev) return prev;
