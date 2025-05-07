@@ -149,6 +149,13 @@ const TimeSlots: React.FC = () => {
     try {
       setIsLoading(true);
       await ApiService.deleteTimeSlot(id);
+      setNewTimeSlot({
+        name: "",
+        startTime: "",
+        endTime: "",
+        slotNumber: "",
+        isFixed: false,
+      });
       setTimeSlots(timeSlots.filter((ts) => ts._id !== id));
       setError("");
     } catch (err) {
