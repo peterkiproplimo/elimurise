@@ -1409,11 +1409,11 @@ function Main() {
                       <Table.Td className="py-3 px-4 bg-white dark:bg-darkmode-600 shadow-sm rounded-md">
                         <Button
                           onClick={() => {
-                            if (!indicator[0]?.assessmentMethod) {
+                            if (!indicator[0]?.method) {
                               alert("Select Assessement Method");
                               return;
                             }
-                            setAssessmentMethod(indicator[0]?.assessmentMethod);
+                            setAssessmentMethod(indicator[0]?.method);
                             setIndicator(indicator[0]?._id);
                             generateAssessment(indicator[0]?._id);
                           }}
