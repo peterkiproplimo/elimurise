@@ -145,8 +145,8 @@ const TimeSlots: React.FC = () => {
       });
       setEditingId(null);
       setError("");
-    } catch (err) {
-      setError("Failed to update time slot. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Failed to update time slot. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -165,8 +165,8 @@ const TimeSlots: React.FC = () => {
       });
       setTimeSlots(timeSlots.filter((ts) => ts._id !== id));
       setError("");
-    } catch (err) {
-      setError("Failed to delete time slot. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Failed to update time slot. Please try again.");
     } finally {
       setIsLoading(false);
     }
