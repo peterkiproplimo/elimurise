@@ -1391,7 +1391,7 @@ function Main() {
                               updatedIndicators[key] = [
                                 {
                                   ...indicator[0],
-                                  assessmentMethod: e.target.value,
+                                  method: e.target.value,
                                 },
                               ];
                               return { ...prev, indicators: updatedIndicators };
