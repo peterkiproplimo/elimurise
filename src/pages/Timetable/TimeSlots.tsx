@@ -136,6 +136,13 @@ const TimeSlots: React.FC = () => {
       setIsLoading(true);
       const updated: TimeSlot = await ApiService.updateTimeSlot(id, updates);
       setTimeSlots(timeSlots.map((ts) => (ts._id === id ? updated : ts)));
+      setNewTimeSlot({
+        name: "",
+        startTime: "",
+        endTime: "",
+        slotNumber: "",
+        isFixed: false,
+      });
       setEditingId(null);
       setError("");
     } catch (err) {
