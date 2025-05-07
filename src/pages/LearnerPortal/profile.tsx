@@ -454,7 +454,7 @@ function Main() {
                     <div className="tab-pane">
                       <h4 className="font-bold">Attendance</h4>
                       <Calendar
-                        initialDate="2025-02-12"
+                        initialDate={new Date().toISOString().split("T")[0]}
                         events={calendarEvents}
                         // onDateClick={fetchAttendancel}
                       />
