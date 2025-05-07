@@ -118,7 +118,7 @@ const TimeSlots: React.FC = () => {
         startTime: "",
         endTime: "",
         slotNumber: "",
-        isFixed: true,
+        isFixed: false,
       });
       setError("");
     } catch (err) {
