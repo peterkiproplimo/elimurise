@@ -703,7 +703,7 @@ function Main() {
                                     className="font-medium whitespace-nowrap"
                                   >
                                     {parent.first_name && parent.first_name}
-                                    {parent.last_name + " " + parent.surname}
+                                    {parent.surname + " " + parent.last_name}
                                   </a>
                                 </div>
                               </div>
