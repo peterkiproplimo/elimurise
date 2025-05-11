@@ -421,6 +421,7 @@ function Main() {
     setRows([...rows, newRow]);
   };
   const [formData, setFormData] = useState({ score: 1 });
+  const isSwahili = /kiswahili/i.test(meta?.learningArea?.name);
 
   return (
     <>
@@ -587,18 +588,34 @@ function Main() {
                       >
                         <b>
                           {assessment?.assessmentDetails?.grading_score == 4
-                            ? "Exceeding Expectation(4): "
+                            ? isSwahili
+                              ? "Kuzidisha Matarajio: " +
+                                assessment?.learner?.first_name
+                              : "Exceeding Expectation: " +
+                                assessment?.learner?.first_name
                             : ""}
                           {assessment?.assessmentDetails?.grading_score == 3
-                            ? "Meeting Expectation(3): "
+                            ? isSwahili
+                              ? "Kufikia Matarajio: " +
+                                assessment?.learner?.first_name
+                              : "Meeting Expectation: " +
+                                assessment?.learner?.first_name
                             : ""}
                           {assessment?.assessmentDetails?.grading_score == 2
-                            ? "Approaching Expectation(2): "
+                            ? isSwahili
+                              ? "Kukaribia Matarajio: " +
+                                assessment?.learner?.first_name
+                              : "Approaching Expectation: " +
+                                assessment?.learner?.first_name
                             : ""}
                           {assessment?.assessmentDetails?.grading_score == 1
-                            ? "Below Expectation(1): "
+                            ? isSwahili
+                              ? "Mbali na Matarajio: " +
+                                assessment?.learner?.first_name
+                              : "Below Expectation: " +
+                                assessment?.learner?.first_name
                             : ""}
-                        </b>
+                        </b>{" "}
                         <br />
                       </span>
                       {assessment?.assessmentDetails?.description ||

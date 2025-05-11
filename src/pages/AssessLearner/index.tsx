@@ -112,7 +112,7 @@ function Main() {
   const [isLearningAreasLoading, setIsLearningAreasLoading] = useState(false);
   const [isStrandsLoading, setIsStrandsLoading] = useState(false);
   const [isSubstrandsLoading, setIsSubstrandsLoading] = useState(false);
-
+  const [learningAreaName, setLearningAreaName] = useState<any>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const learningArea = location?.state?.data;
@@ -144,6 +144,7 @@ function Main() {
     "Practical Assessment",
     "Journal Assessment",
   ];
+  // const isSwahili = /kiswahili/i.test(area.name); // Check if name contains "kiswahili" (case-insensitive)
 
   interface ConfirmDialogProps {
     open: boolean;
@@ -551,6 +552,7 @@ function Main() {
       setSelectedSubStrand("");
       setSubstrands([]);
       setIndicator("");
+
       setStrandFilter((prev) => ({ ...prev, learning_area: selectedValue }));
     },
     []
@@ -722,6 +724,7 @@ function Main() {
   useEffect(() => {
     localStorage.setItem("strandFilter", JSON.stringify(strandFilter));
   }, [strandFilter]);
+  const isSwahili = /kiswahili/i.test(substrand?.strand?.learning_area?.name);
 
   return (
     <>
@@ -1080,20 +1083,32 @@ function Main() {
                           <span>
                             <b>
                               {assessment?.assessmentDetails?.score == 4
-                                ? "Exceeding Expectation: " +
-                                  assessment?.learner?.first_name
+                                ? isSwahili
+                                  ? "Kuzidisha Matarajio: " +
+                                    assessment?.learner?.first_name
+                                  : "Exceeding Expectation: " +
+                                    assessment?.learner?.first_name
                                 : ""}
                               {assessment?.assessmentDetails?.score == 3
-                                ? "Meeting Expectation: " +
-                                  assessment?.learner?.first_name
+                                ? isSwahili
+                                  ? "Kufikia Matarajio: " +
+                                    assessment?.learner?.first_name
+                                  : "Meeting Expectation: " +
+                                    assessment?.learner?.first_name
                                 : ""}
                               {assessment?.assessmentDetails?.score == 2
-                                ? "Approaching Expectation: " +
-                                  assessment?.learner?.first_name
+                                ? isSwahili
+                                  ? "Kukaribia Matarajio: " +
+                                    assessment?.learner?.first_name
+                                  : "Approaching Expectation: " +
+                                    assessment?.learner?.first_name
                                 : ""}
                               {assessment?.assessmentDetails?.score == 1
-                                ? "Below Expectation: " +
-                                  assessment?.learner?.first_name
+                                ? isSwahili
+                                  ? "Mbali na Matarajio: " +
+                                    assessment?.learner?.first_name
+                                  : "Below Expectation: " +
+                                    assessment?.learner?.first_name
                                 : ""}
                             </b>{" "}
                             {assessment?.assessmentDetails?.description
