@@ -44,6 +44,7 @@ function Settings() {
     "Head Teacher",
     "Deputy Principal",
     "Deputy Head Teacher",
+    "School Administrator",
   ]; // Define signatory role options
 
   const schema = yup.object({}).required(); // No specific validation needed for these fields

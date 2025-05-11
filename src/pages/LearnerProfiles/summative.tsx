@@ -116,6 +116,7 @@ function Main() {
       learner: selectedLearner,
       test,
       session: selectedAcademicYear,
+      type,
     };
     setLoading(true);
     try {

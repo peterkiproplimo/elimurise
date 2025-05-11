@@ -173,6 +173,7 @@ function Main() {
       learning_area: selectedLearningArea,
       learner: selectedLearner,
       session: selectedAcademicYear,
+      // type,
     };
     isLoading(true);
     try {
