@@ -227,11 +227,15 @@ const initialState: SideMenuState = {
           icon: "Activity",
           pathname: "/home/behaviour",
           title: "Behaviour Category",
+          ignore: false,
+
         },
         {
           icon: "Activity",
           pathname: "/home/behaviour-assessment",
           title: "Behaviour Assessment",
+          ignore: false,
+
         },
       ],
     },

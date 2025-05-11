@@ -296,7 +296,8 @@ function Settings() {
                     <FormLabel>
                       Summative Report With Score (Not Recommended)
                     </FormLabel>
-
+                  </div>
+                  <div className="col-span-12 md:col-span-6">
                     <FormInput
                       {...register("summative_has_pos")}
                       type="checkbox"
