@@ -367,7 +367,7 @@ function Main() {
               </div>
 
               <div>
-                <FormLabel>Surname</FormLabel>
+                <FormLabel>Middle Name</FormLabel>
                 <FormInput
                   {...register("surname")}
                   type="text"

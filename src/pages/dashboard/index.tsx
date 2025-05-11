@@ -357,7 +357,7 @@ function Main() {
                             {dashboards.totalTests}
                           </div>
                           <div className="mt-1 text-sm sm:text-base text-slate-500">
-                            Unpublished Summative Tests
+                            Unpublished Tests
                           </div>
                         </div>
                       </div>

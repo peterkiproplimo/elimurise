@@ -330,8 +330,8 @@ function Main() {
                 href="#"
               ></a>
             </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-6 sm:col-span-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 gap-y-3">
+              <div>
                 <FormLabel>
                   First Name<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -350,7 +350,25 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-6 sm:col-span-6">
+              <div>
+                <FormLabel>
+                  Middle Name <span className="text-danger ml-0.5">*</span>
+                </FormLabel>
+                <FormInput
+                  {...register("surname")}
+                  type="text"
+                  name="surname"
+                  className={errors.surname ? "border-danger" : ""}
+                  placeholder="Surname"
+                />
+                {errors.surname && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.surname.message === "string" &&
+                      errors.surname.message}
+                  </div>
+                )}
+              </div>
+              <div>
                 <FormLabel>
                   Last Name <span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -368,31 +386,9 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
-                <FormLabel>
-                  Surname <span className="text-danger ml-0.5">*</span>
-                </FormLabel>
-                <FormInput
-                  {...register("surname")}
-                  type="text"
-                  name="surname"
-                  className={errors.surname ? "border-danger" : ""}
-                  placeholder="Surname"
-                />
-                {errors.surname && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.surname.message === "string" &&
-                      errors.surname.message}
-                  </div>
-                )}
-              </div>
-              <div className="col-span-6 sm:col-span-6">
+              <div>
                 <FormLabel htmlFor="modal-form-6">Gender</FormLabel>
-                <FormSelect
-                  {...register("gender")}
-                  name="gender"
-                  // defaultValue={selectedLevel}
-                >
+                <FormSelect {...register("gender")} name="gender">
                   <option value={""}>Select Gender</option>
                   <option value={"Male"}>Male</option>
                   <option value={"Female"}>Female</option>
@@ -404,7 +400,8 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
+
+              <div>
                 <FormLabel>ID Number</FormLabel>
                 <FormInput
                   {...register("id_no")}
@@ -420,7 +417,8 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
+
+              <div>
                 <FormLabel>
                   Email<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -438,7 +436,8 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
+
+              <div>
                 <FormLabel>
                   Phone<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -456,7 +455,9 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-12 mt-3">
+
+              {/* Submit buttons */}
+              <div className="col-span-1 sm:col-span-2 md:col-span-3 mt-3">
                 <Button
                   type="button"
                   variant="outline-secondary"
@@ -702,10 +703,7 @@ function Main() {
                                     className="font-medium whitespace-nowrap"
                                   >
                                     {parent.first_name && parent.first_name}
-                                    {" " +
-                                      parent.surname +
-                                      " " +
-                                      parent.last_name}
+                                    {parent.last_name + " " + parent.surname}
                                   </a>
                                 </div>
                               </div>

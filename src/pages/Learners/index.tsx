@@ -2569,11 +2569,11 @@ function Main() {
                                 onClick={() => openChat(learner?.guardian)}
                               >
                                 <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
-                                {unreadMessages?.guardian1 > 0 && (
+                                {/* {unreadMessages?.guardian1 > 0 && (
                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {unreadMessages?.guardian1}
                                   </span>
-                                )}
+                                )} */}
                               </div>
                             )}
                           </button>
@@ -2594,11 +2594,11 @@ function Main() {
                                 onClick={() => openChat(learner?.guardian2)}
                               >
                                 <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
-                                {unreadMessages?.guardian2 > 0 && (
+                                {/* {unreadMessages?.guardian2 > 0 && (
                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {unreadMessages?.guardian2}
                                   </span>
-                                )}
+                                )} */}
                               </div>
                             )}
                           </button>
