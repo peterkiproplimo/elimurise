@@ -579,7 +579,7 @@ function Main() {
                   onClick={() => setOpenDialog(true)}
                 >
                   <Lucide icon="Mail" className="w-4 h-4 mr-2" />
-                  Send Wecome Email
+                  Send Welcome Email
                 </Button>
               </div>
 

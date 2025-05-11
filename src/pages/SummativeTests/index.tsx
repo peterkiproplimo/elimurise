@@ -19,6 +19,7 @@ import { formatDate } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
 import SummativeDone from "./done-tests";
+
 function Main() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -62,13 +63,13 @@ function Main() {
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
+
   // Success notification
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
       name: yup.string().required("Name is required"),
       type: yup.string().required("Type is required"),
-
       grading: yup.string().required("Select Performance Level Scale"),
       term: yup.string().required("Select Term"),
       grade: yup.string().required("Select Grade"),
@@ -85,6 +86,7 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+
   const getStreams = async (selectedValue: any) => {
     setStreams([]);
     const response = await ApiService.getStream({
@@ -101,7 +103,6 @@ function Main() {
       isLoading(true);
       try {
         const data = await getValues();
-        console.log(data);
         const res = await ApiService.createTests(data);
         await getTests();
         cancel({ name: "" });
@@ -111,22 +112,22 @@ function Main() {
         setMessage(res.message);
         notify.current?.showToast();
       } catch (error: any) {
-        console.log(error.message);
         isLoading(false);
         setSuccess(false);
         setMessage(error.message);
-        console.log(success);
-        console.log(message);
         notify.current?.showToast();
       }
     }
   };
+
   useEffect(() => {
     getTests();
   }, [grade, selectedTerm, type, search, limit, page]);
+
   useEffect(() => {
     fetchGrading();
   }, []);
+
   useEffect(() => {
     getGrades();
   }, []);
@@ -166,27 +167,9 @@ function Main() {
       gradeId: gradeId,
     });
     isLoading(false);
-
     setGradings(res.data);
-    console.log(gradings);
     isLoading(false);
   };
-
-  // const getGrades = async () => {
-  //   const response = await ApiService.getGrades({
-  //     page: page,
-  //     search: search,
-  //     limit: limit,
-  //   });
-  //   const pagination = response.pagination;
-  //   setPagination({
-  //     current_page: pagination.current_page,
-  //     total: pagination.total,
-  //     total_pages: pagination.total_pages,
-  //     per_page: pagination.per_page,
-  //   });
-  //   setGrades(response.data);
-  // };
 
   const deleteRecord = async () => {
     isLoading(true);
@@ -197,6 +180,23 @@ function Main() {
       setConfirmDelete(false);
       setSuccess(true);
       setMessage(res.message);
+      notify.current?.showToast();
+    } catch (error: any) {
+      isLoading(false);
+      setSuccess(false);
+      setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+
+  const publishRecord = async (test: any) => {
+    isLoading(true);
+    try {
+      let res = await ApiService.publishTest(test, test.published);
+      getTests();
+      isLoading(false);
+      setSuccess(true);
+      setMessage(res.message || "Test published successfully");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -229,7 +229,6 @@ function Main() {
     setSelectedTerm("");
     setGradeId("");
     setGrade("");
-
     setDialog(false);
   };
 
@@ -290,11 +289,7 @@ function Main() {
               </div>
               <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel htmlFor="modal-form-6">Type</FormLabel>
-                <FormSelect
-                  {...register("type")}
-                  name="type"
-                  // defaultValue={selectedLevel}
-                >
+                <FormSelect {...register("type")} name="type">
                   <option value={""}>Select Type</option>
                   <option value={"Tunner"}>Tunner-Up</option>
                   <option value={"Mid Term"}>Miderm</option>
@@ -313,7 +308,6 @@ function Main() {
                   {...register("grade")}
                   name="grade"
                   onChange={(event: any) => setGrade(event.target.value)}
-                  // defaultValue={selectedLevel}
                 >
                   <option value={""}>Select Grade</option>
                   {grades.map((grade: any, key: any) => (
@@ -340,7 +334,6 @@ function Main() {
                   onChange={(event: any) => setSelectedTerm(event.target.value)}
                 >
                   <option value={""}>Select Academic Term</option>
-
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
@@ -354,7 +347,6 @@ function Main() {
                   </div>
                 )}
               </div>
-
               <div className="col-span-6 sm:col-span-4">
                 <div className="col-span-4 sm:col-span-12 py-2">
                   <FormLabel className="modal-form-6">
@@ -411,7 +403,6 @@ function Main() {
       ) : (
         <>
           <h2 className="mt-1 text-lg font-medium ">Summative Tests</h2>
-
           <div className="grid grid-cols-12 gap-6 mt-5">
             <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
               <Button
@@ -433,7 +424,6 @@ function Main() {
                   pagination.total}{" "}
                 entries
               </div>
-
               <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
                 <div className="relative w-56 text-slate-500">
                   <FormInput
@@ -458,7 +448,6 @@ function Main() {
                 value={grade}
                 onChange={(event: any) => {
                   setPage(1);
-
                   setGrade(event);
                   setSelectedTerm("");
                   setType("");
@@ -477,16 +466,13 @@ function Main() {
                 value={selectedTerm}
                 onChange={(event: any) => {
                   setPage(1);
-
                   setSelectedTerm(event);
                   setType("");
-                  // handleTestChange();
                 }}
               >
                 <option value={""} selected>
                   All Terms
                 </option>
-
                 {terms.map((term: any, key) => (
                   <option key={key} value={term._id}>
                     {term.name}
@@ -499,22 +485,17 @@ function Main() {
                 value={type}
                 onChange={(event: any) => {
                   setPage(1);
-
                   setType(event);
-                  // handleTestChange();
                 }}
               >
                 <option value={""} selected>
                   All Types
                 </option>
-
                 <option value={"Tunner"}>Tunner-Up</option>
                 <option value={"Mid Term"}>Miderm</option>
                 <option value={"End of the Term"}>End of the Term</option>
               </TomSelect>
             </div>
-
-            {/* BEGIN: Data List */}
             <div className="col-span-12 overflow-auto  2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
@@ -522,12 +503,10 @@ function Main() {
                 </div>
               ) : tests.length === 0 ? (
                 <div className="flex flex-col items-center mt-10 bg-white p-8">
-                  {/* <Search size={28} className="" /> */}
                   <p className="text-xl text-slate-500 ">No records found</p>
                 </div>
               ) : (
                 <>
-                  {" "}
                   <Table className="border-spacing-y-[3px] border-separate -mt-2">
                     <Table.Thead>
                       <Table.Tr>
@@ -537,9 +516,7 @@ function Main() {
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Name
                         </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap">
-                          Owner
-                        </Table.Th>
+
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Type
                         </Table.Th>
@@ -554,6 +531,9 @@ function Main() {
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Session
+                        </Table.Th>
+                        <Table.Th className="border-b-0 whitespace-nowrap">
+                          Published
                         </Table.Th>
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Created At
@@ -585,14 +565,8 @@ function Main() {
                               <a
                                 onClick={(event: any) => event.preventDefault()}
                               >
-                                {" "}
                                 {test.name}
                               </a>
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <span className="font-medium whitespace-nowrap">
-                              {test.school ? "Local" : "Hero"}
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
@@ -620,12 +594,28 @@ function Main() {
                               {test?.session}
                             </span>
                           </Table.Td>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white dark:bg-darkmode-600 px-4 py-3 text-center">
+                            <span className="inline-flex items-center justify-center w-full font-medium">
+                              {test?.published ? (
+                                <Lucide
+                                  icon="CheckCircle"
+                                  className="w-5 h-5 text-green-500"
+                                />
+                              ) : (
+                                <Lucide
+                                  icon="AlertCircle"
+                                  className="w-5 h-5 text-red-500"
+                                />
+                              )}
+                            </span>
+                          </Table.Td>
+
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {new Date(test.grade.createdAt).toLocaleString(
                                 "en-US",
                                 {
-                                  timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
+                                  timeZone: "Africa/Nairobi",
                                   year: "numeric",
                                   month: "2-digit",
                                   day: "2-digit",
@@ -636,7 +626,6 @@ function Main() {
                             </span>
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            {/* <div className="flex items-center justify-center"> */}
                             <div className="flex items-center justify-center">
                               <a
                                 className="flex items-center mr-3 text-success"
@@ -652,10 +641,8 @@ function Main() {
                                 <Lucide icon="View" className="w-4 h-4 mr-1 " />{" "}
                                 View
                               </a>
-                              {/* </div> */}
                               {test?.school && (
                                 <>
-                                  {" "}
                                   <a
                                     className="flex items-center mr-3 text-success"
                                     href="#"
@@ -668,11 +655,22 @@ function Main() {
                                     Edit
                                   </a>
                                   <a
+                                    className="flex items-center mr-3 text-primary"
+                                    href="#"
+                                    onClick={() => publishRecord(test)}
+                                  >
+                                    <Lucide
+                                      icon="Send"
+                                      className="w-4 h-4 mr-1"
+                                    />{" "}
+                                    Publish
+                                  </a>
+                                  <a
                                     className="flex items-center text-danger"
                                     href="#"
                                     onClick={() => {
-                                      setRecordId(test._id),
-                                        setConfirmDelete(true);
+                                      setRecordId(test._id);
+                                      setConfirmDelete(true);
                                     }}
                                   >
                                     <Lucide
@@ -746,9 +744,7 @@ function Main() {
                 </>
               )}
             </div>
-            {/* END: Data List */}
           </div>
-
           <Dialog
             staticBackdrop
             size="lg"
@@ -758,7 +754,6 @@ function Main() {
             }}
           >
             <Dialog.Panel className={"p-5"}>
-              {/* <form> */}
               <div className="col-span-12 sm:col-span-4 mt-2">
                 <FormLabel htmlFor="stream">
                   Select Stream<span className="text-danger ml-0.5">*</span>
@@ -778,14 +773,7 @@ function Main() {
                     </option>
                   ))}
                 </FormSelect>
-                {/* {errors.stream && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.stream.message === "string" &&
-                        errors.stream.message}
-                    </div>
-                  )} */}
               </div>
-
               <div className="col-span-12 mt-4 text-right">
                 <Button
                   variant="outline-secondary"
@@ -802,15 +790,12 @@ function Main() {
                   variant="success"
                   type="submit"
                   className="w-24 ml-4 text-white"
-                  // ref={}
                 >
                   View
                 </Button>
               </div>
-              {/* </form> */}
             </Dialog.Panel>
           </Dialog>
-          {/* BEGIN: Delete Confirmation Modal s*/}
           <Dialog
             open={confirmDelete}
             onClose={() => {
@@ -853,10 +838,8 @@ function Main() {
               </div>
             </Dialog.Panel>
           </Dialog>
-          {/* END: Delete Confirmation Modal */}
         </>
       )}
-
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {

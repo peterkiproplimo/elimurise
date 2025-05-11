@@ -398,6 +398,17 @@ export async function deleteTests(data: any) {
   }
 }
 
+export async function publishTest(data: any, other: any) {
+  try {
+    let res = await axios.patch(c.TESTS + "/" + data + "/publish", {
+      data: other,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
 //streams
 export const getStream = async (data: any) => {
   try {

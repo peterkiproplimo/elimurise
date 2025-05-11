@@ -67,7 +67,15 @@ const MODULE_CONFIG: ModuleConfig = {
   roles: ["read", "create", "update", "delete"],
   school: ["read", "create", "update", "delete"],
   "grade-teacher-assignment": ["read", "create", "update", "delete"],
-  tests: ["read", "create", "update", "delete", "learners-report", "assess"],
+  tests: [
+    "read",
+    "create",
+    "update",
+    "delete",
+    "learners-report",
+    "assess",
+    "publish",
+  ],
   "grading-system": ["read", "create", "update", "delete"],
   summative: ["read", "create", "update", "delete"],
   grades: ["read", "create", "update", "delete"],
@@ -75,6 +83,8 @@ const MODULE_CONFIG: ModuleConfig = {
   "transfer-requests": ["read", "create", "update", "delete", "approve"],
   payments: ["read", "create", "process", "delete"],
   comment: ["read", "create"],
+  communication: ["read", "create"],
+  attendance: ["read", "create"],
 };
 
 // Define role structure

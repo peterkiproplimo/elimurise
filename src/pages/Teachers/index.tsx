@@ -94,13 +94,13 @@ function Main() {
   const schema = yup
     .object({
       firstname: yup.string().required("First Name is required"),
-      lastname: yup.string().required("Middle Name is required"),
+      // lastname: yup.string().required("Middle Name is required"),
       email: yup.string().required(" Email is required"),
-      surname: yup.string().required("Surname is required"),
-      phone: yup
-        .string()
-        .required("Phone number is required")
-        .min(10, "Phone number must be at least 10 characters long"),
+      // surname: yup.string().required("Surname is required"),
+      // phone: yup
+      //   .string()
+      //   .required("Phone number is required")
+      //   .min(10, "Phone number must be at least 10 characters long"),
     })
     .required();
 
@@ -365,22 +365,6 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
-                <FormInput
-                  {...register("lastname")}
-                  type="text"
-                  name="lastname"
-                  className={errors.lastname ? "border-danger" : ""}
-                  placeholder="Doe"
-                />
-                {errors.lastname && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.lastname.message === "string" &&
-                      errors.lastname.message}
-                  </div>
-                )}
-              </div>
               <div className="col-span-6 sm:col-span-6">
                 <FormLabel>Surname</FormLabel>
                 <FormInput
@@ -397,11 +381,25 @@ function Main() {
                   </div>
                 )}
               </div>
+              <div className="col-span-12 sm:col-span-6">
+                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+                <FormInput
+                  {...register("lastname")}
+                  type="text"
+                  name="lastname"
+                  className={errors.lastname ? "border-danger" : ""}
+                  placeholder="Doe"
+                />
+                {errors.lastname && (
+                  <div className="mt-2 text-danger">
+                    {typeof errors.lastname.message === "string" &&
+                      errors.lastname.message}
+                  </div>
+                )}
+              </div>
 
               <div className="col-span-6 sm:col-span-6">
-                <FormLabel>
-                  Phone Number<span className="text-danger ml-0.5">*</span>
-                </FormLabel>
+                <FormLabel>Phone Number</FormLabel>
                 <FormInput
                   {...register("phone", {
                     pattern: {
@@ -752,7 +750,7 @@ function Main() {
                               className="font-medium whitespace-nowrap"
                             >
                               {teacher.firstname && teacher.firstname}
-                              {" " + teacher.lastname + " " + teacher.surname}
+                              {" " + teacher.surname + " " + teacher.lastname}
                             </a>
                           </div>
                         </div>

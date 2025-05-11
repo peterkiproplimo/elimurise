@@ -580,7 +580,7 @@ function Main() {
 
                   <option value={"learner"}>Learner Report</option>
                   <option value="learner-weakness">
-                    Learner's Areas to Improve
+                    Learner's Areas of Improvement
                   </option>
                   {/* <option value="learner-strength">Learner Strengths</option> */}
 
