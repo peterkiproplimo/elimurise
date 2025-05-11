@@ -346,8 +346,8 @@ function Main() {
                 href="#"
               ></a>
             </div>
-            <div className="grid grid-cols-12 gap-4 gap-y-3">
-              <div className="col-span-6 sm:col-span-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 gap-y-3">
+              <div>
                 <FormLabel>
                   First Name<span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -365,7 +365,8 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
+
+              <div>
                 <FormLabel>Surname</FormLabel>
                 <FormInput
                   {...register("surname")}
@@ -381,8 +382,9 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-1">Last Name</FormLabel>
+
+              <div>
+                <FormLabel>Last Name</FormLabel>
                 <FormInput
                   {...register("lastname")}
                   type="text"
@@ -398,7 +400,7 @@ function Main() {
                 )}
               </div>
 
-              <div className="col-span-6 sm:col-span-6">
+              <div>
                 <FormLabel>Phone Number</FormLabel>
                 <FormInput
                   {...register("phone", {
@@ -413,7 +415,6 @@ function Main() {
                   className={errors.phone ? "border-danger" : ""}
                   placeholder="Phone Number"
                 />
-
                 {errors.phone && (
                   <div className="mt-2 text-danger">
                     {typeof errors.phone.message === "string" &&
@@ -421,7 +422,8 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-6 sm:col-span-6">
+
+              <div>
                 <FormLabel>
                   Email <span className="text-danger ml-0.5">*</span>
                 </FormLabel>
@@ -439,8 +441,9 @@ function Main() {
                   </div>
                 )}
               </div>
-              <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Role</FormLabel>
+
+              <div>
+                <FormLabel>Role</FormLabel>
                 <FormSelect {...register("role")} name="role">
                   {roles?.map((role: any, key) => (
                     <option key={key} value={role._id}>
@@ -456,111 +459,13 @@ function Main() {
                 )}
               </div>
 
-              {/* <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">Select Grade</FormLabel>
-                <TomSelect
-                  {...register("grade")}
-                  name="grade"
-                  value={strandFilter.grade}
-                  onChange={(event:any) => handleGradeChange(event)}
-                >
-                  <option value={""}>Select Grade</option>
-                  {grades.map((grade: any, key) => (
-                    <option key={key} value={grade._id}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.grade && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
-                  </div>
-                )}
-              </div> */}
-
-              {/*   <div className="col-span-12 sm:col-span-6">
-                <FormLabel htmlFor="modal-form-6">
-                  Select Learning Area
-                </FormLabel>
-              <FormSelect
-                  {...register("learning_area")}
-                  name="learning_area"
-                  value={strandFilter.learning_area}
-                  onChange={(event) => handleLearningAreaChange(event)}
-                >
-                  <option value={""}>Select Learning Area</option>
-                  {learningAreas
-                    .filter(
-                      (area: any) => area?.grade_id?._id === strandFilter.grade
-                    )
-                    .map((filteredArea: any, key) => (
-                      <option key={key} value={filteredArea._id}>
-                        {filteredArea.name}
-                      </option>
-                    ))}
-                    
-                </FormSelect>
-                {errors.learning_area && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.learning_area.message === "string" &&
-                      errors.learning_area.message}
-                  </div>
-                )}
-              </div> */}
-
-              {/* <Table className="w-100 ">
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      <FormInput
-                        type="checkbox"
-                        className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                        // checked={selectAll}
-                        // onChange={handleSelectAll}
-                      />
-                    </Table.Th>
-                    <Table.Th className="border-b-0 whitespace-nowrap">
-                      Learning Area
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {filteredLearningAreas.map((filteredArea: any, key) => (
-                    <Table.Tr key={key} className="">
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 ">
-                        <span className="font-medium whitespace-nowrap">
-                          <FormInput
-                            type="checkbox"
-                            {...register(`lerningArea[${key}].selected`)}
-                            name={`lerningArea[${key}].selected`}
-                            className=" w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                          />
-                          <FormInput
-                            type="hidden"
-                            {...register(`lerningArea[${key}].id`)}
-                            name={`lerningArea[${key}].id`}
-                            defaultValue={filteredArea?._id} // Use defaultValue instead of value
-                            className="w-5 h-5 border-gray-400 rounded-md focus:ring-indigo-500"
-                          />
-                        </span>
-                      </Table.Td>
-
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600">
-                        <span className="font-medium whitespace-nowrap">
-                          {filteredArea.name}
-                        </span>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))}
-                </Table.Tbody>
-              </Table> */}
-              <div className="col-span-12 sm:col-span-12 mt-3">
+              {/* Submit buttons */}
+              <div className="col-span-1 sm:col-span-2 md:col-span-3 mt-3 flex gap-2">
                 <Button
                   type="button"
                   variant="outline-secondary"
                   onClick={() => cancel({ name: "" })}
-                  className="w-20 mr-1"
+                  className="w-20"
                 >
                   Cancel
                 </Button>
