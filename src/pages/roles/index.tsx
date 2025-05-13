@@ -85,6 +85,7 @@ const MODULE_CONFIG: ModuleConfig = {
   comment: ["read", "create"],
   communication: ["read", "create"],
   attendance: ["read", "create"],
+  "parental-attendance": ["read", "create"],
 };
 
 // Define role structure

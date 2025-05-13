@@ -281,11 +281,13 @@ function Main() {
                 className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               >
                 <option value="">Select Test</option>
-                {tests.map((t: any, key) => (
-                  <option key={key} value={t._id}>
-                    {t.name}
-                  </option>
-                ))}
+                {tests
+                  .filter((t: any) => t.isPublished === true)
+                  .map((t: any, key) => (
+                    <option key={key} value={t._id}>
+                      {t.name}
+                    </option>
+                  ))}
               </TomSelect>
               {testsLoading && (
                 <LoadingIcon

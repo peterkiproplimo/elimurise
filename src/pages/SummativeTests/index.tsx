@@ -32,7 +32,7 @@ function Main() {
   const [term, setTerm] = useState("");
   const [grade_data, setGradeData] = useState("");
   const [displayResults, setDisplayResults] = useState(false);
-
+  const [publish, setPublish] = useState(false);
   const terms = [
     { _id: 1, name: "Term 1" },
     { _id: 2, name: "Term 2" },
@@ -192,7 +192,8 @@ function Main() {
   const publishRecord = async (test: any) => {
     isLoading(true);
     try {
-      let res = await ApiService.publishTest(test, test.published);
+      console.log(test);
+      let res = await ApiService.publishTest(test._id, test.isPublished);
       getTests();
       isLoading(false);
       setSuccess(true);
@@ -596,7 +597,7 @@ function Main() {
                           </Table.Td>
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white dark:bg-darkmode-600 px-4 py-3 text-center">
                             <span className="inline-flex items-center justify-center w-full font-medium">
-                              {test?.published ? (
+                              {test?.isPublished ? (
                                 <Lucide
                                   icon="CheckCircle"
                                   className="w-5 h-5 text-green-500"

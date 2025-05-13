@@ -247,8 +247,8 @@ function Main() {
   const schema = yup
     .object({
       first_name: yup.string().required("First name is required"),
-      last_name: yup.string().required("Last name is required"),
-      surname: yup.string().required("Surname is required"),
+      // last_name: yup.string().required("Last name is required"),
+      // surname: yup.string().required("Surname is required"),
       adm_no: yup.string().required("Adm No is required"),
       grade: yup.string().required("Grade is required"),
       stream: yup.string().required("Stream is required"),
@@ -2563,19 +2563,20 @@ function Main() {
                             onClick={() => setActiveTab("guardian1")}
                           >
                             <span>Parent 1</span>
-                            {learner?.guardian?.email && (
-                              <div
-                                className="relative"
-                                onClick={() => openChat(learner?.guardian)}
-                              >
-                                <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
-                                {/* {unreadMessages?.guardian1 > 0 && (
+                            {learner?.guardian?.email &&
+                              hasPermission("parental-attendance", "read") && (
+                                <div
+                                  className="relative"
+                                  onClick={() => openChat(learner?.guardian)}
+                                >
+                                  <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
+                                  {/* {unreadMessages?.guardian1 > 0 && (
                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {unreadMessages?.guardian1}
                                   </span>
                                 )} */}
-                              </div>
-                            )}
+                                </div>
+                              )}
                           </button>
                         </li>
                         <li className="mr-2 flex items-center">
@@ -2588,19 +2589,20 @@ function Main() {
                             onClick={() => setActiveTab("guardian2")}
                           >
                             <span>Parent 2</span>
-                            {learner?.guardian2?.email && (
-                              <div
-                                className="relative"
-                                onClick={() => openChat(learner?.guardian2)}
-                              >
-                                <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
-                                {/* {unreadMessages?.guardian2 > 0 && (
+                            {learner?.guardian2?.email &&
+                              hasPermission("parental-attendance", "read") && (
+                                <div
+                                  className="relative"
+                                  onClick={() => openChat(learner?.guardian2)}
+                                >
+                                  <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
+                                  {/* {unreadMessages?.guardian2 > 0 && (
                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {unreadMessages?.guardian2}
                                   </span>
                                 )} */}
-                              </div>
-                            )}
+                                </div>
+                              )}
                           </button>
                         </li>
                       </>

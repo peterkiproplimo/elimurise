@@ -57,6 +57,7 @@ function Main() {
   const [strands, setStrands] = useState([]);
   const [tests, setTests] = useState([]);
   const [test, setTest] = useState("");
+  const [published, setPublished] = useState(false);
   const [streams, setStreams] = useState([]);
   const [substrands, setSubstrands] = useState([]);
   const [stream, setStream] = useState("");
@@ -786,7 +787,8 @@ function Main() {
                     .filter(
                       (test: any) =>
                         test?.grade?._id == strandFilter.grade &&
-                        test?.term == selectedTerm
+                        test?.term == selectedTerm &&
+                        test?.isPublished == false
                     )
                     .map((test: any, key) => (
                       <option key={key} value={test._id}>
