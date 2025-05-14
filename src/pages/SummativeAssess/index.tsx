@@ -788,7 +788,8 @@ function Main() {
                       (test: any) =>
                         test?.grade?._id == strandFilter.grade &&
                         test?.term == selectedTerm &&
-                        test?.isPublished == false
+                        (test?.isPublished === false ||
+                          test?.isPublished === undefined)
                     )
                     .map((test: any, key) => (
                       <option key={key} value={test._id}>
