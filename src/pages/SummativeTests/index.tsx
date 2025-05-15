@@ -20,7 +20,16 @@ import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
 import SummativeDone from "./done-tests";
 
+// Define ConfirmDialogProps interface
+interface ConfirmDialogProps {
+  open: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  publish?: boolean; // Optional, to control Publish/Unpublish text
+}
+
 function Main() {
+  // Existing state variables (unchanged)
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
@@ -32,7 +41,7 @@ function Main() {
   const [term, setTerm] = useState("");
   const [grade_data, setGradeData] = useState("");
   const [displayResults, setDisplayResults] = useState(false);
-  const [publish, setPublish] = useState(false);
+  const [publish, setPublish] = useState(false); // Used for ConfirmDialog
   const terms = [
     { _id: 1, name: "Term 1" },
     { _id: 2, name: "Term 2" },
@@ -64,7 +73,15 @@ function Main() {
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
 
-  // Success notification
+  // Add ConfirmDialog state
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogProps>({
+    open: false,
+    onConfirm: () => {},
+    onCancel: () => {},
+    publish: false,
+  });
+
+  // Success notification (unchanged)
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
@@ -87,6 +104,51 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
+  // ConfirmDialog component
+  const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+    open,
+    onConfirm,
+    onCancel,
+    publish,
+  }) => (
+    <Dialog open={open} onClose={onCancel}>
+      <Dialog.Panel>
+        <div className="p-5 text-center">
+          <Lucide
+            icon="AlertCircle"
+            className="w-16 h-16 mx-auto mt-3 text-warning"
+          />
+          <div className="mt-5 text-3xl">Are you sure?</div>
+          <div className="mt-2 text-slate-500">
+            {!publish
+              ? "Once you publish, the results will be sent directly to the individual parents."
+              : "Once you unpublish, the results will no longer be accessible to parents."}
+            Please confirm to continue or cancel to go back.
+          </div>
+        </div>
+        <div className="px-5 pb-8 text-center">
+          <Button
+            variant="outline-secondary"
+            type="button"
+            onClick={onCancel}
+            className="w-24 mr-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={onConfirm}
+            variant="primary"
+            type="button"
+            className="w-24"
+          >
+            {publish ? "Unpublish" : "Publish"}
+          </Button>
+        </div>
+      </Dialog.Panel>
+    </Dialog>
+  );
+
+  // Existing functions (unchanged)
   const getStreams = async (selectedValue: any) => {
     setStreams([]);
     const response = await ApiService.getStream({
@@ -189,11 +251,11 @@ function Main() {
     }
   };
 
-  const publishRecord = async (test: any) => {
+  // Modified publishRecord to integrate with ConfirmDialog
+  const publishRecord = async (testId: string, isPublished: boolean) => {
     isLoading(true);
     try {
-      console.log(test);
-      let res = await ApiService.publishTest(test._id, test.isPublished);
+      let res = await ApiService.publishTest(testId, isPublished);
       getTests();
       isLoading(false);
       setSuccess(true);
@@ -205,6 +267,21 @@ function Main() {
       setMessage(error.message);
       notify.current?.showToast();
     }
+  };
+
+  // New function to open ConfirmDialog for publish/unpublish
+  const openPublishDialog = (test: any) => {
+    setConfirmDialog({
+      open: true,
+      publish: test.isPublished, // Set based on current publish state
+      onConfirm: () => {
+        publishRecord(test._id, test.isPublished);
+        setConfirmDialog({ ...confirmDialog, open: false });
+      },
+      onCancel: () => {
+        setConfirmDialog({ ...confirmDialog, open: false });
+      },
+    });
   };
 
   const editRecord = (record: any) => {
@@ -241,6 +318,7 @@ function Main() {
           setDisplayResults={setDisplayResults}
         />
       ) : dialog ? (
+        // Form JSX (unchanged)
         <>
           <div className="flex items-center mt-8 ">
             <a
@@ -258,18 +336,18 @@ function Main() {
             </h2>
           </div>
           <br />
-          <form className="mt-5 p-5  box validate-form" onSubmit={onSubmit}>
+          <form className="mt-5 p-5 box validate-form" onSubmit={onSubmit}>
             <div>
               <a
                 onClick={(event: React.MouseEvent) => {
                   event.preventDefault();
                   setDialog(false);
                 }}
-                className="absolute  top-0 right-0 mt-3 mr-3"
+                className="absolute top-0 right-0 mt-3 mr-3"
                 href="#"
               ></a>
-            </div>{" "}
-            <div className="grid grid-cols-12 gap-6 ">
+            </div>
+            <div className="grid grid-cols-12 gap-6">
               <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel className="modal-form-6">
                   Name<span className="text-danger ml-0.5">*</span>
@@ -325,7 +403,7 @@ function Main() {
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-6 ">
+            <div className="grid grid-cols-12 gap-6">
               <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <FormSelect
@@ -403,9 +481,9 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-1 text-lg font-medium ">Summative Tests</h2>
+          <h2 className="mt-1 text-lg font-medium">Summative Tests</h2>
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
+            <div className="flex flex-wrap items-center col-span-12 mt-2 xl:flex-nowrap">
               <Button
                 variant="primary"
                 className="mr-2 shadow-md"
@@ -443,7 +521,7 @@ function Main() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap items-center justify-end col-span-12 mt-2 xl:flex-nowrap ">
+            <div className="flex flex-wrap items-center justify-end col-span-12 mt-2 xl:flex-nowrap">
               <TomSelect
                 className="w-56 box mr-3"
                 value={grade}
@@ -497,14 +575,14 @@ function Main() {
                 <option value={"End of the Term"}>End of the Term</option>
               </TomSelect>
             </div>
-            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto 2xl:overflow-visible">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
                 </div>
               ) : tests.length === 0 ? (
                 <div className="flex flex-col items-center mt-10 bg-white p-8">
-                  <p className="text-xl text-slate-500 ">No records found</p>
+                  <p className="text-xl text-slate-500">No records found</p>
                 </div>
               ) : (
                 <>
@@ -517,7 +595,6 @@ function Main() {
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Name
                         </Table.Th>
-
                         <Table.Th className="border-b-0 whitespace-nowrap">
                           Type
                         </Table.Th>
@@ -560,7 +637,7 @@ function Main() {
                               setDialogView(true);
                               setTerm(test.term);
                             }}
-                            className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] cursor-pointer "
+                            className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] cursor-pointer"
                           >
                             <span className="font-medium whitespace-nowrap">
                               <a
@@ -610,7 +687,6 @@ function Main() {
                               )}
                             </span>
                           </Table.Td>
-
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
                             <span className="font-medium whitespace-nowrap">
                               {new Date(test.grade.createdAt).toLocaleString(
@@ -639,7 +715,7 @@ function Main() {
                                   setTerm(test.term);
                                 }}
                               >
-                                <Lucide icon="View" className="w-4 h-4 mr-1 " />{" "}
+                                <Lucide icon="View" className="w-4 h-4 mr-1" />{" "}
                                 View
                               </a>
                               {test?.school && (
@@ -651,20 +727,21 @@ function Main() {
                                   >
                                     <Lucide
                                       icon="CheckSquare"
-                                      className="w-4 h-4 mr-1 "
+                                      className="w-4 h-4 mr-1"
                                     />{" "}
                                     Edit
                                   </a>
                                   <a
                                     className="flex items-center mr-3 text-primary"
                                     href="#"
-                                    onClick={() => publishRecord(test)}
+                                    onClick={() => openPublishDialog(test)} // Updated to open dialog
                                   >
                                     <Lucide
                                       icon="Send"
                                       className="w-4 h-4 mr-1"
                                     />{" "}
-                                    Publish
+                                    {test.isPublished ? "Unpublish" : "Publish"}{" "}
+                                    {/* Dynamic button text */}
                                   </a>
                                   <a
                                     className="flex items-center text-danger"
@@ -688,8 +765,8 @@ function Main() {
                       ))}
                     </Table.Tbody>
                   </Table>
-                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                  <div className="flex flex-wrap items-center col-span-12 sm:flex-row sm:flex-nowrap tt">
+                    <div className="flex flex-wrap items-center col-span-12 sm:flex-row sm:flex-nowrap tt">
                       <Pagination className="w-full sm:w-auto sm:mr-auto">
                         <button
                           onClick={() => setPage(page > 1 ? page - 1 : 1)}
@@ -839,6 +916,13 @@ function Main() {
               </div>
             </Dialog.Panel>
           </Dialog>
+          {/* Add ConfirmDialog to JSX */}
+          <ConfirmDialog
+            open={confirmDialog.open}
+            onConfirm={confirmDialog.onConfirm}
+            onCancel={confirmDialog.onCancel}
+            publish={confirmDialog.publish}
+          />
         </>
       )}
       <Notification
@@ -853,7 +937,7 @@ function Main() {
           className={success ? "text-success" : "text-danger"}
         />
         <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? " Success" : "Failed"}</div>
+          <div className="font-medium">{success ? "Success" : "Failed"}</div>
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>
