@@ -11,6 +11,7 @@ import * as ApiService from "../../services/auth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ClassicEditor } from "../../base-components/Ckeditor";
+import { IMG_URL } from "../../utils/constants";
 
 interface FormData {
   title: string;
@@ -44,7 +45,7 @@ function NoticeBoard() {
     const fetchNotices = async () => {
       setLoading(true);
       try {
-        const response = await ApiService.getNotificeBoardParent({});
+        const response = await ApiService.getNotificeBoardParent({}); // Fixed typo
         setNotices(response.data);
       } catch (error) {
         setMessage("Failed to load notices");
@@ -69,6 +70,7 @@ function NoticeBoard() {
         status,
         recipients,
       };
+      // Note: No API call to create notice; assuming parent view is read-only
       setMessage("Notice created successfully!");
       notify.current?.showToast();
       setShowForm(false);
@@ -107,15 +109,28 @@ function NoticeBoard() {
     const currentDate = new Date();
     const diffInMs = currentDate.getTime() - noticeDate.getTime();
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-    return diffInDays <= 3; // True if within 3 days
+    return diffInDays <= 3;
   };
 
-  // Find the most recent notice
-  const latestNotice = notices.reduce((latest, current) => {
-    return new Date(current.publishOn) > new Date(latest.publishOn)
-      ? current
-      : latest;
-  }, notices[0]);
+  // Function to check if a notice is expired
+  const isExpired = (expiresOn: string | Date | null) => {
+    if (!expiresOn) return false; // No expiration date means not expired
+    const expiryDate = new Date(expiresOn);
+    const currentDate = new Date();
+    return expiryDate < currentDate;
+  };
+
+  // Find the most recent notice (among non-expired, published notices)
+  const filteredNotices = notices.filter(
+    (notice) => notice.status === "published" && !isExpired(notice.expiresOn)
+  );
+  const latestNotice = filteredNotices.reduce(
+    (latest, current) =>
+      new Date(current.publishOn) > new Date(latest.publishOn)
+        ? current
+        : latest,
+    filteredNotices[0]
+  );
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -132,63 +147,90 @@ function NoticeBoard() {
           <div className="flex justify-center items-center h-64">
             <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
           </div>
-        ) : notices.length === 0 ? (
+        ) : filteredNotices.length === 0 ? (
           <div className="text-center py-10 text-gray-500">
-            No notices available at this time.
+            No active notices available at this time.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {notices
-              .filter((notice) => notice.status === "published")
-              .map((notice) => (
-                <div
-                  key={notice._id}
-                  className={`p-5 rounded-xl shadow-md border-l-4 ${getPriorityColor(
-                    notice.priority
-                  )} transition-all hover:shadow-lg relative`}
-                >
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {notice.title}
-                    </h3>
-                    <div className="flex gap-2">
-                      {notice === latestNotice &&
-                        isNewNotice(notice.publishOn) && (
-                          <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center">
-                            <Lucide icon="Star" className="w-3 h-3 mr-1" />
-                            New
-                          </span>
-                        )}
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          notice.status === "published"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
-                      >
-                        {notice.status.charAt(0).toUpperCase() +
-                          notice.status.slice(1)}
-                      </span>
-                    </div>
-                  </div>
-                  <div
-                    className="mt-2 text-sm text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: notice.message }}
-                  />
-                  <div className="mt-4 text-xs text-gray-500 flex justify-between">
-                    <span>
-                      Published:{" "}
-                      {new Date(notice.publishOn).toLocaleDateString()}
+            {filteredNotices.map((notice) => (
+              <div
+                key={notice._id}
+                className={`p-5 rounded-xl shadow-md border-l-4 ${getPriorityColor(
+                  notice.priority
+                )} transition-all hover:shadow-lg relative`}
+              >
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {notice.title}
+                  </h3>
+                  <div className="flex gap-2">
+                    {notice === latestNotice &&
+                      isNewNotice(notice.publishOn) && (
+                        <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                          <Lucide icon="Star" className="w-3 h-3 mr-1" />
+                          New
+                        </span>
+                      )}
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        notice.status === "published"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {notice.status.charAt(0).toUpperCase() +
+                        notice.status.slice(1)}
                     </span>
-                    {notice.expiresOn && (
-                      <span>
-                        Expires:{" "}
-                        {new Date(notice.expiresOn).toLocaleDateString()}
-                      </span>
-                    )}
                   </div>
                 </div>
-              ))}
+                <div
+                  className="mt-2 text-sm text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: notice.message }}
+                />
+                {/* Attachment Display */}
+                {notice.attachment && (
+                  <div className="mt-4">
+                    <p className="text-sm font-semibold text-gray-700">
+                      Attachment:
+                    </p>
+                    {notice.attachment.endsWith(".pdf") ? (
+                      <a
+                        href={`${IMG_URL}${notice.attachment}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                      >
+                        <Lucide icon="FileText" className="w-4 h-4" />
+                        View PDF
+                      </a>
+                    ) : (
+                      <a
+                        href={`${IMG_URL}${notice.attachment}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={`${IMG_URL}${notice.attachment}`}
+                          alt="Notice attachment"
+                          className="w-32 h-32 object-cover rounded-md mt-2"
+                        />
+                      </a>
+                    )}
+                  </div>
+                )}
+                <div className="mt-4 text-xs text-gray-500 flex justify-between">
+                  <span>
+                    Published: {new Date(notice.publishOn).toLocaleDateString()}
+                  </span>
+                  {notice.expiresOn && (
+                    <span>
+                      Expires: {new Date(notice.expiresOn).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

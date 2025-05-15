@@ -11,6 +11,7 @@ import * as ApiService from "../../services/auth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ClassicEditor } from "../../base-components/Ckeditor";
+import { IMG_URL } from "../../utils/constants";
 
 interface FormData {
   title: string;
@@ -289,6 +290,7 @@ function NoticeBoard() {
                   <th className="p-4">Message</th>
                   <th className="p-4">Priority</th>
                   <th className="p-4">Status</th>
+                  <th className="p-4">Attachment</th> {/* New column */}
                   <th className="p-4">Actions</th>
                 </tr>
               </thead>
@@ -312,7 +314,7 @@ function NoticeBoard() {
                           notice.priority === "high"
                             ? "bg-red-100 text-red-800"
                             : notice.priority === "normal"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-green-100 text-green-highlight"
                             : "bg-yellow-100 text-yellow-800"
                         }`}
                       >
@@ -329,6 +331,34 @@ function NoticeBoard() {
                       >
                         {notice.status}
                       </span>
+                    </td>
+                    <td className="p-4">
+                      {notice.attachment ? (
+                        notice.attachment.endsWith(".pdf") ? (
+                          <a
+                            href={`${IMG_URL}${notice.attachment}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-indigo-600 hover:text-indigo-800"
+                          >
+                            View PDF
+                          </a>
+                        ) : (
+                          <a
+                            href={`${IMG_URL}${notice.attachment}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={`${IMG_URL}${notice.attachment}`}
+                              alt="Attachment"
+                              className="w-16 h-16 object-cover rounded"
+                            />
+                          </a>
+                        )
+                      ) : (
+                        "No attachment"
+                      )}
                     </td>
                     <td className="p-4 flex space-x-2">
                       <button
