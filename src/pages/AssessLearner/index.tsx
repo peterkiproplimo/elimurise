@@ -276,6 +276,38 @@ function Main() {
       setLoading(false);
     }
   }, [stream, selectedSubStrand]);
+  function formatAssessmentMethodsAsHtml(htmlString: string): string[] {
+    console.log(htmlString);
+    if (!htmlString) return [];
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, "text/html");
+
+    let items: string[] = [];
+
+    // Step 1: Try extracting <li> elements if they exist
+    const liItems = Array.from(doc.querySelectorAll("li"));
+    if (liItems.length > 0) {
+      return liItems
+        .map((li) => li.textContent?.trim() || "")
+        .filter((text) => !!text);
+    }
+
+    // Step 2: Extract from <p> and <br> tags, or bullet symbols like •
+    const paragraphs = Array.from(doc.querySelectorAll("p"));
+
+    paragraphs.forEach((p) => {
+      const html = p.innerHTML.replace(/<br\s*\/?>/gi, "\n");
+      const lines = html
+        .split(/\n|•/g)
+        .map((line) => line.replace(/&nbsp;/g, " ").trim())
+        .filter((line) => !!line);
+
+      items.push(...lines);
+    });
+    console.log(paragraphs);
+    return items;
+  }
 
   const generateAssessment = useCallback(
     async (indicatorId: string) => {
@@ -953,7 +985,9 @@ function Main() {
                             disabled={assessment?.assessmentDetails?.published}
                           >
                             <option value="">Select Method</option>
-                            {assessmentMethodOptions.map((method, idx) => (
+                            {formatAssessmentMethodsAsHtml(
+                              substrand?.suggested_assessment_methods
+                            ).map((method, idx) => (
                               <option key={idx} value={method}>
                                 {method}
                               </option>
@@ -1429,7 +1463,9 @@ function Main() {
                           }}
                         >
                           <option value="">Select Method</option>
-                          {assessmentMethodOptions.map((method, idx) => (
+                          {formatAssessmentMethodsAsHtml(
+                            substrand?.suggested_assessment_methods
+                          ).map((method, idx) => (
                             <option key={idx} value={method}>
                               {method}
                             </option>
