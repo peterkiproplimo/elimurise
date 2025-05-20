@@ -219,26 +219,26 @@ const initialState: SideMenuState = {
       ],
     },
 
-    {
-      icon: "Users",
-      title: "Learner Behaviour",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/home/behaviour",
-          title: "Behaviour Category",
-          ignore: false,
+    // {
+    //   icon: "Users",
+    //   title: "Learner Behaviour",
+    //   subMenu: [
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/home/behaviour",
+    //       title: "Behaviour Category",
+    //       ignore: false,
 
-        },
-        {
-          icon: "Activity",
-          pathname: "/home/behaviour-assessment",
-          title: "Behaviour Assessment",
-          ignore: false,
+    //     },
+    //     {
+    //       icon: "Activity",
+    //       pathname: "/home/behaviour-assessment",
+    //       title: "Behaviour Assessment",
+    //       ignore: false,
 
-        },
-      ],
-    },
+    //     },
+    //   ],
+    // },
     {
       icon: "Wallet",
       pathname: "/home/billing",

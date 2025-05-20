@@ -1896,7 +1896,8 @@ function Main() {
           )} */}
 
           <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-            {is_admin() && (
+            {(is_admin() ||
+              hasPermission("parental-communication", "read")) && (
               <>
                 {" "}
                 <Button
@@ -2551,7 +2552,8 @@ function Main() {
                         Basic Info
                       </button>
                     </li>
-                    {is_admin() && (
+                    {(is_admin() ||
+                      hasPermission("parental-communication", "read")) && (
                       <>
                         <li className="mr-2 flex items-center">
                           <button
@@ -2564,7 +2566,11 @@ function Main() {
                           >
                             <span>Parent 1</span>
                             {learner?.guardian?.email &&
-                              hasPermission("parental-attendance", "read") && (
+                              (hasPermission(
+                                "parental-communication",
+                                "read"
+                              ) ||
+                                is_admin()) && (
                                 <div
                                   className="relative"
                                   onClick={() => openChat(learner?.guardian)}
@@ -2590,7 +2596,11 @@ function Main() {
                           >
                             <span>Parent 2</span>
                             {learner?.guardian2?.email &&
-                              hasPermission("parental-attendance", "read") && (
+                              (hasPermission(
+                                "parental-communication",
+                                "read"
+                              ) ||
+                                is_admin()) && (
                                 <div
                                   className="relative"
                                   onClick={() => openChat(learner?.guardian2)}

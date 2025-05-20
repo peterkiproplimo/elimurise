@@ -15,10 +15,11 @@ import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import { Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
-import { formatDate } from "../../utils/helper";
+import { formatDate, is_admin } from "../../utils/helper";
 import Pagination from "../../base-components/Pagination";
 import Alert from "../../base-components/Alert";
 import SummativeDone from "./done-tests";
+import { useAuth } from "../../contexts/Auth";
 
 // Define ConfirmDialogProps interface
 interface ConfirmDialogProps {
@@ -29,6 +30,8 @@ interface ConfirmDialogProps {
 }
 
 function Main() {
+  const { hasPermission } = useAuth();
+
   // Existing state variables (unchanged)
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteButtonRef = useRef(null);
@@ -720,43 +723,52 @@ function Main() {
                               </a>
                               {test?.school && (
                                 <>
-                                  <a
-                                    className="flex items-center mr-3 text-success"
-                                    href="#"
-                                    onClick={() => editRecord(test)}
-                                  >
-                                    <Lucide
-                                      icon="CheckSquare"
-                                      className="w-4 h-4 mr-1"
-                                    />{" "}
-                                    Edit
-                                  </a>
-                                  <a
-                                    className="flex items-center mr-3 text-primary"
-                                    href="#"
-                                    onClick={() => openPublishDialog(test)} // Updated to open dialog
-                                  >
-                                    <Lucide
-                                      icon="Send"
-                                      className="w-4 h-4 mr-1"
-                                    />{" "}
-                                    {test.isPublished ? "Unpublish" : "Publish"}{" "}
-                                    {/* Dynamic button text */}
-                                  </a>
-                                  <a
-                                    className="flex items-center text-danger"
-                                    href="#"
-                                    onClick={() => {
-                                      setRecordId(test._id);
-                                      setConfirmDelete(true);
-                                    }}
-                                  >
-                                    <Lucide
-                                      icon="Trash2"
-                                      className="w-4 h-4 mr-1"
-                                    />{" "}
-                                    Delete
-                                  </a>
+                                  {is_admin() && (
+                                    <a
+                                      className="flex items-center mr-3 text-success"
+                                      href="#"
+                                      onClick={() => editRecord(test)}
+                                    >
+                                      <Lucide
+                                        icon="CheckSquare"
+                                        className="w-4 h-4 mr-1"
+                                      />{" "}
+                                      Edit
+                                    </a>
+                                  )}
+
+                                  {hasPermission("tests", "publish") && (
+                                    <a
+                                      className="flex items-center mr-3 text-primary"
+                                      href="#"
+                                      onClick={() => openPublishDialog(test)} // Updated to open dialog
+                                    >
+                                      <Lucide
+                                        icon="Send"
+                                        className="w-4 h-4 mr-1"
+                                      />{" "}
+                                      {test.isPublished
+                                        ? "Unpublish"
+                                        : "Publish"}{" "}
+                                      {/* Dynamic button text */}
+                                    </a>
+                                  )}
+                                  {is_admin() && (
+                                    <a
+                                      className="flex items-center text-danger"
+                                      href="#"
+                                      onClick={() => {
+                                        setRecordId(test._id);
+                                        setConfirmDelete(true);
+                                      }}
+                                    >
+                                      <Lucide
+                                        icon="Trash2"
+                                        className="w-4 h-4 mr-1"
+                                      />{" "}
+                                      Delete
+                                    </a>
+                                  )}
                                 </>
                               )}
                             </div>
