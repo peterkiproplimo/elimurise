@@ -34,20 +34,20 @@ const initialState: SideMenuState = {
       // ignore: !hasPermission("dashboard", "read"),
     },
 
-    {
-      icon: "Activity",
-      pathname: "/home/timetable-teacher",
-      title: "My Timetable",
-      ignore: !hasPermission("titmatble", "teacher"),
-    },
     //create route timetable-viewer
     {
       icon: "Activity",
       pathname: "/home/timetable-viewer",
       title: "Master Timetable",
-      ignore: !hasPermission("parents", "create"),
+      ignore: hasPermission("parents", "read"),
     },
-
+    {
+      icon: "Activity",
+      pathname: "/home/timetable-teacher",
+      title: "My Timetable",
+      ignore: hasPermission("parents", "read"),
+      // ignore: !hasPermission("timetable", "teacher"),
+    },
     {
       icon: "GraduationCap",
       title: "Learners",
