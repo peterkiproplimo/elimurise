@@ -39,6 +39,13 @@ function AttendanceForm() {
   };
 
   const fetchAttendance = async (date: any) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selected = new Date(date);
+    if (selected > today) {
+      alert("Cannot mark attendance for future dates");
+      return;
+    }
     if (!selectedGrade || !selectedStream || !date) return;
     setLoading(true);
     const response = await ApiService.getAttendance({

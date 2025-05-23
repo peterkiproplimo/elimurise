@@ -1349,7 +1349,12 @@ function Main() {
                     <option key={strand._id} value={strand._id}>
                       <div
                         className="font-medium inline-block richtext"
-                        dangerouslySetInnerHTML={{ __html: strand.name }}
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            strand.theme !== "N/A"
+                              ? `${strand.theme}: ${strand.name}`
+                              : strand.name,
+                        }}
                       />
                     </option>
                   ))}
