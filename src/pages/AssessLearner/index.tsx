@@ -249,6 +249,7 @@ function Main() {
         { page, search, limit: 1000 },
         strandFilter
       );
+
       setStrands(response.data || []);
     } catch (error: any) {
       setSuccess(false);
@@ -258,7 +259,37 @@ function Main() {
       setIsStrandsLoading(false);
     }
   }, [strandFilter, page, search, limit]);
+  const normalizeTheme = (theme: string): string => {
+    if (!theme || theme === "N/A") return "No Theme";
+    return theme
+      .trim() // Remove leading/trailing spaces
+      .replace(/O/g, "0") // Replace 'O' with '0'
+      .replace(/[.:]/g, " ") // Replace ":" or "." with space
+      .replace(/\s+/g, " ") // Collapse multiple spaces
+      .trim(); // Ensure no trailing space
+  };
+  // Sort strands by normalized theme, then by name
+  const sortedStrands = [...strands].sort((a, b) => {
+    const themeA = normalizeTheme(a.theme);
+    const themeB = normalizeTheme(b.theme);
+    if (themeA !== themeB) {
+      return themeA.localeCompare(themeB); // Sort by theme first
+    }
+    return a.name.localeCompare(b.name); // Sort by name within same theme
+  });
 
+  // Group sorted strands by normalized theme
+  const groupedStrands = sortedStrands.reduce<Record<string, any[]>>(
+    (acc, strand) => {
+      const normalizedTheme = normalizeTheme(strand.theme);
+      if (!acc[normalizedTheme]) {
+        acc[normalizedTheme] = [];
+      }
+      acc[normalizedTheme].push({ ...strand, theme: strand.theme }); // Preserve original theme
+      return acc;
+    },
+    {}
+  );
   const fetchIndicator = useCallback(async () => {
     if (!stream || !selectedSubStrand) return;
     setLoading(true);
@@ -1344,20 +1375,31 @@ function Main() {
                   onChange={handleStrandChange}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 hover:border-blue-500"
                 >
-                  <option value="">Select Strand</option>
-                  {strands.map((strand) => (
-                    <option key={strand._id} value={strand._id}>
-                      <div
+                  {/* <option value="">Select Strand</option> */}
+                  {/* {strands.map((strand) => ( 
+                     <option key={strand._id} value={strand._id}>
+                       <div
                         className="font-medium inline-block richtext"
                         dangerouslySetInnerHTML={{
-                          __html:
+                           __html:
                             strand.theme !== "N/A"
                               ? `${strand.theme}: ${strand.name}`
                               : strand.name,
                         }}
                       />
-                    </option>
-                  ))}
+                     </option> */}
+                  <option value="">Select Strand</option>
+                  {Object.entries(groupedStrands).map(
+                    ([theme, strands]: [string, any[]]) => (
+                      <optgroup key={theme} label={theme}>
+                        {strands.map((strand) => (
+                          <option key={strand._id} value={strand._id}>
+                            {strand.name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )
+                  )}
                 </FormSelect>
                 {isStrandsLoading && (
                   <LoadingIcon
