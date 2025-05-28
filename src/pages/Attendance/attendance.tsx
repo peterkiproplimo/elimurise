@@ -42,6 +42,9 @@ function AttendanceForm() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const selected = new Date(date);
+    selected.setHours(0, 0, 0, 0);
+    console.log("selected", selected);
+    console.log("today", today);
     if (selected > today) {
       alert("Cannot mark attendance for future dates");
       return;
