@@ -102,6 +102,17 @@ const initialState: SideMenuState = {
       title: "Learning Areas",
       pathname: "/home/grade",
     },
+    // {
+    //   icon: "Activity",
+    //   title: "Professional Documents",
+    //   subMenu: [
+    //     {
+    //       icon: "BookOpen",
+    //       title: "Schemes of work",
+    //       pathname: "/home/schemes",
+    //     },
+    //   ],
+    // },
 
     {
       icon: "Activity",

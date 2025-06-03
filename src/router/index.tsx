@@ -82,6 +82,7 @@ import AttendanceTermly from "../pages/Attendance/attendance_termly";
 import Timetable from "../pages/Timetable";
 import TimetableTeacher from "../pages/Timetable/teacher";
 import TimetableViewer from "../pages/Timetable/Timetable_view";
+import Schemes from "../pages/Schemes";
 
 //nn
 function Router() {
@@ -105,6 +106,10 @@ function Router() {
         {
           path: "reports",
           element: <Reports />,
+        },
+        {
+          path: "schemes",
+          element: <Schemes />,
         },
         {
           path: "parents",

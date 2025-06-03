@@ -34,7 +34,7 @@ const Calendar: React.FC<CalendarProps> = ({
       1
     );
 
-    console.log("month chnaged", dateInfo.view);
+    // console.log("month chnaged", dateInfo.view);
 
     if (onMonthChange) {
       const newMonthStart = new Date(
@@ -45,7 +45,18 @@ const Calendar: React.FC<CalendarProps> = ({
       onMonthChange(newMonthStart); // Trigger month change callback
     }
   };
-
+  const handleEventClick = (info: EventClickArg) => {
+    console.log("cl.....", info.event.start);
+    if (onDateClick && info.event.start) {
+      // Extract the local date in YYYY-MM-DD format
+      const date = info.event.start;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so +1
+      const day = String(date.getDate()).padStart(2, "0");
+      const dateStr = `${year}-${month}-${day}`;
+      onDateClick(dateStr); // Trigger handleDateClick with local date
+    }
+  };
   return (
     <div
       className={`bg-white dark:bg-darkmode-600 rounded-xl shadow-lg p-4 ${className}`}
@@ -67,6 +78,7 @@ const Calendar: React.FC<CalendarProps> = ({
         dayMaxEvents={3} // Limit events per day for cleaner look
         eventBackgroundColor="#6366f1" // Indigo base color
         eventBorderColor="#4f46e5"
+        eventClick={handleEventClick} // Ensures event clicks trigger handleDateClick
         eventTextColor="#ffffff"
         height="auto" // Responsive height
         drop={(info) => {

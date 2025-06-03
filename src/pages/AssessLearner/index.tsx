@@ -1025,11 +1025,15 @@ function Main() {
                             ))}
                           </FormSelect>
                           {[
-                            "Portfolio",
-                            "Project",
-                            "Journal Assessment",
-                            "Practical Assessment",
-                          ].includes(assessmentMethods[key]) && (
+                            "portfolio",
+                            "project",
+                            "journal",
+                            "practical",
+                          ].some((keyword) =>
+                            assessmentMethods[key]
+                              ?.toLowerCase()
+                              .includes(keyword)
+                          ) && (
                             <div className="ml-2">
                               <label className="cursor-pointer">
                                 <Upload className="w-5 h-5 text-blue-500" />

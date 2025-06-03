@@ -64,9 +64,9 @@ function Main() {
   const schema = yup
     .object({
       first_name: yup.string().required("First Name is required"),
-      last_name: yup.string().required("Last Name is required"),
+      // last_name: yup.string().required("Last Name is required"),
       email: yup.string().required(" Email is required"),
-      surname: yup.string().required("Surname is required"),
+      // surname: yup.string().required("Surname is required"),
       phone: yup
         .string()
         .required("Phone Number is required")
@@ -351,9 +351,7 @@ function Main() {
               </div>
 
               <div>
-                <FormLabel>
-                  Middle Name <span className="text-danger ml-0.5">*</span>
-                </FormLabel>
+                <FormLabel>Middle Name</FormLabel>
                 <FormInput
                   {...register("surname")}
                   type="text"
@@ -369,9 +367,7 @@ function Main() {
                 )}
               </div>
               <div>
-                <FormLabel>
-                  Last Name <span className="text-danger ml-0.5">*</span>
-                </FormLabel>
+                <FormLabel>Last Name</FormLabel>
                 <FormInput
                   {...register("last_name")}
                   type="text"

@@ -373,10 +373,12 @@ function Main() {
                 <FormLabel htmlFor="modal-form-6">Type</FormLabel>
                 <FormSelect {...register("type")} name="type">
                   <option value={""}>Select Type</option>
+                  <option value={"Monthly Test"}>Monthly Test</option>
                   <option value={"Tunner"}>Tunner-Up</option>
-                  <option value={"Mid Term"}>Miderm</option>
+                  <option value={"Mid Term"}>Midterm</option>
                   <option value={"End of the Term"}>End of the Term</option>
                 </FormSelect>
+
                 {errors.grade && (
                   <div className="mt-2 text-danger">
                     {typeof errors.grade.message === "string" &&

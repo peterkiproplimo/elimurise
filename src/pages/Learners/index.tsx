@@ -2196,7 +2196,7 @@ function Main() {
                               {learner?.status == "L" ? "Left" : ""}
                               {learner?.status == "G" ? "Graduated" : ""}
                               {learner?.status == "P" ? "In Session" : ""}
-                              {learner?.status == "D" ? "Disabled" : ""}
+                              {learner?.status == "D" ? "Deactivated" : ""}
                             </div>
                           </Table.Td>
 

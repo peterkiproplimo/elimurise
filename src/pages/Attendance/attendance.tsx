@@ -87,6 +87,7 @@ function AttendanceForm() {
   };
 
   const updateAttendance = (index: any, type: any, value: any) => {
+    console.log({ index, type, value });
     const updatedList = [...attendanceList];
     updatedList[index].attendanceDetails[type] = value;
     setAttendanceList(updatedList);
@@ -101,6 +102,7 @@ function AttendanceForm() {
   };
 
   const saveAttendance = async () => {
+    console.log(JSON.stringify(attendanceList));
     if (!attendanceList.length) return;
 
     setLoadingSave(true);
