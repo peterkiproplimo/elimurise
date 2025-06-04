@@ -120,6 +120,9 @@ function Main() {
   //     });
   //     setUsers(res.data);
   //   };
+  const signOut = () => {
+    auth.signOut();
+  };
   const getProfile = async () => {
     setPageLoading(true);
     let res = await ApiService.getProfile({ page: 1, search: "", limit: "" });
@@ -204,6 +207,13 @@ function Main() {
         <>
           <div className="flex items-center mt-8 ">
             <h2 className="mr-auto text-lg font-medium"> User Profile </h2>
+            {/* <Menu.Item
+              className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+              onClick={signOut}
+            >
+              <Lucide icon="ToggleRight" className="w-4 h-4 mr-2" />
+              Sign Out
+            </Menu.Item> */}
           </div>
           <Tab.Group>
             {/* BEGIN: Profile Info */}
@@ -341,20 +351,31 @@ function Main() {
                           >
                             Cancel
                           </Button> */}
-                          <Button
-                            variant="primary"
-                            type="submit"
-                            className="w-20 h-10 mt-7"
-                          >
-                            Save
-                            {loading && (
-                              <LoadingIcon
-                                icon="spinning-circles"
-                                color="white"
-                                className="w-4 h-4 ml-2"
-                              />
-                            )}
-                          </Button>
+                          <div className="col-span-12 sm:col-span-6">
+                            <Button
+                              variant="primary"
+                              type="submit"
+                              className="w-20 h-10 mt-7"
+                            >
+                              Save
+                              {loading && (
+                                <LoadingIcon
+                                  icon="spinning-circles"
+                                  color="white"
+                                  className="w-4 h-4 ml-2"
+                                />
+                              )}
+                            </Button>
+                          </div>
+                          <div className="col-span-12 sm:col-span-6">
+                            <Button
+                              variant="primary"
+                              className="w-20 h-10 mt-7"
+                              onClick={signOut}
+                            >
+                              Logout{" "}
+                            </Button>
+                          </div>
                         </div>
                       </form>
                     </div>

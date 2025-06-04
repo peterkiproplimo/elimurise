@@ -45,7 +45,7 @@ const Calendar: React.FC<CalendarProps> = ({
       onMonthChange(newMonthStart); // Trigger month change callback
     }
   };
-  const handleEventClick = (info: EventClickArg) => {
+  const handleEventClick = (info: any) => {
     console.log("cl.....", info.event.start);
     if (onDateClick && info.event.start) {
       // Extract the local date in YYYY-MM-DD format
