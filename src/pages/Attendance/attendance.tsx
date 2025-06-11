@@ -29,7 +29,7 @@ function AttendanceForm() {
   }, [selectedStream, selectedDate]); // Add selectedDate as a dependency
 
   const getGrades = async () => {
-    const response = await ApiService.getGrades({ page: 1 });
+    const response = await ApiService.getGrades({ page: 1, attendance: true });
     setGrades(response.data);
   };
 
@@ -131,10 +131,22 @@ function AttendanceForm() {
       <div className=" mx-auto bg-white dark:bg-darkmode-700 rounded-2xl shadow-lg overflow-hidden">
         <div className="flex flex-col xl:flex-row">
           {/* Calendar Section */}
+
           <div className="w-full xl:w-2/5 p-6 bg-gradient-to-b from-indigo-50 to-white dark:from-darkmode-800 dark:to-darkmode-700">
             <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
               Attendance Overview
             </h3>
+            <div className="p-6 border-b border-gray-200 dark:border-darkmode-600">
+              <h2 className="text-1xl font-bold text-gray-800 dark:text-white">
+                How to Use the Attendance System
+              </h2>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                Select a grade, and stream, date to load students. Mark present
+                or absent for AM/PM sessions, add absence reasons if needed, and
+                click "Save Attendance" to store records. Also follow same
+                process to amend attendance
+              </p>
+            </div>
             <Calendar
               initialDate={new Date().toISOString().split("T")[0]} // Default to current date
               events={calendarEvents}
@@ -366,168 +378,173 @@ function AttendanceForm() {
                   {/* List */}
                   <div className="max-h-[60vh] overflow-y-auto space-y-3">
                     {attendanceList.length > 0 ? (
-                      attendanceList.map((item: any, index: any) => (
-                        <div
-                          key={item.learner._id}
-                          className="grid grid-cols-4 gap-4 items-center p-4 bg-white dark:bg-darkmode-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
-                        >
-                          <div className="text-gray-800 dark:text-white font-medium">{`${item.learner.first_name} ${item.learner.last_name}`}</div>
-                          <div className="text-gray-600 dark:text-gray-300">
-                            {item.learner.adm_no}
-                          </div>
+                      attendanceList
+                        .filter((item: any) => item.stream == selectedStream)
+                        .map((item: any, index: any) => (
+                          <div
+                            key={item.learner._id}
+                            className="grid grid-cols-4 gap-4 items-center p-4 bg-white dark:bg-darkmode-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
+                          >
+                            <div className="text-gray-800 dark:text-white font-medium">{`${item.learner.first_name} ${item.learner.last_name}`}</div>
+                            <div className="text-gray-600 dark:text-gray-300">
+                              {item.learner.adm_no}
+                            </div>
 
-                          {/* Morning Attendance */}
-                          <div className="flex flex-col items-center space-y-2">
-                            <FormInput
-                              type="checkbox"
-                              className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                              checked={item.attendanceDetails?.morning || false}
-                              onChange={(e) =>
-                                updateAttendance(
-                                  index,
-                                  "morning",
-                                  e.target.checked
-                                )
-                              }
-                            />
-                            {!item.attendanceDetails?.morning && (
-                              <div className="w-full">
-                                <FormSelect
-                                  className="w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
-                                  value={
-                                    item.attendanceDetails?.morning_reason || ""
-                                  }
-                                  onChange={(e) => {
-                                    const reason = e.target.value;
-                                    updateAttendance(
-                                      index,
-                                      "morning_other_reason",
-                                      reason === "Other" ? reason : ""
-                                    );
-                                    updateAttendance(
-                                      index,
-                                      "morning_reason",
-                                      reason === "Other" ? "" : reason
-                                    );
-                                  }}
-                                >
-                                  <option value="">Reason</option>
-                                  {[
-                                    "Sick",
-                                    "Leave",
-                                    "On Leave",
-                                    "Family Emergency",
-                                    "Personal Reasons",
-                                    "Medical Appointment",
-                                    "Transportation Issues",
-                                    "Other",
-                                  ].map((opt) => (
-                                    <option key={opt} value={opt}>
-                                      {opt}
-                                    </option>
-                                  ))}
-                                </FormSelect>
-                                {item.attendanceDetails
-                                  ?.morning_other_reason === "Other" && (
-                                  <FormInput
-                                    type="text"
-                                    placeholder="Specify"
-                                    className="mt-2 w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
+                            {/* Morning Attendance */}
+                            <div className="flex flex-col items-center space-y-2">
+                              <FormInput
+                                type="checkbox"
+                                className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                checked={
+                                  item.attendanceDetails?.morning || false
+                                }
+                                onChange={(e) =>
+                                  updateAttendance(
+                                    index,
+                                    "morning",
+                                    e.target.checked
+                                  )
+                                }
+                              />
+                              {!item.attendanceDetails?.morning && (
+                                <div className="w-full">
+                                  <FormSelect
+                                    className="w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
                                     value={
                                       item.attendanceDetails?.morning_reason ||
                                       ""
                                     }
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                      const reason = e.target.value;
+                                      updateAttendance(
+                                        index,
+                                        "morning_other_reason",
+                                        reason === "Other" ? reason : ""
+                                      );
                                       updateAttendance(
                                         index,
                                         "morning_reason",
-                                        e.target.value
-                                      )
-                                    }
-                                  />
-                                )}
-                              </div>
-                            )}
-                          </div>
+                                        reason === "Other" ? "" : reason
+                                      );
+                                    }}
+                                  >
+                                    <option value="">Reason</option>
+                                    {[
+                                      "Sick",
+                                      "Leave",
+                                      "On Leave",
+                                      "Family Emergency",
+                                      "Personal Reasons",
+                                      "Medical Appointment",
+                                      "Transportation Issues",
+                                      "Other",
+                                    ].map((opt) => (
+                                      <option key={opt} value={opt}>
+                                        {opt}
+                                      </option>
+                                    ))}
+                                  </FormSelect>
+                                  {item.attendanceDetails
+                                    ?.morning_other_reason === "Other" && (
+                                    <FormInput
+                                      type="text"
+                                      placeholder="Specify"
+                                      className="mt-2 w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
+                                      value={
+                                        item.attendanceDetails
+                                          ?.morning_reason || ""
+                                      }
+                                      onChange={(e) =>
+                                        updateAttendance(
+                                          index,
+                                          "morning_reason",
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </div>
 
-                          {/* Afternoon Attendance */}
-                          <div className="flex flex-col items-center space-y-2">
-                            <FormInput
-                              type="checkbox"
-                              className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                              checked={
-                                item.attendanceDetails?.afternoon || false
-                              }
-                              onChange={(e) =>
-                                updateAttendance(
-                                  index,
-                                  "afternoon",
-                                  e.target.checked
-                                )
-                              }
-                            />
-                            {!item.attendanceDetails?.afternoon && (
-                              <div className="w-full">
-                                <FormSelect
-                                  className="w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
-                                  value={
-                                    item.attendanceDetails?.afternoon_reason ||
-                                    ""
-                                  }
-                                  onChange={(e) => {
-                                    const reason = e.target.value;
-                                    updateAttendance(
-                                      index,
-                                      "afternoon_other_reason",
-                                      reason === "Other" ? reason : ""
-                                    );
-                                    updateAttendance(
-                                      index,
-                                      "afternoon_reason",
-                                      reason === "Other" ? "" : reason
-                                    );
-                                  }}
-                                >
-                                  <option value="">Reason</option>
-                                  {[
-                                    "Sick",
-                                    "Leave",
-                                    "On Leave",
-                                    "Family Emergency",
-                                    "Personal Reasons",
-                                    "Medical Appointment",
-                                    "Transportation Issues",
-                                    "Other",
-                                  ].map((opt) => (
-                                    <option key={opt} value={opt}>
-                                      {opt}
-                                    </option>
-                                  ))}
-                                </FormSelect>
-                                {item.attendanceDetails
-                                  ?.afternoon_other_reason === "Other" && (
-                                  <FormInput
-                                    type="text"
-                                    placeholder="Specify"
-                                    className="mt-2 w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
+                            {/* Afternoon Attendance */}
+                            <div className="flex flex-col items-center space-y-2">
+                              <FormInput
+                                type="checkbox"
+                                className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                checked={
+                                  item.attendanceDetails?.afternoon || false
+                                }
+                                onChange={(e) =>
+                                  updateAttendance(
+                                    index,
+                                    "afternoon",
+                                    e.target.checked
+                                  )
+                                }
+                              />
+                              {!item.attendanceDetails?.afternoon && (
+                                <div className="w-full">
+                                  <FormSelect
+                                    className="w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
                                     value={
                                       item.attendanceDetails
                                         ?.afternoon_reason || ""
                                     }
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                      const reason = e.target.value;
+                                      updateAttendance(
+                                        index,
+                                        "afternoon_other_reason",
+                                        reason === "Other" ? reason : ""
+                                      );
                                       updateAttendance(
                                         index,
                                         "afternoon_reason",
-                                        e.target.value
-                                      )
-                                    }
-                                  />
-                                )}
-                              </div>
-                            )}
+                                        reason === "Other" ? "" : reason
+                                      );
+                                    }}
+                                  >
+                                    <option value="">Reason</option>
+                                    {[
+                                      "Sick",
+                                      "Leave",
+                                      "On Leave",
+                                      "Family Emergency",
+                                      "Personal Reasons",
+                                      "Medical Appointment",
+                                      "Transportation Issues",
+                                      "Other",
+                                    ].map((opt) => (
+                                      <option key={opt} value={opt}>
+                                        {opt}
+                                      </option>
+                                    ))}
+                                  </FormSelect>
+                                  {item.attendanceDetails
+                                    ?.afternoon_other_reason === "Other" && (
+                                    <FormInput
+                                      type="text"
+                                      placeholder="Specify"
+                                      className="mt-2 w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
+                                      value={
+                                        item.attendanceDetails
+                                          ?.afternoon_reason || ""
+                                      }
+                                      onChange={(e) =>
+                                        updateAttendance(
+                                          index,
+                                          "afternoon_reason",
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        ))
                     ) : (
                       <p className="text-center text-gray-500 dark:text-gray-400 py-4">
                         No attendance data for {selectedDate || "selected date"}

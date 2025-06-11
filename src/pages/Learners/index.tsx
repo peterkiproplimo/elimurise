@@ -79,6 +79,7 @@ function Main() {
     from_stream: "",
     from_session: "",
     next_session: "",
+    exit: false,
   });
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -253,10 +254,10 @@ function Main() {
       grade: yup.string().required("Grade is required"),
       stream: yup.string().required("Stream is required"),
       guardian_first_name: yup.string().required("First name is required"),
-      guardian_last_name: yup.string().required("Last name is required"),
-      guardian_id_no: yup.string().required("ID Number is required"),
-      guardian_email: yup.string().required("Email is required"),
-      guardian_phone: yup.string().required("Phone Number is required"),
+      // guardian_last_name: yup.string().required("Last name is required"),
+      // guardian_id_no: yup.string().required("ID Number is required"),
+      // guardian_email: yup.string().required("Email is required"),
+      // guardian_phone: yup.string().required("Phone Number is required"),
     })
     .required();
 
@@ -415,7 +416,7 @@ function Main() {
     // event.preventDefault();
     // const result = await trigger();
     console.log(approveTranfer);
-
+    // return;
     if (!loading) {
       isLoading(true);
       try {
@@ -423,6 +424,9 @@ function Main() {
         console.log();
         // data.transferCode = approveTranfer.transferCode;
         let res = await ApiService.leanersPromote(approveTranfer);
+        if (!res.success) {
+          throw Error("Failed To tranfer");
+        }
         await getStudents();
 
         await reset({ name: "" });
@@ -2047,7 +2051,7 @@ function Main() {
                             : ""}
                         </Table.Th>
 
-                        <Table.Th
+                        {/* <Table.Th
                           className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
                           onClick={() => handleSort("nemis_no")}
                         >
@@ -2057,7 +2061,7 @@ function Main() {
                               ? "▲"
                               : "▼"
                             : ""}
-                        </Table.Th>
+                        </Table.Th> */}
 
                         <Table.Th
                           className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
@@ -2158,16 +2162,16 @@ function Main() {
                               {learner?.adm_no}
                             </span>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.assessment_no ?? "N/A"}
                             </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                          </Table.Td> */}
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.nemis_no}
                             </span>
-                          </Table.Td>
+                          </Table.Td> */}
                           <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
                             <span className="font-medium whitespace-nowrap">
                               {learner?.grade?.name}{" "}
@@ -2250,6 +2254,7 @@ function Main() {
                                           ],
                                           from_stream: learner.stream._id,
                                           from_grade: learner.grade._id,
+                                          to_grade: learner.grade._id,
                                           from_session: learner.current_session,
                                           next_session: learner.current_session,
                                         });
@@ -2264,6 +2269,30 @@ function Main() {
                                       Transfer
                                     </Menu.Item>
                                   )}
+                                  <Menu.Item
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    onClick={() => {
+                                      setApproveTranfer({
+                                        learners: [
+                                          {
+                                            id: learner._id,
+                                            status: "G",
+                                          },
+                                        ],
+                                        from_stream: learner.stream._id,
+                                        from_grade: learner.grade._id,
+                                        exit: true,
+                                      });
+                                      setApproveDialog(true);
+                                    }}
+                                  >
+                                    {/* <Lucide
+                                            icon="CheckSquare"
+                                            className="w-4 h-4 mr-1"
+                                          />{" "} */}
+                                    <i className="icon-eye mr-2"></i>
+                                    Exit
+                                  </Menu.Item>
                                   {(learner.status === "D" ||
                                     learner.status === "P") &&
                                     hasPermission("learners", "delete") && (
@@ -2277,7 +2306,7 @@ function Main() {
                                       >
                                         <i className="icon-eye mr-2"></i>
                                         {learner.status === "D"
-                                          ? "Enable "
+                                          ? "Activate "
                                           : "Deactivate "}
                                       </Menu.Item>
                                     )}
@@ -3133,72 +3162,78 @@ function Main() {
                 /> */}
             <div className="mt-5  font-medium">Incoming Tranfer</div>
             <div className="mt-2 text-slate-500">
-              Do you really approve this record?
+              {!approveTranfer.exit
+                ? " Do you really approve this record?"
+                : "Do you really approve to exit this learner?"}
             </div>
-            <div className="col-span-4 sm:col-span-4">
-              <FormLabel htmlFor="grade">
-                Grade<span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <TomSelect
-                id="grade"
-                name="grade"
-                value={grade}
-                onChange={(event: any) => {
-                  // reset({ ...getValues(), grade: event });
-                  console.log("test");
-                  setApproveTranfer({
-                    ...approveTranfer,
-                    to_grade: event,
-                  });
-                  setGrade(event);
-                }}
-                disabled={isEditMode}
-              >
-                <option value="">Select Grade</option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </TomSelect>
-              {errors.grade && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.grade.message === "string" &&
-                    errors.grade.message}
+            {!approveTranfer.exit && (
+              <>
+                <div className="col-span-4 sm:col-span-4">
+                  <FormLabel htmlFor="grade">
+                    Grade<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <TomSelect
+                    id="grade"
+                    name="grade"
+                    value={grade}
+                    onChange={(event: any) => {
+                      // reset({ ...getValues(), grade: event });
+                      console.log("test");
+                      setApproveTranfer({
+                        ...approveTranfer,
+                        to_grade: event,
+                      });
+                      setGrade(event);
+                    }}
+                    disabled={isEditMode}
+                  >
+                    <option value="">Select Grade</option>
+                    {grades.map((grade: any, key) => (
+                      <option key={key} value={grade._id}>
+                        {grade.name}
+                      </option>
+                    ))}
+                  </TomSelect>
+                  {errors.grade && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.grade.message === "string" &&
+                        errors.grade.message}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div className="col-span-12 sm:col-span-4 mt-2">
-              <FormLabel htmlFor="stream">
-                Select Stream<span className="text-danger ml-0.5">*</span>
-              </FormLabel>
-              <FormSelect
-                id="stream"
-                // {...register("stream")}
-                name="stream"
-                defaultValue={approveTranfer.to_stream}
-                onChange={(e) =>
-                  setApproveTranfer({
-                    ...approveTranfer,
-                    to_stream: e.target.value,
-                  })
-                }
-              >
-                <option value="">Select Stream</option>
-                {streams.map((stream: any, key) => (
-                  <option key={key} value={stream._id}>
-                    {stream.name}
-                  </option>
-                ))}
-              </FormSelect>
-              {errors.stream && (
-                <div className="mt-2 text-danger">
-                  {typeof errors.stream.message === "string" &&
-                    errors.stream.message}
+                <div className="col-span-12 sm:col-span-4 mt-2">
+                  <FormLabel htmlFor="stream">
+                    Select Stream<span className="text-danger ml-0.5">*</span>
+                  </FormLabel>
+                  <FormSelect
+                    id="stream"
+                    // {...register("stream")}
+                    name="stream"
+                    defaultValue={approveTranfer.to_stream}
+                    onChange={(e) => {
+                      setApproveTranfer({
+                        ...approveTranfer,
+                        to_stream: e.target.value,
+                      });
+                    }}
+                  >
+                    <option value="">Select Stream</option>
+                    {streams.map((stream: any, key) => (
+                      <option key={key} value={stream._id}>
+                        {stream.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                  {errors.stream && (
+                    <div className="mt-2 text-danger">
+                      {typeof errors.stream.message === "string" &&
+                        errors.stream.message}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
 
             <div className="col-span-12 mt-4 text-right">
               <Button

@@ -200,10 +200,22 @@ const getSchool = (): School | null => {
   return schoolData ? (JSON.parse(schoolData) as School) : null;
 };
 
-const is_admin = (): boolean | null => {
+const is_admin = (): boolean | false => {
   const type = localStorage.getItem("type");
   return type && type == "school" ? true : false;
 };
+const is_agreed_terms = (): boolean | false => {
+  const authData = localStorage.getItem("@AuthData");
+  if (!authData) return false;
+
+  try {
+    const parsed = JSON.parse(authData);
+    return parsed.user?.agreedToTerms === true;
+  } catch {
+    return false;
+  }
+};
+
 function getNextSession(currentSession: any) {
   // Return in the format "nextStartYear-nextEndYear"
   return `${Number(currentSession) + 1}`;
@@ -211,6 +223,7 @@ function getNextSession(currentSession: any) {
 
 // Example usage
 export {
+  is_agreed_terms,
   getNextSession,
   is_admin,
   setSchool,

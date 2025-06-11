@@ -1566,7 +1566,15 @@ export async function schoolDashboard() {
     throw handler(e);
   }
 }
-
+// /accept-terms
+export async function acceptTerms(data: any) {
+  try {
+    let res = await axios.patch(c.USERS + "/accept-terms", data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
 export async function getUserData() {
   try {
     let res = await axios.get(c.USERS + "/profile");

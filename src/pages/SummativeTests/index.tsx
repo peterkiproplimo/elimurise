@@ -312,7 +312,11 @@ function Main() {
     setGrade("");
     setDialog(false);
   };
+  const [selectedType, setSelectedType] = useState(""); // Local state for type
 
+  const handleTypeChange = (e: any) => {
+    setSelectedType(e.target.value); // Update state on type change
+  };
   return (
     <>
       {displayResults ? (
@@ -371,7 +375,11 @@ function Main() {
               </div>
               <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel htmlFor="modal-form-6">Type</FormLabel>
-                <FormSelect {...register("type")} name="type">
+                <FormSelect
+                  {...register("type")}
+                  onChange={(e: any) => handleTypeChange(e)}
+                  name="type"
+                >
                   <option value={""}>Select Type</option>
                   <option value={"Monthly Test"}>Monthly Test</option>
                   <option value={"Tunner"}>Tunner-Up</option>
@@ -386,6 +394,32 @@ function Main() {
                   </div>
                 )}
               </div>
+              {selectedType === "Monthly Test" && (
+                <div className="col-span-6 sm:col-span-4 py-2">
+                  <FormLabel htmlFor="modal-form-6">Month</FormLabel>
+                  <FormSelect {...register("month")} name="month">
+                    <option value="">Select Month</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                  </FormSelect>
+
+                  {/* {errors.month && (
+            <div className="mt-2 text-danger">
+              {typeof errors.month.message === "string" && errors.month.message}
+            </div>
+          )} */}
+                </div>
+              )}
               <div className="col-span-6 sm:col-span-4 py-2">
                 <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect

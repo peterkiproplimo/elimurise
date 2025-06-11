@@ -256,7 +256,7 @@ function NoticeBoard() {
                 {loading ? (
                   <LoadingIcon icon="oval" className="w-5 h-5 mr-2" />
                 ) : null}
-                {editingId ? "Update Notice" : "Add Notice"}
+                {editingId ? "Update Notice" : "Publish Notice"}
               </button>
               <button
                 type="button"

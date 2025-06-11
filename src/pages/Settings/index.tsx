@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import Button from "../../base-components/Button";
-import { FormSelect, FormLabel, FormInput } from "../../base-components/Form";
+import {
+  FormSelect,
+  FormLabel,
+  FormInput,
+  FormTextarea,
+} from "../../base-components/Form";
 import Lucide from "../../base-components/Lucide";
 import Notification, {
   NotificationElement,
@@ -16,13 +21,14 @@ import TomSelect from "../../base-components/TomSelect";
 import { Controller } from "react-hook-form";
 import CardLoader from "../UserProfile/loader";
 
-// Define the form data type based on the fields used
+// Updated FormData interface with school_motto
 interface FormData {
   name: string;
   schoolCode?: string;
   current_session: string;
   current_term?: string;
   address: string;
+  school_motto?: string;
   school_head_teacher: string;
   primaryColor?: string;
   secondaryColor?: string;
@@ -31,13 +37,34 @@ interface FormData {
   logo?: string;
   school_stamp?: string;
   school_head_teacher_signature?: string;
-  signatory_role?: string; // Add this field to match the usage in the form
-  signatory_name?: string; // Add this field to fix the error
+  signatory_role?: string;
+  signatory_name?: string;
 }
+
+// Updated validation schema
+const schema = yup
+  .object({
+    name: yup.string().required("School name is required"),
+    address: yup.string().required("Address is required"),
+    school_motto: yup
+      .string()
+      .max(200, "Motto should not exceed 200 characters"),
+    current_session: yup.string().required("Academic session is required"),
+    signatory_role: yup.string().required("Signatory role is required"),
+    signatory_name: yup.string().required("Signatory name is required"),
+  })
+  .required();
 
 function Settings() {
   const [academicYears, setAcademicYears] = useState<string[]>([]);
   const [schoolDetails, setSchoolDetails] = useState<any>({});
+  const [terms, setTerms] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
+  const [success, setSuccess] = useState(true);
+  const [message, setMessage] = useState("");
+  const notify = useRef<NotificationElement>(null);
+
   const signatoryRoles = [
     "Chief Principal",
     "Principal",
@@ -45,16 +72,7 @@ function Settings() {
     "Deputy Principal",
     "Deputy Head Teacher",
     "School Administrator",
-  ]; // Define signatory role options
-
-  const schema = yup.object({}).required(); // No specific validation needed for these fields
-
-  const [terms, setTerms] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [pageLoading, setPageLoading] = useState(false);
-  const [success, setSuccess] = useState(true);
-  const [message, setMessage] = useState("");
-  const notify = useRef<NotificationElement>(null);
+  ];
 
   const {
     control,
@@ -77,7 +95,7 @@ function Settings() {
     fetchData();
   }, []);
 
-  const generateAcademicYears = (currentYear: any) => {
+  const generateAcademicYears = (currentYear: number) => {
     const yearsBack = 5;
     const yearsForward = 7;
     const years = [];
@@ -97,21 +115,21 @@ function Settings() {
       const data = response?.data || {};
       setSchoolDetails(data);
       reset({
-        ...response.data,
-        signatory_role: response?.data?.signatory_role || "Head Teacher", // Default to "Head Teacher" if not present
-        signatory_name: response?.data?.signatory_name, // Map existing head teacher name
-        signatory_signature: response?.data?.signatory_signature, // Map existing signature
-        current_term: response?.data?.current_term,
-        current_session: response?.data?.current_session,
+        ...data,
+        school_motto: data?.school_motto || "",
+        signatory_role: data?.signatory_role || "Head Teacher",
+        signatory_name: data?.signatory_name,
+        signatory_signature: data?.signatory_signature,
+        current_term: data?.current_term,
+        current_session: data?.current_session,
       });
-      setPageLoading(false);
-      generateAcademicYears(Number(response?.data?.current_session));
+      generateAcademicYears(Number(data?.current_session));
     } catch (error) {
       console.error("Failed to fetch school details", error);
     }
   };
 
-  const onSubmit = async (event: any) => {
+  const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const result = await trigger();
     if (result && !loading) {
@@ -123,7 +141,6 @@ function Settings() {
         setSuccess(true);
         setMessage("Settings updated successfully!");
         notify.current?.showToast();
-        window.location.reload(); // Consider removing if not critical
       } catch (error) {
         console.error("Error updating settings:", error);
         setSuccess(false);
@@ -136,243 +153,306 @@ function Settings() {
   };
 
   return (
-    <>
-      <h2 className="mt-1 text-lg font-medium">Settings</h2>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 uppercase">
+        School Settings
+      </h2>
+
       {pageLoading ? (
         <CardLoader />
       ) : (
-        <div className="grid grid-cols-12 gap-6 mt-2 setting-step-1">
-          <div className="col-span-12">
-            <div className="p-3">
-              <form className="mt-5 p-5 box validate-form" onSubmit={onSubmit}>
-                <fieldset className="mb-4">
-                  <legend className="font-medium text-xl text-gray-700">
-                    School Details
-                  </legend>
-                  <div className="grid grid-cols-12 gap-4 gap-y-3 mt-3">
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>Name</FormLabel>
-                      <FormInput
-                        {...register("name")}
-                        type="text"
-                        name="name"
-                        className={errors.name ? "border-danger" : ""}
-                        placeholder="School Name"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>School Code</FormLabel>
-                      <FormInput
-                        {...register("schoolCode")}
-                        type="text"
-                        name="schoolCode"
-                        disabled
-                        className={errors.schoolCode ? "border-danger" : ""}
-                        placeholder="School Code"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>Current Session</FormLabel>
-                      <Controller
-                        control={control}
-                        name="current_session"
-                        defaultValue=""
-                        render={({ field }) => (
-                          <TomSelect
-                            {...field}
-                            onChange={(value) => field.onChange(value)}
-                            className={
-                              errors.current_session ? "border-danger" : ""
-                            }
-                          >
-                            <option value="">Select Session</option>
-                            {academicYears.map((year: any, key: any) => (
-                              <option key={key} value={year}>
-                                {year}
-                              </option>
-                            ))}
-                          </TomSelect>
-                        )}
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>Address</FormLabel>
-                      <FormInput
-                        {...register("address")}
-                        type="text"
-                        name="address"
-                        className={errors.address ? "border-danger" : ""}
-                        placeholder="Address"
-                      />
-                    </div>
-                    {/* New Signatory Role Field */}
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>Signatory Role</FormLabel>
-                      <Controller
-                        control={control}
-                        name="signatory_role"
-                        render={({ field }) => (
-                          <TomSelect
-                            {...field}
-                            onChange={(value: any) => field.onChange(value)}
-                            className={
-                              errors.signatory_role ? "border-danger" : ""
-                            }
-                          >
-                            {signatoryRoles.map((role, index) => (
-                              <option key={index} value={role}>
-                                {role}
-                              </option>
-                            ))}
-                          </TomSelect>
-                        )}
-                      />
-                    </div>
-                    {/* Updated Signatory Name Field */}
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>Signatory Name</FormLabel>
-                      <FormInput
-                        {...register("signatory_name")}
-                        type="text"
-                        name="signatory_name"
-                        className={errors.signatory_name ? "border-danger" : ""}
-                        placeholder="Signatory Name"
-                      />
-                    </div>
-                    {/* Updated Signatory Signature Field */}
-                    <div className="col-span-12 md:col-span-6">
-                      <FormLabel>Signatory Signature</FormLabel>
-                      <PassportUpload
-                        name="signatory_signature"
-                        register={register}
-                        errors={errors}
-                        initialImageUrl={
-                          IMG_URL +
-                          (schoolDetails.signatory_signature ||
-                            schoolDetails.school_head_teacher_signature)
-                        }
-                      />
-                    </div>
-                  </div>
-                </fieldset>
-
-                <div className="grid grid-cols-12 gap-4 gap-y-3">
-                  <div className="col-span-12 md:col-span-6">
-                    <fieldset className="mb-5">
-                      <legend className="font-medium text-lg text-gray-700">
-                        Branding
-                      </legend>
-                      <div className="grid grid-cols-12 gap-4">
-                        <div className="col-span-12 md:col-span-6">
-                          <FormLabel>Primary Color</FormLabel>
-                          <input
-                            type="color"
-                            {...register("primaryColor")}
-                            className="w-full h-10 cursor-pointer border rounded-md"
-                          />
-                        </div>
-                        <div className="col-span-12 md:col-span-6">
-                          <FormLabel>Secondary Color</FormLabel>
-                          <input
-                            type="color"
-                            {...register("secondaryColor")}
-                            className="w-full h-10 cursor-pointer border rounded-md"
-                          />
-                        </div>
-                      </div>
-                    </fieldset>
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormInput
-                      {...register("summative_has_score")}
-                      type="checkbox"
-                      name="summative_has_score"
-                      className={
-                        errors.summative_has_score
-                          ? "border-danger w-5 h-5 mr-3"
-                          : "w-5 h-5 mr-3"
-                      }
-                    />
-                    <FormLabel>
-                      Summative Report With Score (Not Recommended)
-                    </FormLabel>
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormInput
-                      {...register("summative_has_pos")}
-                      type="checkbox"
-                      name="summative_has_pos"
-                      className={
-                        errors.summative_has_score
-                          ? "border-danger w-5 h-5 mr-3"
-                          : "w-5 h-5 mr-3"
-                      }
-                    />
-                    <FormLabel>
-                      Summative Report Has Pos (Not Recommended)
-                    </FormLabel>
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>School Stamp</FormLabel>
-                    <PassportUpload
-                      name="school_stamp"
-                      register={register}
-                      errors={errors}
-                      initialImageUrl={IMG_URL + schoolDetails.school_stamp}
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <FormLabel>Logo</FormLabel>
-                    <PassportUpload
-                      name="logo"
-                      register={register}
-                      errors={errors}
-                      initialImageUrl={IMG_URL + schoolDetails.logo}
-                      // className="w-full"
-                    />
-                  </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+          <form onSubmit={onSubmit} className="space-y-8">
+            {/* School Details Section */}
+            <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+              <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 uppercase">
+                School Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    School Name
+                  </FormLabel>
+                  <FormInput
+                    {...register("name")}
+                    type="text"
+                    className={`w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white ${
+                      errors.name ? "border-red-500" : ""
+                    }`}
+                    placeholder="Enter school name"
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
-
-                {/* Submit Button */}
-                <div className="flex justify-end">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    disabled={loading}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow-md flex items-center transition-all duration-200"
-                  >
-                    {loading ? (
-                      <>
-                        <LoadingIcon
-                          icon="spinning-circles"
-                          className="w-4 h-4 mr-2"
-                        />
-                        Saving...
-                      </>
-                    ) : (
-                      "Save Settings"
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    School Code
+                  </FormLabel>
+                  <FormInput
+                    {...register("schoolCode")}
+                    type="text"
+                    disabled
+                    className="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white bg-gray-100 cursor-not-allowed"
+                    placeholder="School Code"
+                  />
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Current Session
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    name="current_session"
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        onChange={(value) => field.onChange(value)}
+                        className={`w-full rounded-md ${
+                          errors.current_session ? "border-red-500" : ""
+                        }`}
+                      >
+                        <option value="">Select Session</option>
+                        {academicYears.map((year, key) => (
+                          <option key={key} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </TomSelect>
                     )}
-                  </Button>
+                  />
+                  {errors.current_session && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.current_session.message}
+                    </p>
+                  )}
                 </div>
-              </form>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Address
+                  </FormLabel>
+                  <FormInput
+                    {...register("address")}
+                    type="text"
+                    className={`w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white ${
+                      errors.address ? "border-red-500" : ""
+                    }`}
+                    placeholder="Enter school address"
+                  />
+                  {errors.address && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.address.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    School Motto
+                  </FormLabel>
+                  <FormTextarea
+                    {...register("school_motto")}
+                    className={`w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white ${
+                      errors.school_motto ? "border-red-500" : ""
+                    }`}
+                    placeholder="Enter school motto"
+                    rows={3}
+                  />
+                  {errors.school_motto && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.school_motto.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Signatory Role
+                  </FormLabel>
+                  <Controller
+                    control={control}
+                    name="signatory_role"
+                    render={({ field }) => (
+                      <TomSelect
+                        {...field}
+                        onChange={(value) => field.onChange(value)}
+                        className={`w-full rounded-md ${
+                          errors.signatory_role ? "border-red-500" : ""
+                        }`}
+                      >
+                        {signatoryRoles.map((role, index) => (
+                          <option key={index} value={role}>
+                            {role}
+                          </option>
+                        ))}
+                      </TomSelect>
+                    )}
+                  />
+                  {errors.signatory_role && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.signatory_role.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Signatory Name
+                  </FormLabel>
+                  <FormInput
+                    {...register("signatory_name")}
+                    type="text"
+                    className={`w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white ${
+                      errors.signatory_name ? "border-red-500" : ""
+                    }`}
+                    placeholder="Enter signatory name"
+                  />
+                  {errors.signatory_name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.signatory_name.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Signatory Signature
+                  </FormLabel>
+                  <PassportUpload
+                    name="signatory_signature"
+                    register={register}
+                    errors={errors}
+                    initialImageUrl={
+                      IMG_URL +
+                      (schoolDetails.signatory_signature ||
+                        schoolDetails.school_head_teacher_signature)
+                    }
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+
+            {/* Branding Section */}
+            <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+              <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 uppercase">
+                Branding
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Primary Color
+                  </FormLabel>
+                  <input
+                    type="color"
+                    {...register("primaryColor")}
+                    className="w-full h-12 rounded-md border-gray-300 dark:border-gray-600 cursor-pointer"
+                  />
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Secondary Color
+                  </FormLabel>
+                  <input
+                    type="color"
+                    {...register("secondaryColor")}
+                    className="w-full h-12 rounded-md border-gray-300 dark:border-gray-600 cursor-pointer"
+                  />
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    School Stamp
+                  </FormLabel>
+                  <PassportUpload
+                    name="school_stamp"
+                    register={register}
+                    errors={errors}
+                    initialImageUrl={IMG_URL + schoolDetails.school_stamp}
+                  />
+                </div>
+                <div>
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Logo
+                  </FormLabel>
+                  <PassportUpload
+                    name="logo"
+                    register={register}
+                    errors={errors}
+                    initialImageUrl={IMG_URL + schoolDetails.logo}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Report Settings Section */}
+            <div>
+              <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4 uppercase">
+                Report Settings
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <FormInput
+                    {...register("summative_has_score")}
+                    type="checkbox"
+                    className="w-5 h-5 text-indigo-600 rounded mr-3"
+                  />
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Include Score in Summative Report
+                  </FormLabel>
+                </div>
+                <div className="flex items-center">
+                  <FormInput
+                    {...register("summative_has_pos")}
+                    type="checkbox"
+                    className="w-5 h-5 text-indigo-600 rounded mr-3"
+                  />
+                  <FormLabel className="text-gray-600 dark:text-gray-300">
+                    Include Position in Summative Report
+                  </FormLabel>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex justify-end mt-6">
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={loading}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-md flex items-center transition-all duration-200 disabled:opacity-50"
+              >
+                {loading ? (
+                  <>
+                    <LoadingIcon
+                      icon="spinning-circles"
+                      className="w-4 h-4 mr-2"
+                    />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Lucide icon="Save" className="w-5 h-5 mr-2" />
+                    Save Settings
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
         </div>
       )}
 
       {/* Notification */}
       <Notification
         options={{ duration: 3000 }}
-        // getRef={(el) => {
-        //   notify.current = el;
-        // }}
-        className="flex"
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex items-center p-4 rounded-lg shadow-lg"
       >
         <Lucide
           icon={success ? "CheckCircle" : "XCircle"}
-          className={`w-6 h-6 ${success ? "text-green-500" : "text-red-500"}`}
+          className={`w-6 h-6 ${
+            success ? "text-green-500" : "text-red-500"
+          } mr-3`}
         />
-        <div className="ml-3">
+        <div>
           <div className="font-semibold text-gray-800 dark:text-white">
             {success ? "Success" : "Error"}
           </div>
@@ -381,7 +461,7 @@ function Settings() {
           </div>
         </div>
       </Notification>
-    </>
+    </div>
   );
 }
 
