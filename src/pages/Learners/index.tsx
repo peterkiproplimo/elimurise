@@ -248,7 +248,7 @@ function Main() {
   const schema = yup
     .object({
       first_name: yup.string().required("First name is required"),
-      // last_name: yup.string().required("Last name is required"),
+      gender: yup.string().required("Gender  is required"),
       // surname: yup.string().required("Surname is required"),
       adm_no: yup.string().required("Adm No is required"),
       grade: yup.string().required("Grade is required"),
@@ -2198,7 +2198,7 @@ function Main() {
                               }
                             >
                               {learner?.status == "L" ? "Left" : ""}
-                              {learner?.status == "G" ? "Graduated" : ""}
+                              {learner?.status == "G" ? "Left" : ""}
                               {learner?.status == "P" ? "In Session" : ""}
                               {learner?.status == "D" ? "Deactivated" : ""}
                             </div>
@@ -2789,7 +2789,7 @@ function Main() {
                                   }
                                 >
                                   {learner?.status == "L" ? "Left" : ""}
-                                  {learner?.status == "G" ? "Graduated" : ""}
+                                  {learner?.status == "G" ? "Left" : ""}
                                   {learner?.status == "P" ? "In Session" : ""}
                                 </div>
                               </td>
@@ -2797,7 +2797,7 @@ function Main() {
                             {learner?.status == "G" && (
                               <tr>
                                 <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                  Graduated On
+                                  Left On
                                 </td>
                                 <td className="px-4 py-4 border-b border-gray-200">
                                   {formatDate(learner?.grad_date, "DD-MM-YYYY")}

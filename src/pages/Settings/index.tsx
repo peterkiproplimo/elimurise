@@ -441,9 +441,6 @@ function Settings() {
       {/* Notification */}
       <Notification
         options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
         className="flex items-center p-4 rounded-lg shadow-lg"
       >
         <Lucide

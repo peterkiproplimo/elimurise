@@ -146,7 +146,7 @@ function NoticeBoard() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {showForm ? (
-        <div className=" mx-auto mt-10 p-8 bg-white rounded-xl shadow-2xl transform transition-all duration-300">
+        <div className=" mx-auto mt-10 p-8 bg-white rounded-xl shadow-2xl transform transition-all duration-300 ">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
             {editingId ? "Edit Notice" : "Create New Notice"}
           </h2>
