@@ -59,7 +59,7 @@ function Main() {
 
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
-  const [grades, setGrades] = useState([]);
+  const [grades, setGradess] = useState([]);
   const [test, setTest] = useState("");
   const [tests, setTests] = useState<any>([]);
 
@@ -384,7 +384,7 @@ function Main() {
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
 
-    setGrades(response.data);
+    setGradess(response.data);
   };
   useEffect(() => {
     getGrades();
