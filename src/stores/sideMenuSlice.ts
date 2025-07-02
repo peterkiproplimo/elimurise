@@ -79,7 +79,7 @@ const initialState: SideMenuState = {
         {
           icon: "Users",
           pathname: "/home/exited-learners",
-          title: "Learners Exited",
+          title: "Exited Learners",
           ignore: !hasPermission("learners", "read"),
         },
         {
