@@ -140,6 +140,7 @@ function Settings() {
         localStorage.setItem("school", JSON.stringify(response));
         setSuccess(true);
         setMessage("Settings updated successfully!");
+        window.location.reload();
         notify.current?.showToast();
       } catch (error) {
         console.error("Error updating settings:", error);
