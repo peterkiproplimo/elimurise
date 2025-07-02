@@ -384,7 +384,7 @@ function Main() {
   const getGrades = async () => {
     const response = await ApiService.getGrades({ page: 1 });
 
-    setGradess(response.data);
+    setGrades(response.data);
   };
   useEffect(() => {
     getGrades();
