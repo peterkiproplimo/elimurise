@@ -611,7 +611,7 @@ function Main() {
       isLoading(false);
       // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner status changed!");
+      setMessage("Learner activated successfully!");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);

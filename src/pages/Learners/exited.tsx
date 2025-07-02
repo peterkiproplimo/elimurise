@@ -425,7 +425,7 @@ function Main() {
         // data.transferCode = approveTranfer.transferCode;
         let res = await ApiService.leanersPromote(approveTranfer);
         if (!res.success) {
-          throw Error("Failed To tranfer");
+          throw Error("Failed to reinstate learner");
         }
         await getStudents();
 
@@ -433,7 +433,9 @@ function Main() {
         isLoading(false);
         setApproveDialog(false);
         setSuccess(true);
-        setMessage("Transfer Approved successfully.");
+        setMessage(
+          "Learner activated successfully  learner deactivated successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -3141,8 +3143,8 @@ function Main() {
             <div className="mt-5  font-medium">Reinstate Tranfer</div>
             <div className="mt-2 text-slate-500">
               {!approveTranfer.exit
-                ? " Do you really approve this record?"
-                : "Do you really approve to exit this learner?"}
+                ? " Are you sure you want to reinstate this learner?"
+                : "Are you sure you want to reinstate this learner?"}
             </div>
             {!approveTranfer.exit && (
               <>

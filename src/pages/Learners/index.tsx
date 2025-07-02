@@ -548,6 +548,7 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
+          status: ["P"],
         },
         strandFilter
       );
