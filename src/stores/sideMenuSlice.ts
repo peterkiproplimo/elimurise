@@ -72,6 +72,18 @@ const initialState: SideMenuState = {
         },
         {
           icon: "Users",
+          pathname: "/home/inactive-learners",
+          title: "Dactivated Learners",
+          ignore: !hasPermission("learners", "read"),
+        },
+        {
+          icon: "Users",
+          pathname: "/home/exited-learners",
+          title: "Learners Exited",
+          ignore: !hasPermission("learners", "read"),
+        },
+        {
+          icon: "Users",
           pathname: "/home/enrollment",
           title: "Promotion",
           ignore: !hasPermission("enrollment", "read"),
@@ -298,6 +310,7 @@ const initialState: SideMenuState = {
         // },
       ],
     },
+
     {
       icon: "File",
       pathname: "/home/roles",

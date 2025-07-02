@@ -82,6 +82,9 @@ import AttendanceTermly from "../pages/Attendance/attendance_termly";
 import Timetable from "../pages/Timetable";
 import TimetableTeacher from "../pages/Timetable/teacher";
 import TimetableViewer from "../pages/Timetable/Timetable_view";
+import InactiveLearners from "../pages/Learners/daeactivated";
+import ExitedLearners from "../pages/Learners/exited";
+//inactive learners
 
 //nn
 function Router() {
@@ -207,6 +210,10 @@ function Router() {
           path: "term",
           element: <Term />,
         },
+        { path: "inactive-learners", element: <InactiveLearners /> },
+        // Learners that are not active in the system
+        { path: "exited-learners", element: <ExitedLearners /> },
+
         //TimetableTeacher
         {
           path: "timetable-teacher",
