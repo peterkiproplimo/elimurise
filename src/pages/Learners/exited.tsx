@@ -59,7 +59,7 @@ function Main() {
 
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
-  const [grades, setGradess] = useState([]);
+  const [grades, setGrades] = useState([]);
   const [test, setTest] = useState("");
   const [tests, setTests] = useState<any>([]);
 
