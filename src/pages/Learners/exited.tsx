@@ -2267,33 +2267,10 @@ function Main() {
                                             className="w-4 h-4 mr-1"
                                           />{" "} */}
                                       <i className="icon-eye mr-2"></i>
-                                      Transfer
+                                      Reinstate
                                     </Menu.Item>
                                   )}
-                                  <Menu.Item
-                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                    onClick={() => {
-                                      setApproveTranfer({
-                                        learners: [
-                                          {
-                                            id: learner._id,
-                                            status: "G",
-                                          },
-                                        ],
-                                        from_stream: learner.stream._id,
-                                        from_grade: learner.grade._id,
-                                        exit: true,
-                                      });
-                                      setApproveDialog(true);
-                                    }}
-                                  >
-                                    {/* <Lucide
-                                            icon="CheckSquare"
-                                            className="w-4 h-4 mr-1"
-                                          />{" "} */}
-                                    <i className="icon-eye mr-2"></i>
-                                    Exit
-                                  </Menu.Item>
+
                                   {(learner.status === "D" ||
                                     learner.status === "P") &&
                                     hasPermission("learners", "delete") && (
@@ -3161,7 +3138,7 @@ function Main() {
                   icon="XCircle"
                   className="w-16 h-16 mx-auto mt-3 text-danger"
                 /> */}
-            <div className="mt-5  font-medium">Incoming Tranfer</div>
+            <div className="mt-5  font-medium">Reinstate Tranfer</div>
             <div className="mt-2 text-slate-500">
               {!approveTranfer.exit
                 ? " Do you really approve this record?"
@@ -3254,7 +3231,7 @@ function Main() {
                 className="w-24 ml-4 text-white"
                 ref={approveButtonRef}
               >
-                Approve
+                Reinstate
               </Button>
             </div>
           </div>
