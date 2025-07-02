@@ -56,7 +56,7 @@ const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
 function Main() {
   // const [confirmDelete, setConfirmDelete] = useState(false);
   const { hasPermission } = useAuth();
-
+  const [exit, setExit] = useState(false);
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
@@ -70,7 +70,7 @@ function Main() {
   const [exportDialog, setExportDialog] = useState(false);
   const approveButtonRef = useRef(null);
   const [approveDialog, setApproveDialog] = useState(false);
-
+  const [selectedLearner, setSelectedLearner] = useState<any>(null);
   const [approveTranfer, setApproveTranfer] = useState<any>({
     learner: [],
     to_stream: "",
@@ -433,7 +433,11 @@ function Main() {
         isLoading(false);
         setApproveDialog(false);
         setSuccess(true);
-        setMessage("Transfer Approved successfully.");
+        setMessage(
+          !approveTranfer.exit
+            ? "Transfer Approved successfully."
+            : "Learner Exited successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -611,7 +615,7 @@ function Main() {
       isLoading(false);
       // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner status changed!");
+      setMessage("Learner Deactivated successfully.");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -2301,6 +2305,7 @@ function Main() {
                                         onClick={(e: any) => {
                                           e.preventDefault();
                                           disableRecord(learner._id);
+                                          setSelectedLearner(learner);
                                           // assuming you meant disableRecord instead of disbaleRecord
                                         }}
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"

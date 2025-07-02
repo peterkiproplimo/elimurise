@@ -433,7 +433,11 @@ function Main() {
         isLoading(false);
         setApproveDialog(false);
         setSuccess(true);
-        setMessage("Transfer Approved successfully.");
+        setMessage(
+          !approveTranfer.exit
+            ? "Transfer Approved successfully."
+            : "Learner Exited successfully."
+        );
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -611,7 +615,7 @@ function Main() {
       isLoading(false);
       // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner activated successfully!");
+      setMessage("Learner activated successfully.");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);

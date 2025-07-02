@@ -433,9 +433,7 @@ function Main() {
         isLoading(false);
         setApproveDialog(false);
         setSuccess(true);
-        setMessage(
-          "Learner activated successfully  learner deactivated successfully."
-        );
+        setMessage("Learner reinstated successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
