@@ -2,7 +2,7 @@ import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
 import PassportUpload from "./profilephoto";
-import { X, Paperclip, Send } from "lucide-react"; // Using Lucide icons for a modern look
+import { X, Paperclip, Send, MoreHorizontal, Eye, Edit, ArrowLeftRight, LogOut } from "lucide-react"; // Using Lucide icons for a modern look
 import {
   FormCheck,
   FormInput,
@@ -2025,98 +2025,104 @@ function Main() {
                 </div>
               ) : (
                 <>
-                  <Table className="border-spacing-y-[3px] border-separate mt-2">
-                    <Table.Thead>
+                  <Table hover striped className="mt-6">
+                    <Table.Thead variant="modern">
                       <Table.Tr>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-10">
-                          No.
+                        <Table.Th className="w-16 text-center">
+                          #
                         </Table.Th>
 
                         <Table.Th
-                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
+                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={() => handleSort("first_name")}
                         >
-                          Name{" "}
-                          {sortField === "first_name"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
+                          <div className="flex items-center space-x-2">
+                            <span>Student Name</span>
+                            {sortField === "first_name" && (
+                              <Lucide 
+                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                                className="w-4 h-4" 
+                              />
+                            )}
+                          </div>
                         </Table.Th>
 
                         <Table.Th
-                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={() => handleSort("adm_no")}
                         >
-                          Adm No{" "}
-                          {sortField === "adm_no"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
+                          <div className="flex items-center space-x-2">
+                            <span>Admission No</span>
+                            {sortField === "adm_no" && (
+                              <Lucide 
+                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                                className="w-4 h-4" 
+                              />
+                            )}
+                          </div>
                         </Table.Th>
 
-                        {/* <Table.Th
-                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
-                          onClick={() => handleSort("nemis_no")}
-                        >
-                          Nemis{" "}
-                          {sortField === "nemis_no"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
-                        </Table.Th> */}
-
                         <Table.Th
-                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={() => handleSort("grade")}
                         >
-                          Grade{" "}
-                          {sortField === "grade"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
+                          <div className="flex items-center space-x-2">
+                            <span>Grade</span>
+                            {sortField === "grade" && (
+                              <Lucide 
+                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                                className="w-4 h-4" 
+                              />
+                            )}
+                          </div>
                         </Table.Th>
 
                         <Table.Th
-                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={() => handleSort("stream")}
                         >
-                          Stream{" "}
-                          {sortField === "stream"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
+                          <div className="flex items-center space-x-2">
+                            <span>Stream</span>
+                            {sortField === "stream" && (
+                              <Lucide 
+                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                                className="w-4 h-4" 
+                              />
+                            )}
+                          </div>
                         </Table.Th>
 
                         <Table.Th
-                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
+                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={() => handleSort("session")}
                         >
-                          Session{" "}
-                          {sortField === "session"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
+                          <div className="flex items-center space-x-2">
+                            <span>Session</span>
+                            {sortField === "session" && (
+                              <Lucide 
+                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                                className="w-4 h-4" 
+                              />
+                            )}
+                          </div>
                         </Table.Th>
 
                         <Table.Th
-                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
+                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={() => handleSort("status")}
                         >
-                          Status{" "}
-                          {sortField === "status"
-                            ? sortOrder === "asc"
-                              ? "▲"
-                              : "▼"
-                            : ""}
+                          <div className="flex items-center space-x-2">
+                            <span>Status</span>
+                            {sortField === "status" && (
+                              <Lucide 
+                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                                className="w-4 h-4" 
+                              />
+                            )}
+                          </div>
                         </Table.Th>
 
-                        <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
+                        <Table.Th className="text-center w-32">
                           Actions
                         </Table.Th>
                       </Table.Tr>
@@ -2124,102 +2130,99 @@ function Main() {
 
                     <Table.Tbody>
                       {learners.map((learner: any, key) => (
-                        <Table.Tr key={key} className="">
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
-                            <span className="font-medium whitespace-nowrap">
+                        <Table.Tr key={key}>
+                          <Table.Td className="text-center">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                               {limit * (page - 1) + key + 1}
-                            </span>
+                            </div>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <div className="flex items-center">
-                              <div className="w-9 h-9 ">
+                          
+                          <Table.Td>
+                            <div className="flex items-center space-x-4">
+                              <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
                                 <img
                                   src={c.IMG_URL + learner?.photo}
                                   alt="Learner"
-                                  className="w-9 h-9 rounded-lg border shadow-md"
+                                  className="w-full h-full object-cover"
                                   onError={(e) =>
                                     (e.currentTarget.src = leanerImg)
                                   }
                                 />
                               </div>
-                              <div className="ml-4">
-                                <a
-                                  href="#"
-                                  onClick={() => profileRecord(learner)}
-                                  className="font-medium whitespace-nowrap"
-                                >
+                              <div>
+                                <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
+                                     onClick={() => profileRecord(learner)}>
                                   {learner?.first_name && learner?.first_name}
-                                  {" " +
-                                    learner?.surname +
-                                    " " +
-                                    learner?.last_name}
-                                </a>
-                                <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                  {learner?.stream?.grade?.name}{" "}
-                                  {learner?.stream?.name}
+                                  {" " + learner?.surname + " " + learner?.last_name}
+                                </div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                  {learner?.stream?.grade?.name} • {learner?.stream?.name}
                                 </div>
                               </div>
                             </div>
                           </Table.Td>
 
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.adm_no}
-                            </span>
+                          <Table.Td>
+                            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block">
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {learner?.adm_no}
+                              </span>
+                            </div>
                           </Table.Td>
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.assessment_no ?? "N/A"}
-                            </span>
-                          </Table.Td> */}
-                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.nemis_no}
-                            </span>
-                          </Table.Td> */}
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.grade?.name}{" "}
-                            </span>
+                          
+                          <Table.Td>
+                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
+                              <span className="font-medium text-blue-700 dark:text-blue-300">
+                                {learner?.grade?.name}
+                              </span>
+                            </div>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.stream?.name}
-                            </span>
+                          
+                          <Table.Td>
+                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-3 py-2 inline-block">
+                              <span className="font-medium text-purple-700 dark:text-purple-300">
+                                {learner?.stream?.name}
+                              </span>
+                            </div>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {learner?.current_session}
-                            </span>
+                          
+                          <Table.Td>
+                            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 inline-block">
+                              <span className="font-medium text-green-700 dark:text-green-300">
+                                {learner?.current_session}
+                              </span>
+                            </div>
                           </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <div
-                              className={
-                                learner?.status == "L"
-                                  ? "flex items-center text-primary"
-                                  : learner?.status == "D"
-                                  ? "flex items-center text-danger"
-                                  : "flex items-center text-success"
-                              }
-                            >
-                              {learner?.status == "L" ? "Left" : ""}
-                              {learner?.status == "G" ? "Left" : ""}
-                              {learner?.status == "P" ? "In Session" : ""}
-                              {learner?.status == "D" ? "Deactivated" : ""}
+                          
+                          <Table.Td>
+                            <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                              learner?.status === "L" || learner?.status === "G"
+                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                                : learner?.status === "D"
+                                ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
+                                : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                            }`}>
+                              <div className={`w-2 h-2 rounded-full mr-2 ${
+                                learner?.status === "L" || learner?.status === "G"
+                                  ? "bg-red-500"
+                                  : learner?.status === "D"
+                                  ? "bg-orange-500"
+                                  : "bg-green-500"
+                              }`}></div>
+                              {learner?.status === "L" || learner?.status === "G" ? "Left" : ""}
+                              {learner?.status === "P" ? "Active" : ""}
+                              {learner?.status === "D" ? "Deactivated" : ""}
                             </div>
                           </Table.Td>
 
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0  before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            <div className="flex items-center justify-center">
-                              <Menu className="inline-block mb-2 mr-1 box">
-                                <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
-                                  <Lucide
-                                    icon="AlignJustify"
-                                    className="w-4 h-4 mr-1"
-                                  />{" "}
+                          <Table.Td>
+                            <div className="flex items-center justify-center space-x-2">
+                              <Menu className="inline-block">
+                                <Menu.Button className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                                  <Lucide icon="MoreHorizontal" className="w-5 h-5" />
                                 </Menu.Button>
                                 <Menu.Items
-                                  className="w-40"
+                                  className="w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 py-2 mt-2"
                                   placement="bottom-end"
                                 >
                                   <Menu.Item
@@ -2227,10 +2230,10 @@ function Main() {
                                       e.preventDefault();
                                       profileRecord(learner);
                                     }}
-                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                                   >
-                                    <i className="icon-eye mr-2"></i> View
-                                    Profile
+                                    <Lucide icon="Eye" className="w-4 h-4 mr-3 text-blue-500" />
+                                    View Profile
                                   </Menu.Item>
 
                                   {hasPermission("learners", "update") && (
@@ -2239,16 +2242,16 @@ function Main() {
                                         e.preventDefault();
                                         editRecord(learner);
                                       }}
-                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
                                     >
-                                      <i className="icon-eye mr-2"></i> Edit
-                                      Profile
+                                      <Lucide icon="Edit" className="w-4 h-4 mr-3 text-green-500" />
+                                      Edit Profile
                                     </Menu.Item>
                                   )}
 
                                   {hasPermission("enrollment", "promote") && (
                                     <Menu.Item
-                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
                                       onClick={() => {
                                         setApproveTranfer({
                                           learners: [
@@ -2266,16 +2269,13 @@ function Main() {
                                         setApproveDialog(true);
                                       }}
                                     >
-                                      {/* <Lucide
-                                            icon="CheckSquare"
-                                            className="w-4 h-4 mr-1"
-                                          />{" "} */}
-                                      <i className="icon-eye mr-2"></i>
+                                      <Lucide icon="ArrowLeftRight" className="w-4 h-4 mr-3 text-purple-500" />
                                       Transfer
                                     </Menu.Item>
                                   )}
+                                  
                                   <Menu.Item
-                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                    className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200"
                                     onClick={() => {
                                       setApproveTranfer({
                                         learners: [
@@ -2291,12 +2291,8 @@ function Main() {
                                       setApproveDialog(true);
                                     }}
                                   >
-                                    {/* <Lucide
-                                            icon="CheckSquare"
-                                            className="w-4 h-4 mr-1"
-                                          />{" "} */}
-                                    <i className="icon-eye mr-2"></i>
-                                    Exit
+                                    <Lucide icon="LogOut" className="w-4 h-4 mr-3 text-orange-500" />
+                                    Exit Student
                                   </Menu.Item>
                                   {(learner.status === "D" ||
                                     learner.status === "P") &&

@@ -1,6 +1,7 @@
 import { selectDarkMode, setDarkMode } from "../../stores/darkModeSlice";
 import { useAppSelector, useAppDispatch } from "../../stores/hooks";
 import clsx from "clsx";
+import { Moon, Sun } from "lucide-react";
 
 function Main() {
   const dispatch = useAppDispatch();
@@ -22,22 +23,26 @@ function Main() {
   return (
     <>
       {/* BEGIN: Dark Mode Switcher */}
-      {/* <div
-        className="fixed bottom-0 right-0 z-50 flex items-center justify-center w-40 h-12 mb-10 mr-10 border rounded-full shadow-md cursor-pointer box"
+      <div
+        className="fixed bottom-0 right-0 z-50 flex items-center justify-center w-12 h-12 mb-10 mr-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full shadow-lg cursor-pointer transition-all duration-200 hover:shadow-xl"
         onClick={switchMode}
       >
-        <div className="mr-4 text-slate-600 dark:text-slate-200">Dark Mode</div>
         <div
           className={clsx([
-            "border w-[38px] h-[24px] p-px outline-none rounded-full relative cursor-pointer",
-            "before:content-[''] before:w-[22px] before:h-[22px] before:transition-all before:duration-200 before:shadow-[1px_1px_3px_rgba(0,0,0,0.25)] before:absolute before:inset-y-0 before:my-auto before:rounded-full",
+            "flex items-center justify-center w-full h-full transition-all duration-300",
             {
-              "bg-primary border-primary": darkMode,
-              "before:ml-[13px] before:bg-white": darkMode,
+              "text-primary": !darkMode,
+              "text-yellow-500": darkMode,
             },
           ])}
-        ></div>
-      </div> */}
+        >
+          {darkMode ? (
+            <Sun className="w-5 h-5" />
+          ) : (
+            <Moon className="w-5 h-5" />
+          )}
+        </div>
+      </div>
       {/* END: Dark Mode Switcher */}
     </>
   );

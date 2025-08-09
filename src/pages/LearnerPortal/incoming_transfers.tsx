@@ -9,6 +9,7 @@ import {
   FormSwitch,
   FormTextarea,
 } from "../../base-components/Form";
+import { Loader } from "lucide-react";
 import Lucide from "../../base-components/Lucide";
 import { Dialog, Menu } from "../../base-components/Headless";
 import Table from "../../base-components/Table";
@@ -20,15 +21,13 @@ import Notification, {
 } from "../../base-components/Notification";
 import { useForm } from "react-hook-form";
 import LoadingIcon from "../../base-components/LoadingIcon";
-import { useNavigate } from "react-router-dom";
-import { Search } from "lucide-react";
 import TomSelect from "../../base-components/TomSelect";
 import * as C from "../../utils/constants";
 import Pagination from "../../base-components/Pagination";
-import Alert from "../../base-components/Alert";
-import Dropzone from "dropzone";
+import { useLocation, useNavigate } from "react-router-dom";
+import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
-import * as c from "../../utils/constants";
+import leanerImg from "../../assets/images/student.jpeg";
 
 interface TableRow {
   no: number;
@@ -399,34 +398,41 @@ function Main() {
         <>
           <h2 className="mt-1 text-lg font-medium ">Transfers</h2>
           {message && success && (
-            <Alert
-              variant="soft-success"
-              className="flex items-center mb-2"
-              dismissTimeout={3000}
-              role="alert"
-            >
-              <svg
-                className="flex-shrink-0 inline w-4 h-4 me-3"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              </svg>
-              {message}
-            </Alert>
+            <>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <Lucide icon="CheckCircle" className="h-5 w-5 text-green-400" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-green-800">
+                      Success
+                    </h3>
+                    <div className="mt-2 text-sm text-green-700">
+                      <p>{message}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            //   <div
-            //   className="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
-            //   role="alert"
-            // >
-
-            //   <span className="sr-only">Info</span>
-            //   <div>
-            //     <span className="font-medium">Success alert!</span> {message}
-            //   </div>
-            // </div>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <Lucide icon="AlertTriangle" className="h-5 w-5 text-yellow-400" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-yellow-800">
+                      Transfer Request Pending
+                    </h3>
+                    <div className="mt-2 text-sm text-yellow-700">
+                      <p>
+                        Your transfer request is currently being reviewed by the school administration.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
 
           <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
@@ -456,180 +462,171 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
-              {loading ? (
-                <div className="flex flex-col items-center mt-5">
-                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-                </div>
-              ) : tranfers.length === 0 ? (
-                <div className="flex flex-col items-center mt-10 bg-white p-8">
-                  {/* <Search size={28} className="" /> */}
-                  <p className="text-xl text-slate-500 ">No records found</p>
-                </div>
-              ) : (
-                <>
-                  <Table className="border-spacing-y-[3px] border-separate mt-2">
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-10">
-                          No.
-                        </Table.Th>
+            {/* BEGIN: Data List */}
+            <div className="col-span-12 overflow-x-auto overflow-y-visible 2xl:overflow-visible">
+              <Table hover striped className="mt-6">
+                <Table.Thead variant="modern">
+                  <Table.Tr>
+                    <Table.Th className="w-16 text-center">
+                      #
+                    </Table.Th>
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Student Name</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>From School</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>From Grade</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>From Stream</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>To Grade</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>To Stream</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Status</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="text-center w-32">
+                      Actions
+                    </Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
 
-                        <Table.Th className="border-b-0 whitespace-nowrap w-24">
-                          Name
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Adm No
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Transfer Code
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Old School
-                        </Table.Th>
-
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Payment Status
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Payment
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Approval Status
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap w-20">
-                          Reason
-                        </Table.Th>
-                        <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
-                          Actions
-                        </Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                      {tranfers.map((tranfer: any, key) => (
-                        <Table.Tr key={key} className="">
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
-                            <span className="font-medium whitespace-nowrap">
-                              {key + 1}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                            <div className="flex items-center">
-                              <div className="w-9 h-9 image-fit zoom-in">
-                                <Tippy
-                                  as="img"
-                                  alt=""
-                                  className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                  src={c.IMG_URL + tranfer?.learner?.photo}
-                                  content={
-                                    tranfer?.learner?.first_name +
-                                    " " +
-                                    tranfer?.learner?.last_name
-                                  }
-                                />
-                              </div>
-                              <div className="ml-4">
-                                <a
-                                  href="#"
-                                  onClick={(e: any) => {
-                                    e.preventDefault();
-                                  }}
-                                  className="font-medium whitespace-nowrap"
-                                >
-                                  {tranfer?.learner?.first_name &&
-                                    tranfer?.learner?.first_name}
-                                  {" " +
-                                    tranfer?.learner?.surname +
-                                    " " +
-                                    tranfer?.learner?.last_name}
-                                </a>
-                                <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                  {tranfer?.stream?.grade?.name}{" "}
-                                  {tranfer?.stream?.name}
-                                </div>
-                              </div>
+                <Table.Tbody>
+                  {tranfers.map((transfer: any, key: number) => (
+                    <Table.Tr key={key}>
+                      <Table.Td className="text-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                          {limit * (page - 1) + key + 1}
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
+                            <img
+                              src={transfer?.learner?.photo ? `${C.IMG_URL}${transfer.learner.photo}` : leanerImg}
+                              alt="Student"
+                              className="w-full h-full object-cover"
+                              onError={(e) => (e.currentTarget.src = leanerImg)}
+                            />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-white">
+                              {transfer?.learner?.first_name} {transfer?.learner?.surname} {transfer?.learner?.last_name}
                             </div>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {tranfer?.learner?.adm_no}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {tranfer?.transferCode}{" "}
-                            </span>
-                          </Table.Td>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                              ID: {transfer?.learner?._id?.slice(-6)}
+                            </div>
+                          </div>
+                        </div>
+                      </Table.Td>
 
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              <div className="ml-0">
-                                {tranfer?.oldSchool?.name}
+                      <Table.Td>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {transfer?.from_school?.name || "N/A"}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-blue-700 dark:text-blue-300">
+                            {transfer?.from_grade?.name || "N/A"}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-purple-700 dark:text-purple-300">
+                            {transfer?.from_stream?.name || "N/A"}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-green-700 dark:text-green-300">
+                            {transfer?.to_grade?.name || "N/A"}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-orange-700 dark:text-orange-300">
+                            {transfer?.to_stream?.name || "N/A"}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          transfer?.status === "pending"
+                            ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
+                            : transfer?.status === "approved"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                            : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                        }`}>
+                          <div className={`w-2 h-2 rounded-full mr-2 ${
+                            transfer?.status === "pending"
+                              ? "bg-yellow-500"
+                              : transfer?.status === "approved"
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}></div>
+                          {transfer?.status?.charAt(0).toUpperCase() + transfer?.status?.slice(1) || "Unknown"}
+                        </div>
+                      </Table.Td>
 
-                                <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                  {tranfer?.oldSchool?.schoolCode}
-                                </div>
-                              </div>
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {tranfer?.paymentStatus}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {tranfer?.payment?.confirmation_code ?? "_"}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {tranfer?.approvalStatus}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
-                            <span className="font-medium whitespace-nowrap">
-                              {tranfer?.reason}
-                            </span>
-                          </Table.Td>
-                          <Table.Td className="first:rounded-l-md last:rounded-r-md w-20 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                            <div className="flex items-center justify-center">
-                              {tranfer?.paymentStatus === "Pending" ? (
-                                <a
-                                  className="flex items-center mr-3 text-primary"
-                                  href="#"
-                                  onClick={() => {
-                                    setApproveTranfer({
-                                      id: tranfer?._id,
-                                    });
-                                    setApproveDialog(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="CheckSquare"
-                                    className="w-4 h-4 mr-1"
-                                  />{" "}
-                                  Approve
-                                </a>
-                              ) : (
-                                <>
-                                  <Lucide
-                                    icon="CheckSquare"
-                                    className="w-4 h-4 mr-1"
-                                  />{" "}
-                                  Paid
-                                </>
-                              )}
+                      <Table.Td>
+                        <div className="flex items-center justify-center space-x-2">
+                            <a
+                              className="flex items-center mr-3 text-primary"
+                              href="#"
+                              onClick={() => {
+                                setApproveTranfer({
+                                  id: transfer?._id,
+                                });
+                                setApproveDialog(true);
+                              }}
+                            >
+                              <Lucide
+                                icon="CheckSquare"
+                                className="w-4 h-4 mr-1"
+                              />{" "}
+                              Approve
+                            </a>
+                            <a
+                              className="flex items-center text-primary"
+                              onClick={(e: any) => handleNavigate(transfer?.learner?._id)}
+                            >
+                              <Lucide icon="Eye" className="w-4 h-4 mr-1" /> View More
+                            </a>
 
-                              {/* <a
-                            className="flex items-center text-primary"
-                            onClick={(e: any) => handleNavigate(learner)}
-                        >
-                            <Lucide icon="Eye" className="w-4 h-4 mr-1" /> View More
-                        </a> */}
-
-                              {/* Uncomment the following block if you want to enable the delete action */}
-                              {/* <a
+                            {/* Uncomment the following block if you want to enable the delete action */}
+                            {/* <a
               className="flex items-center text-danger"
               href="#"
               onClick={() => {
@@ -639,133 +636,128 @@ function Main() {
             >
               <Lucide icon="Trash2" className="w-4 h-4 mr-1" /> Delete
             </a> */}
-                            </div>
-                          </Table.Td>
-                        </Table.Tr>
-                      ))}
-                    </Table.Tbody>
-                  </Table>
+                          </div>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
+                  </Table.Tbody>
+                </Table>
 
-                  <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                      <Pagination className="w-full sm:w-auto sm:mr-auto">
+                <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
+                  <Pagination className="w-full sm:w-auto sm:mr-auto">
+                    <button
+                      onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                      className="py-2 px-4 rounded-md"
+                    >
+                      <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                    </button>
+                    {_.times(pagination.total_pages).map((page, key) =>
+                      page + 1 == pagination.current_page ? (
                         <button
-                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
+                          onClick={() => setPage(page + 1)}
+                          key={key}
+                          className="py-2 px-4 bg-white rounded-md"
+                        >
+                          {page + 1}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setPage(page + 1)}
+                          key={key}
                           className="py-2 px-4 rounded-md"
                         >
-                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
+                          {page + 1}
                         </button>
-                        {_.times(pagination.total_pages).map((page, key) =>
-                          page + 1 == pagination.current_page ? (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 bg-white rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          )
-                        )}
-                        <button
-                          onClick={() =>
-                            setPage(
-                              page < pagination.total_pages ? page + 1 : 1
-                            )
-                          }
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronRight" className="w-4 h-4" />
-                        </button>
-                      </Pagination>
-                      <div className="text-slate-500">
-                        <span className="mr-3">Total {pagination.total}</span>
-                        <FormSelect
-                          className="w-30 mt-3 !box sm:mt-0"
-                          onChange={(e) => setLimit(parseInt(e.target.value))}
-                        >
-                          <option value={10}>10/page</option>
-                          <option value={25}>25/page</option>
-                          <option value={50}>50/page</option>
-                          <option value={100}>100/page</option>
-                        </FormSelect>
-                      </div>
-                    </div>
+                      )
+                    )}
+                    <button
+                      onClick={() =>
+                        setPage(
+                          page < pagination.total_pages ? page + 1 : 1
+                        )
+                      }
+                      className="py-2 px-4 rounded-md"
+                    >
+                      <Lucide icon="ChevronRight" className="w-4 h-4" />
+                    </button>
+                  </Pagination>
+                  <div className="text-slate-500">
+                    <span className="mr-3">Total {pagination.total}</span>
+                    <FormSelect
+                      className="w-30 mt-3 !box sm:mt-0"
+                      onChange={(e) => setLimit(parseInt(e.target.value))}
+                    >
+                      <option value={10}>10/page</option>
+                      <option value={25}>25/page</option>
+                      <option value={50}>50/page</option>
+                      <option value={100}>100/page</option>
+                    </FormSelect>
                   </div>
-                </>
-              )}
-            </div>
-
-            {/* END: Data List */}
-          </div>
-          <Dialog
-            staticBackdrop
-            size="lg"
-            open={dialog}
-            onClose={() => {
-              setDialog(false);
-            }}
-          >
-            <Dialog.Panel></Dialog.Panel>
-          </Dialog>
-          {/* BEGIN: Delete Confirmation Modal */}
-          <Dialog
-            open={viewMore}
-            onClose={() => {
-              setViewMore(false);
-            }}
-            initialFocus={deleteButtonRef}
-          >
-            <Dialog.Panel>
-              <div className="p-5 text-center">
-                <Lucide
-                  icon="XCircle"
-                  className="w-16 h-16 mx-auto mt-3 text-danger"
-                />
-                <div className="mt-5 text-3xl">Are you sure?</div>
-                <div className="mt-2 text-slate-500">
-                  Do you really want to delete this record? <br />
-                  This process cannot be undone.
                 </div>
               </div>
-              <div className="px-5 pb-8 text-center">
-                <Button
-                  variant="outline-secondary"
-                  type="button"
-                  onClick={() => {
-                    setViewMore(false);
-                  }}
-                  className="w-24 mr-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => deleteRecord()}
-                  variant="danger"
-                  type="button"
-                  className="w-24"
-                  ref={deleteButtonRef}
-                ></Button>
-              </div>
-            </Dialog.Panel>
-          </Dialog>
-          <Dialog
-            open={approveDialog}
-            onClose={() => {
-              setApproveDialog(false);
-            }}
-            initialFocus={approveButtonRef}
-          >
-            <Dialog.Panel>
-              <div className="p-5 text-center">
-                {/* <Lucide
+              {/* END: Data List */}
+            </div>
+            <Dialog
+              staticBackdrop
+              size="lg"
+              open={dialog}
+              onClose={() => {
+                setDialog(false);
+              }}
+            >
+              <Dialog.Panel></Dialog.Panel>
+            </Dialog>
+            {/* BEGIN: Delete Confirmation Modal */}
+            <Dialog
+              open={viewMore}
+              onClose={() => {
+                setViewMore(false);
+              }}
+              initialFocus={deleteButtonRef}
+            >
+              <Dialog.Panel>
+                <div className="p-5 text-center">
+                  <Lucide
+                    icon="XCircle"
+                    className="w-16 h-16 mx-auto mt-3 text-danger"
+                  />
+                  <div className="mt-5 text-3xl">Are you sure?</div>
+                  <div className="mt-2 text-slate-500">
+                    Do you really want to delete this record? <br />
+                    This process cannot be undone.
+                  </div>
+                </div>
+                <div className="px-5 pb-8 text-center">
+                  <Button
+                    variant="outline-secondary"
+                    type="button"
+                    onClick={() => {
+                      setViewMore(false);
+                    }}
+                    className="w-24 mr-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => deleteRecord()}
+                    variant="danger"
+                    type="button"
+                    className="w-24"
+                    ref={deleteButtonRef}
+                  ></Button>
+                </div>
+              </Dialog.Panel>
+            </Dialog>
+            <Dialog
+              open={approveDialog}
+              onClose={() => {
+                setApproveDialog(false);
+              }}
+              initialFocus={approveButtonRef}
+            >
+              <Dialog.Panel>
+                <div className="p-5 text-center">
+                  {/* <Lucide
                   icon="XCircle"
                   className="w-16 h-16 mx-auto mt-3 text-danger"
                 /> */}

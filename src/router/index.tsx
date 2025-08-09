@@ -34,10 +34,12 @@ import Home from "../webapp/home";
 import Register from "../pages/Register";
 import AssessLearner from "../pages/AssessLearner";
 import LearnerEnrollment from "../pages/LearnerEnrollment";
+import PromotionsPage from "../pages/Promotions";
 import ForgotPasswordOTPParent from "../pages/Auth/forgot-passOTP-parent";
 import LearnerProfile from "../pages/LearnerPortal/profile";
 import LearnerDashboard from "../pages/LearnerPortal/dashboard";
 import Dashboard from "../pages/dashboard";
+import AnalyticsDashboard from "../pages/Dashboard/AnalyticsDashboard";
 import LearnerProfiles from "../pages/LearnerProfiles";
 import IndicatorReports from "../pages/IndicatorReports";
 import UserProfile from "../pages/UserProfile";
@@ -102,6 +104,10 @@ function Router() {
           element: <Dashboard />,
         },
         {
+          path: "analytics",
+          element: <AnalyticsDashboard />,
+        },
+        {
           path: "billing",
           element: <Billing />,
         },
@@ -131,6 +137,10 @@ function Router() {
         {
           path: "enrollment",
           element: <LearnerEnrollment />,
+        },
+        {
+          path: "promotions",
+          element: <PromotionsPage />,
         },
         {
           path: "IndicatorReport",
@@ -449,7 +459,7 @@ function Router() {
     },
     {
       path: "/",
-      element: <Home />,
+      element: <Login />,
     },
   ];
 

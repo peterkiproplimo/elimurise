@@ -39,19 +39,18 @@ function Main() {
       {/* BEGIN: Mobile Menu */}
       <div
         className={clsx([
-          "w-full fixed bg-primary z-[60] border-b border-white/[0.08] -mt-5 -mx-3 sm:-mx-8 mb-6 dark:bg-darkmode-800/90 md:hidden",
+          "w-full fixed bg-primary z-[60] border-b border-white/[0.08] -mt-5 -mx-3 sm:-mx-8 mb-6 dark:bg-darkmode-800/90 md:hidden shadow-lg",
           "before:content-[''] before:w-full before:h-screen before:z-10 before:fixed before:inset-x-0 before:bg-black/90 before:transition-opacity before:duration-200 before:ease-in-out",
           !activeMobileMenu && "before:invisible before:opacity-0",
           activeMobileMenu && "before:visible before:opacity-100",
         ])}
       >
         <div className="h-[70px] px-3 sm:px-8 flex items-center">
-          <a href="" className="flex mr-auto">
-            <img
-              alt="Midone Tailwind HTML Admin Template"
-              className="w-10"
-              src={logoUrl}
-            />
+          <a href="" className="flex mr-auto items-center">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-3">
+              <Lucide icon="BookOpen" className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-white font-bold text-lg">Elimurise</span>
           </a>
           <a href="#" onClick={(e) => e.preventDefault()}>
             <Lucide
@@ -66,7 +65,7 @@ function Main() {
         <div
           ref={scrollableRef}
           className={clsx([
-            "h-screen z-20 top-0 left-0 w-[270px] -ml-[100%] bg-primary transition-all duration-300 ease-in-out dark:bg-darkmode-800",
+            "h-screen z-20 top-0 left-0 w-[270px] -ml-[100%] bg-primary transition-all duration-300 ease-in-out dark:bg-darkmode-800 shadow-xl",
             "[&[data-simplebar]]:fixed [&_.simplebar-scrollbar]:before:bg-black/50",
             activeMobileMenu && "ml-0",
           ])}
@@ -203,9 +202,11 @@ function Menu(props: {
     <a
       href={props.menu.subMenu ? "#" : props.menu.pathname}
       className={clsx([
-        "h-[50px] flex items-center text-white",
+        "h-[50px] flex items-center text-white transition-all duration-200",
         props.level == "first" && "px-6",
         props.level != "first" && "px-4",
+        "hover:bg-white/10 rounded-lg mx-2",
+        props.menu.active && "bg-white/20 rounded-lg mx-2",
       ])}
       onClick={(event) => {
         event.preventDefault();
@@ -213,15 +214,15 @@ function Menu(props: {
         setFormattedMenu(toRaw(formattedMenu));
       }}
     >
-      <div>
-        <Lucide icon={props.menu.icon} />
+      <div className="flex items-center justify-center w-6 h-6">
+        <Lucide icon={props.menu.icon} className="w-5 h-5" />
       </div>
       <div className="flex items-center w-full ml-3">
-        {props.menu.title}
+        <span className="font-medium">{props.menu.title}</span>
         {props.menu.subMenu && (
           <div
             className={clsx([
-              "transition ease-in duration-100 ml-auto",
+              "transition ease-in duration-200 ml-auto",
               props.menu.activeDropdown && "transform rotate-180",
             ])}
           >

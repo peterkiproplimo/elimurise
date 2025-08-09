@@ -131,7 +131,7 @@ const Main: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                       <div className="mt-8 ">
                         <Button
                           onClick={() => subscribe(Package)}
-                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-5 rounded"
+                          className="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-5 rounded"
                         >
                           Buy Now
                         </Button>

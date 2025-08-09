@@ -25,392 +25,314 @@ const hasPermission = (module: string, action: string): boolean => {
   if (!permissions[module]) return false;
   return permissions[module].includes(action);
 };
+
 const initialState: SideMenuState = {
   menu: [
+    // MAIN DASHBOARD
     {
       icon: "Home",
       title: "Dashboard",
       pathname: "/home",
-      // ignore: !hasPermission("dashboard", "read"),
     },
 
-    //create route timetable-viewer
-    {
-      icon: "Activity",
-      pathname: "/home/timetable-viewer",
-      title: "Master Timetable",
-      ignore: hasPermission("parents", "read"),
-    },
-    {
-      icon: "Activity",
-      pathname: "/home/timetable-teacher",
-      title: "My Timetable",
-      ignore: hasPermission("parents", "read"),
-      // ignore: !hasPermission("timetable", "teacher"),
-    },
+    // ACADEMIC MANAGEMENT
     {
       icon: "GraduationCap",
-      title: "Learners",
+      title: "Academic Management",
       subMenu: [
-        // {
-        //   icon: "User",
-        //   pathname: "/home/learners",
-        //   title: "Learners Details",
-        // },
-
         {
           icon: "Users",
-          title: "Parents",
+          title: "Student Directory",
+          pathname: "/home/learners",
+          ignore: !hasPermission("learners", "read"),
+        },
+        {
+          icon: "User",
+          title: "Parent Portal",
           pathname: "/home/parents",
           ignore: !hasPermission("parents", "read"),
         },
         {
-          icon: "Users",
-          pathname: "/home/learners",
-          title: "Learners Details",
-          ignore: !hasPermission("learners", "read"),
-        },
-        {
-          icon: "Users",
-          pathname: "/home/inactive-learners",
-          title: "Dactivated Learners",
-          ignore: !hasPermission("learners", "read"),
-        },
-        {
-          icon: "Users",
-          pathname: "/home/exited-learners",
-          title: "Exited Learners",
-          ignore: !hasPermission("learners", "read"),
-        },
-        {
-          icon: "Users",
+          icon: "UserPlus",
+          title: "Student Promotion",
           pathname: "/home/enrollment",
-          title: "Promotion",
           ignore: !hasPermission("enrollment", "read"),
         },
         {
-          icon: "User",
+          icon: "UserX",
+          title: "Inactive Students",
+          pathname: "/home/inactive-learners",
+          ignore: !hasPermission("learners", "read"),
+        },
+        {
+          icon: "LogOut",
+          title: "Exited Students",
+          pathname: "/home/exited-learners",
+          ignore: !hasPermission("learners", "read"),
+        },
+        {
+          icon: "ArrowLeftRight",
+          title: "Transfer Management",
           pathname: "/home/transfers",
-          title: "Transfers",
           ignore: !hasPermission("transfer-requests", "read"),
         },
         {
-          icon: "User",
-          pathname: "/home/incoming-transfers",
+          icon: "ArrowLeft",
           title: "Incoming Transfers",
+          pathname: "/home/incoming-transfers",
           ignore: !hasPermission("transfer-requests", "read"),
         },
       ],
     },
 
+    // STAFF MANAGEMENT
     {
       icon: "Users",
-      title: "Teachers",
+      title: "Staff Management",
       pathname: "/home/teachers",
       ignore: !hasPermission("teachers", "read"),
     },
+
+    // CURRICULUM & ASSESSMENT
+    {
+      icon: "BookOpen",
+      title: "Curriculum & Assessment",
+      subMenu: [
     {
       icon: "BookOpen",
       title: "Learning Areas",
       pathname: "/home/grade",
     },
-    {
-      icon: "Activity",
-      title: "Professional Documents",
-      subMenu: [
         {
-          icon: "BookOpen",
-          title: "Schemes of work",
-          pathname: "/home/schemes",
-        },
-      ],
-    },
-
-    {
-      icon: "Activity",
-      title: "Attendance",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/home/attendance",
-          title: "Learners Attendance",
-          // ignore: false,
-          ignore: !hasPermission("attendance", "read"),
-        },
-        {
-          icon: "Activity",
-          pathname: "/home/attendance_summary",
-          title: "Attendance Report",
-          // ignore: false,
-          ignore: !hasPermission("attendance", "read"),
-        },
-        {
-          icon: "Activity",
-          pathname: "/home/attendance_termly_summary",
-          title: "Attendance Termly",
-          // ignore: false,
-          ignore: !hasPermission("attendance", "read"),
-        },
-      ],
-    },
-    {
-      icon: "Activity",
-      title: "Communications",
-      subMenu: [
-        {
-          icon: "Activity",
-          pathname: "/home/notice-board",
-          title: "Notices",
-          // ignore: false,
-          ignore: !hasPermission("communication", "read"),
-        },
-        {
-          icon: "Activity",
-          pathname: "/home/message",
-          title: "Inbox",
-          // ignore: false,
-          ignore: !hasPermission("communication", "read"),
-        },
-        // {
-        //   icon: "Activity",
-        //   pathname: "/home/attendance_termly_summary",
-        //   title: "Attendance Termly",
-        //   ignore: false,
-        //   // ignore: !hasPermission("grading-system", "read"),
-        // },
-      ],
-    },
-    // {
-    //   icon: "FileCheck",
-    //   pathname: "/home/learning_areas",
-    //   title: "Learning Areas",
-    // },
-    {
-      icon: "Airplay",
-      title: "Formative",
-      subMenu: [
-        {
-          icon: "Activity",
+          icon: "ClipboardCheck",
+          title: "Formative Assessment",
           pathname: "/home/assessment",
-          title: " Formative Assessment",
           ignore: !hasPermission("assessment", "read"),
         },
         {
-          icon: "Airplay",
+          icon: "BarChart3",
+          title: "Formative Reports",
           pathname: "/home/reports",
-          title: "Formative Report",
           ignore: !hasPermission("assessment", "learners-report"),
         },
-      ],
-    },
-
-    {
-      icon: "Activity",
-      title: "Summative",
-      subMenu: [
         {
-          icon: "Activity",
+          icon: "FileCheck",
+          title: "Performance Scales",
           pathname: "/home/grading",
-          title: "Performance Level Scale",
           ignore: !hasPermission("grading-system", "read"),
         },
         {
-          icon: "Activity",
+          icon: "ClipboardList",
+          title: "Summative Tests",
           pathname: "/home/tests",
-          title: "Summative Tests ",
           ignore: !hasPermission("tests", "read"),
         },
-
         {
-          icon: "User",
-          pathname: "/home/assess",
+          icon: "FileText",
           title: "Summative Assessment",
+          pathname: "/home/assess",
           ignore: !hasPermission("tests", "read"),
         },
-
         {
-          icon: "User",
+          icon: "BarChart",
+          title: "Summative Reports",
           pathname: "/home/summativereports",
-          title: "Summative Report",
           ignore: !hasPermission("tests", "learners-report"),
         },
         {
-          icon: "Activity",
+          icon: "FileSpreadsheet",
+          title: "Termly Reports",
           pathname: "/home/comments",
-          title: "Termly Report",
         },
       ],
     },
 
-    // {
-    //   icon: "Users",
-    //   title: "Learner Behaviour",
-    //   subMenu: [
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/home/behaviour",
-    //       title: "Behaviour Category",
-    //       ignore: false,
-
-    //     },
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/home/behaviour-assessment",
-    //       title: "Behaviour Assessment",
-    //       ignore: false,
-
-    //     },
-    //   ],
-    // },
+    // ATTENDANCE MANAGEMENT
     {
-      icon: "Wallet",
-      pathname: "/home/billing",
-      title: "Billing",
-      ignore: !hasPermission("subscrition", "read"),
-    },
-
-    {
-      icon: "Settings",
-      title: "Settings",
+      icon: "Calendar",
+      title: "Attendance Management",
       subMenu: [
-        // {
-        //   icon: "FileText",
-        //   pathname: "/home/academic",
-        //   title: "Year",
-        // },
-        // {
-        //   icon: "BarChart",
-        //   pathname: "/home/term",
-        //   title: "Term",
-        // },
         {
-          icon: "Activity",
-          pathname: "/home/stream",
-          title: "Stream",
-          ignore: !hasPermission("streams", "read"),
+          icon: "UserCheck",
+          title: "Daily Attendance",
+          pathname: "/home/attendance",
+          ignore: !hasPermission("attendance", "read"),
         },
         {
-          icon: "Activity",
-          pathname: "/home/timetable",
-          title: "Timetable Management",
-          // ignore: !hasPermission("streams", "read"),
-          ignore: !hasPermission("parents", "read"),
+          icon: "BarChart3",
+          title: "Monthly Reports",
+          pathname: "/home/attendance_summary",
+          ignore: !hasPermission("attendance", "read"),
+        },
+        {
+          icon: "TrendingUp",
+          title: "Termly Analysis",
+          pathname: "/home/attendance_termly_summary",
+          ignore: !hasPermission("attendance", "read"),
+        },
+      ],
+    },
+
+    // TIMETABLE MANAGEMENT
+    {
+      icon: "Calendar",
+      title: "Timetable Management",
+      subMenu: [
+        {
+          icon: "Calendar",
+          title: "Master Timetable",
+          pathname: "/home/timetable-viewer",
+          ignore: hasPermission("parents", "read"),
+        },
+        {
+          icon: "Clock",
+          title: "My Timetable",
+          pathname: "/home/timetable-teacher",
+          ignore: hasPermission("parents", "read"),
         },
         {
           icon: "Settings",
-          pathname: "/home/settings",
-          title: "System Settings",
-          ignore: !hasPermission("school", "read"),
+          title: "Timetable Setup",
+          pathname: "/home/timetable",
+          ignore: !hasPermission("parents", "read"),
         },
-
-        // {
-        //   icon: "User",
-        //   pathname: "/home/enrollment",
-        //   title: "Learner Enrollment",
-        // },
       ],
     },
 
+    // COMMUNICATION CENTER
     {
-      icon: "File",
-      pathname: "/home/roles",
-      title: "Roles",
-      ignore: !hasPermission("roles", "read"),
-    },
-    {
-      icon: "Users",
-      title: "System Users",
-      pathname: "/home/users",
-      ignore: !hasPermission("users", "read"),
+      icon: "MessageSquare",
+      title: "Communication Center",
+      subMenu: [
+        {
+          icon: "Bell",
+          title: "Announcements",
+          pathname: "/home/notice-board",
+          ignore: !hasPermission("communication", "read"),
+        },
+        {
+          icon: "Mail",
+          title: "Message Center",
+          pathname: "/home/message",
+          ignore: !hasPermission("communication", "read"),
+        },
+      ],
     },
 
-    // {
-    //   icon: "User",
-    //   pathname: "/home/users",
-    //   title: "Users",
-    // },
-
+    // FINANCIAL MANAGEMENT
     {
-      icon: "FileText",
+      icon: "CreditCard",
+      title: "Financial Management",
+      pathname: "/home/billing",
+      ignore: !hasPermission("subscrition", "read"),
+    },
+
+    // ANALYTICS & REPORTS
+    {
+      icon: "BarChart3",
+      title: "Analytics & Reports",
+      pathname: "/home/analytics",
+    },
+
+    // SYSTEM ADMINISTRATION
+    {
+      icon: "Settings",
+      title: "System Administration",
+      subMenu: [
+        {
+          icon: "Building",
+          title: "Stream Management",
+          pathname: "/home/stream",
+          ignore: !hasPermission("streams", "read"),
+        },
+        {
+          icon: "Shield",
+          title: "System Settings",
+          pathname: "/home/settings",
+          ignore: !hasPermission("school", "read"),
+        },
+        {
+          icon: "Users",
+          title: "User Management",
+          pathname: "/home/users",
+          ignore: !hasPermission("users", "read"),
+        },
+        {
+          icon: "Shield",
+          title: "Role Management",
+          pathname: "/home/roles",
+          ignore: !hasPermission("roles", "read"),
+        },
+      ],
+    },
+
+    // USER PROFILE
+    {
+      icon: "User",
       pathname: "/home/profile",
-      title: "Profile",
+      title: "My Profile",
     },
   ],
 };
+
 const teacherState: SideMenuState = {
   menu: [
     {
       icon: "Home",
-      title: "Dashboards",
+      title: "Dashboard",
       pathname: "/home",
     },
 
     {
       icon: "Users",
+      title: "Student Directory",
       pathname: "/home/learners",
-      title: "Learners",
     },
 
     {
-      icon: "FileText",
-      title: "Learning Area",
+      icon: "BookOpen",
+      title: "Learning Areas",
       pathname: "/home/grade",
     },
-    // {
-    //   path: "timetable-teacher",
-    //   element: <TimetableTeacher />,
-    // },
+
     {
-      icon: "Activity",
+      icon: "Calendar",
+      title: "My Timetable",
       pathname: "/home/timetable",
-      title: "Timetable",
     },
+
     {
-      icon: "Activity",
-      pathname: "/home/assessment",
+      icon: "ClipboardCheck",
       title: "Formative Assessment",
+      pathname: "/home/assessment",
     },
 
     {
-      icon: "User",
+      icon: "BarChart3",
+      title: "Formative Reports",
       pathname: "/home/reports",
-      title: "Formative Report",
     },
 
-    {
-      icon: "User",
-      pathname: "/home/assess",
-      title: "Summative Assessment",
-    },
-    {
-      icon: "User",
-      pathname: "/home/summativereports",
-      title: "Summative Report",
-    },
-
-    // {
-    //   icon: "Users",
-    //   title: "Reports",
-    //   subMenu: [
-    //     {
-    //       icon: "Activity",
-    //       pathname: "/home/indicatorReport",
-    //       title: "By Indicators",
-    //     },
-    //     {
-    //       icon: "User",
-    //       pathname: "/home/reports",
-    //       title: "By Learner",
-    //     },
-    //   ],
-    // },
     {
       icon: "FileText",
+      title: "Summative Assessment",
+      pathname: "/home/assess",
+    },
+
+    {
+      icon: "BarChart",
+      title: "Summative Reports",
+      pathname: "/home/summativereports",
+    },
+
+    {
+      icon: "User",
       pathname: "/home/profile",
-      title: "Profile",
+      title: "My Profile",
     },
   ],
 };
+
 const parentState: SideMenuState = {
   menu: [
     {
@@ -420,45 +342,41 @@ const parentState: SideMenuState = {
     },
 
     {
-      icon: "FileText",
+      icon: "BarChart3",
       title: "Formative Reports",
       pathname: "/parent/report",
     },
+
     {
-      icon: "FileText",
+      icon: "BarChart",
       title: "Summative Reports",
       pathname: "/parent/summative",
     },
+
     {
-      icon: "Activity",
+      icon: "FolderOpen",
+      title: "E-Portfolio",
       pathname: "/parent/e-portifolio",
-      title: "E-Portifolio",
       ignore: false,
-      // ignore: !hasPermission("grading-system", "read"),
-    },
-    {
-      icon: "Activity",
-      pathname: "/parent/message",
-      title: "Messages",
-      ignore: false,
-      // ignore: !hasPermission("grading-system", "read"),
     },
 
     {
-      icon: "Activity",
-      pathname: "/parent/noticeboard",
-      title: "Notices",
+      icon: "MessageSquare",
+      title: "Messages",
+      pathname: "/parent/message",
       ignore: false,
-      // ignore: !hasPermission("grading-system", "read"),
     },
-    // {
-    //   icon: "Users",
-    //   title: "Profile",
-    //   pathname: "/parent/profile",
-    // },
+
     {
-      icon: "FileText",
-      title: "Transfers",
+      icon: "Bell",
+      title: "Announcements",
+      pathname: "/parent/noticeboard",
+      ignore: false,
+    },
+
+    {
+      icon: "ArrowLeftRight",
+      title: "Transfer Requests",
       pathname: "/parent/transfers",
     },
   ],
@@ -479,20 +397,9 @@ export const sideMenuSlice = createSlice({
 
 export const { setMenuState } = sideMenuSlice.actions;
 
-// export const selectSideMenu = (state: RootState) => state.sideMenu.menu;
 export const selectSideMenu = (state: RootState) => {
   let activeSection = localStorage.getItem("type");
-  // const activeSection = "billing";
-  // if (activeSection === "billing") {
-  //   return state.sideMenu.menu.filter((item) => {
-  //     if (typeof item === "object" && "pathname" in item) {
-  //       return item.pathname === "/home/billing";
-  //     }
-  //     return false;
-  //   });
-  // } else {
   return state.sideMenu.menu;
-  // }
 };
 
 export default sideMenuSlice.reducer;

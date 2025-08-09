@@ -18,8 +18,12 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        roboto: ["Roboto"],
+      },
       colors: {
-        primary: "#152259",
+        primary: "#059669",
         // primary: "rgb(var(--color-primary))",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
         success: "rgb(var(--color-success) / <alpha-value>)",
@@ -41,9 +45,6 @@ module.exports = {
           800: "rgb(var(--color-darkmode-800) / <alpha-value>)",
           900: "rgb(var(--color-darkmode-900) / <alpha-value>)",
         },
-      },
-      fontFamily: {
-        roboto: ["Roboto"],
       },
       container: {
         center: true,
@@ -111,7 +112,7 @@ module.exports = {
       addBase({
         // Default colors
         ":root": {
-          "--color-primary": "21, 34, 89",
+          "--color-primary": "5, 150, 105",
           "--color-secondary": "0 122 204",
           // "--color-success": toRGB(colors.blue["600"]),
 
@@ -126,7 +127,7 @@ module.exports = {
           "--color-light": toRGB(colors.blue["100"]),
           "--color-dark": toRGB(colors.slate["800"]),
           "&.dark": {
-            "--color-primary": toRGB(colors.cyan["800"]),
+            "--color-primary": "4, 120, 85",
           },
         },
         // Default dark-mode colors

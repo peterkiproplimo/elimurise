@@ -27,7 +27,7 @@ import Pagination from "../../base-components/Pagination";
 import { useLocation, useNavigate } from "react-router-dom";
 import fakerData from "../../utils/faker";
 import Tippy from "../../base-components/Tippy";
-import logo from "../../assets/images/student.jpeg";
+import leanerImg from "../../assets/images/student.jpeg";
 
 interface TableRow {
   no: number;
@@ -485,19 +485,13 @@ function Main() {
                 </span>
               </div>
             </div>
-            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
-              <div className="flex flex-wrap  col-span-12 mt-2  xl:flex-nowrap">
-                <div className="hidden  md:block ">
-                  {/* Showing{" "}
-                  {pagination.current_page +
-                    " to " +
-                    pagination.total_pages +
-                    " of " +
-                    pagination.total}{" "}
-                  entries */}
+            <div className="col-span-12 overflow-auto 2xl:overflow-visible">
+              <div className="flex flex-wrap col-span-12 mt-2 xl:flex-nowrap">
+                <div className="hidden md:block">
+                  {/* Showing entries */}
                 </div>
-                <div className="hidden  mx-auto md:block  mt-5"></div>
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3  ">
+                <div className="hidden mx-auto md:block mt-5"></div>
+                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-3">
                   <div className="relative w-56 text-slate-500">
                     <FormInput
                       type="text"
@@ -512,170 +506,159 @@ function Main() {
                   </div>
                 </div>
               </div>
-              <Table className="border-spacing-y-[0px] border-separate mt-2 p-2">
-                <Table.Thead>
-                  <Table.Tr className="bg-white">
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[20px] ">
-                      No
+            </div>
+            {/* BEGIN: Data List */}
+            <div className="col-span-12 overflow-x-auto overflow-y-visible 2xl:overflow-visible">
+              <Table hover striped className="mt-6">
+                <Table.Thead variant="modern">
+                  <Table.Tr>
+                    <Table.Th className="w-16 text-center">
+                      #
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[150px] ">
-                      ADM No
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Student Name</span>
+                      </div>
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap w-[150px] ">
-                      NEMIS NO.
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Category</span>
+                      </div>
                     </Table.Th>
-                    <Table.Th className="border-b-1 whitespace-nowrap w-[300px] ">
-                      NAME
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Score</span>
+                      </div>
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-nowrap  w-[100px]">
-                      Learner's Termly Report Entry
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Date</span>
+                      </div>
                     </Table.Th>
-                    <Table.Th className="text-left border-b-1 whitespace-wrap ">
-                      Learner's Termly Report
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Comments</span>
+                      </div>
+                    </Table.Th>
+                    <Table.Th className="text-center w-32">
+                      Actions
                     </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
+
                 <Table.Tbody>
-                  {enrollments?.map((assessment: any, key) => (
-                    <Table.Tr key={key} className="border-b-4 border-grey">
-                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
-                        {key + 1}
+                  {rows.map((row: any, key) => (
+                    <Table.Tr key={key}>
+                      <Table.Td className="text-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                          {key + 1}
+                        </div>
                       </Table.Td>
-
-                      <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
-                        <span className="flex items-center">
-                          {assessment?.learner?.adm_no}
-                        </span>
-                      </Table.Td>
-
-                      <Table.Td className="  text-center bg-white border-b border-grey dark:bg-darkmode-600">
-                        <span className="flex items-center">
-                          {assessment?.learner?.nemis_no}
-                        </span>
-                      </Table.Td>
-
-                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
-                        <div className="flex">
-                          <div className="ml-4">
-                            {assessment?.learner?.first_name}{" "}
-                            {assessment?.learner?.last_name}{" "}
-                            {assessment?.learner?.surname}
+                      
+                      <Table.Td>
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
+                            <img
+                              src={leanerImg}
+                              alt="Student"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-white">
+                              {row.studentName}
+                            </div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                              Student ID: {row.studentId}
+                            </div>
                           </div>
                         </div>
                       </Table.Td>
 
-                      <Table.Td className="  bg-white border-b border-grey dark:bg-darkmode-600">
-                        <FormInput
-                          {...register("score[" + key + "]")}
-                          type="text"
-                          className={`no-spinner appearance-none form-control w-[300px] ${
-                            getValues("score") ? "is-invalid" : ""
-                          }`}
-                          defaultValue={assessment?.assessmentDetails?.comment}
-                          onChange={(e) => {
-                            handleInputChange({
-                              score: e.target.value,
-                              ...assessment,
-                            });
-                          }}
-                        />
+                      <Table.Td>
+                        <div className="bg-pink-50 dark:bg-pink-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-pink-700 dark:text-pink-300">
+                            {row.category}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-yellow-700 dark:text-yellow-300">
+                            {row.score}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-blue-700 dark:text-blue-300">
+                            {row.date}
+                          </span>
+                        </div>
+                      </Table.Td>
+                      
+                      <Table.Td>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block max-w-xs">
+                          <span className="font-medium text-gray-900 dark:text-white text-sm">
+                            {row.comments}
+                          </span>
+                        </div>
                       </Table.Td>
 
-                      <Table.Td
-                        className={`  bg-white border-b border-grey dark:bg-darkmode-600`}
-                      >
-                        {assessment?.assessmentDetails?.comment || "No Comment"}
+                      <Table.Td>
+                        <div className="flex items-center justify-center space-x-2">
+                          <Menu className="inline-block">
+                            <Menu.Button className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg text-white hover:from-pink-600 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                              <Lucide icon="MoreHorizontal" className="w-5 h-5" />
+                            </Menu.Button>
+                            <Menu.Items
+                              className="w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 py-2 mt-2"
+                              placement="bottom-end"
+                            >
+                              <Menu.Item className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                                <Lucide icon="Eye" className="w-4 h-4 mr-3 text-blue-500" />
+                                View Details
+                              </Menu.Item>
+                              <Menu.Item className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200">
+                                <Lucide icon="Edit" className="w-4 h-4 mr-3 text-green-500" />
+                                Edit Comment
+                              </Menu.Item>
+                              <Menu.Item className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-200">
+                                <Lucide icon="Trash2" className="w-4 h-4 mr-3 text-red-500" />
+                                Delete Comment
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Menu>
+                        </div>
                       </Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
               </Table>
             </div>
-            <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-              {/* <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() =>
-                      setPage(page < pagination.total_pages ? page + 1 : 1)
-                    }
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    onChange={(e) => setLimit(parseInt(e.target.value))}
-                  >
-                    <option value={10}>10/page</option>
-                    <option value={25}>25/page</option>
-                    <option value={50}>50/page</option>
-                    <option value={100}>100/page</option>
-                  </FormSelect>
-                </div>
-              </div> */}
-            </div>
           </form>
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
+          <h2 className="mt-5 text-xl font-medium flex flex-wrap">
             {learningArea?.name}
           </h2>
-          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
+          <div className="box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
             <h2 className="mr-auto text-base font-medium border-b p-2">
               Learner's Report Entry
             </h2>
             <div className="grid grid-cols-12 gap-6 mt-10">
               <div className="col-span-12 sm:col-span-2">
-                <FormLabel
-                  htmlFor="modal-form-6"
-                  onClick={(e) => {
-                    alert("hello");
-                  }}
-                >
-                  Grade
-                </FormLabel>
+                <FormLabel htmlFor="modal-form-6">Grade</FormLabel>
                 <FormSelect
                   {...register("grade")}
                   name="grade"
                   value={strandFilter.grade}
                   onChange={(event) => handleGradeChange(event)}
                 >
-                  <option
-                    onClick={(e) => {
-                      alert("hello");
-                    }}
-                  >
-                    Select Grade
-                  </option>
+                  <option>Select Grade</option>
                   {grades.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -684,8 +667,7 @@ function Main() {
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.grade.message === "string" && errors.grade.message}
                   </div>
                 )}
               </div>
@@ -698,7 +680,6 @@ function Main() {
                   onChange={(event) => setStream(event.target.value)}
                 >
                   <option>Select Stream</option>
-
                   {streams.map((grade: any, key) => (
                     <option key={key} value={grade._id}>
                       {grade.name}
@@ -707,12 +688,10 @@ function Main() {
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.grade.message === "string" && errors.grade.message}
                   </div>
                 )}
               </div>
-
               <div className="col-span-12 sm:col-span-2">
                 <FormLabel htmlFor="modal-form-6">Academic Term</FormLabel>
                 <TomSelect
@@ -724,7 +703,6 @@ function Main() {
                   }}
                 >
                   <option>Select Academic Term</option>
-
                   {terms.map((term: any, key) => (
                     <option key={key} value={term._id}>
                       {term.name}
@@ -733,40 +711,40 @@ function Main() {
                 </TomSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.grade.message === "string" && errors.grade.message}
                   </div>
                 )}
               </div>
-
-              {/* <div className="col-span-12 sm:col-span-2">
-                <FormLabel htmlFor="modal-form-6">User</FormLabel>
+              <div className="col-span-12 sm:col-span-2">
+                <FormLabel htmlFor="modal-form-6">Behaviour</FormLabel>
                 <FormSelect
-                  {...register("type")}
-                  name="type"
+                  {...register("behaviour")}
+                  name="behaviour"
                   value={test}
                   onChange={(event: any) => setTest(event.target.value)}
                 >
-                  <option value={"teacher"} selected={true}>
-                    Class Manager
-                  </option>
+                  <option>Select Test</option>
+                  {categories.map((test: any, key) => (
+                    <option key={key} value={test._id}>
+                      {test.name}
+                    </option>
+                  ))}
                 </FormSelect>
                 {errors.grade && (
                   <div className="mt-2 text-danger">
-                    {typeof errors.grade.message === "string" &&
-                      errors.grade.message}
+                    {typeof errors.grade.message === "string" && errors.grade.message}
                   </div>
                 )}
-              </div> */}
+              </div>
             </div>
             <div className="px-5 pb-8 text-right">
               <Button
                 onClick={() => generateAssessment()}
                 variant="primary"
                 type="button"
-                className=" text-white"
+                className="w-24 text-white"
               >
-                Type Learner's Report
+                Assess
                 {loading && (
                   <LoadingIcon
                     icon="spinning-circles"
@@ -777,26 +755,8 @@ function Main() {
               </Button>
             </div>
           </div>
-
-          {/* END: Delete Confirmation Modal */}
         </>
       )}
-      {/* <Notification
-        options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
-        className="flex"
-      >
-        <Lucide
-          icon={success ? "CheckCircle" : "XCircle"}
-          className={success ? "text-success" : "text-danger"}
-        />
-        <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Success" : "Failed"}</div>
-          <div className="mt-1 text-slate-500">{message}</div>
-        </div>
-      </Notification> */}
     </>
   );
 }

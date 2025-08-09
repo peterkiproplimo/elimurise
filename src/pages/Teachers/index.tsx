@@ -574,51 +574,60 @@ function Main() {
               </div>
             </div>
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead>
+            <div className="col-span-12 overflow-x-auto overflow-y-visible 2xl:overflow-visible">
+              <Table hover striped className="mt-6">
+                <Table.Thead variant="modern">
                   <Table.Tr>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      No.
+                    <Table.Th className="w-16 text-center">
+                      #
                     </Table.Th>
 
                     <Table.Th
-                      className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                      className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                       onClick={() => handleSort("firstname")}
                     >
-                      Name{" "}
-                      {sortField === "firstname"
-                        ? sortOrder === "asc"
-                          ? "▲"
-                          : "▼"
-                        : ""}
+                      <div className="flex items-center space-x-2">
+                        <span>Teacher Name</span>
+                        {sortField === "firstname" && (
+                          <Lucide 
+                            icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                            className="w-4 h-4" 
+                          />
+                        )}
+                      </div>
                     </Table.Th>
 
                     <Table.Th
-                      className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                      className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                       onClick={() => handleSort("phone")}
                     >
-                      Phone Number{" "}
-                      {sortField === "phone"
-                        ? sortOrder === "asc"
-                          ? "▲"
-                          : "▼"
-                        : ""}
+                      <div className="flex items-center space-x-2">
+                        <span>Phone Number</span>
+                        {sortField === "phone" && (
+                          <Lucide 
+                            icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                            className="w-4 h-4" 
+                          />
+                        )}
+                      </div>
                     </Table.Th>
 
                     <Table.Th
-                      className="py-0 border-b-0 whitespace-nowrap cursor-pointer"
+                      className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                       onClick={() => handleSort("email")}
                     >
-                      Email{" "}
-                      {sortField === "email"
-                        ? sortOrder === "asc"
-                          ? "▲"
-                          : "▼"
-                        : ""}
+                      <div className="flex items-center space-x-2">
+                        <span>Email Address</span>
+                        {sortField === "email" && (
+                          <Lucide 
+                            icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
+                            className="w-4 h-4" 
+                          />
+                        )}
+                      </div>
                     </Table.Th>
 
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
+                    <Table.Th className="text-center w-32">
                       Actions
                     </Table.Th>
                   </Table.Tr>
@@ -626,53 +635,56 @@ function Main() {
 
                 <Table.Tbody>
                   {teachers.map((teacher: any, key) => (
-                    <Table.Tr key={key} className="">
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
+                    <Table.Tr key={key}>
+                      <Table.Td className="text-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                           {limit * (page - 1) + key + 1}
-                        </span>
+                        </div>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <div className="flex items-center">
-                          <div className="w-9 h-9 image-fit zoom-in">
-                            <Tippy
-                              as="img"
-                              alt=""
-                              className="border-white rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                      
+                      <Table.Td>
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
+                            <img
                               src={avarter}
-                              content={
-                                teacher.firstname + " " + teacher.lastname
-                              }
+                              alt="Teacher"
+                              className="w-full h-full object-cover"
                             />
                           </div>
-                          <div className="ml-4">
-                            <a
-                              href="#"
-                              onClick={(e: any) => {
-                                e.preventDefault();
-                                navigate("/home/teachers/" + teacher?._id);
-                              }}
-                              className="font-medium whitespace-nowrap"
-                            >
+                          <div>
+                            <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
+                                 onClick={(e: any) => {
+                                   e.preventDefault();
+                                   navigate("/home/teachers/" + teacher?._id);
+                                 }}>
                               {teacher.firstname && teacher.firstname}
                               {" " + teacher.surname + " " + teacher.lastname}
-                            </a>
+                            </div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                              Teacher ID: {teacher._id?.slice(-6)}
+                            </div>
                           </div>
                         </div>
                       </Table.Td>
 
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {teacher.phone}
-                        </span>
+                      <Table.Td>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {teacher.phone}
+                          </span>
+                        </div>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {teacher.email}
-                        </span>
+                      
+                      <Table.Td>
+                        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-blue-700 dark:text-blue-300">
+                            {teacher.email}
+                          </span>
+                        </div>
                       </Table.Td>
-                      <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0  before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
+
+                      <Table.Td>
+                        <div className="flex items-center justify-center space-x-2">
                           <Menu className="inline-block mb-2 mr-1 box">
                             <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
                               <Lucide

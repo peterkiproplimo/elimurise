@@ -86,156 +86,118 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
   };
 
   return (
-    <div
-      className={clsx([
-        "h-[70px] md:h-[65px] z-[51] m-2 rounded-2xl shadow-lg px-4 flex items-center",
-        " to-indigo-800 dark:from-darkmode-700 dark:to-darkmode-800",
-        props.layout === "top-menu" && "dark:from-darkmode-800",
-      ])}
-      style={
-        school?.secondaryColor ? { backgroundColor: school.secondaryColor } : {}
-      }
-    >
-      <div className="flex items-center w-full">
-        {/* BEGIN: Logo */}
-        <Link
-          to="/"
-          className={clsx([
-            "flex items-center text-white font-bold",
-            props.layout === "side-menu" && "xl:w-[120px]",
-            props.layout === "simple-menu" && "xl:w-auto",
-            props.layout === "top-menu" && "w-auto",
-          ])}
-        >
-          <img alt="Hero" className="w-10 md:w-12" src={logoUrl} />
-        </Link>
-        {/* END: Logo */}
-
-        {/* BEGIN: Breadcrumb */}
-        <Breadcrumb light className="flex-1 ml-4 md:ml-8 text-white">
-          {getBreadcrumbItems().map((item: any, index: any) => (
-            <Breadcrumb.Link
-              key={index}
-              to={item.to}
-              active={index === getBreadcrumbItems().length - 1}
-              className="text-sm hover:text-indigo-200 transition duration-200"
-            >
-              {item.label}
-            </Breadcrumb.Link>
-          ))}
-        </Breadcrumb>
-        {/* END: Breadcrumb */}
-
-        {/* BEGIN: Current Session */}
-        <div className="hidden md:flex items-center text-white mr-6">
-          <Lucide icon="Calendar" className="w-5 h-5 mr-2" />
-          <span className="text-sm font-medium">
-            Session: {school?.current_session || "N/A"}
-          </span>
+    <div className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 flex items-center justify-between shadow-sm">
+      {/* Left Side - Search */}
+      <div className="flex-1 max-w-md">
+        <div className="relative">
+          <Lucide icon="Search" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search here..."
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+          />
         </div>
-        {/* END: Current Session */}
+      </div>
 
-        {/* BEGIN: Notifications */}
-        <Popover className="mr-4">
-          <Popover.Button className="relative text-white focus:outline-none">
-            <Lucide icon="Bell" className="w-6 h-6" />
+      {/* Right Side - Controls */}
+      <div className="flex items-center space-x-4">
+        {/* Dark Mode Toggle */}
+        <button
+          onClick={switchMode}
+          className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
+          <Lucide icon={darkMode ? "Sun" : "Moon"} className="w-5 h-5" />
+        </button>
+
+        {/* Notifications */}
+        <Popover className="relative">
+          <Popover.Button className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors relative">
+            <Lucide icon="Bell" className="w-5 h-5" />
             {notifications.length > 0 && (
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
             )}
           </Popover.Button>
-          <Popover.Panel className="w-80 mt-2 bg-white rounded-xl shadow-xl p-4 max-h-96 overflow-y-auto">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Notifications
-            </h3>
+          <Popover.Panel className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 z-50">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                Notifications
+              </h3>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {notifications.length} new
+              </span>
+            </div>
             {notifications.length > 0 ? (
               notifications.map((notification: any) => (
                 <div
                   key={notification._id}
-                  className="p-3 rounded-lg hover:bg-gray-100 transition duration-200 cursor-pointer"
+                  className="p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-gray-600 mb-2"
                   onClick={() => setSelectedNotification(notification)}
                 >
                   <div className="flex justify-between items-start">
-                    <span className="font-medium text-gray-800 truncate">
+                    <span className="font-medium text-gray-800 dark:text-white truncate">
                       {notification.title}
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       {new Date(notification.createdAt).toLocaleTimeString()}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 truncate mt-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 truncate mt-1">
                     {notification.message}
                   </p>
                 </div>
               ))
             ) : (
-              <p className="text-center text-gray-500 py-4">
-                No new notifications
-              </p>
+              <div className="text-center py-8">
+                <Lucide icon="BellOff" className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+                <p className="text-gray-500 dark:text-gray-400">
+                  No new notifications
+                </p>
+              </div>
             )}
           </Popover.Panel>
         </Popover>
-        {/* END: Notifications */}
 
-        {/* BEGIN: Notification Dialog */}
-        <Dialog
-          open={!!selectedNotification}
-          onClose={() => setSelectedNotification(null)}
-        >
-          <div className="fixed inset-0 bg-black bg-opacity-40" />
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="w-full max-w-md bg-white rounded-xl shadow-2xl p-6">
-              <Dialog.Title className="text-xl font-semibold text-gray-800">
-                {selectedNotification?.title}
-              </Dialog.Title>
-              <p className="text-xs text-gray-500 mt-1">
-                {new Date(selectedNotification?.createdAt).toLocaleString()}
-              </p>
-              <Dialog.Description className="mt-3 text-gray-700">
-                {selectedNotification?.message}
-              </Dialog.Description>
-              {selectedNotification?.link && (
-                <a
-                  href={selectedNotification.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-indigo-600 underline mt-3 block"
-                >
-                  View More
-                </a>
-              )}
-              <button
-                onClick={() =>
-                  dismissParentNotifications(selectedNotification._id)
-                }
-                className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200"
-              >
-                Mark as Read
-              </button>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-        {/* END: Notification Dialog */}
+        {/* Messages */}
+        <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <Lucide icon="Mail" className="w-5 h-5" />
+        </button>
 
-        {/* BEGIN: Account Menu */}
+        {/* User Profile */}
         <Menu>
-          <Menu.Button className="w-10 h-10 rounded-full overflow-hidden shadow-lg border-2 border-white">
-            <img alt="School Logo" src={IMG_URL + school?.logo} />
-          </Menu.Button>
-          <Menu.Items className="w-56 mt-2 bg-white rounded-xl shadow-xl p-2">
-            <Menu.Header className="px-3 py-2">
-              <div className="font-semibold text-gray-800">
+          <Menu.Button className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+              <span className="text-white text-sm font-medium">
+                {user?.firstname?.charAt(0) || "U"}
+              </span>
+            </div>
+            <div className="hidden md:block text-left">
+              <div className="text-sm font-medium text-gray-900 dark:text-white">
                 {user?.firstname} {user?.lastname}
               </div>
+              <div className="text-xs text-green-600 dark:text-green-400">
+                Online
+              </div>
+            </div>
+            <Lucide icon="ChevronDown" className="w-4 h-4 text-gray-500" />
+          </Menu.Button>
+          <Menu.Items className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-2 z-50">
+            <Menu.Header className="px-3 py-2">
+              <div className="font-semibold text-gray-800 dark:text-white">
+                {user?.firstname} {user?.lastname}
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {user?.email}
+              </div>
             </Menu.Header>
-            <Menu.Divider className="border-gray-200" />
+            <Menu.Divider className="border-gray-200 dark:border-gray-600" />
             <Link to="/home/profile">
-              <Menu.Item className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+              <Menu.Item className="flex items-center px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                 <Lucide icon="User" className="w-4 h-4 mr-2" />
                 Profile
               </Menu.Item>
             </Link>
             <Menu.Item
-              className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+              className="flex items-center px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               onClick={switchMode}
             >
               <Lucide
@@ -244,18 +206,56 @@ function Main(props: { layout?: "side-menu" | "simple-menu" | "top-menu" }) {
               />
               {darkMode ? "Light Mode" : "Dark Mode"}
             </Menu.Item>
-            <Menu.Divider className="border-gray-200" />
+            <Menu.Divider className="border-gray-200 dark:border-gray-600" />
             <Menu.Item
-              className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+              className="flex items-center px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               onClick={signOut}
             >
-              <Lucide icon="ToggleRight" className="w-4 h-4 mr-2" />
+              <Lucide icon="LogOut" className="w-4 h-4 mr-2" />
               Sign Out
             </Menu.Item>
           </Menu.Items>
         </Menu>
-        {/* END: Account Menu */}
       </div>
+
+      {/* Notification Dialog */}
+      <Dialog
+        open={!!selectedNotification}
+        onClose={() => setSelectedNotification(null)}
+      >
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <Dialog.Title className="text-xl font-semibold text-gray-800 dark:text-white">
+              {selectedNotification?.title}
+            </Dialog.Title>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {new Date(selectedNotification?.createdAt).toLocaleString()}
+            </p>
+            <Dialog.Description className="mt-3 text-gray-700 dark:text-gray-300">
+              {selectedNotification?.message}
+            </Dialog.Description>
+            {selectedNotification?.link && (
+              <a
+                href={selectedNotification.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 underline mt-3 block hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+              >
+                View More
+              </a>
+            )}
+            <button
+              onClick={() =>
+                dismissParentNotifications(selectedNotification._id)
+              }
+              className="mt-4 w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-lg transition-colors font-medium"
+            >
+              Mark as Read
+            </button>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </div>
   );
 }

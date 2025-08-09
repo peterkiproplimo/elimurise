@@ -1,239 +1,183 @@
 import React, { useState } from "react";
-import Button from "../base-components/Button";
-import LoadingIcon from "../base-components/LoadingIcon";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import lock from "../assets/images/Lock.png";
-import logo from "../assets/images/heros.png";
-import contact4 from "../assets/images/contact2.png";
-import users from "../assets/images/Users_Group.png";
-import check from "../assets/images/Checkbox_Check.png";
-import vector from "../assets/images/Vector.png";
-import user from "../assets/images/User.png";
-import icon from "../assets/images/login.png";
+import Button from "../base-components/Button";
+import { 
+  Menu, 
+  X, 
+  User, 
+  LogIn, 
+  BookOpen, 
+  Users, 
+  GraduationCap,
+  BarChart3,
+  Shield,
+  Headphones,
+  ChevronDown
+} from "lucide-react";
 
 const NavbarMenu = () => {
-  const [loading, isLoading] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const [showLinks, setShowLinks] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleClick = () => {
-    setShowLinks(!showLinks);
-  };
+  const features = [
+    { name: "Assessment Tools", href: "#assessment", icon: <BookOpen className="w-4 h-4" /> },
+    { name: "Student Management", href: "#students", icon: <Users className="w-4 h-4" /> },
+    { name: "Parent Portal", href: "#parents", icon: <GraduationCap className="w-4 h-4" /> },
+    { name: "Analytics", href: "#analytics", icon: <BarChart3 className="w-4 h-4" /> },
+    { name: "Security", href: "#security", icon: <Shield className="w-4 h-4" /> },
+    { name: "Support", href: "#support", icon: <Headphones className="w-4 h-4" /> }
+  ];
 
   return (
-    <>
-      <div className="flex justify-end items-center w-full p-0 bg-primary text-white ">
-        <div className="buttons">
-          <div className="hidden lg:flex flex-col gap-5 w-[310px] relative">
-            {/* Toggleable Text */}
-            <div
-              onClick={handleClick}
-              className={`font-bold flex items-center text-lg p-4 text-primary cursor-pointer transition duration-300 ${
-                showLinks ? "bg-red-500 text-white" : "text-white"
-              }`}
-            >
-              <Link to="/auth/login" className="flex items-center gap-2">
-                <img alt="ACS" className="w-7 h-7" src={users} />
-                <span>Log in</span>
-              </Link>
-            </div>
-
-            {/* Links to display when clicked */}
-            {/* {showLinks && (
-              <div className="absolute top-full left-0 w-full  bg-white shadow-lg  rounded">
-                <div className="flex flex-col gap-4 ">
-                  <Link
-                    to="/auth/login"
-                    className="font-bold   items-center text-lg text-primary w-full mt-4 ml-4"
-                  >
-                    <div className=" flex w-[240px]">
-                      Log in
-                      <div className="icon ml-auto mt-2">
-                        <img alt="ACS" className="xl:w-35 " src={icon} />
-                      </div>
-                    </div>
-                  </Link>
-                  <div className="border-b border-primary/50 w-full m-0 p-0"></div>
-                  <Link
-                    to="/register"
-                    className="ml-2 font-bold text-lg text-primary w-full mb-4 ml-4"
-                  >
-                    <div className=" flex w-[240px]">
-                      Register
-                      <div className="icon ml-auto mt-2">
-                        <img alt="ACS" className="xl:w-35 " src={icon} />
-                      </div>
-                    </div>
-                  </Link>
+    <nav className="bg-white shadow-sm border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-4">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
+                  <BookOpen className="w-6 h-6 text-white" />
                 </div>
+                <h1 className="text-2xl font-bold text-primary">Elimurise</h1>
               </div>
-            )} */}
+            </Link>
           </div>
-        </div>
-      </div>
-      <div className="box">
-        <div className="flex xl:mx-auto xl:w-[80%] justify-between items-center w-full px-4 lg:px-10  p-2">
-          <Link to="/">
-            <div className="icon">
-              <img alt="ACS" className="xl:w-35 xl:w-auto" src={logo} />
-            </div>
-          </Link>
-          <div className="buttons">
-            <div className="block xl:hidden">
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <a href="#features" className="text-gray-700 hover:text-primary transition-colors font-medium">
+              Features
+            </a>
+            
+            {/* Features Dropdown */}
+            <div className="relative">
               <button
-                onClick={() => setShowMenu(!showMenu)}
-                className="text-blue-800 focus:outline-none mt-5"
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center text-gray-700 hover:text-primary transition-colors font-medium"
               >
-                {showMenu ? (
-                  <Menu className="w-8 h-8" />
-                ) : (
-                  <Menu className="w-8 h-8" />
-                )}
+                Solutions
+                <ChevronDown className="w-4 h-4 ml-1" />
               </button>
-            </div>
-
-            {showMenu && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-20">
-                <div className="fixed left-0 top-0 bottom-0 bg-white shadow-lg w-80 p-5 transform transition-all duration-300 ease-in-out z-30">
-                  <div className="text-right mb-4">
-                    <button
-                      onClick={() => setShowMenu(false)}
-                      className="bg-primary text-white  p-2 focus:outline-none"
+              
+              {showDropdown && (
+                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  {features.map((feature) => (
+                    <a
+                      key={feature.name}
+                      href={feature.href}
+                      className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
                     >
-                      <X className="w-8 h-8" />
-                    </button>
-                  </div>
-                  <div className="border-b border-primary/50 w-full mt-8"></div>
-                  <div className=" ">
-                    <p className="p-2 text-primary font-bold text-xl">
-                      For Business
-                    </p>
-                    <Link
-                      to="/demo"
-                      className="block pl-2 text-lg text-primary flex items-center"
-                    >
-                      <img
-                        src={check}
-                        alt="Demo Icon"
-                        className="w-6 h-6 mr-2"
-                      />
-                      Request Demo
-                    </Link>
-
-                    <p className="block pl-2 text-lg text-primary flex items-center">
-                      <img
-                        src={vector}
-                        alt="Demo Icon"
-                        className="w-6 h-6 mr-2"
-                      />{" "}
-                      Call Us: (+254) 712-345678
-                    </p>
-                  </div>
-                  <div className="border-b border-primary/50 w-full p-2"></div>
-                  <div className=" mb-4 ">
-                    <p className="p-2 text-primary  font-bold text-xl">
-                      For School & Adminstrators
-                    </p>
-                    <Link
-                      to="/auth/login"
-                      className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center"
-                    >
-                      <img
-                        src={lock}
-                        alt="Demo Icon"
-                        className="w-6 h-6 mr-2"
-                      />{" "}
-                      Login
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center"
-                    >
-                      <img
-                        src={user}
-                        alt="Demo Icon"
-                        className="w-6 h-6 mr-2"
-                      />{" "}
-                      Create Account
-                    </Link>
-                    <Link
-                      to="/contact"
-                      className="block pl-2 text-lg  hover:text-blue-800 hover:scale-105 text-primary flex items-center"
-                    >
-                      <img
-                        src={contact4}
-                        alt="Demo Icon"
-                        className="w-6 h-6 mr-2"
-                      />{" "}
-                      Contact Us
-                    </Link>
-                  </div>
+                      <span className="mr-3 text-primary">{feature.icon}</span>
+                      {feature.name}
+                    </a>
+                  ))}
                 </div>
-              </div>
-            )}
-
-            {/* Buttons for large screens (xl and above) */}
-            <div className="hidden xl:flex gap-5 mr-10 ">
-              <Link
-                to="/"
-                className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary"
-              >
-                Home
-              </Link>
-              <a
-                href="/"
-                className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg   hover:text-blue-800 hover:scale-105 text-primary"
-              >
-                Why Us
-              </a>
-              <Link
-                to="/"
-                className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg hover:text-blue-800 hover:scale-105 text-primary cursor-pointer"
-              >
-                Pricing
-              </Link>
-              <Link
-                to="/contact"
-                className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary"
-              >
-                Contact Us
-              </Link>
-              <Link
-                to="/"
-                className="xl:px-3 xl:py-3 px-2 py-2 font-bold text-lg  hover:text-blue-800 hover:scale-105 text-primary"
-              >
-                About Us
-              </Link>
-              <Link to="/demo" className="xl:w-32 xl:mr-8">
-                <Button className="text-md w-[192px] p-2 h-[50px] bg-[#FF3B30] text-white rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px]">
-                  REQUEST DEMO
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </Link>
-              {/* <Link to="/auth/login" className="xl:w-32 xl:mr-3">
-                <Button className="w-full xl:px-4 xl:py-3 px-2 py-2 border-blue-800">
-                  Sign in
-                  {loading && (
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      color="white"
-                      className="w-4 h-4 ml-2"
-                    />
-                  )}
-                </Button>
-              </Link> */}
+              )}
             </div>
+
+            <a href="#about" className="text-gray-700 hover:text-primary transition-colors font-medium">
+              About
+            </a>
+            <a href="#pricing" className="text-gray-700 hover:text-primary transition-colors font-medium">
+              Pricing
+            </a>
+            <a href="#contact" className="text-gray-700 hover:text-primary transition-colors font-medium">
+              Contact
+            </a>
+          </div>
+
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Link to="/auth/login">
+              <Button variant="outline-primary" size="sm" className="flex items-center">
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+            <Link to="/register">
+              <Button variant="primary" size="sm" className="flex items-center">
+                <User className="w-4 h-4 mr-2" />
+                Get Started
+              </Button>
+            </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="text-gray-700 hover:text-primary p-2"
+            >
+              {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {showMobileMenu && (
+          <div className="md:hidden border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              <a href="#features" className="block px-3 py-2 text-gray-700 hover:text-primary font-medium">
+                Features
+              </a>
+              
+              {/* Mobile Solutions Dropdown */}
+              <div>
+                <button
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="flex items-center justify-between w-full px-3 py-2 text-gray-700 hover:text-primary font-medium"
+                >
+                  Solutions
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {showDropdown && (
+                  <div className="pl-4 space-y-1">
+                    {features.map((feature) => (
+                      <a
+                        key={feature.name}
+                        href={feature.href}
+                        className="flex items-center px-3 py-2 text-gray-600 hover:text-primary transition-colors"
+                      >
+                        <span className="mr-3 text-primary">{feature.icon}</span>
+                        {feature.name}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <a href="#about" className="block px-3 py-2 text-gray-700 hover:text-primary font-medium">
+                About
+              </a>
+              <a href="#pricing" className="block px-3 py-2 text-gray-700 hover:text-primary font-medium">
+                Pricing
+              </a>
+              <a href="#contact" className="block px-3 py-2 text-gray-700 hover:text-primary font-medium">
+                Contact
+              </a>
+              
+              {/* Mobile Auth Buttons */}
+              <div className="pt-4 space-y-2 border-t border-gray-200 mt-4">
+                <Link to="/auth/login">
+                  <Button variant="outline-primary" className="w-full flex items-center justify-center">
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button variant="primary" className="w-full flex items-center justify-center">
+                    <User className="w-4 h-4 mr-2" />
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </nav>
   );
 };
 

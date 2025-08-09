@@ -91,161 +91,221 @@ function Layout() {
     };
   }, [dispatch, auth]);
   return (
-    <div className="py-5 md:py-0" style={{ backgroundColor: "#f5f5f5" }}>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <DarkModeSwitcher />
       {/* <MainColorSwitcher /> */}
       <MobileMenu />
       {/* <TopBar layout="side-menu" /> */}
-      <div className="flex overflow-hidden">
+      <div className="flex">
+        {/* OrbitNest Style Sidebar */}
         <nav
-          className={`w-[105px] scrollbar-hidden h-full xl:w-[258px] px-5 pb-16 overflow-x-hidden z-50 pt-10 shadow rounded-md hidden md:block fixed border-b border-white/[0.08] mb-6 dark:bg-darkmode-800/90 ${
-            school?.primaryColor ? "" : "bg-primary"
-          }`}
-          style={
-            school?.primaryColor ? { backgroundColor: school.primaryColor } : {}
-          }
+          className={`w-[280px] h-screen overflow-y-auto z-50 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hidden md:block fixed shadow-lg`}
         >
-          <div className="mb-2">
-            <img
-              alt="Hero"
-              className=" w-[130px] ml-5"
-              src={school?.logo ? IMG_URL + school?.logo : logoUrl}
-              onClick={(e) => navigate("/home")}
-            />
+          {/* Logo Section */}
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-primary/5 to-primary/10">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mr-3">
+                <Lucide icon="BookOpen" className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  {school?.name || "Elimurise"}
+                </h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Learning Platform
+                </p>
+              </div>
+            </div>
           </div>
-          <hr className="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent"></hr>
-          <ul className="pt-10">
-            {formattedMenu
-              .filter(
-                (menuDetails: any) =>
-                  (menuDetails.subMenu &&
-                    menuDetails.subMenu.filter(
-                      (menuDetails: any) => !menuDetails.ignore
-                    ).length > 0) ||
-                  (!menuDetails.subMenu && !menuDetails.ignore)
-              )
 
-              // .filter((menuDetails: any) => !menuDetails.ignore)
+          {/* Navigation Menu */}
+          <div className="p-4">
+            {/* Main Navigation */}
+            <div className="mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-3">
+                Main Navigation
+              </h3>
+              <ul className="space-y-1">
+                {formattedMenu
+                  .filter(
+                    (menuDetails: any) =>
+                      (menuDetails.subMenu &&
+                        menuDetails.subMenu.filter(
+                          (menuDetails: any) => !menuDetails.ignore
+                        ).length > 0) ||
+                      (!menuDetails.subMenu && !menuDetails.ignore)
+                  )
+                  .map((menu, menuKey) =>
+                    menu == "divider" ? (
+                      <Divider
+                        type="li"
+                        className={clsx([
+                          "my-4",
+                          // Animation
+                          `opacity-0 animate-[0.4s_ease-in-out_0.1s_intro-divider] animate-fill-mode-forwards animate-delay-${
+                            (menuKey + 1) * 10
+                          }`,
+                        ])}
+                        key={menuKey}
+                      ></Divider>
+                    ) : (
+                      <li key={menuKey}>
+                        <Menu
+                          className={clsx({
+                            // Animation
+                            [`opacity-0 text-white translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
+                              (menuKey + 1) * 10
+                            }`]: !menu.active,
+                          })}
+                          menu={menu}
+                          formattedMenuState={[formattedMenu, setFormattedMenu]}
+                          level="first"
+                        ></Menu>
+                        {/* BEGIN: Second Child */}
+                        {menu.subMenu && (
+                          <Transition
+                            in={menu.activeDropdown}
+                            onEnter={enter}
+                            onExit={leave}
+                            timeout={300}
+                          >
+                            <ul
+                              className={clsx([
+                                "bg-gray-50 dark:bg-gray-700 rounded-lg mt-1 ml-4 border border-gray-200 dark:border-gray-600",
+                                { block: menu.activeDropdown },
+                                { hidden: !menu.activeDropdown },
+                              ])}
+                            >
+                              {menu.subMenu
+                                .filter((menuDetails: any) => !menuDetails.ignore)
+                                .map((subMenu, subMenuKey) => (
+                                  <li key={subMenuKey}>
+                                    <Menu
+                                      className={clsx({
+                                        // Animation
+                                        [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
+                                          (subMenuKey + 1) * 10
+                                        }`]: !subMenu.active,
+                                      })}
+                                      menu={subMenu}
+                                      formattedMenuState={[
+                                        formattedMenu,
+                                        setFormattedMenu,
+                                      ]}
+                                      level="second"
+                                    ></Menu>
+                                    {/* BEGIN: Third Child */}
+                                    {subMenu.subMenu && (
+                                      <Transition
+                                        in={subMenu.activeDropdown}
+                                        onEnter={enter}
+                                        onExit={leave}
+                                        timeout={300}
+                                      >
+                                        <ul
+                                          className={clsx([
+                                            "bg-gray-50 dark:bg-gray-700 rounded-lg mt-1 ml-4 border border-gray-200 dark:border-gray-600",
+                                            { block: subMenu.activeDropdown },
+                                            { hidden: !subMenu.activeDropdown },
+                                          ])}
+                                        >
+                                          {subMenu.subMenu.map(
+                                            (lastSubMenu, lastSubMenuKey) => (
+                                              <li key={lastSubMenuKey}>
+                                                <Menu
+                                                  className={clsx({
+                                                    // Animation
+                                                    [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
+                                                      (lastSubMenuKey + 1) * 10
+                                                    }`]: !lastSubMenu.active,
+                                                  })}
+                                                  menu={lastSubMenu}
+                                                  formattedMenuState={[
+                                                    formattedMenu,
+                                                    setFormattedMenu,
+                                                  ]}
+                                                  level="third"
+                                                ></Menu>
+                                              </li>
+                                            )
+                                          )}
+                                        </ul>
+                                      </Transition>
+                                    )}
+                                    {/* END: Third Child */}
+                                  </li>
+                                ))}
+                            </ul>
+                          </Transition>
+                        )}
+                        {/* END: Second Child */}
+                      </li>
+                    )
+                  )}
+              </ul>
+            </div>
 
-              .map((menu, menuKey) =>
-                menu == "divider" ? (
-                  <Divider
-                    type="li"
-                    className={clsx([
-                      "my-6",
-                      // Animation
-                      `opacity-0 animate-[0.4s_ease-in-out_0.1s_intro-divider] animate-fill-mode-forwards animate-delay-${
-                        (menuKey + 1) * 10
-                      }`,
-                    ])}
-                    key={menuKey}
-                  ></Divider>
-                ) : (
-                  <li key={menuKey}>
-                    <Menu
-                      className={clsx({
-                        // Animation
-                        [`opacity-0 text-white translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
-                          (menuKey + 1) * 10
-                        }`]: !menu.active,
-                      })}
-                      menu={menu}
-                      formattedMenuState={[formattedMenu, setFormattedMenu]}
-                      level="first"
-                    ></Menu>
-                    {/* BEGIN: Second Child */}
-                    {menu.subMenu && (
-                      <Transition
-                        in={menu.activeDropdown}
-                        onEnter={enter}
-                        onExit={leave}
-                        timeout={300}
-                      >
-                        <ul
-                          className={clsx([
-                            "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
-                            "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
-                            { block: menu.activeDropdown },
-                            { hidden: !menu.activeDropdown },
-                          ])}
-                        >
-                          {menu.subMenu
-                            .filter((menuDetails: any) => !menuDetails.ignore)
-                            .map((subMenu, subMenuKey) => (
-                              <li key={subMenuKey}>
-                                <Menu
-                                  className={clsx({
-                                    // Animation
-                                    [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
-                                      (subMenuKey + 1) * 10
-                                    }`]: !subMenu.active,
-                                  })}
-                                  menu={subMenu}
-                                  formattedMenuState={[
-                                    formattedMenu,
-                                    setFormattedMenu,
-                                  ]}
-                                  level="second"
-                                ></Menu>
-                                {/* BEGIN: Third Child */}
-                                {subMenu.subMenu && (
-                                  <Transition
-                                    in={subMenu.activeDropdown}
-                                    onEnter={enter}
-                                    onExit={leave}
-                                    timeout={300}
-                                  >
-                                    <ul
-                                      className={clsx([
-                                        "bg-primary/[0.04] text-white rounded-xl relative dark:bg-transparent",
-                                        "before:content-[''] before:block before:inset-0 before:bg-white/30 before:rounded-xl before:absolute before:z-[-1] before:dark:bg-darkmode-900/30",
-                                        { block: subMenu.activeDropdown },
-                                        { hidden: !subMenu.activeDropdown },
-                                      ])}
-                                    >
-                                      {subMenu.subMenu.map(
-                                        (lastSubMenu, lastSubMenuKey) => (
-                                          <li key={lastSubMenuKey}>
-                                            <Menu
-                                              className={clsx({
-                                                // Animation
-                                                [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${
-                                                  (lastSubMenuKey + 1) * 10
-                                                }`]: !lastSubMenu.active,
-                                              })}
-                                              menu={lastSubMenu}
-                                              formattedMenuState={[
-                                                formattedMenu,
-                                                setFormattedMenu,
-                                              ]}
-                                              level="third"
-                                            ></Menu>
-                                          </li>
-                                        )
-                                      )}
-                                    </ul>
-                                  </Transition>
-                                )}
-                                {/* END: Third Child */}
-                              </li>
-                            ))}
-                        </ul>
-                      </Transition>
-                    )}
-                    {/* END: Second Child */}
-                  </li>
-                )
-              )}
-            {/* END: First Child */}
-          </ul>
+            {/* Quick Actions */}
+            <div className="mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-3">
+                Quick Actions
+              </h3>
+              <ul className="space-y-1">
+                <li>
+                  <a href="#" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 transition-colors">
+                    <Lucide icon="Plus" className="w-4 h-4 mr-3" />
+                    Add Student
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 transition-colors">
+                    <Lucide icon="FileText" className="w-4 h-4 mr-3" />
+                    Create Report
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 transition-colors">
+                    <Lucide icon="Calendar" className="w-4 h-4 mr-3" />
+                    Schedule Event
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Settings */}
+            <div className="mb-6">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-3">
+                Settings
+              </h3>
+              <ul className="space-y-1">
+                <li>
+                  <a href="#" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 transition-colors">
+                    <Lucide icon="Settings" className="w-4 h-4 mr-3" />
+                    System Settings
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 transition-colors">
+                    <Lucide icon="Users" className="w-4 h-4 mr-3" />
+                    User Management
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 transition-colors">
+                    <Lucide icon="Shield" className="w-4 h-4 mr-3" />
+                    Security
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </nav>
         {/* END: Side Menu */}
         {/* BEGIN: Content */}
         <div
-          // style={{ backgroundColor: "#f5f5f5" }}
           className={clsx([
-            "md:ml-[150px] xl:ml-[270px] max-w-full md:max-w-none  md:rounded-none min-w-0 min-h-screen  flex-1   relative dark:bg-darkmode-700",
-            "before:content-[''] before:w-full  before:block",
+            "md:ml-[280px] max-w-full md:max-w-none md:rounded-none min-w-0 min-h-screen flex-1 relative",
+            "before:content-[''] before:w-full before:block",
           ])}
         >
           <div className="hidden md:block">
@@ -253,9 +313,8 @@ function Layout() {
           </div>
 
           <div
-            // style={{ backgroundColor: "#f5f5f5" }}
             className={clsx([
-              "max-w-full md:max-w-none  md:rounded-none px-4 ] min-w-0 min-h-screen-100px  flex-1  md:mt-1 relative dark:bg-darkmode-700",
+              "max-w-full md:max-w-none md:rounded-none px-6 py-6 min-w-0 min-h-screen-100px flex-1 md:mt-4 relative",
               "before:content-[''] before:w-full before:h-px before:block",
             ])}
           >
@@ -286,17 +345,13 @@ function Menu(props: {
       content={props.menu.title}
       href={props.menu.subMenu ? "#" : props.menu.pathname}
       className={clsx([
-        "h-[50px]  flex items-center pl-5 mb-1 relative rounded-xl dark:text-slate-300",
+        "flex items-center px-3 py-2 text-sm rounded-lg transition-all duration-200",
         {
-          "text-white-600   dark:text-slate-400":
+          "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700":
             !props.menu.active && props.level != "first",
-          "bg-slate-100 dark:bg-transparent":
+          "bg-primary text-white shadow-lg":
             props.menu.active && props.level == "first",
-          "before:content-[''] before:block before:inset-0 before:rounded-xl before:absolute before:border-b-[3px] before:border-solid before:border-black/[0.08] before:dark:border-black/[0.08] before:dark:bg-darkmode-700":
-            props.menu.active && props.level == "first",
-          "after:content-[''] after:w-[20px]   after:h-[80px] after:mr-[-27px] after:bg-menu-active after:bg-no-repeat after:bg-cover after:absolute after:top-0 after:bottom-0 after:right-0 after:my-auto after:dark:bg-menu-active-dark":
-            props.menu.active && props.level == "first",
-          "hover:bg-slate-100 hover:text-primary hover:dark:bg-transparent hover:before:content-[''] hover:before:block hover:before:inset-0 hover:before:rounded-xl hover:before:absolute hover:before:z-[-1] hover:before:border-b-[3px] hover:before:border-solid hover:before:border-black/[0.08] hover:before:dark:bg-darkmode-700":
+          "hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20":
             !props.menu.active &&
             !props.menu.activeDropdown &&
             props.level == "first",
@@ -315,39 +370,39 @@ function Menu(props: {
     >
       <div
         className={clsx({
-          "text-primary z-10 dark:text-slate-300":
+          "text-white z-10":
             props.menu.active && props.level == "first",
-          "text-slate-700 dark:text-slate-300":
+          "text-gray-700 dark:text-gray-300":
             props.menu.active && props.level != "first",
-          "dark:text-slate-400": !props.menu.active,
+          "text-gray-500 dark:text-gray-400": !props.menu.active,
         })}
       >
-        <Lucide icon={props.menu.icon} />
+        <Lucide icon={props.menu.icon} className="w-4 h-4 mr-3" />
       </div>
       <div
         className={clsx([
-          "w-full  ml-3 hidden xl:flex items-center",
+          "flex-1",
           {
-            "text-primary font-medium z-10 dark:text-slate-300":
+            "text-white z-10":
               props.menu.active && props.level == "first",
-            "text-slate-700 font-medium dark:text-slate-300":
+            "text-gray-700 font-medium dark:text-gray-300":
               props.menu.active && props.level != "first",
-            "dark:text-slate-400": !props.menu.active,
+            "text-gray-500 dark:text-gray-400": !props.menu.active,
           },
         ])}
       >
         {props.menu.title}
-        {props.menu.subMenu && (
-          <div
-            className={clsx([
-              "transition ease-in duration-100 ml-auto mr-5 hidden xl:block",
-              { "transform rotate-180": props.menu.activeDropdown },
-            ])}
-          >
-            <Lucide className="w-4 h-4" icon="ChevronDown" />
-          </div>
-        )}
       </div>
+      {props.menu.subMenu && (
+        <div
+          className={clsx([
+            "transition ease-in duration-200",
+            { "transform rotate-180": props.menu.activeDropdown },
+          ])}
+        >
+          <Lucide className="w-4 h-4" icon="ChevronDown" />
+        </div>
+      )}
     </SideMenuTooltip>
   );
 }
@@ -363,7 +418,7 @@ function Divider<C extends React.ElementType>(
       {...computedProps}
       className={clsx([
         props.className,
-        "w-full h-px bg-black/[0.06] z-10 relative dark:bg-white/[0.07]",
+        "w-full h-px bg-gray-200 dark:bg-gray-600 z-10 relative",
       ])}
     ></Component>
   );

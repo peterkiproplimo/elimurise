@@ -321,69 +321,69 @@ function Roles() {
           </div>
         </div>
         {/* BEGIN: Data List */}
-        <div className="col-span-12 overflow-auto  2xl:overflow-visible">
-          <Table className="border-spacing-y-[5px]  border-separate -mt-2">
-            <Table.Thead>
+        <div className="col-span-12 overflow-x-auto overflow-y-visible 2xl:overflow-visible">
+          <Table hover striped className="mt-6">
+            <Table.Thead variant="modern">
               <Table.Tr>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  No.
+                <Table.Th className="w-16 text-center">
+                  #
                 </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  Name
+                <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                  <div className="flex items-center space-x-2">
+                    <span>Role Name</span>
+                  </div>
                 </Table.Th>
-
-                {/* <Table.Th className="border-b-0 whitespace-nowrap">
-                  Created AT
+                <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                  <div className="flex items-center space-x-2">
+                    <span>Description</span>
+                  </div>
                 </Table.Th>
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  Updated At
-                </Table.Th> */}
-                <Table.Th className="border-b-0 whitespace-nowrap">
-                  ACTIONS
+                <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                  <div className="flex items-center space-x-2">
+                    <span>Permissions</span>
+                  </div>
+                </Table.Th>
+                <Table.Th className="text-center w-32">
+                  Actions
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
-            <Table.Tbody>
-              {roles?.map((role: any, key: any) => (
-                <Table.Tr key={key} className="">
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <span className="font-medium whitespace-nowrap">
-                      {key + 1}
-                    </span>
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <span className="font-medium whitespace-nowrap">
-                      {role.name}
-                    </span>
-                  </Table.Td>
-                  {/* 
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <span className="font-medium whitespace-nowrap">
-                      {new Date(role.createdAt).toLocaleString("en-US", {
-                        timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </Table.Td>
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                    <span className="font-medium whitespace-nowrap">
-                      {new Date(role.updatedAt).toLocaleString("en-US", {
-                        timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </Table.Td> */}
 
-                  <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                    <div className="flex items-center justify-center">
+            <Table.Tbody>
+              {roles.map((role: any, key) => (
+                <Table.Tr key={key}>
+                  <Table.Td className="text-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                      {limit * (page - 1) + key + 1}
+                    </div>
+                  </Table.Td>
+                  
+                  <Table.Td>
+                    <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg px-3 py-2 inline-block">
+                      <span className="font-medium text-orange-700 dark:text-orange-300">
+                        {role?.name}
+                      </span>
+                    </div>
+                  </Table.Td>
+                  
+                  <Table.Td>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block">
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {role?.description || "No description"}
+                      </span>
+                    </div>
+                  </Table.Td>
+                  
+                  <Table.Td>
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
+                      <span className="font-medium text-blue-700 dark:text-blue-300">
+                        {role?.permissions?.length || 0} permissions
+                      </span>
+                    </div>
+                  </Table.Td>
+
+                  <Table.Td>
+                    <div className="flex items-center justify-center space-x-2">
                       {/* {role.name != "Super Admin" && ( */}
                       <Menu>
                         <Menu.Button as={Button} className="px-2 !box">

@@ -260,7 +260,7 @@ const TimeSlots: React.FC = () => {
         <button
           onClick={editingId ? handleSaveEdit : handleCreate}
           disabled={isLoading}
-          className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="bg-primary text-white p-2 rounded-md hover:bg-primary/90 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isLoading
             ? "Processing..."

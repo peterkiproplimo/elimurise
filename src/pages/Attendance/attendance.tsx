@@ -1,23 +1,37 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Calendar from "../../components/Calendar/index";
 import { FormLabel, FormSelect, FormInput } from "../../base-components/Form";
 import * as ApiService from "../../services/auth";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle, Users, Calendar as CalendarIcon, Save, RefreshCw, AlertCircle, Clock, UserCheck } from "lucide-react";
 import LoadingIcon from "../../base-components/LoadingIcon";
 import Button from "../../base-components/Button";
+import Lucide from "../../base-components/Lucide";
+import Notification, { NotificationElement } from "../../base-components/Notification";
 
 function AttendanceForm() {
-  const [grades, setGrades] = useState([]);
-  const [streams, setStreams] = useState([]);
+  const [grades, setGrades] = useState<Array<{_id: string; name: string}>>([]);
+  const [streams, setStreams] = useState<Array<{_id: string; name: string}>>([]);
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedStream, setSelectedStream] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [attendanceList, setAttendanceList] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState<any>([]);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [success, setSuccess] = useState(true);
+  const [message, setMessage] = useState("");
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    presentMorning: 0,
+    presentAfternoon: 0,
+    absentMorning: 0,
+    absentAfternoon: 0
+  });
+  
   const navigate = useNavigate();
+  const notify = useRef<NotificationElement>();
 
   useEffect(() => {
     getGrades();
@@ -25,32 +39,55 @@ function AttendanceForm() {
   }, []);
 
   useEffect(() => {
+    if (selectedStream && selectedDate) {
     fetchAttendanceAnalysis();
-  }, [selectedStream, selectedDate]); // Add selectedDate as a dependency
+    }
+  }, [selectedStream, selectedDate]);
+
+  useEffect(() => {
+    calculateStats();
+  }, [attendanceList]);
 
   const getGrades = async () => {
+    try {
     const response = await ApiService.getGrades({ page: 1, attendance: true });
     setGrades(response.data);
+    } catch (error) {
+      console.error("Error fetching grades:", error);
+    }
   };
 
   const getStreams = async (gradeId: any) => {
+    try {
     const response = await ApiService.getStream({ page: 1, grade: gradeId });
     setStreams(response.data);
+    } catch (error) {
+      console.error("Error fetching streams:", error);
+    }
   };
 
-  const fetchAttendance = async (date: any) => {
+  const fetchAttendance = useCallback(async (date: any) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const selected = new Date(date);
     selected.setHours(0, 0, 0, 0);
-    console.log("selected", selected);
-    console.log("today", today);
+    
     if (selected > today) {
-      alert("Cannot mark attendance for future dates");
+      setSuccess(false);
+      setMessage("Cannot mark attendance for future dates");
+      notify.current?.showToast();
       return;
     }
-    if (!selectedGrade || !selectedStream || !date) return;
+    
+    if (!selectedGrade || !selectedStream || !date) {
+      setSuccess(false);
+      setMessage("Please select grade, stream, and date");
+      notify.current?.showToast();
+      return;
+    }
+    
     setLoading(true);
+    try {
     const response = await ApiService.getAttendance({
       grade: selectedGrade,
       stream: selectedStream,
@@ -58,14 +95,21 @@ function AttendanceForm() {
     });
     setAttendanceList(response.data);
     setSelectedDate(date);
+      setHasChanges(false);
+    } catch (error) {
+      setSuccess(false);
+      setMessage("Error fetching attendance data");
+      notify.current?.showToast();
+    } finally {
     setLoading(false);
-  };
+    }
+  }, [selectedGrade, selectedStream]);
 
   const fetchAttendanceAnalysis = async () => {
-    // Use the selected date if available, otherwise default to current date
+    try {
     const dateToUse = selectedDate ? new Date(selectedDate) : new Date();
     const year = dateToUse.getFullYear().toString();
-    const month = (dateToUse.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-based, so +1
+      const month = (dateToUse.getMonth() + 1).toString().padStart(2, "0");
 
     const response = await ApiService.getAttendanceSummary({
       year,
@@ -84,26 +128,73 @@ function AttendanceForm() {
     });
 
     setCalendarEvents(events);
+    } catch (error) {
+      console.error("Error fetching attendance analysis:", error);
+    }
   };
 
   const updateAttendance = (index: any, type: any, value: any) => {
-    console.log({ index, type, value });
     const updatedList = [...attendanceList];
     updatedList[index].attendanceDetails[type] = value;
     setAttendanceList(updatedList);
+    setHasChanges(true);
   };
 
   const markAll = (type: any, status: any) => {
     const updatedList = attendanceList.map((item: any) => ({
       ...item,
-      attendanceDetails: { ...item.attendanceDetails, [type]: status },
+      attendanceDetails: { 
+        ...item.attendanceDetails, 
+        [type]: status,
+        [`${type}_reason`]: status ? "" : item.attendanceDetails?.[`${type}_reason`] || "",
+        [`${type}_other_reason`]: status ? "" : item.attendanceDetails?.[`${type}_other_reason`] || ""
+      },
     }));
     setAttendanceList(updatedList);
+    setHasChanges(true);
+  };
+
+  const calculateStats = () => {
+    if (!attendanceList.length) {
+      setStats({
+        totalStudents: 0,
+        presentMorning: 0,
+        presentAfternoon: 0,
+        absentMorning: 0,
+        absentAfternoon: 0
+      });
+      return;
+    }
+
+    const stats = attendanceList.reduce((acc: any, item: any) => {
+      const morning = item.attendanceDetails?.morning || false;
+      const afternoon = item.attendanceDetails?.afternoon || false;
+      
+      return {
+        totalStudents: acc.totalStudents + 1,
+        presentMorning: acc.presentMorning + (morning ? 1 : 0),
+        presentAfternoon: acc.presentAfternoon + (afternoon ? 1 : 0),
+        absentMorning: acc.absentMorning + (morning ? 0 : 1),
+        absentAfternoon: acc.absentAfternoon + (afternoon ? 0 : 1)
+      };
+    }, {
+      totalStudents: 0,
+      presentMorning: 0,
+      presentAfternoon: 0,
+      absentMorning: 0,
+      absentAfternoon: 0
+    });
+
+    setStats(stats);
   };
 
   const saveAttendance = async () => {
-    console.log(JSON.stringify(attendanceList));
-    if (!attendanceList.length) return;
+    if (!attendanceList.length) {
+      setSuccess(false);
+      setMessage("No attendance data to save");
+      notify.current?.showToast();
+      return;
+    }
 
     setLoadingSave(true);
     try {
@@ -115,92 +206,193 @@ function AttendanceForm() {
           stream: item.attendanceDetails?.stream || "",
         },
       }));
+      
       await ApiService.createAttendance(updatedList);
-      fetchAttendance(selectedDate);
-      fetchAttendanceAnalysis();
+      await fetchAttendance(selectedDate);
+      await fetchAttendanceAnalysis();
+      
+      setSuccess(true);
+      setMessage("Attendance saved successfully!");
+      setHasChanges(false);
+      notify.current?.showToast();
     } catch (error) {
       console.error("Error saving attendance:", error);
-      alert("Failed to save attendance. Please try again.");
+      setSuccess(false);
+      setMessage("Failed to save attendance. Please try again.");
+      notify.current?.showToast();
     } finally {
       setLoadingSave(false);
     }
   };
 
-  return (
-    <div className="p-6 xl:p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-darkmode-900 dark:to-darkmode-800 min-h-screen">
-      <div className=" mx-auto bg-white dark:bg-darkmode-700 rounded-2xl shadow-lg overflow-hidden">
-        <div className="flex flex-col xl:flex-row">
-          {/* Calendar Section */}
+  const handleGradeChange = (gradeId: string) => {
+    setSelectedGrade(gradeId);
+    setSelectedStream("");
+    setAttendanceList([]);
+    setHasChanges(false);
+    if (gradeId) {
+      getStreams(gradeId);
+    }
+  };
 
-          <div className="w-full xl:w-2/5 p-6 bg-gradient-to-b from-indigo-50 to-white dark:from-darkmode-800 dark:to-darkmode-700">
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-              Attendance Overview
-            </h3>
-            <div className="p-6 border-b border-gray-200 dark:border-darkmode-600">
-              <h2 className="text-1xl font-bold text-gray-800 dark:text-white">
-                How to Use the Attendance System
-              </h2>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                Select a grade, and stream, date to load students. Mark present
-                or absent for AM/PM sessions, add absence reasons if needed, and
-                click "Save Attendance" to store records. Also follow same
-                process to amend attendance
-              </p>
+  const handleStreamChange = (streamId: string) => {
+    setSelectedStream(streamId);
+    setAttendanceList([]);
+    setHasChanges(false);
+  };
+
+  const handleDateSelect = (date: string) => {
+    fetchAttendance(date);
+  };
+
+  return (
+    <>
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Attendance Management
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              Record and manage daily student attendance
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg">
+              <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
+            <span className="text-sm text-gray-500">
+              {selectedGrade && selectedStream ? `${grades.find(g => g._id === selectedGrade)?.name} - ${streams.find(s => s._id === selectedStream)?.name}` : "Select Class"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      {stats.totalStudents > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Students</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalStudents}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                <UserCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Morning Present</p>
+                <p className="text-2xl font-bold text-green-600">{stats.presentMorning}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="bg-red-100 dark:bg-red-900 p-3 rounded-lg">
+                <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Morning Absent</p>
+                <p className="text-2xl font-bold text-red-600">{stats.absentMorning}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                <UserCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Afternoon Present</p>
+                <p className="text-2xl font-bold text-green-600">{stats.presentAfternoon}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center">
+              <div className="bg-red-100 dark:bg-red-900 p-3 rounded-lg">
+                <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Afternoon Absent</p>
+                <p className="text-2xl font-bold text-red-600">{stats.absentAfternoon}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {/* Left Panel - Calendar & Filters */}
+        <div className="xl:col-span-1 space-y-6">
+          {/* Calendar Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                <CalendarIcon className="w-5 h-5 mr-2 text-primary" />
+                Attendance Calendar
+            </h3>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  onClick={() => fetchAttendanceAnalysis()}
+                  className="px-3 py-1"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            
             <Calendar
-              initialDate={new Date().toISOString().split("T")[0]} // Default to current date
+              initialDate={selectedDate}
               events={calendarEvents}
-              onDateClick={fetchAttendance}
-              className="rounded-xl shadow-inner bg-white dark:bg-darkmode-600 p-4"
+              onDateClick={handleDateSelect}
+              className="rounded-xl shadow-inner bg-gray-50 dark:bg-gray-700 p-4"
             />
+            
             {selectedDate && (
-              <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-                Selected Date:{" "}
-                <span className="font-medium">{selectedDate}</span>
-              </p>
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  <strong>Selected Date:</strong> {new Date(selectedDate).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+              </div>
             )}
           </div>
 
-          {/* Attendance Form Section */}
-          <div className="w-full xl:w-3/5 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                Record Attendance
-              </h2>
-              <Button
-                variant="primary"
-                onClick={saveAttendance}
-                disabled={loadingSave || !attendanceList.length}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center transition-all duration-200"
-              >
-                {loadingSave ? (
-                  <>
-                    <LoadingIcon
-                      icon="spinning-circles"
-                      className="w-4 h-4 mr-2"
-                    />
-                    Saving...
-                  </>
-                ) : (
-                  "Save Attendance"
-                )}
-              </Button>
-            </div>
-
-            {/* Filters */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+          {/* Filters Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+              <Users className="w-5 h-5 mr-2 text-primary" />
+              Class Selection
+            </h3>
+            
+            <div className="space-y-4">
               <div>
                 <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Grade
                 </FormLabel>
                 <FormSelect
                   value={selectedGrade}
-                  onChange={(e) => {
-                    setSelectedGrade(e.target.value);
-                    getStreams(e.target.value);
-                  }}
-                  required
-                  className="w-full px-4 py-2 bg-gray-50 dark:bg-darkmode-600 border border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
+                  onChange={(e) => handleGradeChange(e.target.value)}
+                  className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                 >
                   <option value="">Select Grade</option>
                   {grades.map((grade: any) => (
@@ -210,18 +402,16 @@ function AttendanceForm() {
                   ))}
                 </FormSelect>
               </div>
+              
               <div>
                 <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Stream
                 </FormLabel>
                 <FormSelect
                   value={selectedStream}
-                  onChange={(e) => {
-                    setSelectedStream(e.target.value);
-                    setAttendanceList([]);
-                  }}
-                  required
-                  className="w-full px-4 py-2 bg-gray-50 dark:bg-darkmode-600 border border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
+                  onChange={(e) => handleStreamChange(e.target.value)}
+                  disabled={!selectedGrade}
+                  className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 disabled:opacity-50"
                 >
                   <option value="">Select Stream</option>
                   {streams.map((stream: any) => (
@@ -233,171 +423,162 @@ function AttendanceForm() {
               </div>
             </div>
 
-            {/* Attendance List */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-                Attendance List
-              </h3>
-              {loading ? (
-                <div className="bg-gray-50 dark:bg-darkmode-600 rounded-xl p-4 shadow-inner">
-                  <div className="grid grid-cols-4 gap-4 bg-indigo-100 dark:bg-darkmode-500 p-3 rounded-lg mb-4">
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                      Learner's Name
-                    </div>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                      Admission No.
-                    </div>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
-                      <Button
-                        onClick={() =>
-                          markAll(
-                            "morning",
-                            !attendanceList.every(
-                              (item: any) => item.attendanceDetails?.morning
-                            )
-                          )
-                        }
-                        className={`text-xs px-3 py-1 rounded-lg flex items-center transition-all duration-200 ${
-                          attendanceList.every(
-                            (item: any) => item.attendanceDetails?.morning
-                          )
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-red-500 text-white hover:bg-red-600"
-                        }`}
-                      >
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                        {attendanceList.every(
-                          (item: any) => item.attendanceDetails?.morning
-                        )
-                          ? "All Present"
-                          : "All Absent"}{" "}
-                        (AM)
-                      </Button>
-                    </div>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
-                      <Button
-                        onClick={() =>
-                          markAll(
-                            "afternoon",
-                            !attendanceList.every(
-                              (item: any) => item.attendanceDetails?.afternoon
-                            )
-                          )
-                        }
-                        className={`text-xs px-3 py-1 rounded-lg flex items-center transition-all duration-200 ${
-                          attendanceList.every(
-                            (item: any) => item.attendanceDetails?.afternoon
-                          )
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-red-500 text-white hover:bg-red-600"
-                        }`}
-                      >
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                        {attendanceList.every(
-                          (item: any) => item.attendanceDetails?.afternoon
-                        )
-                          ? "All Present"
-                          : "All Absent"}{" "}
-                        (PM)
-                      </Button>
-                    </div>
-                  </div>
-                  {[...Array(50)].map((_, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 dark:bg-darkmode-600 rounded-xl p-4 shadow-inner"
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-gray-50 dark:bg-darkmode-600 rounded-xl p-4 shadow-inner">
-                  {/* Header */}
-                  <div className="grid grid-cols-4 gap-4 bg-indigo-100 dark:bg-darkmode-500 p-3 rounded-lg mb-4">
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                      Learner's Name
-                    </div>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                      Admission No.
-                    </div>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
-                      <Button
-                        onClick={() =>
-                          markAll(
-                            "morning",
-                            !attendanceList.every(
-                              (item: any) => item.attendanceDetails?.morning
-                            )
-                          )
-                        }
-                        className={`text-xs px-3 py-1 rounded-lg flex items-center transition-all duration-200 ${
-                          attendanceList.every(
-                            (item: any) => item.attendanceDetails?.morning
-                          )
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-red-500 text-white hover:bg-red-600"
-                        }`}
-                      >
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                        {attendanceList.every(
-                          (item: any) => item.attendanceDetails?.morning
-                        )
-                          ? "All Present"
-                          : "All Absent"}{" "}
-                        (AM)
-                      </Button>
-                    </div>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200 flex justify-center">
-                      <Button
-                        onClick={() =>
-                          markAll(
-                            "afternoon",
-                            !attendanceList.every(
-                              (item: any) => item.attendanceDetails?.afternoon
-                            )
-                          )
-                        }
-                        className={`text-xs px-3 py-1 rounded-lg flex items-center transition-all duration-200 ${
-                          attendanceList.every(
-                            (item: any) => item.attendanceDetails?.afternoon
-                          )
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-red-500 text-white hover:bg-red-600"
-                        }`}
-                      >
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                        {attendanceList.every(
-                          (item: any) => item.attendanceDetails?.afternoon
-                        )
-                          ? "All Present"
-                          : "All Absent"}{" "}
-                        (PM)
-                      </Button>
-                    </div>
-                  </div>
+            {/* Instructions */}
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center">
+                <AlertCircle className="w-4 h-4 mr-2" />
+                How to Use
+              </h4>
+              <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                <li>• Select grade and stream</li>
+                <li>• Choose a date from the calendar</li>
+                <li>• Mark attendance for each student</li>
+                <li>• Add absence reasons if needed</li>
+                <li>• Click "Save Attendance" when done</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
-                  {/* List */}
-                  <div className="max-h-[60vh] overflow-y-auto space-y-3">
-                    {attendanceList.length > 0 ? (
-                      attendanceList
+        {/* Right Panel - Attendance List */}
+        <div className="xl:col-span-2">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+            <div>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Attendance Record
+              </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {selectedDate ? `Recording attendance for ${new Date(selectedDate).toLocaleDateString()}` : "Select a date to record attendance"}
+                  </p>
+                    </div>
+                
+                <div className="flex items-center space-x-3">
+                  {hasChanges && (
+                    <div className="flex items-center text-orange-600 dark:text-orange-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      Unsaved changes
+                    </div>
+                  )}
+                  
+                      <Button
+                    variant="primary"
+                    onClick={saveAttendance}
+                    disabled={loadingSave || !attendanceList.length || !hasChanges}
+                    className="px-6 py-2"
+                  >
+                    {loadingSave ? (
+                      <>
+                        <LoadingIcon icon="spinning-circles" className="w-4 h-4 mr-2" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Attendance
+                      </>
+                    )}
+                      </Button>
+                </div>
+                    </div>
+                    </div>
+
+            <div className="p-6">
+              {/* Bulk Actions */}
+              {attendanceList.length > 0 && (
+                <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Bulk Actions</h4>
+                  <div className="flex flex-wrap gap-3">
+                      <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={() => markAll("morning", true)}
+                      className="text-xs"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                      Mark All Present (AM)
+                    </Button>
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={() => markAll("morning", false)}
+                      className="text-xs"
+                    >
+                      <XCircle className="w-4 h-4 mr-1" />
+                      Mark All Absent (AM)
+                      </Button>
+                      <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={() => markAll("afternoon", true)}
+                      className="text-xs"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                      Mark All Present (PM)
+                    </Button>
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={() => markAll("afternoon", false)}
+                      className="text-xs"
+                    >
+                      <XCircle className="w-4 h-4 mr-1" />
+                      Mark All Absent (PM)
+                      </Button>
+                    </div>
+                </div>
+              )}
+
+              {/* Attendance List */}
+              <div>
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <LoadingIcon icon="spinning-circles" className="w-12 h-12 text-primary" />
+                    <p className="text-gray-600 dark:text-gray-400 mt-4">
+                      Loading students...
+                    </p>
+                  </div>
+                ) : attendanceList.length > 0 ? (
+                  <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+                    {attendanceList
                         .filter((item: any) => item.stream == selectedStream)
                         .map((item: any, index: any) => (
                           <div
                             key={item.learner._id}
-                            className="grid grid-cols-4 gap-4 items-center p-4 bg-white dark:bg-darkmode-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
-                          >
-                            <div className="text-gray-800 dark:text-white font-medium">{`${item.learner.first_name} ${item.learner.last_name}`}</div>
-                            <div className="text-gray-600 dark:text-gray-300">
+                          className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200"
+                        >
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            {/* Student Info */}
+                            <div className="md:col-span-2">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                  <span className="text-sm font-semibold text-primary">
+                                    {item.learner.first_name.charAt(0)}{item.learner.last_name.charAt(0)}
+                                  </span>
+                                </div>
+                                <div>
+                                  <p className="font-medium text-gray-900 dark:text-white">
+                                    {`${item.learner.first_name} ${item.learner.last_name}`}
+                                  </p>
+                                  <p className="text-sm text-gray-600 dark:text-gray-400">
                               {item.learner.adm_no}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
 
                             {/* Morning Attendance */}
-                            <div className="flex flex-col items-center space-y-2">
+                            <div className="flex flex-col space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                                  <Clock className="w-4 h-4 mr-1" />
+                                  Morning
+                                </span>
                               <FormInput
                                 type="checkbox"
-                                className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                                checked={
-                                  item.attendanceDetails?.morning || false
-                                }
+                                  className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+                                  checked={item.attendanceDetails?.morning || false}
                                 onChange={(e) =>
                                   updateAttendance(
                                     index,
@@ -406,14 +587,13 @@ function AttendanceForm() {
                                   )
                                 }
                               />
+                              </div>
+                              
                               {!item.attendanceDetails?.morning && (
-                                <div className="w-full">
+                                <div className="space-y-2">
                                   <FormSelect
-                                    className="w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
-                                    value={
-                                      item.attendanceDetails?.morning_reason ||
-                                      ""
-                                    }
+                                    className="w-full text-sm bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500 rounded-lg focus:ring-primary"
+                                    value={item.attendanceDetails?.morning_reason || ""}
                                     onChange={(e) => {
                                       const reason = e.target.value;
                                       updateAttendance(
@@ -428,13 +608,11 @@ function AttendanceForm() {
                                       );
                                     }}
                                   >
-                                    <option value="">Reason</option>
+                                    <option value="">Select reason</option>
                                     {[
                                       "Sick",
                                       "Leave",
-                                      "On Leave",
                                       "Family Emergency",
-                                      "Personal Reasons",
                                       "Medical Appointment",
                                       "Transportation Issues",
                                       "Other",
@@ -444,16 +622,13 @@ function AttendanceForm() {
                                       </option>
                                     ))}
                                   </FormSelect>
-                                  {item.attendanceDetails
-                                    ?.morning_other_reason === "Other" && (
+                                  
+                                  {item.attendanceDetails?.morning_other_reason === "Other" && (
                                     <FormInput
                                       type="text"
-                                      placeholder="Specify"
-                                      className="mt-2 w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
-                                      value={
-                                        item.attendanceDetails
-                                          ?.morning_reason || ""
-                                      }
+                                      placeholder="Specify reason"
+                                      className="w-full text-sm bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500 rounded-lg focus:ring-primary"
+                                      value={item.attendanceDetails?.morning_reason || ""}
                                       onChange={(e) =>
                                         updateAttendance(
                                           index,
@@ -468,13 +643,16 @@ function AttendanceForm() {
                             </div>
 
                             {/* Afternoon Attendance */}
-                            <div className="flex flex-col items-center space-y-2">
+                            <div className="flex flex-col space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                                  <Clock className="w-4 h-4 mr-1" />
+                                  Afternoon
+                                </span>
                               <FormInput
                                 type="checkbox"
-                                className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                                checked={
-                                  item.attendanceDetails?.afternoon || false
-                                }
+                                  className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+                                  checked={item.attendanceDetails?.afternoon || false}
                                 onChange={(e) =>
                                   updateAttendance(
                                     index,
@@ -483,14 +661,13 @@ function AttendanceForm() {
                                   )
                                 }
                               />
+                              </div>
+                              
                               {!item.attendanceDetails?.afternoon && (
-                                <div className="w-full">
+                                <div className="space-y-2">
                                   <FormSelect
-                                    className="w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
-                                    value={
-                                      item.attendanceDetails
-                                        ?.afternoon_reason || ""
-                                    }
+                                    className="w-full text-sm bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500 rounded-lg focus:ring-primary"
+                                    value={item.attendanceDetails?.afternoon_reason || ""}
                                     onChange={(e) => {
                                       const reason = e.target.value;
                                       updateAttendance(
@@ -505,13 +682,11 @@ function AttendanceForm() {
                                       );
                                     }}
                                   >
-                                    <option value="">Reason</option>
+                                    <option value="">Select reason</option>
                                     {[
                                       "Sick",
                                       "Leave",
-                                      "On Leave",
                                       "Family Emergency",
-                                      "Personal Reasons",
                                       "Medical Appointment",
                                       "Transportation Issues",
                                       "Other",
@@ -521,16 +696,13 @@ function AttendanceForm() {
                                       </option>
                                     ))}
                                   </FormSelect>
-                                  {item.attendanceDetails
-                                    ?.afternoon_other_reason === "Other" && (
+                                  
+                                  {item.attendanceDetails?.afternoon_other_reason === "Other" && (
                                     <FormInput
                                       type="text"
-                                      placeholder="Specify"
-                                      className="mt-2 w-full text-sm bg-gray-50 dark:bg-darkmode-600 border-gray-300 dark:border-darkmode-500 rounded-lg focus:ring-indigo-500"
-                                      value={
-                                        item.attendanceDetails
-                                          ?.afternoon_reason || ""
-                                      }
+                                      placeholder="Specify reason"
+                                      className="w-full text-sm bg-white dark:bg-gray-600 border-gray-300 dark:border-gray-500 rounded-lg focus:ring-primary"
+                                      value={item.attendanceDetails?.afternoon_reason || ""}
                                       onChange={(e) =>
                                         updateAttendance(
                                           index,
@@ -544,20 +716,48 @@ function AttendanceForm() {
                               )}
                             </div>
                           </div>
-                        ))
-                    ) : (
-                      <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-                        No attendance data for {selectedDate || "selected date"}
-                      </p>
-                    )}
+                        </div>
+                      ))}
                   </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Users className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      No Students Found
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                      {!selectedGrade || !selectedStream 
+                        ? "Please select a grade and stream to view students"
+                        : `No students found for ${selectedDate || "selected date"}`
+                      }
+                    </p>
+                  </div>
+                )}
                 </div>
-              )}
             </div>
           </div>
         </div>
       </div>
+
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Error"}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
     </div>
+      </Notification>
+    </>
   );
 }
 

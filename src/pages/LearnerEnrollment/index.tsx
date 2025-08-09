@@ -284,95 +284,77 @@ function Main() {
         </>
       ) : (
         <>
-          <h2 className="mt-5 text-xl font-medium  flex flex-wrap">
-            {learningArea?.name}
-          </h2>
-          <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-            {/* <h2 className="mr-auto text-base font-medium border-b p-2">
-              Student Promotion From 2019-2020 TO 2020-2021 Session
-            </h2> */}
-            <div className="flex items-center justify-between border-b pb-4">
-              <h5 className="text-xl font-bold">
-                Student Promotion From
-                <span className="text-red-500">
-                  {" "}
-                  {school?.current_session}{" "}
+          {/* Header Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  Student Promotion Management
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                  Manage student promotions from one academic session to another
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Lucide icon="Users" className="w-6 h-6 text-primary" />
+                <span className="text-sm text-gray-500">
+                  {learningArea?.name || "All Learning Areas"}
                 </span>
-                TO
-                <span className="text-green-500">
-                  {" "}
-                  {getNextSession(school?.current_session)}{" "}
-                </span>
-                Session
-              </h5>
-              <div className="flex space-x-2">
-                <button
-                  className="text-gray-400 hover:text-gray-600"
-                  aria-label="Collapse"
-                >
-                  <i className="fas fa-minus" />
-                </button>
-                <button
-                  className="text-gray-400 hover:text-gray-600"
-                  aria-label="Remove"
-                >
-                  <i className="fas fa-times" />
-                </button>
               </div>
             </div>
+          </div>
 
-            {/*  <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">
-                  Current Academic Year
-                </FormLabel>
-                <TomSelect
-                  {...register("current_session")}
-                  name="year"
-                  value={year}
-                  onChange={(event) => setYear(event)}
-                >
-                  <option>Current Academic Year</option>
-                  {acadmic.map((year: any, key: any) => (
-                    <option key={key} value={year._id}>
-                      {year.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.year && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.year.message === "string" &&
-                      errors.year.message}
+          {/* Session Information Card */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 mb-8 border border-blue-100 dark:border-gray-600">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                  <Lucide icon="Calendar" className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Academic Session Transition
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Promoting students from{" "}
+                    <span className="font-semibold text-red-500">
+                      {school?.current_session}
+                    </span>{" "}
+                    to{" "}
+                    <span className="font-semibold text-green-500">
+                      {getNextSession(school?.current_session)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div className="hidden md:flex items-center space-x-2">
+                <div className="bg-green-100 dark:bg-green-900 px-3 py-1 rounded-full">
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                    Active
+                </span>
+                </div>
+              </div>
+            </div>
                   </div>
-                )}
-              </div> */}
-            {/* 
-              <div className="col-span-12 sm:col-span-3">
-                <FormLabel htmlFor="modal-form-6">Next Academic year</FormLabel>
-                <TomSelect
-                  {...register("stream")}
-                  name="stream"
-                  value={nextYear}
-                  onChange={(event) => setNextYear(event)}
-                >
-                  <option>Next Academic Year</option>
-                  {acadmic.map((year: any, key: any) => (
-                    <option key={key} value={year._id}>
-                      {year.name}
-                    </option>
-                  ))}
-                </TomSelect>
-                {errors.nextYear && (
-                  <div className="mt-2 text-danger">
-                    {typeof errors.nextYear.message === "string" &&
-                      errors.nextYear.message}
+
+          {/* Promotion Configuration Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                <Lucide icon="Settings" className="w-5 h-5 mr-2 text-primary" />
+                Promotion Configuration
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Select the source and destination grades and streams for promotion
+              </p>
                   </div>
-                )}
-              </div> */}
-            <form className="mt-5 pl-5  box validate-form" onSubmit={onSubmit}>
-              <div className="grid grid-cols-12 gap-1">
+            
+            <div className="p-6">
+              <form className="space-y-6" onSubmit={onSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* From Grade */}
-                <div className="col-span-12 sm:col-span-2">
-                  <FormLabel htmlFor="from-grade" className="font-bold">
+                  <div>
+                    <FormLabel htmlFor="from-grade" className="font-semibold text-gray-700 dark:text-gray-300">
                     From Grade
                   </FormLabel>
                   <Controller
@@ -382,13 +364,13 @@ function Main() {
                     render={({ field }) => (
                       <TomSelect
                         {...field}
-                        className={errors.from_grade ? "border-danger" : ""}
+                          className={`w-full ${errors.from_grade ? "border-danger" : "border-gray-300 dark:border-gray-600"}`}
                         onChange={(value: any) => {
-                          field.onChange(value); // Update form state
-                          setSelectedFromGrade(value); // Update selected grade state
+                            field.onChange(value);
+                            setSelectedFromGrade(value);
                         }}
                       >
-                        <option value="">Choose From Grade</option>
+                          <option value="">Select Source Grade</option>
                         {grades.map((grade: any, key: any) => (
                           <option key={key} value={grade._id}>
                             {grade?.name}
@@ -398,7 +380,7 @@ function Main() {
                     )}
                   />
                   {errors.from_grade && (
-                    <div className="mt-2 text-danger">
+                      <div className="mt-2 text-danger text-sm">
                       {typeof errors.from_grade.message === "string" &&
                         errors.from_grade.message}
                     </div>
@@ -406,8 +388,8 @@ function Main() {
                 </div>
 
                 {/* From Stream */}
-                <div className="col-span-12 sm:col-span-2">
-                  <FormLabel htmlFor="from-stream" className="font-bold">
+                  <div>
+                    <FormLabel htmlFor="from-stream" className="font-semibold text-gray-700 dark:text-gray-300">
                     From Stream
                   </FormLabel>
                   <Controller
@@ -417,9 +399,9 @@ function Main() {
                     render={({ field }) => (
                       <TomSelect
                         {...field}
-                        className={errors.from_stream ? "border-danger" : ""}
+                          className={`w-full ${errors.from_stream ? "border-danger" : "border-gray-300 dark:border-gray-600"}`}
                       >
-                        <option value="">Choose From Stream</option>
+                          <option value="">Select Source Stream</option>
                         {selectedFromGrade &&
                           grades
                             .find(
@@ -434,7 +416,7 @@ function Main() {
                     )}
                   />
                   {errors.from_stream && (
-                    <div className="mt-2 text-danger">
+                      <div className="mt-2 text-danger text-sm">
                       {typeof errors.from_stream.message === "string" &&
                         errors.from_stream.message}
                     </div>
@@ -442,8 +424,8 @@ function Main() {
                 </div>
 
                 {/* To Grade */}
-                <div className="col-span-12 sm:col-span-2">
-                  <FormLabel htmlFor="to-grade" className="font-bold">
+                  <div>
+                    <FormLabel htmlFor="to-grade" className="font-semibold text-gray-700 dark:text-gray-300">
                     To Grade
                   </FormLabel>
                   <Controller
@@ -453,16 +435,14 @@ function Main() {
                     render={({ field }) => (
                       <TomSelect
                         {...field}
-                        className={errors.to_grade ? "border-danger" : ""}
+                          className={`w-full ${errors.to_grade ? "border-danger" : "border-gray-300 dark:border-gray-600"}`}
                         onChange={(value: any) => {
-                          field.onChange(value); // Update form state
-                          setSelectedToGrade(value); // Update selected grade state
-                        }}
-                      >
-                        <option value="">Choose To Grade</option>
-                        {grades
-                          // .filter((grade) => grade._id !== selectedFromGrade)
-                          .map((grade: any, key: any) => (
+                            field.onChange(value);
+                            setSelectedToGrade(value);
+                          }}
+                        >
+                          <option value="">Select Destination Grade</option>
+                          {grades.map((grade: any, key: any) => (
                             <option key={key} value={grade._id}>
                               {grade?.name}
                             </option>
@@ -471,7 +451,7 @@ function Main() {
                     )}
                   />
                   {errors.to_grade && (
-                    <div className="mt-2 text-danger">
+                      <div className="mt-2 text-danger text-sm">
                       {typeof errors.to_grade.message === "string" &&
                         errors.to_grade.message}
                     </div>
@@ -479,8 +459,8 @@ function Main() {
                 </div>
 
                 {/* To Stream */}
-                <div className="col-span-12 sm:col-span-2">
-                  <FormLabel htmlFor="to-stream" className="font-bold">
+                  <div>
+                    <FormLabel htmlFor="to-stream" className="font-semibold text-gray-700 dark:text-gray-300">
                     To Stream
                   </FormLabel>
                   <Controller
@@ -490,9 +470,9 @@ function Main() {
                     render={({ field }) => (
                       <TomSelect
                         {...field}
-                        className={errors.to_stream ? "border-danger" : ""}
+                          className={`w-full ${errors.to_stream ? "border-danger" : "border-gray-300 dark:border-gray-600"}`}
                       >
-                        <option value="">Choose To Stream</option>
+                          <option value="">Select Destination Stream</option>
                         {selectedToGrade &&
                           grades
                             .find((grade: any) => grade._id === selectedToGrade)
@@ -505,310 +485,259 @@ function Main() {
                     )}
                   />
                   {errors.to_stream && (
-                    <div className="mt-2 text-danger">
+                      <div className="mt-2 text-danger text-sm">
                       {typeof errors.to_stream.message === "string" &&
                         errors.to_stream.message}
                     </div>
                   )}
                 </div>
-                <div className="col-span-12 sm:col-span-2">
-                  {/* <Button
+                </div>
+
+                <div className="flex items-center justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <Button
                       type="button"
                       variant="outline-secondary"
                       onClick={handleReset}
-                      className="w-20 ml-4"
+                    className="px-6 py-2"
                     >
+                    <Lucide icon="RefreshCw" className="w-4 h-4 mr-2" />
                       Reset
-                    </Button> */}
+                  </Button>
                   <Button
                     variant="primary"
                     type="submit"
-                    className=" ml-5 mt-5"
-                    // onClick={async () => {
-                    //   const result = await trigger();
-                    //   if (result) {
-                    //     handleTransition();
-                    //   }
-                    // }}
+                    className="px-6 py-2"
+                    disabled={loading}
                   >
-                    Manage Promotion
-                    {loading && (
+                    <Lucide icon="Search" className="w-4 h-4 mr-2" />
+                    {loading ? (
                       <LoadingIcon
                         icon="spinning-circles"
                         color="white"
-                        className="w-4 h-4 ml-"
+                        className="w-4 h-4 mr-2"
                       />
+                    ) : (
+                      "Find Students"
                     )}
                   </Button>
                 </div>
+              </form>
               </div>
-            </form>
           </div>
-          {loading ? (
-            <div className="flex flex-col items-center mt-5">
-              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+
+          {/* Loading State */}
+          {loading && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <LoadingIcon icon="spinning-circles" className="w-12 h-12 text-primary" />
+              <p className="text-gray-600 dark:text-gray-400 mt-4">
+                Searching for students...
+              </p>
             </div>
-          ) : (
-            ""
           )}
-          {promotion?.learners?.length > 0 ? (
-            <div className="p-5 box ">
-              {" "}
-              <div className="flex flex-wrap items-center col-span-12   xl:flex-nowrap ">
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                  {" "}
-                  <h5 className="text-lg font-bold">
-                    Promote Learners From
-                    <span className="text-teal-500">
-                      {" "}
-                      {promotion?.from_stream?.grade?.name}{" "}
-                      {promotion?.from_stream?.name}
+
+          {/* Students List */}
+          {promotion?.learners?.length > 0 && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-green-100 dark:bg-green-900 p-2 rounded-lg">
+                      <Lucide icon="Users" className="w-5 h-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        Students Found
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Promoting {promotion?.learners?.length} students from{" "}
+                        <span className="font-semibold text-teal-500">
+                          {promotion?.from_stream?.grade?.name} {promotion?.from_stream?.name}
                     </span>{" "}
-                    TO
-                    <span className="text-purple-500">
-                      {" "}
-                      {promotion?.to_stream?.grade?.name}{" "}
-                      {promotion?.to_stream?.name}{" "}
+                        to{" "}
+                        <span className="font-semibold text-purple-500">
+                          {promotion?.to_stream?.grade?.name} {promotion?.to_stream?.name}
                     </span>
-                  </h5>
+                      </p>
                 </div>
-                <div className="hidden mx-auto md:block text-slate-500">
-                  Showing{" "}
-                  {pagination.current_page +
-                    " to " +
-                    pagination.total_pages +
-                    " of " +
-                    pagination.total}{" "}
-                  entries
                 </div>
-                <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                  <div className="relative w-56 text-slate-500">
+                  
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
                     <FormInput
                       type="text"
-                      className="w-56 pr-10 "
-                      placeholder="Search..."
+                        className="w-64 pr-10"
+                        placeholder="Search students..."
                       onChange={(e) => setSearch(e.target.value)}
                     />
                     <Lucide
                       icon="Search"
-                      className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                        className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3 text-gray-400"
                     />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-12  ">
-                <div className="col-span-12 overflow-auto  2xl:overflow-visible">
-                  {promotion?.learners?.length === 0 ? (
-                    <div className="flex flex-col items-center mt-10 bg-white p-8">
-                      {/* <Search size={28} className="" /> */}
-                      <p className="text-xl text-slate-500 ">
-                        No records found
-                      </p>
-                    </div>
-                  ) : (
-                    <>
-                      <form
-                        className="space-y-4 p-2"
-                        onSubmit={onSubmitEnrollment}
-                      >
+
+              <div className="p-6">
+                <form onSubmit={onSubmitEnrollment} className="space-y-6">
+                  {/* Hidden form fields */}
                         <input
                           type="text"
                           hidden
                           {...registerEnroll(`from_grade`)}
                           defaultValue={promotion?.from_stream?.grade?._id}
-                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
                         />
                         <input
                           type="text"
                           hidden
                           {...registerEnroll(`from_stream`)}
                           defaultValue={promotion?.from_stream?._id}
-                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
                         />
-
                         <input
                           type="text"
                           hidden
                           {...registerEnroll(`to_grade`)}
                           defaultValue={promotion?.to_stream?.grade?._id}
-                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
                         />
                         <input
                           type="text"
                           hidden
                           {...registerEnroll(`to_stream`)}
                           defaultValue={promotion?.to_stream?._id}
-                          className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
+                  />
+
+                  {/* Action Button */}
+                  <div className="flex justify-end">
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      className="px-8 py-3"
+                      disabled={loading}
+                    >
+                      <Lucide icon="ArrowUp" className="w-4 h-4 mr-2" />
+                      Promote All Students
+                      {loading && (
+                        <LoadingIcon
+                          icon="spinning-circles"
+                          color="white"
+                          className="w-4 h-4 ml-2"
                         />
-                        <div className="w-100">
-                          <button className="mt-2 ml-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded flex items-center">
-                            <i className="icon-stairs-up mr-2"></i>
-                            Promote Learners
-                          </button>
+                      )}
+                    </Button>
                         </div>
-                        <table className="min-w-full bg-white border border-gray-200 dark:bg-darkmode-600">
-                          <thead>
-                            <tr>
-                              <th className="px-4 py-2 text-left">#</th>
-                              <th className="px-4 py-2 text-left">
-                                Learner Name
+
+                  {/* Students Table */}
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                      <thead className="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            #
+                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Student
+                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Admission No
+                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            NEMIS No
+                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Current Grade
+                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Current Stream
+                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Action
                               </th>
-                              <th className="px-4 py-2 text-left">Adm No</th>
-                              <th className="px-4 py-2 text-left">Nemis No</th>
-                              <th className="px-4 py-2 text-left">Grade</th>
-                              <th className="px-4 py-2 text-left">Stream</th>
-                              <th className="px-4 py-2 text-left">Action</th>
-                              {/* <th className="px-4 py-2 text-left">Actions</th> */}
                             </tr>
                           </thead>
-                          <tbody>
-                            {promotion?.learners?.map(
-                              (learner: any, key: any) => (
+                      <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {promotion?.learners?.map((learner: any, key: any) => (
                                 <tr
                                   key={key}
-                                  className="border-t dark:border-darkmode-400"
+                            className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >
-                                  <td className="px-4 py-3 text-center font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                     {key + 1}
                                   </td>
-                                  <td className="px-4 py-3">
+                            <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
                                       <img
                                         src={c.IMG_URL + learner?.photo}
                                         alt="Learner"
-                                        className="w-9 h-9 rounded-lg border shadow-md"
+                                  className="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600 shadow-sm"
                                         onError={(e) =>
                                           (e.currentTarget.src = leanerImg)
                                         }
                                       />
                                       <div className="ml-4">
-                                        <a
-                                          href="#"
-                                          onClick={() => editRecord(learner)}
-                                          className="font-medium text-primary"
-                                        >
+                                  <div className="text-sm font-medium text-gray-900 dark:text-white">
                                           {`${learner?.first_name} ${learner?.surname} ${learner?.last_name}`}
-                                        </a>
-                                        <div className="text-sm text-gray-500">
-                                          {learner?.stream?.grade?.name}{" "}
-                                          {learner?.stream?.name}
+                                  </div>
+                                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                                    {learner?.stream?.grade?.name} {learner?.stream?.name}
                                         </div>
                                       </div>
                                     </div>
                                   </td>
-                                  <td className="px-4 py-3 font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                     {learner?.adm_no}
                                   </td>
-                                  <td className="px-4 py-3 font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                     {learner?.nemis_no}
                                   </td>
-                                  <td className="px-4 py-3 font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                     {learner?.grade?.name}
                                   </td>
-                                  <td className="px-4 py-3 font-medium">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                     {learner?.stream?.name}
                                   </td>
-                                  <td className="px-4 py-3 space-y-2">
+                            <td className="px-6 py-4 whitespace-nowrap">
                                     <input
                                       type="text"
                                       hidden
                                       {...registerEnroll(`learners[${key}].id`)}
                                       defaultValue={learner?._id}
-                                      className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
                                     />
                                     <select
-                                      {...registerEnroll(
-                                        `learners[${key}].status`
-                                      )}
-                                      className="w-full px-3 py-2 border rounded dark:bg-darkmode-700 dark:border-darkmode-500"
-                                    >
-                                      <option value="P">Promote</option>
-                                      <option value="L">Left</option>
-                                      <option value="G">Graduated</option>
+                                {...registerEnroll(`learners[${key}].status`)}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                              >
+                                <option value="P" className="text-green-600">Promote</option>
+                                <option value="L" className="text-red-600">Left</option>
+                                <option value="G" className="text-blue-600">Graduated</option>
                                     </select>
                                   </td>
-
-                                  {/* <td className="px-4 py-3 text-center">
-                                <button
-                                  type="button"
-                                  className="px-3 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600"
-                                  onClick={() => removeLearner(learner)}
-                                >
-                                  Remove
-                                </button>
-                              </td> */}
                                 </tr>
-                              )
-                            )}
+                        ))}
                           </tbody>
                         </table>
+                  </div>
                       </form>
-
-                      {/* <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                    <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap tt">
-                      <Pagination className="w-full sm:w-auto sm:mr-auto">
-                        <button
-                          onClick={() => setPage(page > 1 ? page - 1 : 1)}
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                        </button>
-                        {_.times(pagination.total_pages).map((page, key) =>
-                          page + 1 == pagination.current_page ? (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 bg-white rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setPage(page + 1)}
-                              key={key}
-                              className="py-2 px-4 rounded-md"
-                            >
-                              {page + 1}
-                            </button>
-                          )
-                        )}
-                        <button
-                          onClick={() =>
-                            setPage(
-                              page < pagination.total_pages ? page + 1 : 1
-                            )
-                          }
-                          className="py-2 px-4 rounded-md"
-                        >
-                          <Lucide icon="ChevronRight" className="w-4 h-4" />
-                        </button>
-                      </Pagination>
-                      <div className="text-slate-500">
-                        <span className="mr-3">Total {pagination.total}</span>
-                        <FormSelect
-                          className="w-30 mt-3 !box sm:mt-0"
-                          onChange={(e) => setLimit(parseInt(e.target.value))}
-                        >
-                          <option value={10}>10/page</option>
-                          <option value={25}>25/page</option>
-                          <option value={50}>50/page</option>
-                          <option value={100}>100/page</option>
-                        </FormSelect>
                       </div>
                     </div>
-                  </div> */}
-                    </>
-                  )}
-                </div>
+          )}
 
-                {/* END: Data List */}
+          {/* Empty State */}
+          {!loading && promotion?.learners?.length === 0 && promotion?.from_stream && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+              <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                <Lucide icon="Users" className="w-8 h-8 text-gray-400" />
               </div>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                No Students Found
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+                No students were found for the selected grade and stream combination. Please verify your selection and try again.
+              </p>
             </div>
-          ) : (
-            ""
           )}
         </>
       )}
+      
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {

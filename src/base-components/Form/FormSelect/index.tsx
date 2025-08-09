@@ -15,11 +15,15 @@ const FormSelect = forwardRef((props: FormSelectProps, ref: FormInputRef) => {
       {...computedProps}
       ref={ref}
       className={twMerge([
-        "disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50",
-        "[&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50",
-        "transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50",
-        props.formSelectSize == "sm" && "text-xs py-1.5 pl-2 pr-8",
-        props.formSelectSize == "lg" && "text-lg py-1.5 pl-4 pr-8",
+        "transition-all duration-200 ease-in-out w-full text-sm border-gray-300 shadow-sm rounded-lg py-2.5 px-3 pr-8",
+        "focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:border-blue-500 focus:outline-none",
+        "dark:bg-gray-800 dark:border-gray-600 dark:text-white",
+        "disabled:bg-gray-100 disabled:cursor-not-allowed disabled:border-gray-200",
+        "dark:disabled:bg-gray-700 dark:disabled:border-gray-600",
+        "[&[readonly]]:bg-gray-50 [&[readonly]]:cursor-not-allowed [&[readonly]]:border-gray-200",
+        "dark:[&[readonly]]:bg-gray-700 dark:[&[readonly]]:border-gray-600",
+        props.formSelectSize == "sm" && "text-xs py-2 px-3 pr-8",
+        props.formSelectSize == "lg" && "text-lg py-3 px-4 pr-8",
         formInline && "flex-1",
         props.className,
       ])}

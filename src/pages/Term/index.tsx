@@ -345,94 +345,69 @@ function Main() {
               {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
             </div>
             {/* BEGIN: Data List */}
-            <div className="col-span-12 overflow-x-auto overflow-y-visible  2xl:overflow-visible">
-              <Table className="border-spacing-y-[3px] border-separate mt-2">
-                <Table.Thead>
+            <div className="col-span-12 overflow-x-auto overflow-y-visible 2xl:overflow-visible">
+              <Table hover striped className="mt-6">
+                <Table.Thead variant="modern">
                   <Table.Tr>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      No.
+                    <Table.Th className="w-16 text-center">
+                      #
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Term
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Term Name</span>
+                      </div>
                     </Table.Th>
-                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Start Date
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>Start Date</span>
+                      </div>
                     </Table.Th>
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      End Date
-                    </Table.Th> */}
-                    <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Year
+                    <Table.Th className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                      <div className="flex items-center space-x-2">
+                        <span>End Date</span>
+                      </div>
                     </Table.Th>
-                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap">
-                      Created At
-                    </Table.Th> */}
-                    {/* <Table.Th className="py-0 border-b-0 whitespace-nowrap text-center">
+                    <Table.Th className="text-center w-32">
                       Actions
-                    </Table.Th> */}
+                    </Table.Th>
                   </Table.Tr>
                 </Table.Thead>
+
                 <Table.Tbody>
                   {terms.map((term: any, key) => (
-                    <Table.Tr key={key} className="">
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {key + 1}
-                        </span>
+                    <Table.Tr key={key}>
+                      <Table.Td className="text-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                          {limit * (page - 1) + key + 1}
+                        </div>
                       </Table.Td>
-                      <Table.Td className="py-3 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {term.name}
-                        </span>
+                      
+                      <Table.Td>
+                        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-green-700 dark:text-green-300">
+                            {term?.name}
+                          </span>
+                        </div>
                       </Table.Td>
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(term.startDate).toLocaleString("en-US", {
-                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          })}
-                        </span>
+                      
+                      <Table.Td>
+                        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-blue-700 dark:text-blue-300">
+                            {term?.start_date}
+                          </span>
+                        </div>
                       </Table.Td>
-                      <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(term.endDate).toLocaleString("en-US", {
-                            timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
-                          })}
-                        </span>
-                      </Table.Td> */}
-                      <Table.Td className="py-3 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {term?.academicYear?.name}
-                        </span>
+                      
+                      <Table.Td>
+                        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-3 py-2 inline-block">
+                          <span className="font-medium text-purple-700 dark:text-purple-300">
+                            {term?.end_date}
+                          </span>
+                        </div>
                       </Table.Td>
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {learningArea?.grade_id?.name}
-                        </span>
-                      </Table.Td> */}
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
-                        <span className="font-medium whitespace-nowrap">
-                          {new Date(term.createdAt).toLocaleString(
-                            "en-US",
-                            {
-                              timeZone: "Africa/Nairobi", // Set to the Kenyan time zone
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            }
-                          )}
-                        </span>
-                      </Table.Td> */}
 
-                      {/* <Table.Td className="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-3 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
-                        <div className="flex items-center justify-center">
+                      <Table.Td>
+                        <div className="flex items-center justify-center space-x-2">
                           <a
                             className="flex items-center mr-3 text-success"
                             href="#"
@@ -455,47 +430,7 @@ function Main() {
                             Delete
                           </a>
                         </div>
-                      </Table.Td> */}
-
-                      {/* <Table.Td className="py-0 first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] ">
-                        <div className="flex items-center justify-center">
-                          {true && (
-                            <Menu>
-                              <Menu.Button as={Button} className="px-2 !box">
-                                <span className="flex items-center justify-center w-5 h-5">
-                                  <Lucide
-                                    icon="MoreVertical"
-                                    className="w-4 h-4"
-                                  />
-                                </span>
-                              </Menu.Button>
-                              <Menu.Items>
-                                <Menu.Item
-                                  onClick={() => editRecord(term)}
-                                >
-                                  <Lucide
-                                    icon="Edit"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Edit
-                                </Menu.Item>
-                                <Menu.Item
-                                  onClick={() => {
-                                    setRecordId(term._id),
-                                      setConfirmDelete(true);
-                                  }}
-                                >
-                                  <Lucide
-                                    icon="Trash"
-                                    className="w-4 h-4 mr-2"
-                                  />{" "}
-                                  Delete
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Menu>
-                          )}
-                        </div>
-                      </Table.Td> */}
+                      </Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>

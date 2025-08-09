@@ -456,7 +456,7 @@ function Main() {
                         </span>
                       </Table.Td>
                       <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]  flex justify-center">
-                         <button className="w-1/2  px-3 py-4 bg-primary text-white rounded-md hover:bg-blue-600 "
+                         <button className="w-1/2  px-3 py-4 bg-primary text-white rounded-md hover:bg-primary/90 "
                           onClick={(e: any) => openSubStrand(strand)}>
                             View Substrands....
                           </button>

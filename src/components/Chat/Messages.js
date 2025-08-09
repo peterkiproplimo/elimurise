@@ -1,121 +1,155 @@
 import React from 'react'
+import Lucide from '../base-components/Lucide';
 
 const Messages = () => {
     return (
-        <div className="flex-grow h-full flex flex-col">
-            <div className="w-full h-15 p-1 bg-purple-600 dark:bg-gray-800 shadow-md rounded-xl rounded-bl-none rounded-br-none">
-                <div className="flex p-2 align-middle items-center">
-                    <div className="p-2 md:hidden rounded-full mr-1 hover:bg-purple-500 text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                    </div>
-                    <div className="border rounded-full border-white p-1/2">
-                        <img className="w-14 h-14 rounded-full" src="https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png" alt="avatar"/>
-                    </div>
-                    <div className="flex-grow p-2">
-                        <div className="text-md text-gray-50 font-semibold">Rey Jhon A. Baquirin </div>
-                        <div className="flex items-center">
-                            <div className="w-2 h-2 bg-green-300 rounded-full"></div>
-                            <div className="text-xs text-gray-50 ml-1">
-                            Online
-                            </div>
+        <div className="h-full flex flex-col bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+                <div className="flex items-center space-x-4">
+                    <div className="relative">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
+                            <img 
+                                className="w-full h-full object-cover" 
+                                src="https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png" 
+                                alt="avatar"
+                            />
                         </div>
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
                     </div>
-                    <div className="p-2 text-white cursor-pointer hover:bg-purple-500 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            <div className="w-full flex-grow bg-gray-100 dark:bg-gray-900 my-2 p-2 overflow-y-auto">
-                <div className="flex items-end w-3/4" >
-                    <img className="hidden w-8 h-8 m-3 rounded-full" src="https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png" alt="avatar"/>  
-                    <div className="w-8 m-3 rounded-full"/>
-                    <div className="p-3 bg-purple-300 dark:bg-gray-800 mx-3 my-1 rounded-2xl rounded-bl-none sm:w-3/4 md:w-3/6">
-                        <div className="text-xs text-gray-600 dark:text-gray-200">
-                            Rey Jhon A. Baqurin
-                        </div>
-                        <div className="text-gray-700 dark:text-gray-200">
-                            gsegjsghjbdg bfb sbjbfsj fsksnf jsnfj snf nnfnsnfsnj
-                        </div>
-                        <div className="text-xs text-gray-400">
-                            1 day ago
+                    <div className="flex-1">
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            Rey Jhon A. Baquirin
+                        </h2>
+                        <div className="flex items-center space-x-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+                                Online
+                            </span>
                         </div>
                     </div>
-                </div>
-                <div className="flex items-end w-3/4">
-                    <img className="w-8 h-8 m-3 rounded-full" src="https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png" alt="avatar"/>  
-                    <div className="p-3 bg-purple-300 dark:bg-gray-800  mx-3 my-1 rounded-2xl rounded-bl-none sm:w-3/4 md:w-3/6">
-                        <div className="text-xs text-gray-100 hidden dark:text-gray-200">
-                            Rey Jhon A. Baqurin
+                    <div className="flex items-center space-x-2">
+                        <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 cursor-pointer">
+                            <Lucide icon="Phone" className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                         </div>
-                        <div className="text-gray-700 dark:text-gray-200">
-                            gsegjsghjbdg bfb sbjbfsj fsksnf jsnfj snf nnfnsnfsnj
+                        <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 cursor-pointer">
+                            <Lucide icon="Video" className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                         </div>
-                        <div className="text-xs text-gray-400">
-                            1 day ago
-                        </div>
-                    </div>
-                </div>
-                
-                <div className="flex justify-end">
-                    <div className="flex items-end w-auto bg-purple-500 dark:bg-gray-800 m-1 rounded-xl rounded-br-none sm:w-3/4 md:w-auto">
-                        <div className="p-2">
-                            <div className="text-gray-200">
-                                Hello ? How Can i help you ?
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex justify-end">
-                    <div className="flex items-end w-3/4 bg-purple-500 dark:bg-gray-800 m-1 rounded-xl rounded-br-none sm:w-3/4 md:w-auto">
-                        <div className="p-2">
-                            <div className="text-gray-200">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex justify-end">
-                    <div className="flex items-end w-3/4 bg-purple-500 dark:bg-gray-800 m-1 rounded-xl rounded-br-none sm:w-3/4 max-w-xl md:w-auto">
-                        <div className="p-2">
-                            <div className="text-gray-200 ">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex items-end w-3/4">
-                    <img className="w-8 h-8 m-3 rounded-full" src="https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png" alt="avatar"/>  
-                    <div className="p-3 bg-purple-300 dark:bg-gray-800 mx-3 my-1 rounded-2xl rounded-bl-none sm:w-3/4 md:w-3/6">
-                        <div className="text-xs text-gray-100 hidden dark:text-gray-200">
-                            Rey Jhon A. Baqurin
-                        </div>
-                        <div className="text-gray-700 dark:text-gray-200">
-                            Hello po ang pogi niyo :)
-                        </div>
-                        <div className="text-xs text-gray-400">
-                            just now
+                        <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 cursor-pointer">
+                            <Lucide icon="MoreVertical" className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="h-15  p-3 rounded-xl rounded-tr-none rounded-tl-none bg-gray-100 dark:bg-gray-800">
-                <div className="flex items-center">
-                    <div className="p-2 text-gray-600 dark:text-gray-200 ">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                {/* Incoming Message */}
+                <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600">
+                        <img 
+                            className="w-full h-full object-cover" 
+                            src="https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png" 
+                            alt="avatar"
+                        />
                     </div>
-                    <div className="search-chat flex flex-grow p-2">
-                        <input className="input text-gray-700 dark:text-gray-200 text-sm p-5 focus:outline-none bg-gray-100 dark:bg-gray-800  flex-grow rounded-l-md" type="text" placeholder="Type your message ..."/>
-                        <div className="bg-gray-100 dark:bg-gray-800 dark:text-gray-200  flex justify-center items-center pr-3 text-gray-400 rounded-r-md">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
+                    <div className="max-w-xs lg:max-w-md">
+                        <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl rounded-bl-md px-4 py-3">
+                            <p className="text-gray-900 dark:text-gray-100 text-sm">
+                                Hey there! Are you finish creating the chat app?
+                            </p>
                         </div>
+                        <div className="flex items-center space-x-2 mt-2">
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                Rey Jhon A. Baquirin
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                                1 day ago
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Outgoing Message */}
+                <div className="flex items-start justify-end space-x-3">
+                    <div className="max-w-xs lg:max-w-md">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl rounded-br-md px-4 py-3">
+                            <p className="text-white text-sm">
+                                Hello! How can I help you?
+                            </p>
+                        </div>
+                        <div className="flex items-center justify-end space-x-2 mt-2">
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                                just now
+                            </span>
+                            <Lucide icon="CheckCheck" className="w-3 h-3 text-blue-500" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Another Outgoing Message */}
+                <div className="flex items-start justify-end space-x-3">
+                    <div className="max-w-xs lg:max-w-md">
+                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl rounded-br-md px-4 py-3">
+                            <p className="text-white text-sm">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            </p>
+                        </div>
+                        <div className="flex items-center justify-end space-x-2 mt-2">
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                                2 min ago
+                            </span>
+                            <Lucide icon="CheckCheck" className="w-3 h-3 text-blue-500" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Incoming Message */}
+                <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600">
+                        <img 
+                            className="w-full h-full object-cover" 
+                            src="https://cdn.pixabay.com/photo/2017/01/31/21/23/avatar-2027366_960_720.png" 
+                            alt="avatar"
+                        />
+                    </div>
+                    <div className="max-w-xs lg:max-w-md">
+                        <div className="bg-gray-100 dark:bg-gray-700 rounded-2xl rounded-bl-md px-4 py-3">
+                            <p className="text-gray-900 dark:text-gray-100 text-sm">
+                                Hello po ang pogi niyo :)
+                            </p>
+                        </div>
+                        <div className="flex items-center space-x-2 mt-2">
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                Rey Jhon A. Baquirin
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                                just now
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Message Input */}
+            <div className="p-6 border-t border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+                <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 cursor-pointer">
+                        <Lucide icon="Smile" className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    </div>
+                    <div className="flex-1 relative">
+                        <input 
+                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                            placeholder="Type your message..."
+                        />
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-500 transition-all duration-200 cursor-pointer">
+                                <Lucide icon="Paperclip" className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center hover:from-blue-600 hover:to-purple-600 transition-all duration-200 cursor-pointer shadow-lg">
+                        <Lucide icon="Send" className="w-5 h-5 text-white" />
                     </div>
                 </div>
             </div>

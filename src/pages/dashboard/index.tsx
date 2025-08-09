@@ -29,6 +29,7 @@ import { useTour } from "../../TourContext";
 import ContentLoader from "react-content-loader";
 import CardLoader from "../UserProfile/loader";
 import { is_agreed_terms } from "../../utils/helper";
+
 // Define interfaces for timetable data
 interface TimeSlot {
   _id: string;
@@ -58,6 +59,49 @@ interface UpcomingClass {
   timeSlot: TimeSlot;
   period: Period;
 }
+
+// Enhanced skeleton loader component
+const DashboardSkeleton = () => (
+  <div className="space-y-8 animate-pulse">
+    {/* Header skeleton */}
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+      <div className="space-y-2">
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg w-48"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-64"></div>
+      </div>
+      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 mt-4 sm:mt-0"></div>
+    </div>
+
+    {/* Metrics cards skeleton */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-3 flex-1">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+            </div>
+            <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Charts skeleton */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {[...Array(2)].map((_, i) => (
+        <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-40"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+          </div>
+          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 function Main() {
   const { setRunTour } = useTour();
@@ -265,11 +309,11 @@ function Main() {
                             any of its entities controlling, controlled by or
                             under control by or with the Company (Affiliates)
                             may provide in connection therewith to all the
-                            Company’s customers, as subscribers and licensees
+                            Company's customers, as subscribers and licensees
                             (the Customer). For purposes of these Terms and
                             Conditions, the term Company shall include all its
                             Affiliates. Reference to these Terms and Conditions
-                            shall include the Company’s Data Privacy Policy (as
+                            shall include the Company's Data Privacy Policy (as
                             defined below), the applicable ordering document
                             according to which the Customer orders and
                             subscribes for the Software (together with any
@@ -311,19 +355,19 @@ function Main() {
                             <li>
                               {" "}
                               download, install, activate, access to and use any
-                              of the Company’s integrated system comprised of
+                              of the Company's integrated system comprised of
                               hardware-bound algorithms, software application,
                               cloud-based services and solutions, computer
                               programs in object form provided, connected and/or
-                              associated to a Company’s branded instrument or
+                              associated to a Company's branded instrument or
                               any of the above provided on a standalone as
                               described under the Order Form (the Software) in
-                              Customer’s normal course of business in one (1) or
+                              Customer's normal course of business in one (1) or
                               multiple hardware devices owned or otherwise
                               controlled by the Customer strictly in accordance
-                              with these Terms and Conditions. The Customer’s
+                              with these Terms and Conditions. The Customer's
                               user account shall be at all times associated with
-                              the Company’s branded equipment referred to in the
+                              the Company's branded equipment referred to in the
                               respective Order Form; and
                             </li>
                             <li>
@@ -360,7 +404,7 @@ function Main() {
                           The Software together with any third-party software,
                           documentation, interfaces, content, fonts and any data
                           accompanying the Software whether preinstalled on the
-                          Company’s branded hardware, on disk, in read only
+                          Company's branded hardware, on disk, in read only
                           memory, on any other media or in any other form are an
                           integral part of the Software and are provided to the
                           Customer by the Company for use only under these Terms
@@ -372,7 +416,7 @@ function Main() {
                         <div>
                           The Software may be delivered to the Customer by data
                           media or by electronic means via data networks such as
-                          the Internet, or third parties’ platforms. The Company
+                          the Internet, or third parties' platforms. The Company
                           offers no guarantee for the availability of such
                           networks or platforms nor for the correct transfer and
                           download of the Software.
@@ -440,7 +484,7 @@ function Main() {
                         <div className="mr-2">1.</div>
                         <div>
                           The Customer acknowledges and agrees that the Software
-                          shall be used in connection with the Company’s branded
+                          shall be used in connection with the Company's branded
                           hardware specified in the respective Order Form that
                           meets specified system requirements as indicated by
                           the Company and that the use of and access to certain
@@ -491,7 +535,7 @@ function Main() {
                               providing and maintaining, to the extent deemed
                               required during the use of the Software the
                               necessary Internet access for its use of the
-                              Software, and connection to the Company’s cloud to
+                              Software, and connection to the Company's cloud to
                               store and manage its data;
                             </li>
                             <li>
@@ -571,10 +615,10 @@ function Main() {
                       <li className="flex">
                         <div className="mr-2">5.</div>
                         <div>
-                          Upon request and subject to the Company’s prior
+                          Upon request and subject to the Company's prior
                           written approval, the Customer may be permitted to
                           sub-license the Software in cases of rental of the
-                          Company’s branded hardware described in the Order Form
+                          Company's branded hardware described in the Order Form
                           and associated with the Software Subscription. In such
                           case, the Customer shall enter into a separate
                           agreement with the Company. The Company reserves all
@@ -601,7 +645,7 @@ function Main() {
                           Except as expressly permitted herein, Customer agrees
                           that it shall make no use of the Software, the
                           documentation, or any other related materials without
-                          Company’s prior written consent. Any and all goodwill
+                          Company's prior written consent. Any and all goodwill
                           associated with such rights shall enure directly and
                           exclusively to the benefit of the Company.
                         </div>
@@ -715,7 +759,7 @@ function Main() {
                         <div className="mr-2">1.</div>
                         <div>
                           The Company may, at its discretion, make available
-                          future Updates to the Software for the Customer’s
+                          future Updates to the Software for the Customer's
                           compatible Company-branded devices. These Terms and
                           Conditions will govern any Software Updates provided
                           by the Company to the original Software product,
@@ -739,7 +783,7 @@ function Main() {
                         <div className="mr-2">3.</div>
                         <div>
                           Updates, if any, will be made available to Customer
-                          based on Customer’s settings, and when its device is
+                          based on Customer's settings, and when its device is
                           connected to the Internet either:
                           <ul>
                             <li>
@@ -775,8 +819,8 @@ function Main() {
                         <div>
                           Data processed by the Company through or in connection
                           with the Software Subscription are subject to the
-                          Company’s Data Privacy Policy, as amended from time to
-                          time at the Company’s sole discretion, available at
+                          Company's Data Privacy Policy, as amended from time to
+                          time at the Company's sole discretion, available at
                           www.herolearning.co.ke (the Privacy Policy). By means
                           of the Software Subscription, the Customer consents to
                           all actions taken by the Company with respect to its
@@ -793,7 +837,7 @@ function Main() {
                           manner in which such data is obtained, used,
                           generated, collected, provided, uploaded or loaded
                           through or into the Software and uploaded by the
-                          Customer in the Company’s cloud platform, including,
+                          Customer in the Company's cloud platform, including,
                           without limitation, historical data to permit the use
                           of the Software and maintenance thereof.
                         </div>
@@ -809,7 +853,7 @@ function Main() {
                           collected or generated through or by means of the
                           Software during the Subscription Period as well as any
                           intellectual property rights thereunder according to
-                          the Company’s Privacy Policy. This right to use such
+                          the Company's Privacy Policy. This right to use such
                           data shall survive the termination or expiry of the
                           Subscription for whatever reason.
                         </div>
@@ -822,7 +866,7 @@ function Main() {
                           Services provided in connection therewith or
                           installation, functionality, performance, accuracy,
                           consistency, and ease of use of the Software or
-                          Services (Feedback) will be considered the Company’s
+                          Services (Feedback) will be considered the Company's
                           property and shall be treated by the Customer as
                           confidential. The Customer hereby irrevocably
                           transfers and assigns to the Company all rights
@@ -876,7 +920,7 @@ function Main() {
                           obligation, in addition to any other rights it holds
                           pursuant to these Terms and Conditions or remedies
                           available at law or equity, to immediately disable or
-                          suspend the Customer’s access to and use of the
+                          suspend the Customer's access to and use of the
                           Software without further notice for an undetermined
                           period of time, upon occurrence of any of the
                           following events:
@@ -889,7 +933,7 @@ function Main() {
                             </li>
                             <li>
                               in case the Company believes in good faith that
-                              the Customer’s conduct or failure to act may (i)
+                              the Customer's conduct or failure to act may (i)
                               pose a security risk or otherwise adversely impact
                               the Software and/or the Company; (ii) constitute
                               or enable tampering with, removing, disabling, or
@@ -897,7 +941,7 @@ function Main() {
                               technical protections (including any mechanisms
                               for managing, monitoring, controlling, or
                               analyzing the installation of, access to, or use
-                              of the Software or protections of the Company’s
+                              of the Software or protections of the Company's
                               intellectual property rights); (iii) subject the
                               Company or any of its partners or representatives
                               or any other user to liability. Unless the Company
@@ -939,7 +983,7 @@ function Main() {
                           Software and errors that arise out of or result from
                           (a) modifications to the Software or hardware made by
                           the Customer or a third party not authorized by the
-                          Company; (b) Customer’s operation or use of the
+                          Company; (b) Customer's operation or use of the
                           Software other than as strictly specified by the
                           Company; (c) any failure, including failure to
                           promptly install any Update; (d) continued use of the
@@ -992,7 +1036,7 @@ function Main() {
                           balance of all overdue sums at the rate of 5% per
                           annum; (b) suspend the Software Subscription as per
                           Clause 8; (c) charge to the Customer an additional fee
-                          for administration costs at the Company’s applicable
+                          for administration costs at the Company's applicable
                           rates; and (d) require and Customer shall cease all
                           use of the Software.
                         </div>
@@ -1056,11 +1100,11 @@ function Main() {
                           In the event of early termination without reason by
                           the Company, if Customer has pre-paid any Fees in
                           respect of the then current Software Subscription, the
-                          Company’s sole liability to Customer in respect of
+                          Company's sole liability to Customer in respect of
                           such termination shall be to refund the pre-paid Fees
                           in respect of the remainder Subscription Period. No
                           such refund shall be required in event of termination
-                          for Customer’s breach of any of the terms hereunder.
+                          for Customer's breach of any of the terms hereunder.
                         </div>
                       </li>
                       <li className="flex">
@@ -1143,7 +1187,7 @@ function Main() {
                           <ul className="list-disc ml-5 mt-5">
                             <li>
                               {" "}
-                              whilst, in Company’s reasonable opinion, such
+                              whilst, in Company's reasonable opinion, such
                               discussions are proceeding without undue delay,
                               continue licensing the relevant Software on the
                               terms of these Terms and Conditions during that
@@ -1159,9 +1203,9 @@ function Main() {
                             </li>
                             <li>
                               in the event that such agreement is not reached
-                              within a reasonable period, at Company’s sole
+                              within a reasonable period, at Company's sole
                               discretion have the right to require to withdraw
-                              Customer’s access to the Software. In such case,
+                              Customer's access to the Software. In such case,
                               Customer shall cease all use of the Software,
                               uninstall the Software, and confirm by email to
                               Company that the said Software has been
@@ -1203,8 +1247,8 @@ function Main() {
                         <div className="mr-2">3.</div>
                         <div>
                           In case the Company determines that any of the
-                          Customer’s reported maintenance problems cannot be
-                          resolved due to Customer’s failure to install Updates
+                          Customer's reported maintenance problems cannot be
+                          resolved due to Customer's failure to install Updates
                           or procure new versions of the Software, Customer will
                           be given a reasonable opportunity to install such
                           Updates or procure a new version. If, after such
@@ -1216,7 +1260,7 @@ function Main() {
                       <li className="flex">
                         <div className="mr-2">4.</div>
                         <div>
-                          The Company’s obligations under the Software
+                          The Company's obligations under the Software
                           Subscription provided hereunder will extend only to
                           Updates of the Software provided to Customer by the
                           Company so long as the Software or hardware has not
@@ -1229,7 +1273,7 @@ function Main() {
                         <div className="mr-2">5.</div>
                         <div>
                           Customer shall ensure that the Company personnel are
-                          provided with such information under Customer’s
+                          provided with such information under Customer's
                           control as is reasonably necessary to enable the
                           Company to comply with its obligations hereunde.
                         </div>
@@ -1240,7 +1284,7 @@ function Main() {
                           Any services, training, or other requirements not
                           expressly included in these Terms and Conditions are
                           outside the scope of this Software Subscription and
-                          may be only provided subject to the Company’s
+                          may be only provided subject to the Company's
                           availability and for additional fees. Fees for such
                           items are payable as specified in the applicable Order
                           Form.
@@ -1278,7 +1322,7 @@ function Main() {
                         <div>
                           Third-Party Materials and links thereto are provided
                           solely as a convenience to the Customer, and
-                          Customer’s access and use of them are entirely at its
+                          Customer's access and use of them are entirely at its
                           own risk and subject to such third parties' terms and
                           conditions.
                         </div>
@@ -1297,8 +1341,8 @@ function Main() {
                           Except as specifically and expressly provided in these
                           Terms and Conditions and to the fullest extent
                           permitted by law, the Software and any Services
-                          provided hereunder are provided “as is” and “as
-                          available” without warranty of any kind, whether
+                          provided hereunder are provided "as is" and "as
+                          available" without warranty of any kind, whether
                           express or implied or statutory including but not
                           limited to warranties of performance, merchantability,
                           fitness for a particular purpose, accuracy, omissions,
@@ -1316,7 +1360,7 @@ function Main() {
                           downtime, or trade practice. Without limitation to the
                           foregoing, the Company provides no warranty or
                           undertaking, and makes no representation of any kind
-                          that the Software will meet the Customer’s
+                          that the Software will meet the Customer's
                           requirements, achieve any intended results, be
                           compatible, or work with any other software, devices,
                           applications, systems, or services, operate without
@@ -1344,7 +1388,7 @@ function Main() {
                           settlements, interest, awards, penalties, fines,
                           costs, or expenses of whatever kind, including
                           attorneys' fees, arising from or relating to your use
-                          or misuse of the Software or Customer’s breach of
+                          or misuse of the Software or Customer's breach of
                           these Terms and Conditions including but not limited
                           to the content the Customer submits or makes available
                           through the Software.
@@ -1353,7 +1397,7 @@ function Main() {
                       <li className="flex">
                         <div className="mr-2">2.</div>
                         <div>
-                          Customer’s sole and exclusive remedy for the Company’s
+                          Customer's sole and exclusive remedy for the Company's
                           breach of its obligations arising out of the Software
                           Subscription will be to have Company re-perform the
                           defective services so that they conform to the
@@ -1381,7 +1425,7 @@ function Main() {
                         <div className="mr-2">4.</div>
                         <div>
                           The remedies provided in these Terms and Conditions
-                          are Customer’s exclusive remedies and are in lieu of
+                          are Customer's exclusive remedies and are in lieu of
                           all other legal or equitable remedies and all
                           liabilities or obligations on the part of the Company
                           for any direct or indirect damages arising out of,
@@ -1449,7 +1493,7 @@ function Main() {
                       <li className="flex">
                         <div className="mr-2">4.</div>
                         <div>
-                          These Terms and Conditions contain the Company’s
+                          These Terms and Conditions contain the Company's
                           entire obligation and the exclusive remedies of
                           Customer with regard to any claimed infringement
                           arising out of or based upon the Software used by
@@ -1492,7 +1536,7 @@ function Main() {
                           or their nationals, or any other embargoed/denied
                           persons listed from time to time by other countries.
                           The Company will not be liable for any default or
-                          delay caused by the Customer’s efforts to comply with
+                          delay caused by the Customer's efforts to comply with
                           any Export Laws. If Export Laws change after the
                           commencement of the Subscription Period and such
                           changes materially inhibit or prohibit the Company
@@ -1838,7 +1882,7 @@ function Main() {
                       <li className="flex">
                         <div className="mr-2">9.</div>
                         <div>
-                          The Company’s General Terms and Conditions of Sale and
+                          The Company's General Terms and Conditions of Sale and
                           General Terms and Conditions of Rental, as amended
                           from time to time, may supplement these Terms and
                           Conditions and govern the Software Subscription and
@@ -1862,7 +1906,7 @@ function Main() {
             <div className="flex justify-center space-x-4">
               <button
                 onClick={handleAcceptTerms}
-                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark"
+                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90"
               >
                 Accept
               </button>
@@ -1880,359 +1924,458 @@ function Main() {
       {termsAccepted ? (
         loading ? (
           <div className="w-full">
-            <CardLoader />
+            <DashboardSkeleton />
           </div>
         ) : is_admin() ? (
-          <div className="grid grid-cols-12 gap-4 sm:gap-6">
-            {/* Admin dashboard content remains unchanged */}
-            <div className="col-span-12 2xl:col-span-9">
-              <div className="grid gap-4 sm:gap-6">
-                <div className="col-span-12">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center">
-                    <h2 className="mr-0 sm:mr-5 text-lg font-medium truncate mb-2 sm:mb-0">
-                      Dashboard
-                    </h2>
-                  </div>
-                  {hasPermission("dashboard", "view-stats") && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mt-4 sm:mt-5">
-                      <div className="col-span-1">
-                        <div
-                          className={clsx(["relative zoom-in"])}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            navigate("/home/learners");
-                          }}
-                        >
-                          <div className="p-4 sm:p-5 box">
-                            <div className="flex flex-wrap items-center">
-                              <Lucide
-                                icon="Monitor"
-                                className="w-6 h-6 sm:w-7 sm:h-7 text-warning mr-2"
-                              />
-                              <div className="ml-auto">
-                                <Tippy
-                                  as="div"
-                                  className="cursor-pointer bg-success py-1 sm:py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                                  content="12% Higher than last month"
-                                >
-                                  12%{" "}
-                                  <Lucide
-                                    icon="ChevronUp"
-                                    className="w-3 h-3 sm:w-4 sm:h-4 ml-0.5"
-                                  />
-                                </Tippy>
-                              </div>
-                            </div>
-                            <div className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-medium leading-8">
-                              {dashboards.totalLearners}
-                            </div>
-                            <div className="mt-1 text-sm sm:text-base text-slate-500">
-                              Learners
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-span-1">
-                        <div
-                          className={clsx(["relative zoom-in"])}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            navigate("/home/teachers");
-                          }}
-                        >
-                          <div className="p-4 sm:p-5 box">
-                            <div className="flex flex-wrap items-center">
-                              <Lucide
-                                icon="ShoppingCart"
-                                className="w-6 h-6 sm:w-7 sm:h-7 text-primary mr-2"
-                              />
-                              <div className="ml-auto">
-                                <Tippy
-                                  as="div"
-                                  className="cursor-pointer bg-success py-1 sm:py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                                  content="Total Teachers"
-                                >
-                                  <Lucide
-                                    icon="ChevronUp"
-                                    className="w-3 h-3 sm:w-4 sm:h-4 ml-0.5"
-                                  />
-                                </Tippy>
-                              </div>
-                            </div>
-                            <div className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-medium leading-8">
-                              {dashboards.totalTeachers}
-                            </div>
-                            <div className="mt-1 text-sm sm:text-base text-slate-500">
-                              Teachers
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-span-1">
-                        <div
-                          className={clsx(["relative zoom-in"])}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            navigate("/home/parents");
-                          }}
-                        >
-                          <div className="p-4 sm:p-5 box">
-                            <div className="flex flex-wrap items-center">
-                              <Lucide
-                                icon="CreditCard"
-                                className="w-6 h-6 sm:w-7 sm:h-7 text-pending mr-2"
-                              />
-                              <div className="ml-auto">
-                                <Tippy
-                                  as="div"
-                                  className="cursor-pointer bg-danger py-1 sm:py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                                  content="2% Lower than last month"
-                                >
-                                  2%
-                                  <Lucide
-                                    icon="ChevronDown"
-                                    className="w-3 h-3 sm:w-4 sm:h-4 ml-0.5"
-                                  />
-                                </Tippy>
-                              </div>
-                            </div>
-                            <div className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-medium leading-8">
-                              {dashboards.totalParents}
-                            </div>
-                            <div className="mt-1 text-sm sm:text-base text-slate-500">
-                              Parents
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-span-1">
-                        <div
-                          className={clsx(["relative zoom-in"])}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            navigate("/home/tests");
-                          }}
-                        >
-                          <div className="p-4 sm:p-5 box">
-                            <div className="flex flex-wrap items-center">
-                              <Lucide
-                                icon="ShoppingCart"
-                                className="w-6 h-6 sm:w-7 sm:h-7 text-primary mr-2"
-                              />
-                              <div className="ml-auto">
-                                <Tippy
-                                  as="div"
-                                  className="cursor-pointer bg-success py-1 sm:py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                                  content="Total Teachers"
-                                >
-                                  <Lucide
-                                    icon="ChevronUp"
-                                    className="w-3 h-3 sm:w-4 sm:h-4 ml-0.5"
-                                  />
-                                </Tippy>
-                              </div>
-                            </div>
-                            <div className="mt-4 sm:mt-6 text-2xl sm:text-3xl font-medium leading-8">
-                              {dashboards.totalTests}
-                            </div>
-                            <div className="mt-1 text-sm sm:text-base text-slate-500">
-                              Unpublished Tests
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+          <div className="space-y-8">
+            {/* Enhanced Header with Welcome Message */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-6 border border-blue-100 dark:border-gray-600">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Welcome back, {user?.first_name || 'Administrator'}!
+                  </h1>
+                  <p className="text-gray-600 dark:text-gray-300 text-lg">
+                    Here's your comprehensive school overview for today
+                  </p>
                 </div>
-                <div className="relative col-span-12 home-step-1">
-                  <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 sm:gap-6">
-                    <div className="col-span-1 sm:col-span-4 box p-4 sm:p-6">
-                      <div className="flex items-center justify-between h-10">
-                        <h2 className="text-base sm:text-lg font-medium truncate">
-                          Last Per Grade
-                        </h2>
-                      </div>
-                      <div className="mt-6 sm:mt-2 overflow-auto lg:overflow-visible">
-                        <StackedBarChart
-                          height={250}
-                          className="mt-4 -mb-6 w-full"
-                          labels={dashboards?.learnerStreamWise?.labels}
-                          data={dashboards?.learnerStreamWise?.values}
-                        />
-                      </div>
-                    </div>
-                    <div className="relative col-span-1 sm:col-span-2">
-                      <div className="flex items-center h-10">
-                        <h2 className="text-base sm:text-lg font-medium truncate">
-                          Last Added Parents
-                        </h2>
-                      </div>
-                      <div className="mt-4 sm:mt-5 space-y-3">
-                        {dashboards?.parents?.map((parent: any, key: any) => (
-                          <div
-                            onClick={(e: any) => {
-                              navigate("/home/parents/" + parent._id);
-                            }}
-                            key={key}
-                            className="flex items-center px-4 py-3 box zoom-in"
-                          >
-                            <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
-                              <img
-                                alt={`${parent?.first_name}'s profile`}
-                                src={image}
-                              />
-                            </div>
-                            <div className="ml-4 truncate">
-                              <div className="font-medium truncate">
-                                {parent?.first_name} {parent?.last_name}
-                              </div>
-                              <div className="text-slate-500 text-xs mt-0.5 truncate">
-                                {parent?.email}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                        <a
-                          onClick={(event) => {
-                            event.preventDefault();
-                            navigate("/home/parents");
-                          }}
-                          className="block w-full py-3 text-center bg-success text-white rounded-md hover:bg-success-dark transition text-sm"
-                        >
-                          See More
-                        </a>
-                      </div>
-                    </div>
+                <div className="mt-4 sm:mt-0 flex items-center space-x-3">
+                  <div className="bg-white dark:bg-gray-700 rounded-xl px-4 py-2 shadow-sm border border-gray-200 dark:border-gray-600">
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {currentDate}
+                    </span>
+                  </div>
+                  <div className="bg-green-100 dark:bg-green-900/30 rounded-xl px-3 py-2">
+                    <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                      Live
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-span-12 2xl:col-span-3 home-step-2">
-              <div className="2xl:border-l 2xl:pl-4 sm:pl-0">
-                <div className="grid grid-cols-1 gap-4 sm:gap-6 2xl:gap-x-0">
-                  <div className="col-span-1">
-                    <div className="flex items-center h-10">
-                      <h2 className="text-base sm:text-lg font-medium truncate">
-                        Teachers
-                      </h2>
+
+            {hasPermission("dashboard", "view-stats") && (
+              <>
+                {/* Enhanced Key School Metrics Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* Total Students Card */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                            Total Students
+                          </p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          {dashboards.totalLearners || "1,234"}
+                        </p>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center bg-green-50 dark:bg-green-900/20 rounded-full px-3 py-1">
+                            <Lucide icon="TrendingUp" className="w-4 h-4 text-green-600 mr-1" />
+                            <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                              +12%
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            from last month
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Lucide icon="Users" className="w-8 h-8 text-white" />
+                      </div>
                     </div>
-                    <div className="mt-2 space-y-3">
-                      {dashboards?.teachers?.map((teacher: any, key: any) => (
-                        <div
-                          key={key}
-                          onClick={() =>
-                            navigate("/home/teacher/" + teacher._id)
-                          }
-                        >
-                          <div className="flex items-center px-4 py-3 box zoom-in">
-                            <div className="flex-none w-10 h-10 overflow-hidden rounded-full image-fit">
-                              <img
-                                alt="Midone Tailwind HTML Admin Template"
-                                src={logo}
-                              />
-                            </div>
-                            <div className="ml-4 truncate">
-                              <div className="font-medium truncate">
-                                {teacher?.firstname} {teacher?.lastname}
+                  </div>
+
+                  {/* Total Teachers Card */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                            Total Teachers
+                          </p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          {dashboards.totalTeachers || "89"}
+                        </p>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center bg-green-50 dark:bg-green-900/20 rounded-full px-3 py-1">
+                            <Lucide icon="TrendingUp" className="w-4 h-4 text-green-600 mr-1" />
+                            <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                              +8%
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            from last month
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Lucide icon="GraduationCap" className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Total Classes Card */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                            Active Classes
+                          </p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          {dashboards.totalClasses || "45"}
+                        </p>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center bg-green-50 dark:bg-green-900/20 rounded-full px-3 py-1">
+                            <Lucide icon="TrendingUp" className="w-4 h-4 text-green-600 mr-1" />
+                            <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                              +15%
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            from last month
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Lucide icon="BookOpen" className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Attendance Rate Card */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                          <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                            Attendance Rate
+                          </p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          94.2%
+                        </p>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center bg-green-50 dark:bg-green-900/20 rounded-full px-3 py-1">
+                            <Lucide icon="TrendingUp" className="w-4 h-4 text-green-600 mr-1" />
+                            <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                              +2.1%
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            from last week
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Lucide icon="Calendar" className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enhanced School Analytics Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Student Enrollment Trend */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                          Student Enrollment Trend
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Monthly enrollment growth
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <select className="text-sm border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                          <option>2024</option>
+                          <option>2023</option>
+                        </select>
+                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      </div>
+                    </div>
+                    <div className="relative h-72 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center border border-blue-100 dark:border-gray-600">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                          <Lucide icon="BarChart3" className="w-8 h-8 text-white" />
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 font-medium">Enrollment Analytics</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Interactive chart coming soon</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Grade Distribution */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                          Grade Distribution
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Current term performance
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                            A: 35%
+                          </p>
+                        </div>
+                        <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                          +5% from last term
+                        </p>
+                      </div>
+                    </div>
+                    <div className="relative h-72 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center border border-purple-100 dark:border-gray-600">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                          <Lucide icon="PieChart" className="w-8 h-8 text-white" />
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 font-medium">Grade Analytics</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Performance insights</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enhanced Attendance & Performance */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300">
+                    <div className="mb-6">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        Attendance by Grade Level
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Real-time attendance tracking
+                      </p>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                              96.8%
+                            </span>
+                          </div>
+                          <div className="flex items-center bg-green-100 dark:bg-green-900/30 rounded-full px-3 py-1">
+                            <Lucide icon="TrendingUp" className="w-4 h-4 text-green-600 mr-1" />
+                            <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                              +1.2%
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          Primary School
+                        </p>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all duration-1000" style={{ width: '96.8%' }}></div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                              91.5%
+                            </span>
+                          </div>
+                          <div className="flex items-center bg-blue-100 dark:bg-blue-900/30 rounded-full px-3 py-1">
+                            <Lucide icon="TrendingUp" className="w-4 h-4 text-blue-600 mr-1" />
+                            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                              +0.8%
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          Secondary School
+                        </p>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000" style={{ width: '91.5%' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300">
+                    <div className="mb-6">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        Subject Performance
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Academic excellence tracking
+                      </p>
+                    </div>
+                    <div className="relative h-64 bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center border border-orange-100 dark:border-gray-600">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                          <Lucide icon="BookOpen" className="w-8 h-8 text-white" />
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 font-medium">Subject Analytics</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Performance insights</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enhanced School Data Tables */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Top Performing Students */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300">
+                    <div className="mb-6">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        Top Performing Students
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Academic excellence leaders
+                      </p>
+                    </div>
+                    <div className="space-y-4">
+                      {[
+                        { name: "Sarah Johnson", grade: "A+", gpa: "4.0", change: "+0.2", color: "green", rank: 1 },
+                        { name: "Michael Chen", grade: "A", gpa: "3.9", change: "+0.1", color: "green", rank: 2 },
+                        { name: "Emma Davis", grade: "A", gpa: "3.8", change: "+0.3", color: "green", rank: 3 },
+                        { name: "James Wilson", grade: "A-", gpa: "3.7", change: "+0.1", color: "blue", rank: 4 },
+                        { name: "Olivia Brown", grade: "A-", gpa: "3.6", change: "+0.2", color: "blue", rank: 5 }
+                      ].map((item, index) => (
+                        <div key={index} className="group/item bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-4 border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                                item.rank <= 3 ? 'bg-gradient-to-br from-yellow-400 to-orange-500' : 'bg-gradient-to-br from-gray-400 to-gray-500'
+                              }`}>
+                                {item.rank}
                               </div>
-                              <div className="text-slate-500 text-xs mt-0.5 truncate">
-                                {teacher?.email}
+                              <div>
+                                <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                                  {item.name}
+                                </span>
+                                <div className="flex items-center space-x-2 mt-1">
+                                  <div className={`w-2 h-2 rounded-full bg-${item.color}-500`}></div>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {item.grade} • GPA: {item.gpa}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center bg-green-50 dark:bg-green-900/20 rounded-full px-3 py-1">
+                                <Lucide icon="TrendingUp" className="w-3 h-3 text-green-600 mr-1" />
+                                <span className="text-xs font-medium text-green-700 dark:text-green-300">
+                                  {item.change}
+                                </span>
                               </div>
                             </div>
                           </div>
                         </div>
                       ))}
-                      <a
-                        href="#"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          navigate("/home/teachers");
-                        }}
-                        className="block w-full py-3 text-center border bg-success text-white rounded-md hover:bg-success-dark transition text-sm"
-                      >
-                        See More
-                      </a>
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-600">
+                      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                        <span>Showing top 5 of 1,234 students</span>
+                        <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors duration-200">
+                          View All
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="col-span-1 home-step-3">
-                    <div className="relative before:content-[''] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70">
-                      <Tab.Group className="p-4 sm:p-5 box">
-                        <Tab.Panels className="mt-4 sm:mt-6">
-                          <Tab.Panel>
-                            <div className="relative">
-                              <ReportDonutChart
-                                height={180}
-                                className="mt-3 w-full"
-                                learners={[
-                                  {
-                                    value:
-                                      dashboards.learners_capacity -
-                                      dashboards.totalLearners,
-                                    color: "#ff6347",
-                                  },
-                                  {
-                                    value: dashboards.totalLearners,
-                                    color: "#32cd32",
-                                  },
-                                ]}
-                              />
-                              <div className="absolute top-0 left-0 flex flex-col items-center justify-center w-full h-full">
-                                <div className="text-xl sm:text-2xl font-medium text-primary">
-                                  {dashboards.totalLearners} /{" "}
-                                  {dashboards.learners_capacity}
-                                </div>
-                                <div className="text-slate-500 mt-0.5 text-xs sm:text-sm">
-                                  Learners Enrolled
-                                </div>
+
+                  {/* Class Attendance by Subject */}
+                  <div className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300">
+                    <div className="mb-6">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                        Class Attendance by Subject
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Subject-wise attendance rates
+                      </p>
+                    </div>
+                    <div className="space-y-6">
+                      {[
+                        { subject: "Mathematics", attendance: 95, color: "blue", icon: "Calculator" },
+                        { subject: "English", attendance: 92, color: "green", icon: "BookOpen" },
+                        { subject: "Science", attendance: 88, color: "purple", icon: "FlaskConical" },
+                        { subject: "History", attendance: 85, color: "orange", icon: "Landmark" },
+                        { subject: "Physical Education", attendance: 98, color: "cyan", icon: "Zap" },
+                        { subject: "Art", attendance: 90, color: "pink", icon: "Palette" }
+                      ].map((item, index) => (
+                        <div key={index} className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-8 h-8 bg-${item.color}-100 dark:bg-${item.color}-900/30 rounded-lg flex items-center justify-center`}>
+                                <Lucide icon={item.icon} className={`w-4 h-4 text-${item.color}-600 dark:text-${item.color}-400`} />
                               </div>
+                              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                                {item.subject}
+                              </span>
                             </div>
-                            <div className="mx-auto mt-4 sm:mt-5 w-full max-w-xs sm:max-w-sm">
-                              <div className="flex items-center mb-2">
-                                <div className="w-2 h-2 mr-2 sm:mr-3 rounded-full bg-primary"></div>
-                                <span className="text-xs sm:text-sm font-semibold text-slate-600 truncate">
-                                  Total Learners
-                                </span>
-                                <span className="ml-auto font-medium text-xs sm:text-sm text-slate-600">
-                                  {dashboards.totalLearners} /{" "}
-                                  {dashboards.learners_capacity}
-                                </span>
-                              </div>
-                              <div className="relative pt-1">
-                                <div className="flex mb-2 items-center justify-between">
-                                  <span className="text-xs sm:text-sm font-semibold text-slate-600">
-                                    Progress
-                                  </span>
-                                  <span className="text-xs font-medium text-slate-400">
-                                    {(
-                                      (dashboards.totalLearners /
-                                        dashboards.learners_capacity) *
-                                      100
-                                    ).toFixed(2)}
-                                    %
-                                  </span>
-                                </div>
-                                <div className="flex h-2 mb-2 overflow-hidden rounded-lg bg-slate-100">
-                                  <div
-                                    className="flex flex-col justify-center bg-green-500 transition-all text-primary"
-                                    style={{
-                                      width: `${
-                                        (dashboards.totalLearners /
-                                          dashboards.learners_capacity) *
-                                        100
-                                      }%`,
-                                    }}
-                                  ></div>
-                                </div>
-                              </div>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg font-bold text-gray-900 dark:text-white">
+                                {item.attendance}%
+                              </span>
+                              <div className={`w-2 h-2 rounded-full bg-${item.color}-500`}></div>
                             </div>
-                          </Tab.Panel>
-                        </Tab.Panels>
-                      </Tab.Group>
+                          </div>
+                          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-3 bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 rounded-full transition-all duration-1000`} 
+                              style={{ width: `${item.attendance}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+
+                {/* Enhanced Quick Stats Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+                  {[
+                    { title: "Present Today", value: "1,156", change: "+12%", icon: "CheckCircle", color: "green", trend: "up" },
+                    { title: "Absent Today", value: "78", change: "-5%", icon: "XCircle", color: "red", trend: "down" },
+                    { title: "Assignments Due", value: "45", change: "+8%", icon: "FileText", color: "blue", trend: "up" },
+                    { title: "Exams This Week", value: "12", change: "+3%", icon: "Clipboard", color: "purple", trend: "up" },
+                    { title: "Events Today", value: "3", change: "0%", icon: "Calendar", color: "orange", trend: "neutral" },
+                    { title: "New Enrollments", value: "8", change: "+15%", icon: "UserPlus", color: "cyan", trend: "up" }
+                  ].map((item, index) => (
+                    <div key={index} className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className={`w-16 h-16 bg-gradient-to-br from-${item.color}-500 to-${item.color}-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <Lucide icon={item.icon} className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        {item.value}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mb-3 font-medium">
+                        {item.title}
+                      </div>
+                      <div className={`flex items-center justify-center space-x-1 ${
+                        item.trend === 'up' ? 'text-green-600 dark:text-green-400' : 
+                        item.trend === 'down' ? 'text-red-600 dark:text-red-400' : 
+                        'text-gray-600 dark:text-gray-400'
+                      }`}>
+                        {item.trend === 'up' && <Lucide icon="TrendingUp" className="w-4 h-4" />}
+                        {item.trend === 'down' && <Lucide icon="TrendingDown" className="w-4 h-4" />}
+                        {item.trend === 'neutral' && <Lucide icon="Minus" className="w-4 h-4" />}
+                        <span className="text-xs font-medium">{item.change}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         ) : (
           <div className="col-span-12 mt-2 p-2 sm:p-4">

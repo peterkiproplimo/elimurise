@@ -1060,7 +1060,7 @@ function Main() {
                       onClick={() => exportTemplate()}
                       variant="primary"
                       type="button"
-                      className="px-1 py-1  text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition"
+                      className="px-1 py-1  text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition"
                       ref={deleteButtonRef}
                     >
                       Download Template
@@ -1093,7 +1093,7 @@ function Main() {
                     onClick={() => importData()}
                     variant="primary"
                     type="button"
-                    className="ml-3 px-6 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark transition"
+                    className="ml-3 px-6 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition"
                     ref={deleteButtonRef}
                   >
                     Import
