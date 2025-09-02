@@ -1,9 +1,9 @@
 import illustrationUrl from "../assets/images/illustration.png";
 import { Outlet } from "react-router-dom";
-import logoUrl from "../assets/images/hero.png";
+import logoUrl from "../assets/images/Elimurise.png";
 import clsx from "clsx";
 import "./auth.css";
-import logo from "../assets/images/heros.png";
+import logo from "../assets/images/Elimurises.png";
 import Button from "../base-components/Button";
 import { Link } from "react-router-dom";
 import React, { useState, useRef } from "react";

@@ -275,7 +275,7 @@ const Register: React.FC<{ setCurrentStep: (step: number) => void }> = ({
                   placeholder="Address"
                 />
                 <FormLabel htmlFor="modal-form-1" className="">
-                  eg. hero | hero@gmail.com | +2547273.... |
+                  eg. Elimurise | Elimurise@gmail.com | +2547273.... |
                 </FormLabel>
                 {errors.address && (
                   <div className="mt-2 text-danger">

@@ -29,7 +29,7 @@ import TopBar from "../../src/components/TopBar";
 import MobileMenu from "../../src/components/MobileMenu";
 import DarkModeSwitcher from "../../src/components/DarkModeSwitcher";
 import { useDispatch, useSelector } from "react-redux";
-import logoUrl from "../assets/images/hero.png";
+import logoUrl from "../assets/images/Elimurise.png";
 import Joyride from "react-joyride";
 
 import MainColorSwitcher from "../components/MainColorSwitcher";

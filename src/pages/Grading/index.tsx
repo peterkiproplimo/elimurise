@@ -305,7 +305,7 @@ function Users() {
                       onClick={(e) => openConfig(grade)}
                       className="cursor-pointer font-medium first:rounded-l-md last:rounded-r-md capitalize bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                     >
-                      {!grade?.school ? "Hero Assessment" : "Custom"}
+                      {!grade?.school ? "Elimurise Assessment" : "Custom"}
                     </Table.Td>
 
                     <Table.Td

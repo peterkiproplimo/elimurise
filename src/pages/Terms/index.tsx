@@ -23,11 +23,11 @@ const Terms = () => {
             TERMS OF USE
           </h1>
           <h1 className="xl:text-5xl text-2xl mt-5 text-center font-semibold  text-primary w-full">
-            Hero Learning
+            Elimurise Learning
           </h1>
 
           <h1 className="xl:text-3xl text-2xl p-5 mt-10 font-semibold   w-full">
-            GENERAL TERMS AND CONDITIONS OF HERO LEARNING EDGE LTD. SOFTWARE
+            GENERAL TERMS AND CONDITIONS OF Elimurise LEARNING EDGE LTD. SOFTWARE
             SUBSCRIPTION
           </h1>
           <h1 className="xl:text-3xl text-2xl p-5 font-semibold  w-full">
@@ -45,7 +45,7 @@ const Terms = () => {
                   <div className="mr-2">1.</div>
                   <div>
                     These General Terms and Conditions of Software Subscription
-                    of Hero Learning Edge Ltd. (the Company), as amended from
+                    of Elimurise Learning Edge Ltd. (the Company), as amended from
                     time to time (the Terms and Conditions), shall govern and
                     apply to the subscription, license, and use of the Software
                     and any Services (as defined below) which the Company or any
@@ -527,7 +527,7 @@ const Terms = () => {
                   Data processed by the Company through or in connection with
                   the Software Subscription are subject to the Company’s Data
                   Privacy Policy, as amended from time to time at the Company’s
-                  sole discretion, available at www.herolearning.co.ke (the
+                  sole discretion, available at www.Elimuriselearning.co.ke (the
                   Privacy Policy). By means of the Software Subscription, the
                   Customer consents to all actions taken by the Company with
                   respect to its data pursuant to the terms of the Privacy
@@ -1483,8 +1483,8 @@ const Terms = () => {
                   for the period of one (01) year from the date of termination
                   of this Agreement, either by itself or through its affiliates,
                   hire, employ, or engage any person who has, during the Term of
-                  this Agreement been an employee or consultant of Hero Learning
-                  Edge Ltd. without the prior written consent of Hero Learning
+                  this Agreement been an employee or consultant of Elimurise Learning
+                  Edge Ltd. without the prior written consent of Elimurise Learning
                   Edge Ltd.
                 </div>
               </li>
@@ -1493,14 +1493,14 @@ const Terms = () => {
                 <div>
                   During the Term of this Agreement, the Customer shall not,
                   whether directly or indirectly, engage itself in a business
-                  that is the same or similar to the Business of Hero Learning
+                  that is the same or similar to the Business of Elimurise Learning
                   Edge Ltd. Further, the Customer shall not, whether directly or
                   indirectly, during the Term of this Agreement, engage itself
                   in marketing, promotion, advertisement, and sales of the
                   products of any third party which is the same or similar to
-                  the Products of Hero Learning Edge Ltd. After the agreement
+                  the Products of Elimurise Learning Edge Ltd. After the agreement
                   ends, the Customer also agrees not to engage in a business
-                  that is the same or similar to the business of Hero Learning
+                  that is the same or similar to the business of Elimurise Learning
                   Edge Ltd. for a period of three (3) years.
                 </div>
               </li>
@@ -1509,7 +1509,7 @@ const Terms = () => {
                 <div>
                   Except as otherwise provided, all notices and correspondence
                   must be given in writing to the Company at
-                  info@herolearning.co.ke or such other addresses as may from
+                  info@Elimuriselearning.co.ke or such other addresses as may from
                   time to time be notified to the Customer in writing; and to
                   Customer at the address set out in the applicable Order Form
                   unless otherwise notified to the Company in writing.

@@ -17,7 +17,7 @@ import { formatCurrency } from "../../utils/helper";
 import { Link } from "react-router-dom";
 
 import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/heros.png";
+import logo from "../../assets/images/Elimurises.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
 
 import users from "../../assets/images/Users_Group.png";
@@ -135,7 +135,7 @@ const Payment = () => {
               {/* Info Box */}
               <div className="p-4 mt-4 mb-6 text-orange-800 bg-orange-100 border border-orange-200 rounded">
                 <p>
-                  Thank you for choosing Hero, our accounts representative will
+                  Thank you for choosing Elimurise, our accounts representative will
                   get in touch with you within 24 hours to activate your
                   account.
                 </p>
@@ -167,7 +167,7 @@ const Payment = () => {
 
             {/* Footer */}
             <footer className="mt-6 text-sm text-gray-500">
-              © 2024 Hero Software Solutions Limited. All Rights Reserved <br />
+              © 2024 Elimurise Software Solutions Limited. All Rights Reserved <br />
               Version 1.0.4
             </footer>
           </div>

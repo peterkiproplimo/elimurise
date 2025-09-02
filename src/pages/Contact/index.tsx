@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { Link } from "react-router-dom";
 
 import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/heros.png";
+import logo from "../../assets/images/Elimurises.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
 import email from "../../assets/images/Social Media Button (1).png";
 import phone from "../../assets/images/Social Media Button (2).png";
@@ -38,7 +38,7 @@ const Contact = () => {
 
         <div className="xl:mx-auto  max-w-[1500px] p-5">
           <h1 className="xl:text-5xl text-2xl text-center font-semibold  text-primary w-full">
-            Get in touch with Hero Learning
+            Get in touch with Elimurise Learning
           </h1>
           <div className="grid xl:mt-10 bg-white xl:ml-10 xl:mr-10 overflow-hidden rounded-3xl sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group p-5 xl:p-10 xl:ml-10  dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
@@ -56,13 +56,13 @@ const Contact = () => {
                 <Button
                   variant="primary"
                   as="a"
-                  href="https://mail.google.com/mail/?view=cm&fs=1&to=info@herolearning.co.ke"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=info@Elimuriselearning.co.ke"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary bg-transparent border-primary text-md w-[192px] hover:bg-[#D1D9F9] p-2 h-[40px]  mb-2 gap-2 rounded-tl-[44px] rounded-tr-[44px] rounded-br-[44px] rounded-bl-[44px] border"
                 >
                   {" "}
-                  info@herolearning.co.ke
+                  info@Elimuriselearning.co.ke
                   {loading && (
                     <LoadingIcon
                       icon="spinning-circles"
@@ -78,7 +78,7 @@ const Contact = () => {
               <div className="mt-2">
                 <p className="xl:text-lg sm:text-3l text-[#808080]">
                   We'd love to hear more about your school's goals and share
-                  with you how hundreds of schools are using Hero Learning
+                  with you how hundreds of schools are using Elimurise Learning
                   today.
                 </p>
               </div>
@@ -106,7 +106,7 @@ const Contact = () => {
                 <p className="xl:text-lg sm:text-3l text-[#808080]">
                   For media inquiries, please
                   <a
-                    href="https://mail.google.com/mail/?view=cm&fs=1&to=info@herolearning.co.ke"
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=info@Elimuriselearning.co.ke"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-1.5 font-medium text-primary transition duration-300 ease-in-out hover:text-blue-800"

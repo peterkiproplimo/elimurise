@@ -1,6 +1,6 @@
 import illustrationUrl from "../assets/images/illustration.png";
 import { Outlet } from "react-router-dom";
-import logoUrl from "../assets/images/hero.png";
+import logoUrl from "../assets/images/Elimurise.png";
 import image from "../assets/images/Image sidebar.png";
 import clsx from "clsx";
 import "./auth.css";

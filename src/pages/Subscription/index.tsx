@@ -6,7 +6,7 @@ import Lucide from "../../base-components/Lucide";
 import Tippy from "../../base-components/Tippy";
 import Table from "../../base-components/Table";
 import "./profile.css";
-import logoUrl from "../../assets/images/heros.png";
+import logoUrl from "../../assets/images/Elimurises.png";
 import { useState, useRef, useEffect } from "react";
 import {
   FormCheck,

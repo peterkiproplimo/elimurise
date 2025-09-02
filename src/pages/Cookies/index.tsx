@@ -10,7 +10,7 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
 import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/heros.png";
+import logo from "../../assets/images/Elimurises.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
 
 import users from "../../assets/images/Users_Group.png";
@@ -45,12 +45,12 @@ const Cookies = () => {
           </h1>
 
           <h1 className="xl:text-5xl text-2xl mt-5 text-center font-semibold  text-primary w-full">
-            Hero Learning
+            Elimurise Learning
           </h1>
 
           <div className="xl:p-5  p-5">
             <h1 className="xl:text-2xl text-xl font-semibold w-full">
-              In this policy, we, Hero Learning Edge Ltd., use the term
+              In this policy, we, Elimurise Learning Edge Ltd., use the term
               "cookies" to refer to cookies and similar technologies used on our
               website, along with your preferences and choices related to them.{" "}
             </h1>
@@ -131,7 +131,7 @@ const Cookies = () => {
                   Third-party cookies belong to and are managed by other parties
                   or service providers. These cookies may be required to render
                   certain forms, such as the submission of a job application, or
-                  to allow for some advertising outside of the Hero Learning
+                  to allow for some advertising outside of the Elimurise Learning
                   Edge Ltd. website.
                 </li>
               </ul>

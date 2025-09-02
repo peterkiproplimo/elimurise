@@ -66,7 +66,7 @@ const fakers = {
       { name: "Edward Norton", gender: "male" },
       { name: "Bruce Willis", gender: "male" },
       { name: "Tom Hanks", gender: "male" },
-      { name: "Charlize Theron", gender: "female" },
+      { name: "Charlize TElimurisen", gender: "female" },
       { name: "Will Smith", gender: "male" },
       { name: "Sean Connery", gender: "male" },
       { name: "Keira Knightley", gender: "female" },

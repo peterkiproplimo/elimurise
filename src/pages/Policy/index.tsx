@@ -10,7 +10,7 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
 import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/heros.png";
+import logo from "../../assets/images/Elimurises.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
 
 import users from "../../assets/images/Users_Group.png";
@@ -44,7 +44,7 @@ const Policy = () => {
             PRIVACY POLICY
           </h1>
           <h1 className="xl:text-5xl text-2xl mt-5 text-center font-semibold  text-primary w-full">
-            Hero Learning
+            Elimurise Learning
           </h1>
 
           <div className="xl:p-5  p-5">
@@ -53,10 +53,10 @@ const Policy = () => {
             </h1>
             <div className="mt-2  xl:text-2xl">
               <p>
-                Thank you for visiting the website of Hero Learning Edge Ltd.
+                Thank you for visiting the website of Elimurise Learning Edge Ltd.
                 Your privacy is important to us. This Privacy Policy explains
                 how we handle and treat your data when you engage with us to use
-                the products or services provided by Hero Learning Edge Ltd (our
+                the products or services provided by Elimurise Learning Edge Ltd (our
                 "Services"). It also includes information about individuals
                 whose personal information we may process as a result of
                 providing the Services to third parties
@@ -277,11 +277,11 @@ We may update this Privacy Policy periodically to reflect changes in practices, 
               For questions, concerns, or requests regarding this Privacy Policy, please contact us at:</p>
               <p className="mt-2">
             
-              Hero Learning Edge Ltd. </p>
+              Elimurise Learning Edge Ltd. </p>
 
               <ul className="  mt-5">
                 <li className="font-bold">Address: 51318-00200, Nairobi</li>
-                <li className="font-bold">Email: <span className="text-danger">info@herolearning.co.ke</span></li>
+                <li className="font-bold">Email: <span className="text-danger">info@Elimuriselearning.co.ke</span></li>
                 <li className="font-bold">Phone: <span className="text-danger">+254 722 424 273</span></li>
               </ul>
               <p>

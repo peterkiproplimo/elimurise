@@ -80,7 +80,7 @@ export const getPackages = async (data: any) => {
 export const scedule_demo = async (data: any) => {
   try {
     let res = await axios.post(
-      "https://staging.herolearning.co.ke/api/method/hero.hero.apis.appointment.schedule_appointment",
+      "https://staging.Elimuriselearning.co.ke/api/method/Elimurise.Elimurise.apis.appointment.schedule_appointment",
       data
     );
     return res.data;
@@ -91,7 +91,7 @@ export const scedule_demo = async (data: any) => {
 export const get_schedule_demo = async () => {
   try {
     let res = await axios.get(
-      "https://staging.herolearning.co.ke/api/method/hero.hero.apis.appointment.get_booked_dates"
+      "https://staging.Elimuriselearning.co.ke/api/method/Elimurise.Elimurise.apis.appointment.get_booked_dates"
     );
     return res.data.message; // Assuming booked dates are inside `message`
   } catch (e) {

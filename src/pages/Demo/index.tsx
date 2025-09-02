@@ -228,13 +228,13 @@ const Demo = () => {
           <p className="text-primary text-center xl:text-2xl  p-4">
             We're proud to partner with school to provide students equitable
             access to academic support, preparing them for success in school and
-            beyond. If you'd like to explore a partnership with Hero Learning,
+            beyond. If you'd like to explore a partnership with Elimurise Learning,
             please get in touch with us via the form below.
           </p>
           <div className="grid xl:mt-10 xl:ml-10 xl:mr-10 overflow-hidden sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:divide-y-0 xl:grid-cols-2">
             <div className="group xl:ml-10 xl:pr-10 dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
               <h1 className="xl:text-3xl text-xl font-semibold  w-full">
-                Hero Learning System drives CBC learning positive academic
+                Elimurise Learning System drives CBC learning positive academic
                 outcomes
               </h1>
               <div className="mt-2">
@@ -277,7 +277,7 @@ const Demo = () => {
                       </h2>
                       <p className="text-lg text-gray-700 mb-6">
                         Your appointment has been successfully scheduled. You
-                        will be contacted by Hero within 24 hours.
+                        will be contacted by Elimurise within 24 hours.
                       </p>
                       <p className="text-sm text-gray-500">
                         Thank you for choosing our services.
@@ -493,7 +493,7 @@ const Demo = () => {
                     />
                   </div>
                   <p className="p-2 text-gray-500">
-                    Hero Learning needs the contact information you provide to
+                    Elimurise Learning needs the contact information you provide to
                     us to contact you about our products and services.
                   </p>
                   <div className="flex mt-4 text-xs text-slate-600 dark:text-slate-500 sm:text-sm">
@@ -548,13 +548,13 @@ const Demo = () => {
         </div>
         <div className="aboutContainer   p-5 bg-gray-300">
           <h1 className="xl:text-5xl text-2xl p-5 text-center text-primary font-bold">
-            Already a Hero Learning Partner?
+            Already a Elimurise Learning Partner?
           </h1>
           <div className="  xl:flex items-center justify-center gap-10 xl:mx-80 px-5">
             <div>
               <p className="xl:text-2xl xl:p-5 text-lg text-center text-primary">
                 If you need help from our customer care team, you can reach us
-                at support@herolearning.com.{" "}
+                at support@Elimuriselearning.com.{" "}
               </p>
             </div>
           </div>

@@ -130,7 +130,7 @@ function Main() {
       // Create a temporary link element
       const link = document.createElement("a");
       link.href = url;
-      link.download = "hero invoice.pdf"; // Set the download name
+      link.download = "Elimurise invoice.pdf"; // Set the download name
 
       // Programmatically trigger the download
       document.body.appendChild(link);

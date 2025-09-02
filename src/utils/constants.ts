@@ -1,7 +1,7 @@
 //API URL
 // export const BASE_URL = "http://localhost:3000/";
 
-// export const BASE_URL = "https://api.herolearning.co.ke/";
+// export const BASE_URL = "https://api.Elimuriselearning.co.ke/";
 export const BASE_URL = import.meta.env.VITE_API_ENDPOINT;
 export const IMG_URL = `${BASE_URL}portal`;
 //API Endpoints

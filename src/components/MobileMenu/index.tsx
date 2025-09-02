@@ -13,7 +13,7 @@ import { useAppSelector } from "../../stores/hooks";
 import { FormattedMenu, nestedMenu } from "../../layouts/side-menu";
 import { linkTo, enter, leave } from "./mobile-menu";
 import Lucide from "../../base-components/Lucide";
-import logoUrl from "../../assets/images/hero.png";
+import logoUrl from "../../assets/images/Elimurise.png";
 import clsx from "clsx";
 import SimpleBar from "simplebar";
 

@@ -277,13 +277,13 @@ function Main() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-4 sm:p-6 lg:p-2 w-full max-w-md sm:max-w-lg lg:max-w-4xl mx-4 sm:mx-auto">
             <h2 className="text-2xl sm:text-2xl lg:text-xl font-bold  text-center p-2">
-              GENERAL TERMS AND CONDITIONS OF HERO LEARNING EDGE LTD. SOFTWARE
+              GENERAL TERMS AND CONDITIONS OF Elimurise LEARNING EDGE LTD. SOFTWARE
               SUBSCRIPTION
             </h2>
             <div className="max-h-[600px] overflow-y-auto  text-xs p-2 sm:text-sm lg:text-base text-gray-700">
               <div className="mx-auto max-w-[1200px]">
                 {/* <h1 className="text-lg  lg:text-xl  p-2  font-bold w-full">
-                  GENERAL TERMS AND CONDITIONS OF HERO LEARNING EDGE LTD.
+                  GENERAL TERMS AND CONDITIONS OF Elimurise LEARNING EDGE LTD.
                   SOFTWARE SUBSCRIPTION
                 </h1> */}
                 <h1 className="text-lg  lg:text-xl  p-2 font-bold w-full">
@@ -301,7 +301,7 @@ function Main() {
                           <div className="mr-2">1.</div>
                           <div>
                             These General Terms and Conditions of Software
-                            Subscription of Hero Learning Edge Ltd. (the
+                            Subscription of Elimurise Learning Edge Ltd. (the
                             Company), as amended from time to time (the Terms
                             and Conditions), shall govern and apply to the
                             subscription, license, and use of the Software and
@@ -821,7 +821,7 @@ function Main() {
                           with the Software Subscription are subject to the
                           Company's Data Privacy Policy, as amended from time to
                           time at the Company's sole discretion, available at
-                          www.herolearning.co.ke (the Privacy Policy). By means
+                          www.Elimuriselearning.co.ke (the Privacy Policy). By means
                           of the Software Subscription, the Customer consents to
                           all actions taken by the Company with respect to its
                           data pursuant to the terms of the Privacy Policy
@@ -1844,9 +1844,9 @@ function Main() {
                           date of termination of this Agreement, either by
                           itself or through its affiliates, hire, employ, or
                           engage any person who has, during the Term of this
-                          Agreement been an employee or consultant of Hero
+                          Agreement been an employee or consultant of Elimurise
                           Learning Edge Ltd. without the prior written consent
-                          of Hero Learning Edge Ltd.
+                          of Elimurise Learning Edge Ltd.
                         </div>
                       </li>
                       <li className="flex">
@@ -1855,15 +1855,15 @@ function Main() {
                           During the Term of this Agreement, the Customer shall
                           not, whether directly or indirectly, engage itself in
                           a business that is the same or similar to the Business
-                          of Hero Learning Edge Ltd. Further, the Customer shall
+                          of Elimurise Learning Edge Ltd. Further, the Customer shall
                           not, whether directly or indirectly, during the Term
                           of this Agreement, engage itself in marketing,
                           promotion, advertisement, and sales of the products of
                           any third party which is the same or similar to the
-                          Products of Hero Learning Edge Ltd. After the
+                          Products of Elimurise Learning Edge Ltd. After the
                           agreement ends, the Customer also agrees not to engage
                           in a business that is the same or similar to the
-                          business of Hero Learning Edge Ltd. for a period of
+                          business of Elimurise Learning Edge Ltd. for a period of
                           three (3) years.
                         </div>
                       </li>
@@ -1872,7 +1872,7 @@ function Main() {
                         <div>
                           Except as otherwise provided, all notices and
                           correspondence must be given in writing to the Company
-                          at info@herolearning.co.ke or such other addresses as
+                          at info@Elimuriselearning.co.ke or such other addresses as
                           may from time to time be notified to the Customer in
                           writing; and to Customer at the address set out in the
                           applicable Order Form unless otherwise notified to the
