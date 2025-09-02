@@ -8,7 +8,7 @@ import * as yup from "yup";
 import { Link } from "react-router-dom";
 
 import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/Elimurises.png";
+import logo from "../../assets/images/Elimurise.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
 import email from "../../assets/images/Social Media Button (1).png";
 import phone from "../../assets/images/Social Media Button (2).png";

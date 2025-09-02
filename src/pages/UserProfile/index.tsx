@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormSelect,
 } from "../../base-components/Form";
-import logoUrl from "../../assets/images/Elimurises.png";
+import logoUrl from "../../assets/images/Elimurise.png";
 import { useState, useRef, useEffect } from "react";
 import Notification, {
   NotificationElement,

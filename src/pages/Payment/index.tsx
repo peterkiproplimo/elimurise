@@ -17,7 +17,7 @@ import { formatCurrency } from "../../utils/helper";
 import { Link } from "react-router-dom";
 
 import logoUrl from "../assets/images/Untitled-1.png";
-import logo from "../../assets/images/Elimurises.png";
+import logo from "../../assets/images/Elimurise.png";
 import icon from "../../assets/images/Arrow_Right_MD.png";
 
 import users from "../../assets/images/Users_Group.png";
