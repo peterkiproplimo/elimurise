@@ -17,6 +17,7 @@ type AuthContextData = {
   signOut(): void;
   permissions: Record<string, string[]>; // Add permissions to the context
   hasPermission(module: string, action: string): boolean; // Method to check permissions
+  user?: any; // Add user property to the context
 };
 
 //Create the Auth Context with the data type specified
@@ -85,6 +86,7 @@ const AuthProvider = (props: ContainerProps) => {
         signOut,
         permissions,
         hasPermission,
+        user: authData?.user,
       }}
     >
       {props.children}

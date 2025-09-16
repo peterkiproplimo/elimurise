@@ -1,321 +1,224 @@
-import _, { upperCase } from "lodash";
-import { useState, useRef, useEffect } from "react";
-import Button from "../../base-components/Button";
-import { FormInput, FormLabel, FormSelect } from "../../base-components/Form";
-import Lucide from "../../base-components/Lucide";
-import { Dialog, Menu } from "../../base-components/Headless";
-import Table from "../../base-components/Table";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import * as ApiService from "../../services/auth";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import Notification, {
-  NotificationElement,
-} from "../../base-components/Notification";
-import { useForm } from "react-hook-form";
-import LoadingIcon from "../../base-components/LoadingIcon";
-import TomSelect from "../../base-components/TomSelect";
-import Pagination from "../../base-components/Pagination";
-import { formatDate } from "../../utils/helper";
-import logoUrl from "../../assets/images/edit.png";
-import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/Books.jpeg";
-import { Search } from "lucide-react";
-import BookCover from "./book";
-import { useLocation } from "react-router-dom";
 
-function Main() {
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const deleteButtonRef = useRef(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const navigate = useNavigate();
+function LearningAreas() {
   const [learningAreas, setLearningAreas] = useState([]);
-  const [grades, setGrades] = useState([]);
-  const [permissions] = useState(["Add", "Edit", "View", "Delete"]);
-  const [selectGroup, setGroup] = useState([""]);
-  const [selectPermission, setPermission] = useState([""]);
-  const [recordId, setRecordId] = useState(null);
-  const [gradeId, setGradeId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+  const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total: 0 });
+  const [grade, setGrade] = useState(null);
   const [dialog, setDialog] = useState(false);
-  const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
   const [message, setMessage] = useState("");
-  const [userPermissions, setUserPermissions] = useState([]);
-  const [grade, setGrade] = useState<any>({});
-  const [pagination, setPagination] = useState({
-    current_page: 1,
-    total: 0,
-    total_pages: 1,
-    per_page: 0,
-  });
-  const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState(12);
-  const [page, setPage] = useState(1);
+  const notify = useRef(null);
+
+  const navigate = useNavigate();
   const location = useLocation();
-  const [next_page, setNextPage] = useState(1);
-  const [previous_page, setPreviousPage] = useState(1);
-  // Success notification
-  const notify = useRef<NotificationElement>();
-  const schema = yup
-    .object({
-      name: yup.string().required("Level is required"),
-    })
-    .required();
-
-  const {
-    register,
-    trigger,
-    getValues,
-    reset,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-    resolver: yupResolver(schema),
-  });
-
-  const onSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const result = await trigger();
-    if (result && !loading) {
-      isLoading(true);
-      try {
-        const data = await getValues();
-        await ApiService.createLearningArea(data);
-        await getLearningAreas();
-        await reset();
-        isLoading(false);
-        setDialog(false);
-        setSuccess(true);
-        setMessage("Level created successfully.");
-        notify.current?.showToast();
-      } catch (error: any) {
-        isLoading(false);
-        setSuccess(false);
-        setMessage(
-          error.message || "An error occurred while creating the role."
-        );
-        notify.current?.showToast();
-      }
-    }
-  };
 
   useEffect(() => {
-    getLearningAreas();
-  }, [search, page, limit, gradeId]);
-  useEffect(() => {
-    const grade = location?.state?.data;
-    setGrade(grade);
-    console.log("grade", grade);
+    const gradeData = location?.state?.data;
+    if (gradeData) setGrade(gradeData);
+  }, [location]);
 
-    if (grade) {
-      setGradeId(grade._id);
-    }
-  }, []);
-  const getLearningAreas = async () => {
-    isLoading(true);
-    if (gradeId) {
+  useEffect(() => {
+    if (grade?._id) fetchLearningAreas();
+  }, [grade, page, limit, search]);
+
+  async function fetchLearningAreas() {
+    setLoading(true);
+    try {
       const response = await ApiService.getLearningAreas({
-        page: page,
-        limit: limit,
-        search: search,
-        gradeId: gradeId,
+        page,
+        limit,
+        search,
+        gradeId: grade._id,
       });
       setLearningAreas(response.data);
-      const pagination = response.pagination;
-      setPagination({
-        current_page: pagination.current_page,
-        total: pagination.total,
-        total_pages: pagination.total_pages,
-        per_page: pagination.per_page,
-      });
-      isLoading(false);
+      setPagination(response.pagination);
+    } catch (error) {
+      setMessage("Failed to load learning areas.");
+      setSuccess(false);
+      setDialog(true);
+      setTimeout(() => setDialog(false), 3000);
+    } finally {
+      setLoading(false);
     }
-  };
-  //ss
+  }
 
-  const openStrand = (learningArea: any) => {
-    navigate("/home/Strands", {
-      replace: true,
-      state: { data: learningArea },
-    });
-  };
-
-  // const cancel = (record: any) => {
-  //   setGroup([""]);
-  //   setPermission([""]);
-  //   reset(record);
-  //   setDialog(false);
-  // };
+  function openStrand(learningArea) {
+    navigate("/home/Strands", { replace: true, state: { data: learningArea } });
+  }
 
   return (
-    <>
-      {dialog ? (
-        <></>
-      ) : (
-        <>
-          <h2 className="mt-1 text-lg font-medium  flex flex-wrap">
-            <a
-              onClick={(e: any) =>
-                navigate("/home/grade", {
-                  replace: true,
-                })
-              }
-              className=" mr-5 "
-              href="#"
+    <main className="min-h-screen bg-white py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Top Navigation Bar */}
+        <nav className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 bg-white border-b border-gray-200 pb-4">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/home/grade", { replace: true })}
+              className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2"
+              aria-label="Back to grades"
             >
-              <Lucide icon="ArrowLeft" className="text-slate-400 " />
-            </a>
-            Learning Areas for({grade?.name})
-          </h2>
-          <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-              <div className="hidden mx-auto md:block text-slate-500">
-                Showing{" "}
-                {pagination.current_page +
-                  " to " +
-                  pagination.total_pages +
-                  " of " +
-                  pagination.total}{" "}
-                entries
-              </div>
-              <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
-                <div className="relative w-56 text-slate-500">
-                  <FormInput
-                    type="text"
-                    className="w-56 pr-10 !box"
-                    placeholder="Search..."
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  <Lucide
-                    icon="Search"
-                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                  />
-                </div>
-              </div>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              Grades
+            </button>
+            <h1 className="text-2xl font-bold text-indigo-600">{grade?.name || "Loading..."}</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative w-full sm:w-64">
+              <input
+                type="search"
+                placeholder="Search areas..."
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search learning areas"
+              />
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 16.65z"
+                />
+              </svg>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                disabled={pagination.current_page === 1}
+                className="px-3 py-1 rounded-md bg-indigo-600 text-white disabled:opacity-50 hover:bg-indigo-700 transition-colors"
+                aria-label="Previous page"
+              >
+                Prev
+              </button>
+              <button
+                onClick={() => setPage((prev) => Math.min(prev + 1, pagination.total_pages))}
+                disabled={pagination.current_page === pagination.total_pages}
+                className="px-3 py-1 rounded-md bg-indigo-600 text-white disabled:opacity-50 hover:bg-indigo-700 transition-colors"
+                aria-label="Next page"
+              >
+                Next
+              </button>
             </div>
           </div>
+        </nav>
 
-          {/* <div className="hidden mx-auto md:block text-slate-500"></div> */}
-          {/* </div> */}
-
-          <div>
-            {loading ? (
-              <div className="fixed inset-0 flex items-center justify-center">
-                <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
-              </div>
-            ) : learningAreas.length === 0 ? (
-              <div className="flex flex-col items-center mt-10 bg-white w-full p-8">
-                {/* <Search size={28} className="" /> */}
-                <p className="text-xl text-slate-500 ">No records found</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-12 gap-5 mt-5">
-                {learningAreas.map((learningArea: any, key) => (
-                  <div
-                    key={key}
-                    className="col-span-12  cursor-pointer sm:col-span-4 lg:col-span-3 xl:col-span-2 2xl:col-span-2 flex flex-col items-center gap-4 hover:bg-gray-100 rounded-lg  transition-all duration-300 ease-in-out transform hover:scale-105"
-                    onClick={(e: any) => openStrand(learningArea)}
-                  >
-                    {/* Book Cover */}
-                    <div className="w-full flex justify-center mb-4">
-                      <BookCover
-                        bookName={learningArea.name}
-                        author={learningArea?.grade_id?.name}
-                      />
-                    </div>
-                    {/* Learning Area Details */}
-                    {/* <div className="text-center">
-                      <h1 className="text-xl font-semibold mb-1 truncate">
-                        {learningArea.name}
-                      </h1>
-                      <h2 className="text-lg font-medium text-gray-600">
-                        {learningArea?.grade_id?.name}
+        {/* Main Content */}
+        <section className="pb-8">
+          {loading ? (
+            <div className="flex justify-center items-center py-16">
+              <svg className="w-12 h-12 text-indigo-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8 8 8 0 01-8-8z"
+                />
+              </svg>
+            </div>
+          ) : learningAreas.length === 0 ? (
+            <div className="text-center py-16 text-gray-500 text-lg">
+              No learning areas found. Try adjusting your search.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" aria-label="Learning areas grid">
+              {learningAreas.map((area, idx) => (
+                <article
+                  key={area._id || idx}
+                  onClick={() => openStrand(area)}
+                  className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-indigo-500 transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  tabIndex={0}
+                  aria-label={`View strands for ${area.name}`}
+                  role="button"
+                >
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <h2 className="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 truncate">
+                        {area.name}
                       </h2>
-                    </div> */}
+                      <div className="w-6 h-6">
+                        <svg className="w-full h-full text-amber-500 group-hover:text-amber-600" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10 10 10 0 0 1-10-10 10 10 0 0 1 10-10"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            className="opacity-20"
+                          />
+                          <path
+                            d="M12 2a10 10 0 0 1 10 10"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeDasharray="15 45"
+                            className="group-hover:animate-spin-slow"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-500 truncate">{area?.grade_id?.name}</p>
+                    <div className="mt-4">
+                      <span className="inline-block px-3 py-1 text-sm font-medium text-white bg-emerald-600 rounded-full group-hover:bg-emerald-700 transition-colors">
+                        Explore Strands
+                      </span>
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          {!loading && learningAreas.length > 0 && (
-            <div className="mt-2 flex flex-wrap w-100 items-center col-span-12  sm:flex-row sm:flex-nowrap">
-              <div className="flex flex-wrap items-center col-span-12  sm:flex-row sm:flex-nowrap">
-                <Pagination className="w-full sm:w-auto sm:mr-auto">
-                  <button
-                    onClick={() => setPage(page - 1)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronLeft" className="w-4 h-4" />
-                  </button>
-                  {_.times(pagination.total_pages).map((page, key) =>
-                    page + 1 == pagination.current_page ? (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 bg-white rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setPage(page + 1)}
-                        key={key}
-                        className="py-2 px-4 rounded-md"
-                      >
-                        {page + 1}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => setPage(page + 1)}
-                    className="py-2 px-4 rounded-md"
-                  >
-                    <Lucide icon="ChevronRight" className="w-4 h-4" />
-                  </button>
-                </Pagination>
-                <div className="text-slate-500">
-                  <span className="mr-3">Total {pagination.total}</span>
-                  <FormSelect
-                    className="w-30 mt-3 !box sm:mt-0"
-                    value={limit}
-                    onChange={(e) => {
-                      setLimit(parseInt(e.target.value));
-                      setPage(1);
-                    }}
-                  >
-                    <option value={12}>12/page</option>
-                    <option value={24}>24/page</option>
-                    <option value={44}>44/page</option>
-                    <option value={88}>88/page</option>
-                  </FormSelect>
-                </div>
-              </div>
+                </article>
+              ))}
             </div>
           )}
-          {/* </div> */}
+        </section>
 
-          <div>{/* END: Pagination */}</div>
+        {/* Footer Info */}
+        <footer className="text-center text-sm text-gray-500">
+          Showing page {pagination.current_page} of {pagination.total_pages} ({pagination.total} entries)
+        </footer>
 
-          {/* END: Delete Confirmation Modal */}
-        </>
-      )}
-      <Notification
-        options={{ duration: 3000 }}
-        getRef={(el) => {
-          notify.current = el;
-        }}
-        className="flex"
-      >
-        <Lucide
-          icon={success ? "CheckCircle" : "XCircle"}
-          className={success ? "text-success" : "text-danger"}
-        />
-        <div className="ml-4 mr-4">
-          <div className="font-medium">{success ? "Success" : "Failed"}</div>
-          <div className="mt-1 text-slate-500">{message}</div>
+        {/* Notification */}
+        <div
+          className={`fixed bottom-4 right-4 transition-opacity duration-300 ${
+            dialog ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <div className={`p-4 rounded-lg shadow-lg flex items-center gap-3 ${
+            success ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+          }`}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {success ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 13l4 4L19 7"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              )}
+            </svg>
+            <div>
+              <p className="font-medium">{success ? "Success" : "Failed"}</p>
+              <p className="text-sm">{message}</p>
+            </div>
+          </div>
         </div>
-      </Notification>
-    </>
+      </div>
+    </main>
   );
 }
 
-export default Main;
+export default LearningAreas;

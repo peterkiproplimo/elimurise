@@ -185,7 +185,7 @@ const Home = () => {
                   </Button>
                 </Link>
                 <Link to="/auth/login">
-                  <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary">
+                  <Button variant="outline-primary" size="lg" className="border-white text-white hover:bg-white hover:text-primary">
                     Sign In
                   </Button>
                 </Link>
@@ -375,7 +375,7 @@ const Home = () => {
               </Button>
             </Link>
             <Link to="/auth/login">
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary">
+              <Button variant="outline-primary" size="lg" className="border-white text-white hover:bg-white hover:text-primary">
                 Sign In
               </Button>
             </Link>

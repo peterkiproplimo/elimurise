@@ -56,6 +56,9 @@ const Terms = {
 };
 export const ROLES = `${BASE_URL}portal/roles`;
 
+export const SCHEME = `${BASE_URL}portal/scheme`;
+export const LESSON_PLAN = `${BASE_URL}portal/lesson-plan`;
+
 // export const FORGOT_PASSWORD = `${BASE_URL}send-password/`;
 // export const CHANGE_PASSWORD = `${BASE_URL}change-password`;
 

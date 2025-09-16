@@ -80,7 +80,7 @@ export const getPackages = async (data: any) => {
 export const scedule_demo = async (data: any) => {
   try {
     let res = await axios.post(
-      "https://staging.Elimuriselearning.co.ke/api/method/Elimurise.Elimurise.apis.appointment.schedule_appointment",
+      "https://staging.herolearning.co.ke/api/method/hero.hero.apis.appointment.schedule_appointment",
       data
     );
     return res.data;
@@ -91,7 +91,7 @@ export const scedule_demo = async (data: any) => {
 export const get_schedule_demo = async () => {
   try {
     let res = await axios.get(
-      "https://staging.Elimuriselearning.co.ke/api/method/Elimurise.Elimurise.apis.appointment.get_booked_dates"
+      "https://staging.herolearning.co.ke/api/method/hero.hero.apis.appointment.get_booked_dates"
     );
     return res.data.message; // Assuming booked dates are inside `message`
   } catch (e) {
@@ -164,11 +164,23 @@ export const getSchoolDetails = async (data: any) => {
 };
 export const setCurrentSettings = async (data: any) => {
   try {
-    let res = await axios.put(`${c.SCHOOL}/update`, data, config);
+    const res = await axios.put(`${c.SCHOOL}/update`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
 
-    return res.data;
-  } catch (e) {
-    throw handler(e);
+    if (!res.data) {
+      throw new Error('No response data received');
+    }
+
+    return res;
+  } catch (e: any) {
+    console.error('School update error:', e.response?.data || e.message);
+    throw {
+      message: e.response?.data?.message || e.message || 'Failed to update school settings',
+      response: e.response
+    };
   }
 };
 
@@ -1136,6 +1148,15 @@ export async function createLearningArea(data: FieldValues) {
   }
 }
 
+export async function updateLearningArea(id: string, data: FieldValues) {
+  try {
+    let res = await axios.put(c.LEARNING_AREA + "/" + id, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
 export async function deleteLearningArea(gradeId: any) {
   try {
     let res = await axios.delete(c.LEARNING_AREA + "/" + gradeId);
@@ -1148,12 +1169,14 @@ export async function deleteLearningArea(gradeId: any) {
 
 export const getStrands = async (data: any, filter: any) => {
   try {
-    if (filter.learning_area === "na") {
-      console.log("failed...");
-      return;
+    if (filter.learning_area === "na" || !filter.learning_area) {
+        return { data: [], pagination: { current_page: 1, total_pages: 1, total: 0 } };
     }
+    
+    // Handle term parameter - if it's 'na' or undefined, don't include it in URL
+    const termParam = filter.term && filter.term !== "na" ? `/${filter.term}` : "/all";
     let res = await axios.get(
-      `${c.STRANDS}/${filter.learning_area}/${filter.term}`,
+      `${c.STRANDS}/${filter.learning_area}${termParam}`,
       {
         params: data,
       }
@@ -1441,6 +1464,150 @@ export async function getSingleSubstrand(stream: any, substrand: any) {
   }
 }
 
+export async function getSchemeLearningAreas(learning_area: any) {
+  try {
+    let res = await axios.get(
+      c.STRANDS + "/scheme/learning-areas/" + learning_area
+    );
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function getScheme() {
+  try {
+    let res = await axios.get(c.SCHEME);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+//getSchemeById
+export async function getSchemeById(id: string) {
+  try {
+    let res = await axios.get(`${c.SCHEME}/${id}`);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export async function createScheme(data: any) {
+  try {
+    let res = await axios.post(c.SCHEME, data);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+export const updateScheme = async (schemeId: string, updatedScheme: any) => {
+  try {
+    const response = await axios.put(`${c.SCHEME}/${schemeId}`, updatedScheme);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Failed to update scheme");
+  }
+};
+//lessson pla
+export async function createLessonPlan(data: any) {
+  try {
+    let res = await axios.post(c.LESSON_PLAN, data);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+//export async function getLessonPlanById(id: string) {
+export async function getLessonPlanById(id: string) {
+  try {
+    let res = await axios.get(`${c.LESSON_PLAN}/${id}`);
+    console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+// download lesson plan
+export async function downloadLessonPlan(id: string) {
+  try {
+    const res = await axios.get(`${c.LESSON_PLAN}/${id}/download`, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `lesson_plan_${id}.pdf`); // Adjust file extension if needed
+    document.body.appendChild(link);
+    link.click();
+    link.remove(); // Clean up
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+// Get all lesson plans
+export async function getLessonPlans(data: any) {
+  try {
+    let res = await axios.get(c.LESSON_PLAN, { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+// Update lesson plan
+export async function updateLessonPlan(id: string, data: any) {
+  try {
+    let res = await axios.put(`${c.LESSON_PLAN}/${id}`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+// Delete lesson plan
+export async function deleteLessonPlan(id: string) {
+  try {
+    let res = await axios.delete(`${c.LESSON_PLAN}/${id}`);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+// Get lesson plans by teacher
+export async function getLessonPlansByTeacher(teacherId: string, data: any) {
+  try {
+    let res = await axios.get(`${c.LESSON_PLAN}/teacher/${teacherId}`, { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+//'/scheme/:id/download
+export async function downloadScheme(id: string) {
+  try {
+    const res = await axios.get(`${c.SCHEME}/${id}/download`, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `scheme_${id}.pdf`); // Adjust file extension if needed
+    document.body.appendChild(link);
+    link.click();
+    link.remove(); // Clean up
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
 export const getRole = async (data: any) => {
   try {
     let res = await axios.get(c.ROLES, { params: data });
@@ -1712,6 +1879,8 @@ export async function getLeanerAssessmentReportUploads(data: FieldValues) {
     throw handler(e);
   }
 }
+
+
 export const getLearningAreasAssignments = async (data: any) => {
   try {
     let res = await axios.get(c.LEARNING_AREA_ASSIGNMENT, { params: data });
@@ -1741,6 +1910,33 @@ export async function deleteLearningAreaAssignment(userId: any) {
   try {
     let res = await axios.delete(c.LEARNING_AREA_ASSIGNMENT + "/" + userId);
     console.log(res);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function removeLearningAreaAssignment(assignmentId: any) {
+  try {
+    let res = await axios.delete(c.LEARNING_AREA_ASSIGNMENT + "/" + assignmentId);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getAvailableLearningAreas(data: any) {
+  try {
+    let res = await axios.get(c.LEARNING_AREA + "/available", { params: data });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function selectLearningAreas(data: any) {
+  try {
+    let res = await axios.post(c.LEARNING_AREA_ASSIGNMENT + "/select", data);
     return res.data;
   } catch (e) {
     throw handler(e);

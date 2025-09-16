@@ -1,0 +1,40 @@
+/* animate.css (partial) for fadeIn and fadeInUp */
+.animate__animated {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+  }
+  
+  @keyframes animate__fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .animate__fadeIn {
+    animation-name: animate__fadeIn;
+  }
+  
+  @keyframes animate__fadeInUp {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 100%, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .animate__fadeInUp {
+    animation-name: animate__fadeInUp;
+  }
+  
+  /* Delay classes */
+  .animate__delay-0s { animation-delay: 0s; }
+  .animate__delay-1s { animation-delay: 1s; }
+  .animate__delay-2s { animation-delay: 2s; }
+  .animate__delay-3s { animation-delay: 3s; }
+  .animate__delay-4s { animation-delay: 4s; }

@@ -350,7 +350,7 @@ function Roles() {
             </Table.Thead>
 
             <Table.Tbody>
-              {roles.map((role: any, key) => (
+              {roles.map((role: any, key: number) => (
                 <Table.Tr key={key}>
                   <Table.Td className="text-center">
                     <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
