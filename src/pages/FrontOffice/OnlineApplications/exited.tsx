@@ -1,8 +1,8 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
-import Button from "../../base-components/Button";
+import Button from "../../../base-components/Button";
 import PassportUpload from "./profilephoto";
-import { X, Paperclip, Send, MoreHorizontal, Eye, Edit, ArrowLeftRight, LogOut } from "lucide-react"; // Using Lucide icons for a modern look
+import { X, Paperclip, Send } from "lucide-react"; // Using Lucide icons for a modern look
 import {
   FormCheck,
   FormInput,
@@ -10,31 +10,31 @@ import {
   FormSelect,
   FormSwitch,
   FormTextarea,
-} from "../../base-components/Form";
-import Lucide from "../../base-components/Lucide";
-import { Dialog, Menu } from "../../base-components/Headless";
-import Table from "../../base-components/Table";
-import * as ApiService from "../../services/auth";
+} from "../../../base-components/Form";
+import Lucide from "../../../base-components/Lucide";
+import { Dialog, Menu } from "../../../base-components/Headless";
+import Table from "../../../base-components/Table";
+import * as ApiService from "../../../services/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Notification, {
   NotificationElement,
-} from "../../base-components/Notification";
+} from "../../../base-components/Notification";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../contexts/Auth";
+import { useAuth } from "../../../contexts/Auth";
 
-import LoadingIcon from "../../base-components/LoadingIcon";
+import LoadingIcon from "../../../base-components/LoadingIcon";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MessageCircle, Search } from "lucide-react";
-import TomSelect from "../../base-components/TomSelect";
-import * as C from "../../utils/constants";
-import Pagination from "../../base-components/Pagination";
-import Alert from "../../base-components/Alert";
+import TomSelect from "../../../base-components/TomSelect";
+import * as C from "../../../utils/constants";
+import Pagination from "../../../base-components/Pagination";
+import Alert from "../../../base-components/Alert";
 import Dropzone from "dropzone";
-import Tippy from "../../base-components/Tippy";
-import * as c from "../../utils/constants";
+import Tippy from "../../../base-components/Tippy";
+import * as c from "../../../utils/constants";
 import leanerImg from "../../assets/images/learner.jpeg";
-import { formatDate, is_admin } from "../../utils/helper";
+import { formatDate, is_admin } from "../../../utils/helper";
 import io, { Socket } from "socket.io-client";
 
 interface TableRow {
@@ -47,19 +47,16 @@ let auth_data = auth ? JSON.parse(auth) : null; // Prevents JSON.parse(null) err
 
 let user = auth_data?.user;
 
-const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
+const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
   transports: ["websocket"],
   auth: {
-    token: `Bearer ${user?.token}`,
+    token: `Bearer ${user?.token}`, // Use the token from localStorage
   },
 });
-
-
-
 function Main() {
   // const [confirmDelete, setConfirmDelete] = useState(false);
   const { hasPermission } = useAuth();
-  const [exit, setExit] = useState(false);
+
   const [viewMore, setViewMore] = useState(false);
   const deleteButtonRef = useRef(null);
   const [grades, setGrades] = useState([]);
@@ -73,7 +70,7 @@ function Main() {
   const [exportDialog, setExportDialog] = useState(false);
   const approveButtonRef = useRef(null);
   const [approveDialog, setApproveDialog] = useState(false);
-  const [selectedLearner, setSelectedLearner] = useState<any>(null);
+
   const [approveTranfer, setApproveTranfer] = useState<any>({
     learner: [],
     to_stream: "",
@@ -172,14 +169,32 @@ function Main() {
   const [attachments, setAttachments] = useState<File[]>([]);
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  
-
+  // const handleFileChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files ? Array.from(e.target.files) : [];
+  //   setAttachments((prev) => [...prev, ...files]);
+  //   if (fileInputRef.current) fileInputRef.current.value = ""; // Reset input
+  // };
   const handleFileChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     setAttachments((prev) => [...prev, ...files]);
   };
 
+  // const fetchMessages = async () => {
+  //   setLoading(true);
+  //   try {
+  //     console.log(selectedParent);
+  //     const response = await ApiService.getMessage({
+  //       parent: selectedParent._id,
+  //     });
+  //     console.log(response);
+  //     setMessages(response.data);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     // setMessage("Failed to load messages");
+  //     // notify.current?.showToast();
+  //   }
+  // };
 
   useEffect(() => {
     if (!socket) return;
@@ -239,8 +254,10 @@ function Main() {
       grade: yup.string().required("Grade is required"),
       stream: yup.string().required("Stream is required"),
       guardian_first_name: yup.string().required("First name is required"),
-  
-
+      // guardian_last_name: yup.string().required("Last name is required"),
+      // guardian_id_no: yup.string().required("ID Number is required"),
+      // guardian_email: yup.string().required("Email is required"),
+      // guardian_phone: yup.string().required("Phone Number is required"),
     })
     .required();
 
@@ -254,9 +271,31 @@ function Main() {
     mode: "onChange",
     resolver: yupResolver(schema),
   });
+  // const onSubmitMesage = async (data: any) => {
+  //   setLoading(true);
+  //   try {
+  //     const newMessage = {
+  //       sender: user._id,
+  //       senderModel: "Parent",
+  //       receiver: selectedParent?._id, // Use selected parent
+  //       receiverModel: "Parent",
+  //       message: data,
+  //     };
+  //     const response = await ApiService.sendMessage(newMessage);
 
-  
-  
+  //     // socket.emit("sendMessage", newMessage);
+  //     fetchMessages();
+
+  //     reset();
+  //     setLoading(false);
+  //     // setMessage("Message sent successfully");
+  //     notify.current?.showToast();
+  //   } catch (error) {
+  //     setLoading(false);
+  //     setMessage("Failed to send message");
+  //     notify.current?.showToast();
+  //   }
+  // };
   const onSubmitMesage = async (e?: any) => {
     // if (e) e.preventDefault();
     if (!content.trim() && attachments.length === 0) return;
@@ -303,8 +342,6 @@ function Main() {
       setLoading(false);
     }
   };
-
-  
   const onSubmit = async (event: any) => {
     event.preventDefault();
     const result = await trigger();
@@ -388,7 +425,7 @@ function Main() {
         // data.transferCode = approveTranfer.transferCode;
         let res = await ApiService.leanersPromote(approveTranfer);
         if (!res.success) {
-          throw Error("Failed To tranfer");
+          throw Error("Failed to reinstate learner");
         }
         await getStudents();
 
@@ -396,11 +433,7 @@ function Main() {
         isLoading(false);
         setApproveDialog(false);
         setSuccess(true);
-        setMessage(
-          !approveTranfer.exit
-            ? "Transfer Approved successfully."
-            : "Learner Exited successfully."
-        );
+        setMessage("Learner reinstated successfully.");
         notify.current?.showToast();
       } catch (error: any) {
         isLoading(false);
@@ -515,7 +548,7 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
-          status: ["P"],
+          status: ["L", "G"], // Filter for "Left" or "Exited" learners
         },
         strandFilter
       );
@@ -578,7 +611,7 @@ function Main() {
       isLoading(false);
       // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner Deactivated successfully.");
+      setMessage("Learner status changed!");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -588,7 +621,12 @@ function Main() {
     }
   };
   const profileRecord = (record: any) => {
-
+    // setIsEditMode(true);
+    // setGroup(record?.groups);
+    // setPhoto(record?.photo);
+    // setGrade(record?.stream?.grade?._id);
+    // setGuardianIdNo(record?.guardian?.email);
+    // setGuardianIdNo2(record?.guardian2?.email);
     setLearner(record);
     getLeanerClasses(record._id);
     console.log(record);
@@ -1983,104 +2021,98 @@ function Main() {
                 </div>
               ) : (
                 <>
-                  <Table hover striped className="mt-6">
-                    <Table.Thead variant="modern">
+                  <Table className="border-spacing-y-[3px] border-separate mt-2">
+                    <Table.Thead>
                       <Table.Tr>
-                        <Table.Th className="w-16 text-center">
-                          #
+                        <Table.Th className="border-b-0 whitespace-nowrap w-10">
+                          No.
                         </Table.Th>
 
                         <Table.Th
-                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
                           onClick={() => handleSort("first_name")}
                         >
-                          <div className="flex items-center space-x-2">
-                            <span>Student Name</span>
-                            {sortField === "first_name" && (
-                              <Lucide 
-                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
-                                className="w-4 h-4" 
-                              />
-                            )}
-                          </div>
+                          Name{" "}
+                          {sortField === "first_name"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
                         <Table.Th
-                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
                           onClick={() => handleSort("adm_no")}
                         >
-                          <div className="flex items-center space-x-2">
-                            <span>Admission No</span>
-                            {sortField === "adm_no" && (
-                              <Lucide 
-                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
-                                className="w-4 h-4" 
-                              />
-                            )}
-                          </div>
+                          Adm No{" "}
+                          {sortField === "adm_no"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
+                        {/* <Table.Th
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
+                          onClick={() => handleSort("nemis_no")}
+                        >
+                          Nemis{" "}
+                          {sortField === "nemis_no"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
+                        </Table.Th> */}
+
                         <Table.Th
-                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
                           onClick={() => handleSort("grade")}
                         >
-                          <div className="flex items-center space-x-2">
-                            <span>Grade</span>
-                            {sortField === "grade" && (
-                              <Lucide 
-                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
-                                className="w-4 h-4" 
-                              />
-                            )}
-                          </div>
+                          Grade{" "}
+                          {sortField === "grade"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
                         <Table.Th
-                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="border-b-0 whitespace-nowrap w-20 cursor-pointer"
                           onClick={() => handleSort("stream")}
                         >
-                          <div className="flex items-center space-x-2">
-                            <span>Stream</span>
-                            {sortField === "stream" && (
-                              <Lucide 
-                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
-                                className="w-4 h-4" 
-                              />
-                            )}
-                          </div>
+                          Stream{" "}
+                          {sortField === "stream"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
                         <Table.Th
-                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
                           onClick={() => handleSort("session")}
                         >
-                          <div className="flex items-center space-x-2">
-                            <span>Session</span>
-                            {sortField === "session" && (
-                              <Lucide 
-                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
-                                className="w-4 h-4" 
-                              />
-                            )}
-                          </div>
+                          Session{" "}
+                          {sortField === "session"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
                         <Table.Th
-                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                          className="border-b-0 whitespace-nowrap w-24 cursor-pointer"
                           onClick={() => handleSort("status")}
                         >
-                          <div className="flex items-center space-x-2">
-                            <span>Status</span>
-                            {sortField === "status" && (
-                              <Lucide 
-                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
-                                className="w-4 h-4" 
-                              />
-                            )}
-                          </div>
+                          Status{" "}
+                          {sortField === "status"
+                            ? sortOrder === "asc"
+                              ? "▲"
+                              : "▼"
+                            : ""}
                         </Table.Th>
 
-                        <Table.Th className="text-center w-32">
+                        <Table.Th className="border-b-0 whitespace-nowrap text-center w-20">
                           Actions
                         </Table.Th>
                       </Table.Tr>
@@ -2088,99 +2120,102 @@ function Main() {
 
                     <Table.Tbody>
                       {learners.map((learner: any, key) => (
-                        <Table.Tr key={key}>
-                          <Table.Td className="text-center">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                        <Table.Tr key={key} className="">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-10">
+                            <span className="font-medium whitespace-nowrap">
                               {limit * (page - 1) + key + 1}
-                            </div>
+                            </span>
                           </Table.Td>
-                          
-                          <Table.Td>
-                            <div className="flex items-center space-x-4">
-                              <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md !py-3.5 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]">
+                            <div className="flex items-center">
+                              <div className="w-9 h-9 ">
                                 <img
                                   src={c.IMG_URL + learner?.photo}
                                   alt="Learner"
-                                  className="w-full h-full object-cover"
+                                  className="w-9 h-9 rounded-lg border shadow-md"
                                   onError={(e) =>
                                     (e.currentTarget.src = leanerImg)
                                   }
                                 />
                               </div>
-                              <div>
-                                <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
-                                     onClick={() => profileRecord(learner)}>
+                              <div className="ml-4">
+                                <a
+                                  href="#"
+                                  onClick={() => profileRecord(learner)}
+                                  className="font-medium whitespace-nowrap"
+                                >
                                   {learner?.first_name && learner?.first_name}
-                                  {" " + learner?.surname + " " + learner?.last_name}
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                  {learner?.stream?.grade?.name} • {learner?.stream?.name}
+                                  {" " +
+                                    learner?.surname +
+                                    " " +
+                                    learner?.last_name}
+                                </a>
+                                <div className="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                  {learner?.stream?.grade?.name}{" "}
+                                  {learner?.stream?.name}
                                 </div>
                               </div>
                             </div>
                           </Table.Td>
 
-                          <Table.Td>
-                            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block">
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {learner?.adm_no}
-                              </span>
-                            </div>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.adm_no}
+                            </span>
                           </Table.Td>
-                          
-                          <Table.Td>
-                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
-                              <span className="font-medium text-blue-700 dark:text-blue-300">
-                                {learner?.grade?.name}
-                              </span>
-                            </div>
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.assessment_no ?? "N/A"}
+                            </span>
+                          </Table.Td> */}
+                          {/* <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.nemis_no}
+                            </span>
+                          </Table.Td> */}
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.grade?.name}{" "}
+                            </span>
                           </Table.Td>
-                          
-                          <Table.Td>
-                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-3 py-2 inline-block">
-                              <span className="font-medium text-purple-700 dark:text-purple-300">
-                                {learner?.stream?.name}
-                              </span>
-                            </div>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.stream?.name}
+                            </span>
                           </Table.Td>
-                          
-                          <Table.Td>
-                            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 inline-block">
-                              <span className="font-medium text-green-700 dark:text-green-300">
-                                {learner?.current_session}
-                              </span>
-                            </div>
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <span className="font-medium whitespace-nowrap">
+                              {learner?.current_session}
+                            </span>
                           </Table.Td>
-                          
-                          <Table.Td>
-                            <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                              learner?.status === "L" || learner?.status === "G"
-                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                                : learner?.status === "D"
-                                ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
-                                : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                            }`}>
-                              <div className={`w-2 h-2 rounded-full mr-2 ${
-                                learner?.status === "L" || learner?.status === "G"
-                                  ? "bg-red-500"
-                                  : learner?.status === "D"
-                                  ? "bg-orange-500"
-                                  : "bg-green-500"
-                              }`}></div>
-                              {learner?.status === "L" || learner?.status === "G" ? "Left" : ""}
-                              {learner?.status === "P" ? "Active" : ""}
-                              {learner?.status === "D" ? "Deactivated" : ""}
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] w-20">
+                            <div
+                              className={
+                                learner?.status == "L"
+                                  ? "flex items-center text-primary"
+                                  : learner?.status == "D"
+                                  ? "flex items-center text-danger"
+                                  : "flex items-center text-success"
+                              }
+                            >
+                              {learner?.status == "L" ? "Left" : ""}
+                              {learner?.status == "G" ? "Left" : ""}
+                              {learner?.status == "P" ? "In Session" : ""}
+                              {learner?.status == "D" ? "Deactivated" : ""}
                             </div>
                           </Table.Td>
 
-                          <Table.Td>
-                            <div className="flex items-center justify-center space-x-2">
-                              <Menu className="inline-block">
-                                <Menu.Button className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                                  <Lucide icon="MoreHorizontal" className="w-5 h-5" />
+                          <Table.Td className="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0  before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400">
+                            <div className="flex items-center justify-center">
+                              <Menu className="inline-block mb-2 mr-1 box">
+                                <Menu.Button className="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">
+                                  <Lucide
+                                    icon="AlignJustify"
+                                    className="w-4 h-4 mr-1"
+                                  />{" "}
                                 </Menu.Button>
                                 <Menu.Items
-                                  className="w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 py-2 mt-2"
+                                  className="w-40"
                                   placement="bottom-end"
                                 >
                                   <Menu.Item
@@ -2188,10 +2223,10 @@ function Main() {
                                       e.preventDefault();
                                       profileRecord(learner);
                                     }}
-                                    className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                   >
-                                    <Lucide icon="Eye" className="w-4 h-4 mr-3 text-blue-500" />
-                                    View Profile
+                                    <i className="icon-eye mr-2"></i> View
+                                    Profile
                                   </Menu.Item>
 
                                   {hasPermission("learners", "update") && (
@@ -2200,16 +2235,16 @@ function Main() {
                                         e.preventDefault();
                                         editRecord(learner);
                                       }}
-                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                     >
-                                      <Lucide icon="Edit" className="w-4 h-4 mr-3 text-green-500" />
-                                      Edit Profile
+                                      <i className="icon-eye mr-2"></i> Edit
+                                      Profile
                                     </Menu.Item>
                                   )}
 
                                   {hasPermission("enrollment", "promote") && (
                                     <Menu.Item
-                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                       onClick={() => {
                                         setApproveTranfer({
                                           learners: [
@@ -2227,31 +2262,15 @@ function Main() {
                                         setApproveDialog(true);
                                       }}
                                     >
-                                      <Lucide icon="ArrowLeftRight" className="w-4 h-4 mr-3 text-purple-500" />
-                                      Transfer
+                                      {/* <Lucide
+                                            icon="CheckSquare"
+                                            className="w-4 h-4 mr-1"
+                                          />{" "} */}
+                                      <i className="icon-eye mr-2"></i>
+                                      Reinstate
                                     </Menu.Item>
                                   )}
-                                  
-                                  <Menu.Item
-                                    className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200"
-                                    onClick={() => {
-                                      setApproveTranfer({
-                                        learners: [
-                                          {
-                                            id: learner._id,
-                                            status: "G",
-                                          },
-                                        ],
-                                        from_stream: learner.stream._id,
-                                        from_grade: learner.grade._id,
-                                        exit: true,
-                                      });
-                                      setApproveDialog(true);
-                                    }}
-                                  >
-                                    <Lucide icon="LogOut" className="w-4 h-4 mr-3 text-orange-500" />
-                                    Exit Student
-                                  </Menu.Item>
+
                                   {(learner.status === "D" ||
                                     learner.status === "P") &&
                                     hasPermission("learners", "delete") && (
@@ -2259,7 +2278,6 @@ function Main() {
                                         onClick={(e: any) => {
                                           e.preventDefault();
                                           disableRecord(learner._id);
-                                          setSelectedLearner(learner);
                                           // assuming you meant disableRecord instead of disbaleRecord
                                         }}
                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
@@ -3120,11 +3138,11 @@ function Main() {
                   icon="XCircle"
                   className="w-16 h-16 mx-auto mt-3 text-danger"
                 /> */}
-            <div className="mt-5  font-medium">Incoming Tranfer</div>
+            <div className="mt-5  font-medium">Reinstate Tranfer</div>
             <div className="mt-2 text-slate-500">
               {!approveTranfer.exit
-                ? " Do you really approve this record?"
-                : "Do you really approve to exit this learner?"}
+                ? " Are you sure you want to reinstate this learner?"
+                : "Are you sure you want to reinstate this learner?"}
             </div>
             {!approveTranfer.exit && (
               <>
@@ -3213,7 +3231,7 @@ function Main() {
                 className="w-24 ml-4 text-white"
                 ref={approveButtonRef}
               >
-                Approve
+                Reinstate
               </Button>
             </div>
           </div>
@@ -3339,7 +3357,12 @@ function Main() {
               <Lucide icon="X" className="w-8 h-8 text-slate-400" />
             </a>
           </Dialog.Title>
-     
+          {/* <div className="p-5 text-center">
+                <Lucide
+                  icon="XCircle"
+                  className="w-16 h-16 mx-auto mt-3 text-danger"
+                />
+              </div> */}
           <div className="p-1">
             Choose the file to upload. <i>Type must be csv</i>
             <input

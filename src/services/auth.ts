@@ -2,6 +2,9 @@ import axios from "axios";
 import * as c from "../utils/constants";
 import { FieldValues } from "react-hook-form";
 const config = { headers: { "Content-Type": "multipart/form-data" } };
+const config2 = { headers:  {
+  "Content-Type": "application/json",
+}, };
 
 export async function login(data: FieldValues) {
   try {
@@ -629,6 +632,52 @@ export const getLearnersEnroll = async (data: any, filter: any) => {
     throw handler(e);
   }
 };
+
+
+export const getEnquiries = async (data: any, filter: any) => {
+  try {
+    let res = await axios.get(c.ENQUIRIES, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getOnlineApplicants = async (data: any, filter: any) => {
+  try {
+    let res = await axios.get(c.ONLINEAPPLICANTS, {
+      params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getVisitors = async (data: any, filter: any) => {
+  try {
+    let res = await axios.get(c.VISITORS, {
+      // params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getComplaints = async (data: any, filter: any) => {
+  try {
+    let res = await axios.get(c.COMPLAINTS, {
+      // params: data,
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
 export const getLearners = async (data: any, filter: any) => {
   try {
     let res = await axios.get(c.LEARNERS + "/all-by-session", {
@@ -732,13 +781,139 @@ export const toggleIdicatorStatus = async (id: any, data: any) => {
     throw handler(e);
   }
 };
+
+
 export async function createLearner(data: FieldValues) {
   try {
     if (data._id) {
-      let res = await axios.put(c.LEARNERS + "/" + data._id, data, config);
+      let res = await axios.put(c.LEARNERS + "/" + data._id, data, config2);
       return res.data;
     } else {
-      let res = await axios.post(c.LEARNERS, data, config);
+      let res = await axios.post(c.LEARNERS, data, config2);
+
+      console.log("Data here", data)
+
+      return res.data;
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function createEnquiries(data: any) {
+  try {
+    if (data._id) {
+      let res = await axios.put(c.ENQUIRIES + "/" + data._id, data, config2);
+      return res.data;
+    } else {
+
+      console.log("Data", data);
+
+      let res = await axios.post(c.ENQUIRIES, data, config2);
+      return res.data;
+      
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function createVisitor(data: any) {
+  try {
+    if (data._id) {
+      let res = await axios.put(c.VISITORS + "/" + data._id, data, config2);
+      return res.data;
+    } else {
+
+      console.log("Data", data);
+
+      let res = await axios.post(c.VISITORS, data, config2);
+      return res.data;
+      
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function updateStatus(learnerId:any, reply: any) {
+ 
+  try {
+  
+      let res = await axios.put(c.COMPLAINTS + "/"+ learnerId +"/status", reply,  config2);
+     
+
+      return res.data;
+    
+  } catch (e) {
+    throw handler(e);
+  }
+
+}
+
+export async function updateAssignedTo(learnerId:any, reply: any) {
+ 
+  try {
+  
+      let res = await axios.put(c.COMPLAINTS + "/"+ learnerId +"/assign", reply,  config2);
+     
+      
+      return res.data;
+    
+  } catch (e) {
+    throw handler(e);
+  }
+
+}
+
+export async function createComplaint(data: any) {
+  try {
+    if (data._id) {
+      let res = await axios.put(c.COMPLAINTS + "/" + data._id, data, config2);
+      return res.data;
+    } else {
+
+      console.log("Data", data);
+
+      let res = await axios.post(c.COMPLAINTS, data, config2);
+      return res.data;
+      
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+
+export async function createReply(complaintId, data) {
+  
+  try {
+    let res = await axios.post(`${c.COMPLAINTS}/${complaintId}/replies`, data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+
+}
+
+export async function getReplies(complaintId: string) {
+  try {
+
+    const res = await axios.get(`${c.COMPLAINTS}/${complaintId}/replies`, config2);
+    return res.data;
+
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function createOnlineApplicant(data: any) {
+  try {
+    if (data._id) {
+      let res = await axios.put(c.ONLINEAPPLICANTS + "/" + data._id, data, config2);
+      return res.data;
+    } else {
+      let res = await axios.post(c.ONLINEAPPLICANTS, data, config2);
       return res.data;
     }
   } catch (e) {
@@ -755,6 +930,20 @@ export async function deleteLearner(gradeId: any) {
     throw handler(e);
   }
 }
+
+export async function checkoutVisitor(gradeId: any) {
+  try {
+
+    let res = await axios.put(c.VISITORS +"/" + gradeId + "/checkout");
+    console.log(res);
+
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+
 export async function toggleLearnerStatus(gradeId: any) {
   try {
     let res = await axios.put(c.LEARNERS + "/" + gradeId + "/status");

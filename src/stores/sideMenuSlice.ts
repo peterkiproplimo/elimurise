@@ -85,6 +85,43 @@ const initialState: SideMenuState = {
       ],
     },
 
+    // FRONT OFFICE
+    {
+      icon: "Building2",
+      title: "Front Office",
+      subMenu: [
+        {
+          icon: "Users",
+          title: "Enquiries",
+          pathname: "/home/enquiries",
+          ignore: !hasPermission("learners", "read"),
+        },
+        {
+          icon: "User",
+          title: "Visitors",
+          pathname: "/home/visitors",
+          ignore: !hasPermission("parents", "read"),
+        },
+        {
+          icon: "User",
+          title: "PhoneCalls",
+          pathname: "/home/phonecalls",
+          ignore: !hasPermission("parents", "read"),
+        },
+        {
+          icon: "User",
+          title: "Complaints",
+          pathname: "/home/complaints",
+          ignore: !hasPermission("parents", "read"),
+        },
+        {
+          icon: "User",
+          title: "Online Applications",
+          pathname: "/home/onlineapplications",
+          ignore: !hasPermission("parents", "read"),
+        }
+      ],
+    },
     // STAFF MANAGEMENT
     {
       icon: "Users",

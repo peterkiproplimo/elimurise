@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
-import Button from "../../base-components/Button";
+import Button from "../../../base-components/Button";
 import PassportUpload from "./profilephoto";
 import { X, Paperclip, Send, MoreHorizontal, Eye, Edit, ArrowLeftRight, LogOut } from "lucide-react"; // Using Lucide icons for a modern look
 import {
@@ -10,31 +10,31 @@ import {
   FormSelect,
   FormSwitch,
   FormTextarea,
-} from "../../base-components/Form";
-import Lucide from "../../base-components/Lucide";
-import { Dialog, Menu } from "../../base-components/Headless";
-import Table from "../../base-components/Table";
-import * as ApiService from "../../services/auth";
+} from "../../../base-components/Form";
+import Lucide from "../../../base-components/Lucide";
+import { Dialog, Menu } from "../../../base-components/Headless";
+import Table from "../../../base-components/Table";
+import * as ApiService from "../../../services/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Notification, {
   NotificationElement,
-} from "../../base-components/Notification";
+} from "../../../base-components/Notification";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../contexts/Auth";
+import { useAuth } from "../../../contexts/Auth";
 
-import LoadingIcon from "../../base-components/LoadingIcon";
+import LoadingIcon from "../../../base-components/LoadingIcon";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MessageCircle, Search } from "lucide-react";
-import TomSelect from "../../base-components/TomSelect";
-import * as C from "../../utils/constants";
-import Pagination from "../../base-components/Pagination";
-import Alert from "../../base-components/Alert";
+import TomSelect from "../../../base-components/TomSelect";
+import * as C from "../../../utils/constants";
+import Pagination from "../../../base-components/Pagination";
+import Alert from "../../../base-components/Alert";
 import Dropzone from "dropzone";
-import Tippy from "../../base-components/Tippy";
-import * as c from "../../utils/constants";
-import leanerImg from "../../assets/images/learner.jpeg";
-import { formatDate, is_admin } from "../../utils/helper";
+import Tippy from "../../../base-components/Tippy";
+import * as c from "../../../utils/constants";
+import leanerImg from "../../../assets/images/learner.jpeg";
+import { formatDate, is_admin } from "../../../utils/helper";
 import io, { Socket } from "socket.io-client";
 
 interface TableRow {
@@ -53,6 +53,7 @@ const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
     token: `Bearer ${user?.token}`,
   },
 });
+
 
 
 
@@ -173,12 +174,12 @@ function Main() {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  
 
   const handleFileChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     setAttachments((prev) => [...prev, ...files]);
   };
+
 
 
   useEffect(() => {
@@ -239,7 +240,6 @@ function Main() {
       grade: yup.string().required("Grade is required"),
       stream: yup.string().required("Stream is required"),
       guardian_first_name: yup.string().required("First name is required"),
-  
 
     })
     .required();
@@ -255,8 +255,9 @@ function Main() {
     resolver: yupResolver(schema),
   });
 
-  
-  
+
+
+ 
   const onSubmitMesage = async (e?: any) => {
     // if (e) e.preventDefault();
     if (!content.trim() && attachments.length === 0) return;
@@ -303,8 +304,6 @@ function Main() {
       setLoading(false);
     }
   };
-
-  
   const onSubmit = async (event: any) => {
     event.preventDefault();
     const result = await trigger();
@@ -506,7 +505,7 @@ function Main() {
   const getStudents = async () => {
     isLoading(true);
     try {
-      const response = await ApiService.getLearnersEnroll(
+      const response = await ApiService.getOnlineApplicants(
         {
           page,
           search,
@@ -519,14 +518,15 @@ function Main() {
         },
         strandFilter
       );
-      const pagination = response.pagination;
+      const pagination = response?.pagination;
       setPagination({
-        current_page: Number(pagination.current_page),
-        total: pagination.total,
-        total_pages: pagination.total_pages,
-        per_page: Number(pagination.per_page),
+        current_page: Number(pagination?.current_page),
+        total: pagination?.total,
+        total_pages: pagination?.total_pages,
+        per_page: Number(pagination?.per_page),
       });
-      setLearners(response.data);
+
+      setLearners(response);
     } catch (error) {
       console.error("Error fetching students:", error);
     } finally {
@@ -537,14 +537,7 @@ function Main() {
     setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
     setSortField(field);
   };
-  const getParents = async (search: any) => {
-    const response = await ApiService.getParents({
-      page: 1,
-      search,
-    });
-    // setParents(response.data);
-    return response.data;
-  };
+
   const getStreams = async () => {
     const response = await ApiService.getStream({ grade: grade });
     setStreams(response.data);
@@ -588,7 +581,12 @@ function Main() {
     }
   };
   const profileRecord = (record: any) => {
-
+    // setIsEditMode(true);
+    // setGroup(record?.groups);
+    // setPhoto(record?.photo);
+    // setGrade(record?.stream?.grade?._id);
+    // setGuardianIdNo(record?.guardian?.email);
+    // setGuardianIdNo2(record?.guardian2?.email);
     setLearner(record);
     getLeanerClasses(record._id);
     console.log(record);
@@ -758,13 +756,7 @@ function Main() {
 
       setPdfUrl(url);
       // setEnrollments(res);
-      // const pagination = res.pagination;
-      // setPagination({
-      //   current_page: pagination?.current_page,
-      //   total: pagination?.total,
-      //   total_pages: pagination?.total_pages,
-      //   per_page: pagination?.per_page,
-      // });
+
       // setDialog(true);
       isLoading(false);
     } catch (error: any) {
@@ -816,13 +808,7 @@ function Main() {
 
       setPdfUrl(url);
       // setEnrollments(res);
-      // const pagination = res.pagination;
-      // setPagination({
-      //   current_page: pagination?.current_page,
-      //   total: pagination?.total,
-      //   total_pages: pagination?.total_pages,
-      //   per_page: pagination?.per_page,
-      // });
+
       // setDialog(true);
       isLoading(false);
     } catch (error: any) {
@@ -835,23 +821,7 @@ function Main() {
   };
   const [showParent2, setShowParent2] = useState(false);
 
-  const handleToggleParent2 = (event: any) => {
-    if (!event.target.checked) {
-      // Clear "Parent 2 Details" fields when unchecked
-      reset({
-        ...getValues(),
-        guardian2_id_no: "",
-        guardian2_relationship: "",
-        guardian2_first_name: "",
-        guardian2_surname: "",
-        guardian2_last_name: "",
-        guardian2_email: "",
-        guardian2_phone: "",
-      });
-      setGuardianIdNo2("");
-    }
-    setShowParent2(event.target.checked); // Toggle visibility
-  };
+
   const [content, setContent] = useState("");
 
   const handleChange = (e: any) => {
@@ -875,16 +845,7 @@ function Main() {
   useEffect(() => {
     scrollToBottom(); // Scroll to bottom on message update
 
-    // Play sound for new messages from others
-    // if (
-    //   messages.length > 0 &&
-    //   messages[messages.length - 1].sender !== user._id
-    // ) {
-    //   if (!audioRef.current) {
-    //     audioRef.current = new Audio("/audio/notification.mp3");
-    //   }
-    //   audioRef.current.play();
-    // }
+    
   }, [messages]);
 
   const triggerFileInput = (e: React.MouseEvent) => {
@@ -1108,782 +1069,22 @@ function Main() {
       </div>
       {dialog && !profile ? (
         <>
-          {/* Enhanced Top Section */}
-          <div className="flex items-center bg-white  p-4 rounded-t-2xl shadow-lg">
-            <a
-              onClick={(event: React.MouseEvent) => {
-                event.preventDefault();
-                cancel({ name: "" });
-                setDialog(false);
-                setIsEditMode(false);
-              }}
-              href="#"
-              className="text-black hover:text-gray-200 transition-colors"
-            >
-              <Lucide icon="ArrowLeft" className="w-6 h-6" />
-            </a>
-            <h2 className="ml-4 text-xl font-semibold text-black">
-              {isEditMode ? "Edit Learner" : "New Learner"}
-            </h2>
-          </div>
-          <form
-            className="mt-8 p-8 bg-white rounded-2xl shadow-xl  mx-auto border border-gray-100 animate-fade-in"
-            onSubmit={onSubmit}
-          >
-            {/* Close Button */}
-            <div className="absolute top-4 right-4">
-              <a
-                onClick={(event: React.MouseEvent) => {
-                  event.preventDefault();
-                  setPhoto("");
-                  setIsEditMode(false);
-                  setDialog(false);
-                }}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-                href="#"
-              >
-                <Lucide icon="X" className="w-6 h-6" />
-              </a>
-            </div>
 
-            {/* Tabs */}
-            <div className="flex border-b border-gray-200 mb-6">
-              <button
-                type="button"
-                className={`flex-1 py-3 px-4 text-center font-semibold text-sm transition-all ${
-                  activeTabLearner === "learner"
-                    ? "border-b-2 border-indigo-600 text-indigo-600"
-                    : "text-gray-500 hover:text-indigo-500"
-                }`}
-                onClick={() => setActiveTabLearner("learner")}
-              >
-                Learner Details
-              </button>
-              <button
-                type="button"
-                className={`flex-1 py-3 px-4 text-center font-semibold text-sm transition-all ${
-                  activeTabLearner === "parent1"
-                    ? "border-b-2 border-indigo-600 text-indigo-600"
-                    : "text-gray-500 hover:text-indigo-500"
-                }`}
-                onClick={() => setActiveTabLearner("parent1")}
-              >
-                Parent 1 Details
-              </button>
-              <button
-                type="button"
-                className={`flex-1 py-3 px-4 text-center font-semibold text-sm transition-all ${
-                  activeTabLearner === "parent2"
-                    ? "border-b-2 border-indigo-600 text-indigo-600"
-                    : "text-gray-500 hover:text-indigo-500"
-                }`}
-                onClick={() => setActiveTabLearner("parent2")}
-              >
-                Parent 2 Details
-              </button>
-            </div>
-
-            {/* Tab Content */}
-            <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-              {activeTabLearner === "learner" && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      First Name <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormInput
-                      {...register("first_name")}
-                      type="text"
-                      name="first_name"
-                      className={`mt-1 w-full rounded-lg border ${
-                        errors.first_name ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
-                      placeholder="First name"
-                    />
-                    {errors.first_name && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.first_name.message === "string" &&
-                          errors.first_name.message}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Middle Name <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormInput
-                      {...register("last_name")}
-                      type="text"
-                      name="last_name"
-                      className={`mt-1 w-full rounded-lg border ${
-                        errors.last_name ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
-                      placeholder="Last name"
-                    />
-                    {errors.last_name && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.last_name.message === "string" &&
-                          errors.last_name.message}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Surname
-                    </FormLabel>
-                    <FormInput
-                      {...register("surname")}
-                      type="text"
-                      name="surname"
-                      className={`mt-1 w-full rounded-lg border ${
-                        errors.surname ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
-                      placeholder="Surname"
-                    />
-                    {errors.surname && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.surname.message === "string" &&
-                          errors.surname.message}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <FormLabel
-                      className="text-sm font-medium text-gray-700"
-                      htmlFor="modal-form-6"
-                    >
-                      Gender
-                    </FormLabel>
-                    <FormSelect
-                      {...register("gender")}
-                      name="gender"
-                      className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
-                    >
-                      <option value="">Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </FormSelect>
-                    {errors.guardian2_relationship && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.guardian2_relationship.message ===
-                          "string" && errors.guardian2_relationship.message}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Admission Number <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormInput
-                      {...register("adm_no")}
-                      type="text"
-                      name="adm_no"
-                      className={`mt-1 w-full rounded-lg border ${
-                        errors.adm_no ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
-                      placeholder="Admission no"
-                    />
-                    {errors.adm_no && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.adm_no.message === "string" &&
-                          errors.adm_no.message}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Nemis No
-                    </FormLabel>
-                    <FormInput
-                      {...register("nemis_no")}
-                      type="number"
-                      name="nemis_no"
-                      className={`mt-1 w-full rounded-lg border ${
-                        errors.nemis_no ? "border-red-500" : "border-gray-300"
-                      } focus:ring-2 focus:ring-indigo-500 transition-all`}
-                      placeholder="Nemis no"
-                    />
-                    {errors.nemis_no && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.nemis_no.message === "string" &&
-                          errors.nemis_no.message}
-                      </div>
-                    )}
-                  </div>
-                  {!isEditMode && (
-                    <>
-                      <div>
-                        <FormLabel
-                          className="text-sm font-medium text-gray-700"
-                          htmlFor="modal-form-6"
-                        >
-                          Grade <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <TomSelect
-                          name="grade"
-                          value={grade}
-                          className={`mt-1 w-full rounded-lg ${
-                            errors.grade ? "border-red-500" : "border-gray-300"
-                          }`}
-                          onChange={(event: any) => {
-                            reset({ ...getValues(), grade: event });
-                            setGrade(event);
-                          }}
-                          disabled={isEditMode}
-                        >
-                          <option value="" selected>
-                            Select Grade
-                          </option>
-                          {grades.map((grade: any, key) => (
-                            <option key={key} value={grade._id}>
-                              {grade.name}
-                            </option>
-                          ))}
-                        </TomSelect>
-                        {errors.grade && (
-                          <div className="mt-2 text-red-500 text-sm">
-                            {typeof errors.grade.message === "string" &&
-                              errors.grade.message}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <FormLabel
-                          className="text-sm font-medium text-gray-700"
-                          htmlFor="modal-form-6"
-                        >
-                          Stream <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormSelect
-                          {...register("stream")}
-                          name="stream"
-                          className={`mt-1 w-full rounded-lg border ${
-                            errors.stream ? "border-red-500" : "border-gray-300"
-                          } focus:ring-2 focus:ring-indigo-500 transition-all`}
-                          disabled={isEditMode}
-                        >
-                          <option value="">Select Stream</option>
-                          {streams.map((stream: any, key) => (
-                            <option key={key} value={stream._id}>
-                              {stream.name}
-                            </option>
-                          ))}
-                        </FormSelect>
-                        {errors.stream && (
-                          <div className="mt-2 text-red-500 text-sm">
-                            {typeof errors.stream.message === "string" &&
-                              errors.stream.message}
-                          </div>
-                        )}
-                      </div>
-                    </>
-                  )}
-                  <div>
-                    <FormLabel
-                      className="text-sm font-medium text-gray-700"
-                      htmlFor="modal-form-6"
-                    >
-                      Passport Photo
-                    </FormLabel>
-                    <PassportUpload
-                      name="image"
-                      register={register}
-                      errors={errors}
-                      initialImageUrl={c.IMG_URL + photo}
-                      // className="mt-1 w-full"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {activeTabLearner === "parent1" && (
-                <>
-                  <div className="mb-6">
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Search Parent <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <TomSelect
-                      {...register("guardian_id_no")}
-                      name="guardian_id_no"
-                      value={guardianIdNo}
-                      onChange={(event: any) => {
-                        reset({ ...getValues(), parent: event });
-                        setGuardianIdNo(event);
-                        handleGuardianIdNoBlur();
-                      }}
-                      className={`mt-1 w-full rounded-lg ${
-                        errors.guardian_id_no
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      } focus:ring-2 focus:ring-indigo-500 transition-all bg-white shadow-sm`}
-                      options={{
-                        load: async (query: any, callback: any) => {
-                          const parents = await getParents(query);
-                          const options = parents
-                            .filter(
-                              (parent: any) => parent.email !== guardianIdNo2
-                            )
-                            .map((parent: any) => ({
-                              value: parent.email,
-                              text: `${parent.first_name} ${parent.last_name} - ${parent.email}`,
-                            }));
-                          callback(options);
-                        },
-                        placeholder: "Search for a parent by email...",
-                        loadThrottle: 300,
-                        maxOptions: 50,
-                      }}
-                    >
-                      <option value="">Select Email</option>
-                    </TomSelect>
-                    <FormInput
-                      {...register("guardian")}
-                      type="hidden"
-                      name="guardian"
-                      className={
-                        errors.guardian_id_no
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }
-                      placeholder="Parent ID number"
-                    />
-                    {errors.guardian_id_no && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.guardian_id_no.message === "string" &&
-                          errors.guardian_id_no.message}
-                      </div>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <FormLabel
-                        className="text-sm font-medium text-gray-700"
-                        htmlFor="modal-form-6"
-                      >
-                        Relationship
-                      </FormLabel>
-                      <FormSelect
-                        {...register("guardian_relationship")}
-                        name="guardian_relationship"
-                        className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
-                      >
-                        <option value="">Select Relationship</option>
-                        <option value="Father">Father</option>
-                        <option value="Mother">Mother</option>
-                        <option value="Guardian">Guardian</option>
-                      </FormSelect>
-                      {errors.guardian_relationship && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian_relationship.message ===
-                            "string" && errors.guardian_relationship.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent First Name{" "}
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian_first_name")}
-                        type="text"
-                        name="guardian_first_name"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian_first_name
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Parent First name"
-                        disabled
-                      />
-                      {errors.guardian_first_name && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian_first_name.message ===
-                            "string" && errors.guardian_first_name.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Surname
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian_surname")}
-                        type="text"
-                        name="guardian_surname"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian_surname
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Parent surname"
-                        disabled
-                      />
-                      {errors.guardian_surname && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian_surname.message ===
-                            "string" && errors.guardian_surname.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Last Name <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian_last_name")}
-                        type="text"
-                        name="guardian_last_name"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian_last_name
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Parent Last name"
-                        disabled
-                      />
-                      {errors.guardian_last_name && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian_last_name.message ===
-                            "string" && errors.guardian_last_name.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Email
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian_email")}
-                        type="text"
-                        name="guardian_email"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian_email
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Parent email"
-                        disabled
-                      />
-                      {errors.guardian_email && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian_email.message === "string" &&
-                            errors.guardian_email.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Phone
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian_phone")}
-                        type="text"
-                        name="guardian_phone"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian_phone
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Parent phone"
-                        disabled
-                      />
-                      {errors.guardian_phone && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian_phone.message === "string" &&
-                            errors.guardian_phone.message}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {activeTabLearner === "parent2" && (
-                <>
-                  <div className="flex items-center mb-6">
-                    <div className="flex-1">
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Search Parent 2 <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <TomSelect
-                        {...register("guardian_id_no")}
-                        name="guardian_id_no"
-                        value={guardianIdNo}
-                        onChange={(event: any) => {
-                          reset({ ...getValues(), guardian2_id_no: event });
-                          setGuardianIdNo2(event);
-                          handleGuardianIdNoBlur2();
-                        }}
-                        className={`mt-1 w-full rounded-lg ${
-                          errors.guardian_id_no
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } focus:ring-2 focus:ring-indigo-500 transition-all bg-white shadow-sm`}
-                        options={{
-                          load: async (query: any, callback: any) => {
-                            const parents = await getParents(query);
-                            const options = parents
-                              .filter(
-                                (parent: any) => parent.email !== guardianIdNo
-                              )
-                              .map((parent: any) => ({
-                                value: parent.email,
-                                text: `${parent.first_name} ${parent.last_name} - ${parent.email}`,
-                              }));
-                            callback(options);
-                          },
-                          placeholder: "Search for a parent by email...",
-                          loadThrottle: 300,
-                          maxOptions: 50,
-                        }}
-                      >
-                        <option value="">Select Email</option>
-                      </TomSelect>
-                      <FormInput
-                        {...register("guardian2")}
-                        type="hidden"
-                        name="guardian2"
-                        className={
-                          errors.guardian2_id_no
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }
-                        placeholder="Second Parent ID number"
-                      />
-                      {errors.guardian2_id_no && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian2_id_no.message === "string" &&
-                            errors.guardian2_id_no.message}
-                        </div>
-                      )}
-                    </div>
-                    <Lucide
-                      icon="Trash"
-                      className="w-5 h-5 text-red-500 hover:text-red-700 cursor-pointer transition-colors ml-4 mt-6"
-                      onClick={handleToggleParent2}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <FormLabel
-                        className="text-sm font-medium text-gray-700"
-                        htmlFor="modal-form-6"
-                      >
-                        Relationship
-                      </FormLabel>
-                      <FormSelect
-                        {...register("guardian2_relationship")}
-                        name="guardian2_relationship"
-                        className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
-                      >
-                        <option value="">Select Relationship</option>
-                        <option value="Father">Father</option>
-                        <option value="Mother">Mother</option>
-                        <option value="Guardian">Guardian</option>
-                      </FormSelect>
-                      {errors.guardian2_relationship && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian2_relationship.message ===
-                            "string" && errors.guardian2_relationship.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent First Name{" "}
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian2_first_name")}
-                        type="text"
-                        name="guardian2_first_name"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian2_first_name
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Second Parent First name"
-                        disabled
-                      />
-                      {errors.guardian2_first_name && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian2_first_name.message ===
-                            "string" && errors.guardian2_first_name.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Surname
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian2_surname")}
-                        type="text"
-                        name="guardian2_surname"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian2_surname
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Second Parent surname"
-                        disabled
-                      />
-                      {errors.guardian2_surname && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian2_surname.message ===
-                            "string" && errors.guardian2_surname.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Last Name <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian2_last_name")}
-                        type="text"
-                        name="guardian2_last_name"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian2_last_name
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Second Parent Last name"
-                        disabled
-                      />
-                      {errors.guardian2_last_name && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian2_last_name.message ===
-                            "string" && errors.guardian2_last_name.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Email
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian2_email")}
-                        type="email"
-                        name="guardian2_email"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian2_email
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Second Parent email"
-                        disabled
-                      />
-                      {errors.guardian2_email && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian2_email.message === "string" &&
-                            errors.guardian2_email.message}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Parent Phone
-                      </FormLabel>
-                      <FormInput
-                        {...register("guardian2_phone")}
-                        type="text"
-                        name="guardian2_phone"
-                        className={`mt-1 w-full rounded-lg border ${
-                          errors.guardian2_phone
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } bg-gray-100`}
-                        placeholder="Second Parent phone"
-                        disabled
-                      />
-                      {errors.guardian2_phone && (
-                        <div className="mt-2 text-red-500 text-sm">
-                          {typeof errors.guardian2_phone.message === "string" &&
-                            errors.guardian2_phone.message}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Buttons */}
-            <div className="mt-6 flex justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                onClick={() => cancel({ name: "" })}
-                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                type="submit"
-                className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center disabled:bg-indigo-400"
-                disabled={loading}
-              >
-                Save
-                {loading && (
-                  <LoadingIcon
-                    icon="spinning-circles"
-                    color="white"
-                    className="w-4 h-4 ml-2"
-                  />
-                )}
-              </Button>
-            </div>
-          </form>
+    
         </>
       ) : !profile && !dialog ? (
         <>
-          <h2 className="mt-1 text-lg font-medium ">Learners</h2>
-          {/* {message && success && (
-            <Alert
-              variant="soft-success"
-              className="flex items-center mb-2"
-              dismissTimeout={3000}
-              role="alert"
-            >
-              <svg
-                className="flex-shrink-0 inline w-4 h-4 me-3"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-              </svg>
-              {message}
-            </Alert>
-
-          )} */}
+          <h2 className="mt-1 text-lg font-medium ">Online Applicants</h2>
+    
 
           <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
             {(is_admin() ||
               hasPermission("parental-communication", "read")) && (
               <>
                 {" "}
-                <Button
-                  variant="primary"
-                  className="mr-2 shadow-md"
-                  onClick={(event: React.MouseEvent) => {
-                    event.preventDefault();
-                    setDialog(true);
-                    setIsEditMode(false);
-                  }}
-                >
-                  New Learner
-                </Button>
+ 
                 <Menu>
-                  <Menu.Button as={Button} className="px-2 !box">
-                    <span className="flex items-center justify-center w-5 h-5">
-                      <Lucide icon="Plus" className="w-4 h-4" />
-                    </span>
-                  </Menu.Button>
+            
                   <Menu.Items className="w-40">
                     <Menu.Item onClick={() => setUploadDialog(true)}>
                       <Lucide icon="Book" className="w-4 h-4 mr-2" /> Import
@@ -2005,27 +1206,14 @@ function Main() {
                           </div>
                         </Table.Th>
 
-                        <Table.Th
-                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-                          onClick={() => handleSort("adm_no")}
-                        >
-                          <div className="flex items-center space-x-2">
-                            <span>Admission No</span>
-                            {sortField === "adm_no" && (
-                              <Lucide 
-                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
-                                className="w-4 h-4" 
-                              />
-                            )}
-                          </div>
-                        </Table.Th>
+          
 
                         <Table.Th
                           className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                           onClick={() => handleSort("grade")}
                         >
                           <div className="flex items-center space-x-2">
-                            <span>Grade</span>
+                            <span>Parent Name</span>
                             {sortField === "grade" && (
                               <Lucide 
                                 icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
@@ -2040,7 +1228,7 @@ function Main() {
                           onClick={() => handleSort("stream")}
                         >
                           <div className="flex items-center space-x-2">
-                            <span>Stream</span>
+                            <span>Parent Relationship</span>
                             {sortField === "stream" && (
                               <Lucide 
                                 icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
@@ -2055,7 +1243,7 @@ function Main() {
                           onClick={() => handleSort("session")}
                         >
                           <div className="flex items-center space-x-2">
-                            <span>Session</span>
+                            <span>Parent Phone</span>
                             {sortField === "session" && (
                               <Lucide 
                                 icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"} 
@@ -2097,57 +1285,46 @@ function Main() {
                           
                           <Table.Td>
                             <div className="flex items-center space-x-4">
-                              <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 shadow-sm">
-                                <img
-                                  src={c.IMG_URL + learner?.photo}
-                                  alt="Learner"
-                                  className="w-full h-full object-cover"
-                                  onError={(e) =>
-                                    (e.currentTarget.src = leanerImg)
-                                  }
-                                />
-                              </div>
+                        
                               <div>
                                 <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
                                      onClick={() => profileRecord(learner)}>
                                   {learner?.first_name && learner?.first_name}
                                   {" " + learner?.surname + " " + learner?.last_name}
                                 </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                  {learner?.stream?.grade?.name} • {learner?.stream?.name}
-                                </div>
+                              
                               </div>
                             </div>
                           </Table.Td>
 
-                          <Table.Td>
-                            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block">
-                              <span className="font-medium text-gray-900 dark:text-white">
-                                {learner?.adm_no}
-                              </span>
-                            </div>
-                          </Table.Td>
+      
                           
                           <Table.Td>
                             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 inline-block">
-                              <span className="font-medium text-blue-700 dark:text-blue-300">
-                                {learner?.grade?.name}
-                              </span>
+                              
+                            <div>
+                                <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
+                                     onClick={() => profileRecord(learner)}>
+                                  {learner?.guardian_first_name && learner?.guardian_first_name}
+                                  {" " + learner?.guardian_surname + " " + learner?.guardian_last_name}
+                                </div>
+                              
+                              </div>
                             </div>
                           </Table.Td>
                           
                           <Table.Td>
                             <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-3 py-2 inline-block">
                               <span className="font-medium text-purple-700 dark:text-purple-300">
-                                {learner?.stream?.name}
+                                {learner?.guardian_relationship}
                               </span>
                             </div>
                           </Table.Td>
-                          
+               
                           <Table.Td>
                             <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 inline-block">
                               <span className="font-medium text-green-700 dark:text-green-300">
-                                {learner?.current_session}
+                                {learner?.guardian_phone}
                               </span>
                             </div>
                           </Table.Td>
@@ -2167,9 +1344,11 @@ function Main() {
                                   ? "bg-orange-500"
                                   : "bg-green-500"
                               }`}></div>
-                              {learner?.status === "L" || learner?.status === "G" ? "Left" : ""}
+
+                              Shortlisted
+                              {/* {learner?.status === "L" || learner?.status === "G" ? "Left" : ""}
                               {learner?.status === "P" ? "Active" : ""}
-                              {learner?.status === "D" ? "Deactivated" : ""}
+                              {learner?.status === "D" ? "Deactivated" : ""} */}
                             </div>
                           </Table.Td>
 
@@ -2191,85 +1370,8 @@ function Main() {
                                     className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                                   >
                                     <Lucide icon="Eye" className="w-4 h-4 mr-3 text-blue-500" />
-                                    View Profile
+                                    Review
                                   </Menu.Item>
-
-                                  {hasPermission("learners", "update") && (
-                                    <Menu.Item
-                                      onClick={(e: any) => {
-                                        e.preventDefault();
-                                        editRecord(learner);
-                                      }}
-                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
-                                    >
-                                      <Lucide icon="Edit" className="w-4 h-4 mr-3 text-green-500" />
-                                      Edit Profile
-                                    </Menu.Item>
-                                  )}
-
-                                  {hasPermission("enrollment", "promote") && (
-                                    <Menu.Item
-                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
-                                      onClick={() => {
-                                        setApproveTranfer({
-                                          learners: [
-                                            {
-                                              id: learner._id,
-                                              status: "P",
-                                            },
-                                          ],
-                                          from_stream: learner.stream._id,
-                                          from_grade: learner.grade._id,
-                                          to_grade: learner.grade._id,
-                                          from_session: learner.current_session,
-                                          next_session: learner.current_session,
-                                        });
-                                        setApproveDialog(true);
-                                      }}
-                                    >
-                                      <Lucide icon="ArrowLeftRight" className="w-4 h-4 mr-3 text-purple-500" />
-                                      Transfer
-                                    </Menu.Item>
-                                  )}
-                                  
-                                  <Menu.Item
-                                    className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-colors duration-200"
-                                    onClick={() => {
-                                      setApproveTranfer({
-                                        learners: [
-                                          {
-                                            id: learner._id,
-                                            status: "G",
-                                          },
-                                        ],
-                                        from_stream: learner.stream._id,
-                                        from_grade: learner.grade._id,
-                                        exit: true,
-                                      });
-                                      setApproveDialog(true);
-                                    }}
-                                  >
-                                    <Lucide icon="LogOut" className="w-4 h-4 mr-3 text-orange-500" />
-                                    Exit Student
-                                  </Menu.Item>
-                                  {(learner.status === "D" ||
-                                    learner.status === "P") &&
-                                    hasPermission("learners", "delete") && (
-                                      <Menu.Item
-                                        onClick={(e: any) => {
-                                          e.preventDefault();
-                                          disableRecord(learner._id);
-                                          setSelectedLearner(learner);
-                                          // assuming you meant disableRecord instead of disbaleRecord
-                                        }}
-                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                      >
-                                        <i className="icon-eye mr-2"></i>
-                                        {learner.status === "D"
-                                          ? "Activate "
-                                          : "Deactivate "}
-                                      </Menu.Item>
-                                    )}
 
                                   {hasPermission("learners", "delete") && (
                                     <Menu.Item
@@ -2278,9 +1380,10 @@ function Main() {
                                         setRecordId(learner._id);
                                         setViewMore(true);
                                       }}
-                                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                                    >
-                                      <i className="icon-eye mr-2"></i> Delete
+                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                                      >
+                                       <Lucide icon="Trash2" className="w-4 h-4 mr-3 text-blue-500" />
+                                        Delete
                                     </Menu.Item>
                                   )}
                                 </Menu.Items>
@@ -2497,16 +1600,7 @@ function Main() {
             <div className="w-full md:w-1/4 text-center mb-4 md:mb-0">
               <div className="bg-white shadow-md m-4 rounded-lg overflow-hidden ">
                 <div className="p-6">
-                  {/* <div className="w-9 h-9 ">
-                                <img
-                                  src={c.IMG_URL + learner?.photo}
-                                  alt="Learner"
-                                  className="w-9 h-9 rounded-lg border shadow-md"
-                                  onError={(e) =>
-                                    (e.currentTarget.src = leanerImg)
-                                  }
-                                />
-                              </div> */}
+         
                   <img
                     src={c.IMG_URL + learner?.photo}
                     alt="photo"
@@ -2525,7 +1619,7 @@ function Main() {
             <div className="w-full md:w-3/4 ">
               <div className="bg-white shadow-md rounded-lg  m-4">
                 <div className="p-6">
-                  <h4 className="font-bold">Learner's Information</h4>
+                  <h4 className="font-bold">Applicant's Information</h4>
 
                   {/* Tabs for Basic Info and Guardians */}
                   <ul className="flex border-b border-gray-200 mb-4">
@@ -2541,119 +1635,7 @@ function Main() {
                         Basic Info
                       </button>
                     </li>
-                    {(is_admin() ||
-                      hasPermission("parental-communication", "read")) && (
-                      <>
-                        <li className="mr-2 flex items-center">
-                          <button
-                            className={`inline-block py-2 px-4 ${
-                              activeTab === "guardian1"
-                                ? "text-blue-600 border-b-2 border-blue-600"
-                                : "text-gray-600 hover:text-blue-600"
-                            } font-semibold flex items-center`}
-                            onClick={() => setActiveTab("guardian1")}
-                          >
-                            <span>Parent 1</span>
-                            {learner?.guardian?.email &&
-                              (hasPermission(
-                                "parental-communication",
-                                "read"
-                              ) ||
-                                is_admin()) && (
-                                <div
-                                  className="relative"
-                                  onClick={() => openChat(learner?.guardian)}
-                                >
-                                  <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
-                                  {/* {unreadMessages?.guardian1 > 0 && (
-                                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                    {unreadMessages?.guardian1}
-                                  </span>
-                                )} */}
-                                </div>
-                              )}
-                          </button>
-                        </li>
-                        <li className="mr-2 flex items-center">
-                          <button
-                            className={`inline-block py-2 px-4 ${
-                              activeTab === "guardian2"
-                                ? "text-blue-600 border-b-2 border-blue-600"
-                                : "text-gray-600 hover:text-blue-600"
-                            } font-semibold flex items-center`}
-                            onClick={() => setActiveTab("guardian2")}
-                          >
-                            <span>Parent 2</span>
-                            {learner?.guardian2?.email &&
-                              (hasPermission(
-                                "parental-communication",
-                                "read"
-                              ) ||
-                                is_admin()) && (
-                                <div
-                                  className="relative"
-                                  onClick={() => openChat(learner?.guardian2)}
-                                >
-                                  <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
-                                  {/* {unreadMessages?.guardian2 > 0 && (
-                                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                    {unreadMessages?.guardian2}
-                                  </span>
-                                )} */}
-                                </div>
-                              )}
-                          </button>
-                        </li>
-                      </>
-                    )}
-                    <li className="mr-2">
-                      <button
-                        className={`inline-block py-2 px-4 ${
-                          activeTab === "tab4"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
-                        } font-semibold`}
-                        onClick={() => setActiveTab("tab4")}
-                      >
-                        Formative Assessments
-                      </button>
-                    </li>
-                    <li className="mr-2">
-                      <button
-                        className={`inline-block py-2 px-4 ${
-                          activeTab === "tab3"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
-                        } font-semibold`}
-                        onClick={() => setActiveTab("tab3")}
-                      >
-                        Summative Assessments
-                      </button>
-                    </li>
-                    <li className="mr-2">
-                      <button
-                        className={`inline-block py-2 px-4 ${
-                          activeTab === "tab5"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
-                        } font-semibold`}
-                        onClick={() => setActiveTab("tab5")}
-                      >
-                        History
-                      </button>
-                    </li>
-                    <li className="mr-2">
-                      <button
-                        className={`inline-block py-2 px-4 ${
-                          activeTab === "tab6"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
-                        } font-semibold`}
-                        onClick={() => setActiveTab("tab6")}
-                      >
-                        E-Portfolio
-                      </button>
-                    </li>
+                 
                   </ul>
 
                   {/* Tab Content */}
@@ -2670,90 +1652,77 @@ function Main() {
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
                                 Name
                               </td>
-                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.first_name} ${learner.surname}`}</td>
+                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.first_name} ${learner?.last_name} ${learner.surname}`}</td>
                             </tr>
+    
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                ADM NO
+                              gender
                               </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.adm_no}
-                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.gender}`}</td>
                             </tr>
+              
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Gender
+                              Admn No
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.gender}
+                                {`${learner?.adm_no}`}
                               </td>
                             </tr>
+
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Class
+                              Guardian Relationship
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.grade.name}
+                                {`${learner?.guardian_relationship}`}
                               </td>
                             </tr>
+
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Stream
+                              Guardian Name
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.stream?.name}
+                                {`${learner?.guardian_first_name}  ${learner?.guardian_last_name} ${learner?.guardian_surname}`}
                               </td>
                             </tr>
+                       
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Year Admitted
+                              Guardian Email
                               </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {new Date(learner?.createdAt).getFullYear()}
-                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.guardian_email}`}</td>
                             </tr>
+
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Email
+                              Guardian Phone
                               </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian?.email || "N/A"}
-                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.guardian_phone}`}</td>
                             </tr>
+
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                NEMIS NO
+                              Time Created
                               </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.nemis_no}
-                              </td>
+                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.createdAt}`}</td>
                             </tr>
+
                             <tr>
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Current Session
                               </td>
                               <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.current_session}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Status
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                <div
-                                  className={
-                                    learner?.status != "L"
-                                      ? "flex items-center text-success"
-                                      : "flex items-center text-danger"
-                                  }
+                              <button
+                                  className=" bg-gray-800 text-white p-2 hover:bg-gray-700 transition-colors"
+                                
                                 >
-                                  {learner?.status == "L" ? "Left" : ""}
-                                  {learner?.status == "G" ? "Left" : ""}
-                                  {learner?.status == "P" ? "In Session" : ""}
-                                </div>
+                                  Short List
+                                </button>
                               </td>
                             </tr>
+
                             {learner?.status == "G" && (
                               <tr>
                                 <td className="px-4 py-4 font-bold border-b border-gray-200">
@@ -2769,335 +1738,6 @@ function Main() {
                       </div>
                     )}
 
-                    {/* Parent 1 Tab */}
-                    {activeTab === "guardian1" && (
-                      <div className="tab-pane">
-                        <div className="flex justify-between items-center">
-                          <h4 className="font-bold">Parent 1 Information</h4>
-                        </div>
-                        <table className="min-w-full border border-gray-200 mt-2">
-                          <tbody>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Name
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian?.first_name}{" "}
-                                {learner?.guardian?.surname}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Relationship
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian_relationship}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Contact
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian?.phone || "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Email
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian?.email || "N/A"}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-
-                    {/* Parent 2 Tab */}
-                    {activeTab === "guardian2" && (
-                      <div className="tab-pane">
-                        <div className="flex justify-between items-center">
-                          <h4 className="font-bold">Parent 2 Information</h4>
-                        </div>
-                        <table className="min-w-full border border-gray-200 mt-2">
-                          <tbody>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Name
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian2?.first_name}{" "}
-                                {learner?.guardian2?.surname || "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Relationship
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian2_relationship || "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Contact
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian2?.phone || "N/A"}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Email
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {learner?.guardian2?.email || "N/A"}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-
-                    {/* Tab 3 */}
-                    {activeTab === "tab3" && (
-                      <div className="tab-pane">
-                        <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                          <h2 className="mr-auto text-base font-medium border-b p-2">
-                            Learner Report
-                          </h2>
-                          <div className="grid grid-cols-6 gap-2 mt-10">
-                            <div className="col-span-12 sm:col-span-2">
-                              {/* {JSON.stringify(academicYear)} */}
-                              <FormLabel htmlFor="modal-form-6">
-                                Grade{" "}
-                              </FormLabel>
-                              <TomSelect
-                                {...register("grade")}
-                                value={selectedAcademicYear}
-                                name="grade"
-                                onChange={(event: any) => {
-                                  setSelectedAcademicYear(event);
-                                }}
-                              >
-                                <option value={""}>Select Grade</option>
-                                {learner_grades?.map((grade: any, key: any) => (
-                                  <option key={key} value={grade.to_session}>
-                                    {grade?.to_grade?.name}-
-                                    {grade?.to_stream?.name}- {grade.to_session}
-                                    {/* {grade?.to_stream?.name}- {grade.to_session} */}
-                                  </option>
-                                ))}
-                              </TomSelect>
-                              {errors.term && (
-                                <div className="mt-2 text-danger">
-                                  {typeof errors.term.message === "string" &&
-                                    errors.term.message}
-                                </div>
-                              )}
-                            </div>
-                            <div className="col-span-12 sm:col-span-2">
-                              <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-                              <TomSelect
-                                {...register("term")}
-                                value={selectedTerm}
-                                name="term"
-                                onChange={(event: any) =>
-                                  setSelectedTerm(event)
-                                }
-                              >
-                                <option value={""}>Select Term</option>
-                                {terms.map((term: any, key) => (
-                                  <option key={key} value={term._id}>
-                                    {term.name}
-                                  </option>
-                                ))}
-                              </TomSelect>
-                              {errors.term && (
-                                <div className="mt-2 text-danger">
-                                  {typeof errors.term.message === "string" &&
-                                    errors.term.message}
-                                </div>
-                              )}
-                            </div>
-                            <div className="col-span-12 sm:col-span-2">
-                              <FormLabel htmlFor="modal-form-6">Test</FormLabel>
-                              <TomSelect
-                                {...register("test")}
-                                value={test}
-                                name="test"
-                                onChange={(event: any) => setTest(event)}
-                              >
-                                <option value={""}>Select Test</option>
-                                {tests.map((test: any, key: any) => (
-                                  <option key={key} value={test._id}>
-                                    {test.name}- {test?.type}
-                                  </option>
-                                ))}
-                              </TomSelect>
-                              {errors.term && (
-                                <div className="mt-2 text-danger">
-                                  {typeof errors.term.message === "string" &&
-                                    errors.term.message}
-                                </div>
-                              )}
-                            </div>
-
-                            {/* {substrands.map((substrand: any, key: any) => (
-                <span>{substrand.name}</span>
-              ))} */}
-                          </div>
-                          <div className="p-5 mt-3  text-right">
-                            <Button
-                              onClick={() => generateAssessmentSummative()}
-                              variant="primary"
-                              type="button"
-                              className="w-50 text-white"
-                            >
-                              Generate Report
-                              {loading && (
-                                <LoadingIcon
-                                  icon="spinning-circles"
-                                  color="white"
-                                  className="w-4 h-4 ml-2"
-                                />
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-                        {/* You can include more fields or tables here as needed */}
-                      </div>
-                    )}
-                    {activeTab === "tab4" && (
-                      <div className="tab-pane">
-                        <div className=" box mb-5 mt-5 items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                          <h2 className="mr-auto text-base font-medium border-b p-2">
-                            Learner Report
-                          </h2>
-                          <div className="grid grid-cols-6 gap-2 mt-10">
-                            <div className="col-span-12 sm:col-span-2">
-                              {/* {JSON.stringify(academicYear)} */}
-                              <FormLabel htmlFor="modal-form-6">
-                                Grade{" "}
-                              </FormLabel>
-                              <TomSelect
-                                {...register("grade")}
-                                value={selectedAcademicYear}
-                                name="grade"
-                                onChange={(event: any) => {
-                                  setSelectedAcademicYear(event);
-                                }}
-                              >
-                                <option value={""}>Select Grade</option>
-                                {learner_grades?.map((grade: any, key: any) => (
-                                  <option key={key} value={grade.to_session}>
-                                    {grade?.to_grade?.name}-
-                                    {grade?.to_stream?.name}- {grade.to_session}
-                                  </option>
-                                ))}
-                              </TomSelect>
-                              {errors.term && (
-                                <div className="mt-2 text-danger">
-                                  {typeof errors.term.message === "string" &&
-                                    errors.term.message}
-                                </div>
-                              )}
-                            </div>
-                            <div className="col-span-12 sm:col-span-2">
-                              <FormLabel htmlFor="modal-form-6">Term</FormLabel>
-                              <TomSelect
-                                {...register("term")}
-                                value={selectedTerm}
-                                name="term"
-                                onChange={(event: any) =>
-                                  setSelectedTerm(event)
-                                }
-                              >
-                                <option value={""}>Select Term</option>
-                                {terms.map((term: any, key) => (
-                                  <option key={key} value={term._id}>
-                                    {term.name}
-                                  </option>
-                                ))}
-                              </TomSelect>
-                              {errors.term && (
-                                <div className="mt-2 text-danger">
-                                  {typeof errors.term.message === "string" &&
-                                    errors.term.message}
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="col-span-12 sm:col-span-2">
-                              <FormLabel htmlFor="modal-form-6">
-                                Learning Area
-                              </FormLabel>
-                              <TomSelect
-                                {...register("learning_area")}
-                                value={selectedLeaningArea}
-                                name="learning_area"
-                                onChange={(event: any) =>
-                                  setSelectedLearningArea(event)
-                                }
-                              >
-                                <option>Select Learning Area</option>
-                                {learningAreas?.map(
-                                  (filteredArea: any, key) => (
-                                    <option key={key} value={filteredArea?._id}>
-                                      {filteredArea.name}
-                                    </option>
-                                  )
-                                )}
-                              </TomSelect>
-                              {errors.learning_area && (
-                                <div className="mt-2 text-danger">
-                                  {typeof errors.learning_area.message ===
-                                    "string" && errors.learning_area.message}
-                                </div>
-                              )}
-                            </div>
-
-                            {/* {substrands.map((substrand: any, key: any) => (
-                <span>{substrand.name}</span>
-              ))} */}
-                          </div>
-                          <div className="px-5  mt-5 text-right">
-                            <Button
-                              onClick={() => generateAssessment()}
-                              variant="primary"
-                              type="button"
-                              className="w-50 text-white"
-                            >
-                              Generate Report
-                              {loading && (
-                                <LoadingIcon
-                                  icon="spinning-circles"
-                                  color="white"
-                                  className="w-4 h-4 ml-2"
-                                />
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-                        {/* You can include more fields or tables here as needed */}
-                      </div>
-                    )}
-                    {activeTab === "tab5" && (
-                      <div className="tab-pane">
-                        <h4 className="font-bold">Additional Information</h4>
-                        <p>Comming soon...2</p>
-                        {/* You can include more fields or tables here as needed */}
-                      </div>
-                    )}
-                    {activeTab === "tab6" && (
-                      <div className="tab-pane">
-                        <h4 className="font-bold">Information</h4>
-                        <p>Comming soon...2</p>
-                        {/* You can include more fields or tables here as needed */}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

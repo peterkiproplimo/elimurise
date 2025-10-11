@@ -69,11 +69,17 @@ const user: User = {
   status: "online",
 };
 
-const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
-  transports: ["websocket"],
-  auth: { token: `Bearer ${auth.user?.token}` },
-});
+// const socket: Socket = io(new URL(import.meta.env.VITE_API_ENDPOINT).origin, {
+//   transports: ["websocket"],
+//   auth: { token: `Bearer ${auth.user?.token}` },
+// });
 
+const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
+  transports: ["websocket"],
+  auth: {
+    token: `Bearer ${auth.user?.token}`,
+  },
+});
 // MessageBubble Component
 const MessageBubble: React.FC<{
   message: Message;

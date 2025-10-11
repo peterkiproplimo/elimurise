@@ -45,6 +45,7 @@ const Calendar: React.FC<CalendarProps> = ({
       onMonthChange(newMonthStart); // Trigger month change callback
     }
   };
+
   const handleEventClick = (info: any) => {
     console.log("cl.....", info.event.start);
     if (onDateClick && info.event.start) {
@@ -57,6 +58,7 @@ const Calendar: React.FC<CalendarProps> = ({
       onDateClick(dateStr); // Trigger handleDateClick with local date
     }
   };
+  
   return (
     <div
       className={`bg-white dark:bg-darkmode-600 rounded-xl shadow-lg p-4 ${className}`}

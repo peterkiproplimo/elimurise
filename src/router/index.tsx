@@ -85,7 +85,13 @@ import Timetable from "../pages/Timetable";
 import TimetableTeacher from "../pages/Timetable/teacher";
 import TimetableViewer from "../pages/Timetable/Timetable_view";
 import InactiveLearners from "../pages/Learners/daeactivated";
+import Enquiries from "../pages/FrontOffice/Enquiries/index";
+import Visitors from "../pages/FrontOffice/Visitors/index";
+import PhoneCalls from "../pages/FrontOffice/PhoneCalls/index";
+import Complaints from "../pages/FrontOffice/Complaints/index";
 import ExitedLearners from "../pages/Learners/exited";
+import OnlineRegistration from "../pages/Learners/onlineregistration";
+import OnlineApplications from "../pages/FrontOffice/OnlineApplications/index";
 //inactive learners
 
 //nn
@@ -102,6 +108,26 @@ function Router() {
         {
           path: "",
           element: <Dashboard />,
+        },
+        {
+          path: "enquiries",
+          element: <Enquiries />
+        },
+        {
+          path: "visitors",
+          element: <Visitors />
+        },
+        {
+          path: "phonecalls",
+          element: <PhoneCalls />
+        },
+        {
+          path: "complaints",
+          element: <Complaints />
+        },
+        {
+          path: "onlineapplications",
+          element: <OnlineApplications />
         },
         {
           path: "analytics",
@@ -188,12 +214,10 @@ function Router() {
           path: "attendance",
           element: <AttendanceForm />,
         },
-
         {
           path: "notice-board",
           element: <Noticesboard />,
         },
-
         {
           path: "attendance_summary",
           element: <AttendanceSummary />,
@@ -206,12 +230,10 @@ function Router() {
           path: "behaviour-assessment",
           element: <BehaviourAssessment />,
         },
-
         {
           path: "academic",
           element: <Academic />,
         },
-
         {
           path: "stream",
           element: <Stream />,
@@ -262,7 +284,6 @@ function Router() {
           path: "settings",
           element: <Settings />,
         },
-
         {
           path: "users",
           element: <User />,
@@ -300,12 +321,10 @@ function Router() {
           path: "learning_areas",
           element: <LearningAreas />,
         },
-
         {
           path: "strands",
           element: <Strands />,
         },
-
         {
           path: "learner/:id",
           element: <LearnerDetails />,
@@ -448,6 +467,10 @@ function Router() {
     {
       path: "/register",
       element: <Register />,
+    },
+    {
+      path: "/online-registration",
+      element: <OnlineRegistration />,
     },
     {
       path: "/error-page",
