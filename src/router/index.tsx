@@ -90,6 +90,7 @@ import Visitors from "../pages/FrontOffice/Visitors/index";
 import PhoneCalls from "../pages/FrontOffice/PhoneCalls/index";
 import Complaints from "../pages/FrontOffice/Complaints/index";
 import ExitedLearners from "../pages/Learners/exited";
+import Certificates from "../pages/Certificates/index";
 import OnlineRegistration from "../pages/Learners/onlineregistration";
 import OnlineApplications from "../pages/FrontOffice/OnlineApplications/index";
 //inactive learners
@@ -128,6 +129,10 @@ function Router() {
         {
           path: "onlineapplications",
           element: <OnlineApplications />
+        },
+        {
+          path: "certificates",
+          element: <Certificates />
         },
         {
           path: "analytics",
@@ -469,7 +474,7 @@ function Router() {
       element: <Register />,
     },
     {
-      path: "/online-registration",
+      path: "/onlineregistration",
       element: <OnlineRegistration />,
     },
     {

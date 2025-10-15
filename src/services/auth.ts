@@ -909,11 +909,15 @@ export async function getReplies(complaintId: string) {
 
 export async function createOnlineApplicant(data: any) {
   try {
+    // Determine if data is FormData or regular object
+    const isFormData = data instanceof FormData;
+    const requestConfig = isFormData ? config : config2;
+    
     if (data._id) {
-      let res = await axios.put(c.ONLINEAPPLICANTS + "/" + data._id, data, config2);
+      let res = await axios.put(c.ONLINEAPPLICANTS + "/" + data._id, data, requestConfig);
       return res.data;
     } else {
-      let res = await axios.post(c.ONLINEAPPLICANTS, data, config2);
+      let res = await axios.post(c.ONLINEAPPLICANTS, data, requestConfig);
       return res.data;
     }
   } catch (e) {
@@ -2311,4 +2315,104 @@ export function handler(err: any) {
   console.log("error");
   console.log(error.message);
   return new Error(error.message);
+}
+
+// Certificate API functions
+export async function createCertificate(data: any) {
+  try {
+    // Determine if data is FormData or regular object
+    const isFormData = data instanceof FormData;
+    const requestConfig = isFormData ? config : config2;
+
+    if (data._id) {
+      let res = await axios.put(c.CERTIFICATES + "/" + data._id, data, requestConfig);
+      return res.data;
+    } else {
+      let res = await axios.post(c.CERTIFICATES, data, requestConfig);
+      return res.data;
+    }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getCertificates(params: any = {}) {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${c.CERTIFICATES}?${queryString}` : c.CERTIFICATES;
+    let res = await axios.get(url);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getCertificateById(id: string) {
+  try {
+    let res = await axios.get(c.CERTIFICATES + "/" + id);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getCertificatesByStudent(studentId: string, params: any = {}) {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString 
+      ? `${c.CERTIFICATES}/student/${studentId}?${queryString}` 
+      : `${c.CERTIFICATES}/student/${studentId}`;
+    let res = await axios.get(url);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function updateCertificate(id: string, data: any) {
+  try {
+    const isFormData = data instanceof FormData;
+    const requestConfig = isFormData ? config : config2;
+    
+    let res = await axios.put(c.CERTIFICATES + "/" + id, data, requestConfig);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function deleteCertificate(id: string) {
+  try {
+    let res = await axios.delete(c.CERTIFICATES + "/" + id);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function verifyCertificate(id: string, data: any) {
+  try {
+    let res = await axios.patch(c.CERTIFICATES + "/" + id + "/verify", data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getCertificateStats() {
+  try {
+    let res = await axios.get(c.CERTIFICATES + "/stats");
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function updateEnquiry(id: string, data: any) {
+  try {
+    let res = await axios.put(c.ENQUIRIES + "/" + id, data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
 }

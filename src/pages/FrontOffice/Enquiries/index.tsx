@@ -83,10 +83,166 @@ function Main() {
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
+  // Conversion workflow states
+  const [conversionMode, setConversionMode] = useState(false);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<any>(null);
+  const [conversionForm, setConversionForm] = useState({
+    studentName: '',
+    dateOfBirth: '',
+    gender: '',
+    gradeInterested: '',
+    parentName: '',
+    relationship: '',
+    phoneNumber: '',
+    email: '',
+    address: '',
+    previousSchool: '',
+    medicalConditions: '',
+    emergencyContact: '',
+    notes: ''
+  });
+
   const [schools, setSchools] = useState([]);
   const [selectGroup, setGroup] = useState([""]);
   const [selectPermission, setPermission] = useState([""]);
   const [recordId, setRecordId] = useState(null);
+
+  // Conversion workflow functions
+  const handleConvertToApplication = (enquiry: any) => {
+    setSelectedEnquiry(enquiry);
+    
+    // Pre-populate form with enquiry data
+    setConversionForm({
+      studentName: enquiry.studentName || '',
+      dateOfBirth: enquiry.dateOfBirth || '',
+      gender: enquiry.gender || '',
+      gradeInterested: enquiry.gradeInterested || '',
+      parentName: enquiry.parentName || '',
+      relationship: enquiry.relationship || '',
+      phoneNumber: enquiry.phoneNumber || '',
+      email: enquiry.email || '',
+      address: enquiry.address || '',
+      previousSchool: enquiry.previousSchool || '',
+      medicalConditions: enquiry.medicalConditions || '',
+      emergencyContact: enquiry.emergencyContact || '',
+      notes: enquiry.notes || ''
+    });
+    
+    setConversionMode(true);
+    setDialog(false); // Close the main enquiry dialog if open
+  };
+
+  const handleConversionSubmit = async () => {
+    try {
+      // Create online application from enquiry data with correct field structure
+      const applicationData = {
+        // Student Details
+        first_name: conversionForm.studentName.split(' ')[0] || '',
+        middle_name: '',
+        last_name: conversionForm.studentName.split(' ').slice(1).join(' ') || '',
+        gender: conversionForm.gender,
+        dateOfBirth: conversionForm.dateOfBirth,
+        nationality: 'Kenyan', // Default nationality
+        countySubCounty: '',
+        birthCertificateNo: '',
+        
+        // Parent/Guardian Details
+        guardian_relationship: conversionForm.relationship,
+        guardian_first_name: conversionForm.parentName.split(' ')[0] || '',
+        guardian_surname: '',
+        guardian_last_name: conversionForm.parentName.split(' ').slice(1).join(' ') || '',
+        guardian_email: conversionForm.email,
+        guardian_phone: conversionForm.phoneNumber,
+        postalAddress: conversionForm.address,
+        idNumber: '',
+        
+        // Academic Information
+        currentOrLastSchool: conversionForm.previousSchool,
+        currentClass: '',
+        classApplyingFor: conversionForm.gradeInterested,
+        kcpeIndexNumber: '',
+        kcpeMarks: '',
+        
+        // Address/Contact Details
+        homeAddress: conversionForm.address,
+        nearestLandmark: '',
+        distanceFromSchool: '',
+        
+        // Payment Information
+        payment: JSON.stringify({
+          method: 'M-Pesa',
+          amount: 1000,
+          transactionCode: 'CONV' + Date.now(),
+          paymentDate: new Date().toISOString(),
+          status: 'Pending'
+        }),
+        
+        // Application Status
+        applicationStatus: 'Pending',
+        
+        // Additional Information
+        medical_conditions: conversionForm.medicalConditions,
+        emergency_contact: conversionForm.emergencyContact,
+        notes: conversionForm.notes,
+        
+        // Source tracking
+        source: 'enquiry_conversion',
+        original_enquiry_id: selectedEnquiry._id,
+        conversion_date: new Date().toISOString()
+      };
+
+      // Debug: Log the application data being sent
+      console.log('Sending application data:', applicationData);
+      
+      // Submit to online applications
+      const response = await ApiService.createOnlineApplicant(applicationData);
+      
+      if (response) {
+        // Update enquiry status to 'Converted'
+        await ApiService.updateEnquiry(selectedEnquiry._id, {
+          status: 'Converted',
+          converted_to_application: true,
+          application_id: response.applicant?._id,
+          conversion_date: new Date().toISOString()
+        });
+        
+        // Show success message
+        setMessage('Enquiry successfully converted to admission application!');
+        setSuccess(true);
+        notify.current?.showToast();
+        
+        // Close form and refresh data
+        setConversionMode(false);
+        await getEnquiries();
+      }
+    } catch (error) {
+      console.error('Error converting enquiry:', error);
+      setMessage('Error converting enquiry to application. Please try again.');
+      setSuccess(false);
+      notify.current?.showToast();
+    }
+  };
+
+  const handleConversionCancel = () => {
+    setConversionMode(false);
+    setSelectedEnquiry(null);
+    setConversionForm({
+      studentName: '',
+      dateOfBirth: '',
+      gender: '',
+      gradeInterested: '',
+      parentName: '',
+      relationship: '',
+      phoneNumber: '',
+      email: '',
+      address: '',
+      previousSchool: '',
+      medicalConditions: '',
+      emergencyContact: '',
+      notes: ''
+    });
+  };
+
   const [dialog, setDialog] = useState(false);
   const [loading, isLoading] = useState(true);
   const [success, setSuccess] = useState(true);
@@ -374,6 +530,8 @@ function Main() {
       setSelectedFile(file);
     }
   };
+
+
   const approveTranferSubmit = async () => {
     console.log("event");
     // event.preventDefault();
@@ -504,6 +662,7 @@ function Main() {
       }
     }
   };
+
   const getStudents = async () => {
     isLoading(true);
     try {
@@ -523,7 +682,7 @@ function Main() {
       const pagination = response?.pagination;
       setPagination({
         current_page: Number(pagination?.current_page),
-        total: pagination?.total,
+        total: response?.length,
         total_pages: pagination?.total_pages,
         per_page: Number(pagination?.per_page),
       });
@@ -590,6 +749,7 @@ function Main() {
     getLeanerClasses(record._id);
     console.log(record);
     setProfile(true);
+
   };
 
   const learner_state = location.state; // The object passed in `state`
@@ -760,12 +920,14 @@ function Main() {
     console.log(e.target.value);
     setContent(e.target.value);
   };
+
   const handleSend = () => {
     if (!content.trim()) return; // Prevent sending empty messages
     console.log(content);
     onSubmitMesage(content); // Call function with the message
     setContent(""); // Clear input after sending
   };
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -787,6 +949,7 @@ function Main() {
       fileInputRef.current.click();
     }
   };
+  
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   const openZoom = (imageUrl: string) => {
@@ -1302,6 +1465,296 @@ function Main() {
             </div>
           </form>
         </>
+      ) : conversionMode ? (
+        <>
+          {/* Conversion Form Header */}
+          <div className="flex items-center bg-white p-4 rounded-t-2xl shadow-lg">
+            <a
+              onClick={(event: React.MouseEvent) => {
+                event.preventDefault();
+                handleConversionCancel();
+              }}
+              href="#"
+              className="text-black hover:text-gray-200 transition-colors"
+            >
+              <Lucide icon="ArrowLeft" className="w-6 h-6" />
+            </a>
+            <h2 className="ml-4 text-xl font-semibold text-black">
+              Convert Enquiry to Admission Application
+            </h2>
+          </div>
+
+          <form
+            className="mt-8 p-8 bg-white rounded-2xl shadow-xl mx-auto border border-gray-100 animate-fade-in"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleConversionSubmit();
+            }}
+          >
+            {/* Close Button */}
+            <div className="absolute top-4 right-4">
+              <a
+                onClick={(e: any) => {
+                  e.preventDefault();
+                  handleConversionCancel();
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                href="#"
+              >
+                <Lucide icon="X" className="w-6 h-6" />
+              </a>
+            </div>
+
+            {/* Conversion Form Header */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Application Details</h3>
+              <p className="text-sm text-gray-600">Review and complete the application information</p>
+            </div>
+
+            {/* Student Information Section */}
+            <div className="mb-8">
+              <h4 className="text-md font-semibold text-gray-700 mb-4 border-b border-gray-200 pb-2">
+                Student Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Student Name <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.studentName}
+                    onChange={(e) => setConversionForm({...conversionForm, studentName: e.target.value})}
+                    type="text"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Student Name"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Date of Birth <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.dateOfBirth}
+                    onChange={(e) => setConversionForm({...conversionForm, dateOfBirth: e.target.value})}
+                    type="date"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Gender <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormSelect
+                    value={conversionForm.gender}
+                    onChange={(e) => setConversionForm({...conversionForm, gender: e.target.value})}
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </FormSelect>
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Grade Interested <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormSelect
+                    value={conversionForm.gradeInterested}
+                    onChange={(e) => setConversionForm({...conversionForm, gradeInterested: e.target.value})}
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                  >
+                    <option value="">Select Grade</option>
+                    <option value="Grade1">Grade 1</option>
+                    <option value="Grade2">Grade 2</option>
+                    <option value="Grade3">Grade 3</option>
+                    <option value="Grade4">Grade 4</option>
+                    <option value="Grade5">Grade 5</option>
+                    <option value="Grade6">Grade 6</option>
+                    <option value="Grade7">Grade 7</option>
+                    <option value="Grade8">Grade 8</option>
+                  </FormSelect>
+                </div>
+              </div>
+            </div>
+
+            {/* Parent/Guardian Information Section */}
+            <div className="mb-8">
+              <h4 className="text-md font-semibold text-gray-700 mb-4 border-b border-gray-200 pb-2">
+                Parent/Guardian Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Parent/Guardian Name <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.parentName}
+                    onChange={(e) => setConversionForm({...conversionForm, parentName: e.target.value})}
+                    type="text"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Parent/Guardian Name"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Relationship <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.relationship}
+                    onChange={(e) => setConversionForm({...conversionForm, relationship: e.target.value})}
+                    type="text"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Relationship to student"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Phone Number <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.phoneNumber}
+                    onChange={(e) => setConversionForm({...conversionForm, phoneNumber: e.target.value})}
+                    type="text"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Phone Number"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Email Address <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.email}
+                    onChange={(e) => setConversionForm({...conversionForm, email: e.target.value})}
+                    type="email"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Email Address"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Address
+                  </FormLabel>
+                  <FormTextarea
+                    value={conversionForm.address}
+                    onChange={(e) => setConversionForm({...conversionForm, address: e.target.value})}
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Home Address"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Information Section */}
+            <div className="mb-8">
+              <h4 className="text-md font-semibold text-gray-700 mb-4 border-b border-gray-200 pb-2">
+                Additional Information
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Previous School
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.previousSchool}
+                    onChange={(e) => setConversionForm({...conversionForm, previousSchool: e.target.value})}
+                    type="text"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Previous School"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Emergency Contact
+                  </FormLabel>
+                  <FormInput
+                    value={conversionForm.emergencyContact}
+                    onChange={(e) => setConversionForm({...conversionForm, emergencyContact: e.target.value})}
+                    type="text"
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Emergency Contact"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Medical Conditions
+                  </FormLabel>
+                  <FormTextarea
+                    value={conversionForm.medicalConditions}
+                    onChange={(e) => setConversionForm({...conversionForm, medicalConditions: e.target.value})}
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Any medical conditions or allergies"
+                    rows={2}
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    Additional Notes
+                  </FormLabel>
+                  <FormTextarea
+                    value={conversionForm.notes}
+                    onChange={(e) => setConversionForm({...conversionForm, notes: e.target.value})}
+                    className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Any additional notes or special requirements"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Conversion Summary */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-700 mb-6">
+              <h4 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
+                Conversion Summary
+              </h4>
+              <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+                <p>• This enquiry will be converted to an admission application</p>
+                <p>• The enquiry status will be updated to "Converted"</p>
+                <p>• A new application will be created in the Online Applications system</p>
+                <p>• The parent/guardian will receive notification about the application</p>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-6 flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={handleConversionCancel}
+                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                className="px-6 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-all flex items-center disabled:bg-purple-400"
+                disabled={loading}
+              >
+                <Lucide icon="ArrowLeftRight" className="w-4 h-4 mr-2" />
+                Convert to Application
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
+                  />
+                )}
+              </Button>
+            </div>
+          </form>
+        </>
       ) : !profile && !dialog ? (
         <>
           <h2 className="mt-1 text-lg font-medium ">Enquiries</h2>
@@ -1347,7 +1800,7 @@ function Main() {
                   </Menu>
                 </>
               )}
-            <div className="hidden mx-auto md:block text-slate-500">
+            {/* <div className="hidden mx-auto md:block text-slate-500">
               Showing{" "}
               {pagination.current_page +
                 " to " +
@@ -1355,47 +1808,9 @@ function Main() {
                 " of " +
                 pagination.total}{" "}
               entries
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <TomSelect
-                value={grade}
-                className="relative w-56 text-slate-500 "
-                onChange={(event: any) => {
-                  reset({ ...getValues(), grade: event, stream: "" });
-                  setStream("");
-                  // reset({ ...getValues(), grade: event });
+            </div> */}
+   
 
-                  setGrade(event);
-                }}
-              >
-                <option value={""} selected>
-                  All Grades
-                </option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </TomSelect>
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <FormSelect
-                {...register("stream")}
-                name="stream"
-                onChange={(e: any) => {
-                  setStream(e.target.value);
-                }}
-                className={errors.stream ? "border-danger" : ""}
-                disabled={isEditMode}
-              >
-                <option value={""}>Select Stream</option>
-                {streams.map((stream: any, key) => (
-                  <option key={key} value={stream._id}>
-                    {stream.name}
-                  </option>
-                ))}
-              </FormSelect>
-            </div>
             <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
               <div className="relative w-56 text-slate-500">
                 <FormInput
@@ -1571,6 +1986,19 @@ function Main() {
                                     <Lucide icon="Eye" className="w-4 h-4 mr-3 text-blue-500" />
                                     View Details
                                   </Menu.Item>
+
+                                  {learner.status !== "Converted" && (
+                                    <Menu.Item
+                                      onClick={(e: any) => {
+                                        e.preventDefault();
+                                        handleConvertToApplication(learner);
+                                      }}
+                                      className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+                                    >
+                                      <Lucide icon="ArrowLeftRight" className="w-4 h-4 mr-3 text-purple-500" />
+                                      Convert to Application
+                                    </Menu.Item>
+                                  )}
 
                                   {hasPermission("learners", "update") && (
                                     <Menu.Item
@@ -2398,6 +2826,7 @@ function Main() {
           <div className="mt-1 text-slate-500">{message}</div>
         </div>
       </Notification>
+
     </>
   );
 }

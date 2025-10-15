@@ -85,6 +85,20 @@ const initialState: SideMenuState = {
       ],
     },
 
+        // Achievements
+    {
+      icon: "Building2",
+      title: "Achievements",
+      subMenu: [
+        {
+          icon: "Users",
+          title: "Certificates",
+          pathname: "/home/certificates",
+          ignore: !hasPermission("learners", "read"),
+        },
+      ]
+    },
+
     // FRONT OFFICE
     {
       icon: "Building2",

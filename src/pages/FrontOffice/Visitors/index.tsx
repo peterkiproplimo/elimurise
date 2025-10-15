@@ -529,7 +529,7 @@ function Main() {
       const pagination = response?.pagination;
       setPagination({
         current_page: Number(pagination?.current_page),
-        total: pagination?.total,
+        total: response?.length,
         total_pages: pagination?.total_pages,
         per_page: Number(pagination?.per_page),
       });
@@ -1356,7 +1356,7 @@ function Main() {
                   </Menu>
                 </>
               )}
-            <div className="hidden mx-auto md:block text-slate-500">
+            {/* <div className="hidden mx-auto md:block text-slate-500">
               Showing{" "}
               {pagination.current_page +
                 " to " +
@@ -1364,47 +1364,9 @@ function Main() {
                 " of " +
                 pagination.total}{" "}
               entries
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <TomSelect
-                value={grade}
-                className="relative w-56 text-slate-500 "
-                onChange={(event: any) => {
-                  reset({ ...getValues(), grade: event, stream: "" });
-                  setStream("");
-                  // reset({ ...getValues(), grade: event });
-
-                  setGrade(event);
-                }}
-              >
-                <option value={""} selected>
-                  All Grades
-                </option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </TomSelect>
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <FormSelect
-                {...register("stream")}
-                name="stream"
-                onChange={(e: any) => {
-                  setStream(e.target.value);
-                }}
-                className={errors.stream ? "border-danger" : ""}
-                disabled={isEditMode}
-              >
-                <option value={""}>Select Stream</option>
-                {streams.map((stream: any, key) => (
-                  <option key={key} value={stream._id}>
-                    {stream.name}
-                  </option>
-                ))}
-              </FormSelect>
-            </div>
+            </div> */}
+  
+       
             <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
               <div className="relative w-56 text-slate-500">
                 <FormInput

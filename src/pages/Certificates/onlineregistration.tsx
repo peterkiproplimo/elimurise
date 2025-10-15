@@ -142,155 +142,9 @@ function Main() {
   const isPublicView = location.pathname.startsWith("/onlineregistration");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Document upload states
-  const [uploadedDocuments, setUploadedDocuments] = useState<{[key: string]: File}>({});
-  const [documentStatuses, setDocumentStatuses] = useState<{[key: string]: string}>({
-    'birth-certificate': 'Pending',
-    'passport-photo': 'Pending', 
-    'academic-report': 'Pending',
-    'transfer-letter': 'Optional',
-    'parent-id': 'Pending',
-    'medical-report': 'Optional'
-  });
-
-  // Multi-step application states
-  const [currentStep, setCurrentStep] = useState(1); // 1: Form, 2: Payment, 3: Review
-  const [formData, setFormData] = useState<any>({});
-  const [paymentData, setPaymentData] = useState<any>({
-    method: '',
-    amount: 1000,
-    transactionCode: '',
-    paymentDate: ''
-  });
-  const [applicationStatus, setApplicationStatus] = useState('Pending');
-
   const handleFileChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     setAttachments((prev) => [...prev, ...files]);
-  };
-
-  // Handle document uploads
-  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>, documentType: string) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be less than 5MB');
-        return;
-      }
-
-      // Validate file type based on document type
-      const allowedTypes: {[key: string]: string[]} = {
-        'birth-certificate': ['.pdf', '.jpg', '.jpeg'],
-        'passport-photo': ['.jpg', '.jpeg', '.png'],
-        'academic-report': ['.pdf', '.jpg', '.jpeg'],
-        'transfer-letter': ['.pdf'],
-        'parent-id': ['.pdf', '.jpg', '.jpeg'],
-        'medical-report': ['.pdf']
-      };
-
-      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-      if (!allowedTypes[documentType]?.includes(fileExtension)) {
-        alert(`Invalid file type. Allowed types: ${allowedTypes[documentType].join(', ')}`);
-        return;
-      }
-
-      // Store the uploaded file
-      setUploadedDocuments(prev => ({
-        ...prev,
-        [documentType]: file
-      }));
-
-      // Update status
-      setDocumentStatuses(prev => ({
-        ...prev,
-        [documentType]: 'Uploaded'
-      }));
-
-      console.log(`Uploaded ${documentType}:`, file.name);
-    }
-  };
-
-  // Multi-step navigation functions
-  const handleFormSubmit = async (event: any) => {
-    event.preventDefault();
-    console.log('Form submit triggered');
-    const result = await trigger();
-    console.log('Validation result:', result);
-    
-    if (result && !loadings) {
-      const data = await getValues();
-      console.log('Form data:', data);
-      setFormData(data);
-      setCurrentStep(2); // Move to payment step
-    } else {
-      console.log('Validation failed or loading:', { result, loadings });
-    }
-  };
-
-  const handlePaymentSubmit = async (event: any) => {
-    event.preventDefault();
-    
-    if (!paymentData.method || !paymentData.transactionCode) {
-      alert('Please fill in all payment details');
-      return;
-    }
-
-    // Simulate payment verification
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setCurrentStep(3); // Move to review step
-    }, 2000);
-  };
-
-  const handleFinalSubmit = async () => {
-    setLoading(true);
-    try {
-      // Create FormData for file uploads
-      const formDataToSend = new FormData();
-      
-      // Add all form data
-      Object.keys(formData).forEach(key => {
-        if (formData[key] !== null && formData[key] !== undefined) {
-          formDataToSend.append(key, formData[key]);
-        }
-      });
-
-      // Add payment data
-      formDataToSend.append('payment', JSON.stringify(paymentData));
-      
-      // Add application status
-      formDataToSend.append('applicationStatus', 'Pending');
-
-      // Add uploaded documents as files
-      Object.keys(uploadedDocuments).forEach(documentType => {
-        const file = uploadedDocuments[documentType];
-        if (file) {
-          formDataToSend.append(documentType, file);
-        }
-      });
-
-      console.log('Submitting application with FormData');
-      console.log('Form data:', Object.fromEntries(formDataToSend.entries()));
-      
-      // Send FormData instead of JSON
-      await ApiService.createOnlineApplicant(formDataToSend);
-      setApplicationStatus('Pending');
-      setCurrentStep(4); // Move to success page
-      
-      // Send notification to parent
-      console.log('Application submitted successfully. SMS will be sent to parent.');
-    } catch (error) {
-      console.error('Error submitting application:', error);
-      alert('Error submitting application. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const goToStep = (step: number) => {
-    setCurrentStep(step);
   };
 
 
@@ -340,43 +194,11 @@ function Main() {
   const notify = useRef<NotificationElement>();
   const schema = yup
     .object({
-      // Student Details
       first_name: yup.string().required("First name is required"),
-      middle_name: yup.string(),
-      last_name: yup.string().required("Last name is required"),
-      gender: yup.string().required("Gender is required"),
-      dateOfBirth: yup.string().required("Date of birth is required"),
-      nationality: yup.string().required("Nationality is required"),
-      countySubCounty: yup.string(),
-      birthCertificateNo: yup.string(),
-      
-      // Parent/Guardian Details
-      guardian_relationship: yup.string().required("Guardian relationship is required"),
-      guardian_first_name: yup.string().required("Guardian first name is required"),
-      guardian_surname: yup.string(),
-      guardian_last_name: yup.string().required("Guardian last name is required"),
-      guardian_email: yup.string().email("Valid email is required").required("Guardian email is required"),
-      guardian_phone: yup.string().required("Guardian phone number is required"),
-      postalAddress: yup.string(),
-      idNumber: yup.string(),
-      
-      // Academic Information
-      currentOrLastSchool: yup.string().required("Current/Last school is required"),
-      currentClass: yup.string(),
-      classApplyingFor: yup.string().required("Class applying for is required"),
-      kcpeIndexNumber: yup.string(),
-      kcpeMarks: yup.string(),
-      
-      // Address/Contact Details
-      homeAddress: yup.string().required("Home address is required"),
-      nearestLandmark: yup.string().required("Nearest landmark is required"),
-      distanceFromSchool: yup.string(),
-      
-      // Assessment fields (optional)
-      grade: yup.string(),
-      term: yup.string(),
-      test: yup.string(),
-      learning_area: yup.string(),
+      gender: yup.string().required("Gender  is required"),
+      adm_no: yup.string().required("Adm No is required"),
+      guardian_first_name: yup.string().required("First name is required"),
+
     })
     .required();
 
@@ -1063,123 +885,54 @@ function Main() {
       </div>
       {(isPublicView || (dialog && !profile)) ? (
         <>
-          {/* Enhanced Header with Description */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-8 rounded-t-2xl shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                {!isPublicView && (
-                  <a
-                    onClick={(event: React.MouseEvent) => {
-                      event.preventDefault();
-                      cancel({ name: "" });
-                      setDialog(false);
-                      setIsEditMode(false);
-                    }}
-                    href="#"
-                    className="text-white hover:text-blue-200 transition-colors mr-4"
-                  >
-                    <Lucide icon="ArrowLeft" className="w-6 h-6" />
-                  </a>
-                )}
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">Welcome to our Online Admission Portal</h1>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mt-4">
-                    <div className="flex items-center mb-3">
-                      <Lucide icon="Info" className="w-5 h-5 mr-2" />
-                      <span className="font-semibold text-lg">Application Information</span>
-                    </div>
-                    <div className="text-blue-100 leading-relaxed space-y-2">
-                      <p>
-                        The application period is open from{' '}
-                        <span className="font-semibold text-white">March 1st, 2024</span> to{' '}
-                        <span className="font-semibold text-white">April 30th, 2024</span>.
-                      </p>
-                      
-                      <p>
-                        Please ensure that you fill in all the required fields accurately and upload the necessary documents before submitting your application.
-                        Incomplete applications or those submitted after the deadline will not be considered.
-                      </p>
-                      
-                      <p>
-                        After submission, you will receive a confirmation message once your application and payment have been successfully received.
-                        Your parent or guardian will be notified via SMS once your application has been shortlisted or confirmed for admission.
-                      </p>
-                      
-                      <p className="font-semibold text-white">
-                        Kindly double-check your details before submitting.
-                        Thank you for applying to join our school community — we look forward to welcoming you!
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {!isPublicView && (
-                <button
+          {/* Enhanced Top Section */}
+          <div className="flex items-center bg-white  p-4 rounded-t-2xl shadow-lg">
+            {!isPublicView && (
+              <a
+                onClick={(event: React.MouseEvent) => {
+                  event.preventDefault();
+                  cancel({ name: "" });
+                  setDialog(false);
+                  setIsEditMode(false);
+                }}
+                href="#"
+                className="text-black hover:text-gray-200 transition-colors"
+              >
+                <Lucide icon="ArrowLeft" className="w-6 h-6" />
+              </a>
+            )}
+            <h2 className="ml-4 text-xl font-semibold text-black">
+              Online Registration
+            </h2>
+          </div>
+          <form
+            className="mt-8 p-8 bg-white rounded-2xl shadow-xl  mx-auto border border-gray-100 animate-fade-in"
+            onSubmit={onSubmit}
+          >
+            {/* Close Button */}
+            {!isPublicView && (
+              <div className="absolute top-4 right-4">
+                <a
                   onClick={(event: React.MouseEvent) => {
                     event.preventDefault();
                     setIsEditMode(false);
                     setDialog(false);
                   }}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  href="#"
                 >
                   <Lucide icon="X" className="w-6 h-6" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Step Indicator */}
-          <div className="bg-white shadow-lg border border-gray-100">
-            <div className="px-8 py-4">
-              <div className="flex items-center justify-between">
-                {[1, 2, 3].map((step) => (
-                  <div key={step} className="flex items-center">
-                    <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                      currentStep >= step 
-                        ? 'bg-blue-600 border-blue-600 text-white' 
-                        : 'border-gray-300 text-gray-400'
-                    }`}>
-                      {currentStep > step ? (
-                        <Lucide icon="Check" className="w-5 h-5" />
-                      ) : (
-                        <span className="font-semibold">{step}</span>
-                      )}
-                    </div>
-                    <span className={`ml-2 text-sm font-medium ${
-                      currentStep >= step ? 'text-blue-600' : 'text-gray-400'
-                    }`}>
-                      {step === 1 && 'Application Form'}
-                      {step === 2 && 'Payment'}
-                      {step === 3 && 'Review & Submit'}
-                    </span>
-                    {step < 3 && (
-                      <div className={`w-16 h-0.5 mx-4 ${
-                        currentStep > step ? 'bg-blue-600' : 'bg-gray-300'
-                      }`} />
-                    )}
-                  </div>
-                ))}
+                </a>
               </div>
-            </div>
-          </div>
+            )}
 
-          {/* Main Form Container */}
-          <div className="bg-white shadow-2xl rounded-b-2xl border border-gray-100">
-            {currentStep === 1 && (
-              <form
-                className="p-8 animate-fade-in"
-                onSubmit={handleFormSubmit}
-              >
             {/* Form Content */}
-            <div className="space-y-8">
+            <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
               {/* Student Details Section */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-                <div className="flex items-center mb-6">
-                  <div className="bg-blue-600 rounded-lg p-2 mr-3">
-                    <Lucide icon="User" className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800">Student Details</h3>
-                </div>
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-300 pb-2">
+                  Student Details
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <FormLabel className="text-sm font-medium text-gray-700">
@@ -1189,9 +942,9 @@ function Main() {
                       {...register("first_name")}
                       type="text"
                       name="first_name"
-                      className={`mt-1 w-full rounded-xl border-2 ${errors.first_name ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
-                      placeholder="Enter first name"
+                      className={`mt-1 w-full rounded-lg border ${errors.first_name ? "border-red-500" : "border-gray-300"
+                        } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="First name"
                     />
                     {errors.first_name && (
                       <div className="mt-2 text-red-500 text-sm">
@@ -1227,9 +980,9 @@ function Main() {
                       {...register("last_name")}
                       type="text"
                       name="last_name"
-                      className={`mt-1 w-full rounded-xl border-2 ${errors.last_name ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
-                      placeholder="Enter last name"
+                      className={`mt-1 w-full rounded-lg border ${errors.last_name ? "border-red-500" : "border-gray-300"
+                        } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="last_name"
                     />
                     {errors.last_name && (
                       <div className="mt-2 text-red-500 text-sm">
@@ -1351,13 +1104,10 @@ function Main() {
               </div>
 
               {/* Parent Details Section */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-                <div className="flex items-center mb-6">
-                  <div className="bg-green-600 rounded-lg p-2 mr-3">
-                    <Lucide icon="Users" className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800">Parent/Guardian Details</h3>
-                </div>
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-300 pb-2">
+                  Parent Details
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <FormLabel
@@ -1539,13 +1289,10 @@ function Main() {
 
 
             {/* Academic Information */}
-              <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl p-6 border border-purple-200">
-                <div className="flex items-center mb-6">
-                  <div className="bg-purple-600 rounded-lg p-2 mr-3">
-                    <Lucide icon="BookOpen" className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800">Academic Information</h3>
-                </div>
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-300 pb-2">
+                  Academic Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                
                   <div>
@@ -1661,71 +1408,53 @@ function Main() {
               </div>
 
 
-                    {/* Address / Contact Details */}
-              <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-200">
-                <div className="flex items-center mb-6">
-                  <div className="bg-orange-600 rounded-lg p-2 mr-3">
-                    <Lucide icon="MapPin" className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800">Address / Contact Details</h3>
-                </div>
+                    {/* Academic Information */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-300 pb-2">
+                  Address / Contact Details
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               
                   <div>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Home Address <span className="text-red-500">*</span>
+                      Current / Last School{" "}
+                      <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormInput
-                      {...register("homeAddress")}
+                      {...register("currentOrLastSchool")}
                       type="text"
-                      name="homeAddress"
-                      className={`mt-1 w-full rounded-xl border-2 ${errors.homeAddress ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
-                      placeholder="Enter physical location"
+                      name="currentOrLastSchool"
+                      className={`mt-1 w-full rounded-lg border ${errors.currentOrLastSchool
+                          ? "border-red-500"
+                          : "border-gray-300"
+                        } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="Current / Last School"
                     />
-                    {errors.homeAddress && (
+                    {errors.currentOrLastSchool && (
                       <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.homeAddress.message === "string" &&
-                          errors.homeAddress.message}
+                        {typeof errors.currentOrLastSchool.message ===
+                          "string" && errors.currentOrLastSchool.message}
                       </div>
                     )}
                   </div>
-
                   <div>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Nearest Landmark <span className="text-red-500">*</span>
+                      Current Class
                     </FormLabel>
                     <FormInput
-                      {...register("nearestLandmark")}
+                      {...register("currentClass")}
                       type="text"
-                      name="nearestLandmark"
-                      className={`mt-1 w-full rounded-xl border-2 ${errors.nearestLandmark ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
-                      placeholder="Enter nearest landmark for pickup/drop-off"
+                      name="currentClass"
+                      className={`mt-1 w-full rounded-lg border ${errors.currentClass
+                          ? "border-red-500"
+                          : "border-gray-300"
+                        } focus:ring-2 focus:ring-indigo-500 transition-all`}
+                      placeholder="Parent surname"
                     />
-                    {errors.nearestLandmark && (
+                    {errors.currentClass && (
                       <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.nearestLandmark.message === "string" &&
-                          errors.nearestLandmark.message}
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <FormLabel className="text-sm font-medium text-gray-700">
-                      Distance from School
-                    </FormLabel>
-                    <FormInput
-                      {...register("distanceFromSchool")}
-                      type="text"
-                      name="distanceFromSchool"
-                      className={`mt-1 w-full rounded-xl border-2 ${errors.distanceFromSchool ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
-                      placeholder="e.g., 5km (Optional)"
-                    />
-                    {errors.distanceFromSchool && (
-                      <div className="mt-2 text-red-500 text-sm">
-                        {typeof errors.distanceFromSchool.message === "string" &&
-                          errors.distanceFromSchool.message}
+                        {typeof errors.currentClass.message ===
+                          "string" && errors.currentClass.message}
                       </div>
                     )}
                   </div>
@@ -1738,530 +1467,33 @@ function Main() {
 
             </div>
 
-            {/* Required Documents Upload Section */}
-            <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 border border-red-200">
-              <div className="flex items-center mb-6">
-                <div className="bg-red-600 rounded-lg p-2 mr-3">
-                  <Lucide icon="FileText" className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800">F. Required Documents Upload</h3>
-              </div>
-              
-              {/* Document Upload Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Birth Certificate */}
-                <div>
-                  <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                    Birth Certificate <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <p className="text-xs text-gray-500 mb-2">Proof of age (PDF/JPG)</p>
-                  <FormInput
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg"
-                    onChange={(e) => handleDocumentUpload(e, 'birth-certificate')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+            {/* Buttons */}
+            <div className="mt-6 flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={() => cancel({ name: "" })}
+                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                type="submit"
+                className="px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all flex items-center disabled:bg-indigo-400"
+                disabled={loading}
+              >
+                Save
+                {loading && (
+                  <LoadingIcon
+                    icon="spinning-circles"
+                    color="white"
+                    className="w-4 h-4 ml-2"
                   />
-                  {documentStatuses['birth-certificate'] === 'Uploaded' && (
-                    <div className="mt-2 flex items-center text-green-600 text-sm">
-                      <Lucide icon="CheckCircle" className="w-4 h-4 mr-1" />
-                      File uploaded successfully
-                    </div>
-                  )}
-                </div>
-
-                {/* Recent Passport Photo */}
-                <div>
-                  <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                    Recent Passport Photo <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <p className="text-xs text-gray-500 mb-2">For identification (JPG/PNG)</p>
-                  <FormInput
-                    type="file"
-                    accept=".jpg,.jpeg,.png"
-                    onChange={(e) => handleDocumentUpload(e, 'passport-photo')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
-                  />
-                  {documentStatuses['passport-photo'] === 'Uploaded' && (
-                    <div className="mt-2 flex items-center text-green-600 text-sm">
-                      <Lucide icon="CheckCircle" className="w-4 h-4 mr-1" />
-                      File uploaded successfully
-                    </div>
-                  )}
-                </div>
-
-                {/* Academic Report */}
-                <div>
-                  <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                    Academic Report <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <p className="text-xs text-gray-500 mb-2">Previous term report or KCPE result slip (PDF/JPG)</p>
-                  <FormInput
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg"
-                    onChange={(e) => handleDocumentUpload(e, 'academic-report')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
-                  />
-                  {documentStatuses['academic-report'] === 'Uploaded' && (
-                    <div className="mt-2 flex items-center text-green-600 text-sm">
-                      <Lucide icon="CheckCircle" className="w-4 h-4 mr-1" />
-                      File uploaded successfully
-                    </div>
-                  )}
-                </div>
-
-                {/* Transfer Letter */}
-                <div>
-                  <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                    Transfer Letter (if applicable)
-                  </FormLabel>
-                  <p className="text-xs text-gray-500 mb-2">For mid-year transfers (PDF)</p>
-                  <FormInput
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => handleDocumentUpload(e, 'transfer-letter')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
-                  />
-                  {documentStatuses['transfer-letter'] === 'Uploaded' && (
-                    <div className="mt-2 flex items-center text-green-600 text-sm">
-                      <Lucide icon="CheckCircle" className="w-4 h-4 mr-1" />
-                      File uploaded successfully
-                    </div>
-                  )}
-                </div>
-
-                {/* Parent/Guardian ID */}
-                <div>
-                  <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                    Parent/Guardian ID <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <p className="text-xs text-gray-500 mb-2">Verification document (PDF/JPG)</p>
-                  <FormInput
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg"
-                    onChange={(e) => handleDocumentUpload(e, 'parent-id')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
-                  />
-                  {documentStatuses['parent-id'] === 'Uploaded' && (
-                    <div className="mt-2 flex items-center text-green-600 text-sm">
-                      <Lucide icon="CheckCircle" className="w-4 h-4 mr-1" />
-                      File uploaded successfully
-                    </div>
-                  )}
-                </div>
-
-                {/* Medical Report */}
-                <div>
-                  <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                    Medical Report (optional)
-                  </FormLabel>
-                  <p className="text-xs text-gray-500 mb-2">Health declaration (PDF)</p>
-                  <FormInput
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => handleDocumentUpload(e, 'medical-report')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
-                  />
-                  {documentStatuses['medical-report'] === 'Uploaded' && (
-                    <div className="mt-2 flex items-center text-green-600 text-sm">
-                      <Lucide icon="CheckCircle" className="w-4 h-4 mr-1" />
-                      File uploaded successfully
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Upload Instructions */}
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start">
-                  <Lucide icon="Info" className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">Upload Instructions:</p>
-                    <ul className="list-disc list-inside space-y-1 text-blue-700">
-                      <li>Maximum file size: 5MB per document</li>
-                      <li>Supported formats: PDF, JPG, PNG</li>
-                      <li>Ensure documents are clear and legible</li>
-                      <li>All required documents must be uploaded before submission</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                )}
+              </Button>
             </div>
-
-                {/* Action Buttons */}
-                <div className="flex justify-between items-center pt-8 border-t border-gray-200">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Lucide icon="Info" className="w-4 h-4 mr-2" />
-                    <span>All fields marked with * are required</span>
-                  </div>
-                  <div className="flex gap-4">
-                    <Button
-                      type="button"
-                      variant="outline-secondary"
-                      onClick={() => cancel({ name: "" })}
-                      className="px-8 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-semibold"
-                    >
-                      <Lucide icon="X" className="w-4 h-4 mr-2" />
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      disabled={loadings}
-                      className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 font-semibold shadow-lg hover:shadow-xl flex items-center"
-                    >
-                      {loadings ? (
-                        <>
-                          <LoadingIcon icon="spinning-circles" color="white" className="w-4 h-4 mr-2" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <Lucide icon="ArrowRight" className="w-4 h-4 mr-2" />
-                          Continue to Payment
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </form>
-            )}
-
-            {/* Step 2: Payment */}
-            {currentStep === 2 && (
-              <div className="p-8 animate-fade-in">
-                <div className="text-center mb-8">
-                  <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <Lucide icon="CreditCard" className="w-8 h-8 text-green-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Fee Payment</h2>
-                  <p className="text-gray-600">Complete your application by paying the required fee</p>
-                </div>
-
-                <div className="max-w-2xl mx-auto">
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200 mb-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Payment Details</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                          Payment Method <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormSelect
-                          value={paymentData.method}
-                          onChange={(e) => setPaymentData({...paymentData, method: e.target.value})}
-                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        >
-                          <option value="">Select Payment Method</option>
-                          <option value="M-Pesa">M-Pesa</option>
-                          <option value="Bank Transfer">Bank Transfer</option>
-                        </FormSelect>
-                      </div>
-
-                      <div>
-                        <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                          Amount (KES)
-                        </FormLabel>
-                        <FormInput
-                          type="number"
-                          value={paymentData.amount}
-                          disabled
-                          className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 text-gray-600"
-                        />
-                      </div>
-
-                      <div>
-                        <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                          Transaction Code <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormInput
-                          type="text"
-                          value={paymentData.transactionCode}
-                          onChange={(e) => setPaymentData({...paymentData, transactionCode: e.target.value})}
-                          placeholder="Enter transaction code"
-                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        />
-                      </div>
-
-                      <div>
-                        <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                          Payment Date <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormInput
-                          type="date"
-                          value={paymentData.paymentDate}
-                          onChange={(e) => setPaymentData({...paymentData, paymentDate: e.target.value})}
-                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                        />
-                      </div>
-                    </div>
-
-                    {paymentData.method && (
-                      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <div className="flex items-start">
-                          <Lucide icon="Info" className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                          <div className="text-sm text-blue-800">
-                            <p className="font-medium mb-1">
-                              {paymentData.method === 'mpesa' ? 'M-Pesa Payment Instructions:' : 'Bank Transfer Instructions:'}
-                            </p>
-                            <ul className="list-disc list-inside space-y-1 text-blue-700">
-                              {paymentData.method === 'mpesa' ? (
-                                <>
-                                  <li>Go to M-Pesa menu on your phone</li>
-                                  <li>Select "Lipa na M-Pesa"</li>
-                                  <li>Select "Pay Bill"</li>
-                                  <li>Enter Business Number: 123456</li>
-                                  <li>Enter Account Number: Your phone number</li>
-                                  <li>Enter Amount: KES {paymentData.amount}</li>
-                                  <li>Enter your M-Pesa PIN</li>
-                                </>
-                              ) : (
-                                <>
-                                  <li>Make a bank transfer to Account: 1234567890</li>
-                                  <li>Bank: Kenya Commercial Bank</li>
-                                  <li>Account Name: School Admissions</li>
-                                  <li>Amount: KES {paymentData.amount}</li>
-                                  <li>Use your name as reference</li>
-                                </>
-                              )}
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <Button
-                      type="button"
-                      variant="outline-secondary"
-                      onClick={() => setCurrentStep(1)}
-                      className="px-8 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-semibold"
-                    >
-                      <Lucide icon="ArrowLeft" className="w-4 h-4 mr-2" />
-                      Back to Form
-                    </Button>
-                    <Button
-                      onClick={handlePaymentSubmit}
-                      disabled={loading}
-                      className="px-8 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 font-semibold shadow-lg hover:shadow-xl flex items-center"
-                    >
-                      {loading ? (
-                        <>
-                          <LoadingIcon icon="spinning-circles" color="white" className="w-4 h-4 mr-2" />
-                          Verifying Payment...
-                        </>
-                      ) : (
-                        <>
-                          <Lucide icon="ArrowRight" className="w-4 h-4 mr-2" />
-                          Continue to Review
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Review */}
-            {currentStep === 3 && (
-              <div className="p-8 animate-fade-in">
-                <div className="text-center mb-8">
-                  <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <Lucide icon="Eye" className="w-8 h-8 text-blue-600" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Review Your Application</h2>
-                  <p className="text-gray-600">Please review all details before submitting</p>
-                </div>
-
-                <div className="max-w-4xl mx-auto space-y-6">
-                  {/* Personal Details Review */}
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Lucide icon="User" className="w-5 h-5 mr-2 text-blue-600" />
-                      Personal Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div><span className="font-medium">Name:</span> {formData.first_name} {formData.last_name}</div>
-                      <div><span className="font-medium">Date of Birth:</span> {formData.dateOfBirth}</div>
-                      <div><span className="font-medium">Gender:</span> {formData.gender}</div>
-                      <div><span className="font-medium">Nationality:</span> {formData.nationality}</div>
-                    </div>
-                  </div>
-
-                  {/* Parent Details Review */}
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Lucide icon="Users" className="w-5 h-5 mr-2 text-green-600" />
-                      Parent/Guardian Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div><span className="font-medium">Guardian Name:</span> {formData.guardian_first_name} {formData.guardian_last_name}</div>
-                      <div><span className="font-medium">Phone:</span> {formData.guardian_phone}</div>
-                      <div><span className="font-medium">Email:</span> {formData.guardian_email}</div>
-                      <div><span className="font-medium">Relationship:</span> {formData.guardian_relationship}</div>
-                      <div><span className="font-medium">ID Number:</span> {formData.idNumber}</div>
-                      <div><span className="font-medium">Postal Address:</span> {formData.postalAddress || 'Not specified'}</div>
-                    </div>
-                  </div>
-
-                  {/* Academic Details Review */}
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Lucide icon="BookOpen" className="w-5 h-5 mr-2 text-purple-600" />
-                      Academic Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div><span className="font-medium">Current/Last School:</span> {formData.currentOrLastSchool}</div>
-                      <div><span className="font-medium">Current Class:</span> {formData.currentClass || 'Not specified'}</div>
-                      <div><span className="font-medium">Class Applying For:</span> {formData.classApplyingFor}</div>
-                      <div><span className="font-medium">KCPE Index Number:</span> {formData.kcpeIndexNumber || 'Not specified'}</div>
-                      <div><span className="font-medium">KCPE Marks:</span> {formData.kcpeMarks || 'Not specified'}</div>
-                    </div>
-                  </div>
-
-                  {/* Address Details Review */}
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Lucide icon="MapPin" className="w-5 h-5 mr-2 text-orange-600" />
-                      Address / Contact Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div><span className="font-medium">Home Address:</span> {formData.homeAddress}</div>
-                      <div><span className="font-medium">Nearest Landmark:</span> {formData.nearestLandmark}</div>
-                      <div><span className="font-medium">Distance from School:</span> {formData.distanceFromSchool || 'Not specified'}</div>
-                    </div>
-                  </div>
-
-                  {/* Documents Review */}
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Lucide icon="FileText" className="w-5 h-5 mr-2 text-red-600" />
-                      Required Documents
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center">
-                        <Lucide icon={uploadedDocuments['birth-certificate'] ? "CheckCircle" : "Clock"} 
-                               className={`w-4 h-4 mr-2 ${uploadedDocuments['birth-certificate'] ? 'text-green-600' : 'text-yellow-600'}`} />
-                        <span className="font-medium">Birth Certificate:</span> {uploadedDocuments['birth-certificate'] ? uploadedDocuments['birth-certificate'].name : 'Pending'}
-                      </div>
-                      <div className="flex items-center">
-                        <Lucide icon={uploadedDocuments['passport-photo'] ? "CheckCircle" : "Clock"} 
-                               className={`w-4 h-4 mr-2 ${uploadedDocuments['passport-photo'] ? 'text-green-600' : 'text-yellow-600'}`} />
-                        <span className="font-medium">Passport Photo:</span> {uploadedDocuments['passport-photo'] ? uploadedDocuments['passport-photo'].name : 'Pending'}
-                      </div>
-                      <div className="flex items-center">
-                        <Lucide icon={uploadedDocuments['academic-report'] ? "CheckCircle" : "Clock"} 
-                               className={`w-4 h-4 mr-2 ${uploadedDocuments['academic-report'] ? 'text-green-600' : 'text-yellow-600'}`} />
-                        <span className="font-medium">Academic Report:</span> {uploadedDocuments['academic-report'] ? uploadedDocuments['academic-report'].name : 'Pending'}
-                      </div>
-                      <div className="flex items-center">
-                        <Lucide icon={uploadedDocuments['parent-id'] ? "CheckCircle" : "Clock"} 
-                               className={`w-4 h-4 mr-2 ${uploadedDocuments['parent-id'] ? 'text-green-600' : 'text-yellow-600'}`} />
-                        <span className="font-medium">Parent ID:</span> {uploadedDocuments['parent-id'] ? uploadedDocuments['parent-id'].name : 'Pending'}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Payment Details Review */}
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Lucide icon="CreditCard" className="w-5 h-5 mr-2 text-green-600" />
-                      Payment Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div><span className="font-medium">Method:</span> {paymentData.method}</div>
-                      <div><span className="font-medium">Amount:</span> KES {paymentData.amount}</div>
-                      <div><span className="font-medium">Transaction Code:</span> {paymentData.transactionCode}</div>
-                      <div><span className="font-medium">Date:</span> {paymentData.paymentDate}</div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-6">
-                    <Button
-                      type="button"
-                      variant="outline-secondary"
-                      onClick={() => setCurrentStep(2)}
-                      className="px-8 py-3 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-semibold"
-                    >
-                      <Lucide icon="ArrowLeft" className="w-4 h-4 mr-2" />
-                      Back to Payment
-                    </Button>
-                    <Button
-                      onClick={handleFinalSubmit}
-                      disabled={loading}
-                      className="px-8 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center"
-                    >
-                      {loading ? (
-                        <>
-                          <LoadingIcon icon="spinning-circles" color="white" className="w-4 h-4 mr-2" />
-                          Submitting Application...
-                        </>
-                      ) : (
-                        <>
-                          <Lucide icon="Send" className="w-4 h-4 mr-2" />
-                          Submit Application
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-
-            {/* Step 4: Success */}
-            {currentStep === 4 && (
-              <div className="p-8 animate-fade-in">
-                <div className="text-center">
-                  <div className="bg-green-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                    <Lucide icon="CheckCircle" className="w-12 h-12 text-green-600" />
-                  </div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-4">Application Submitted Successfully!</h2>
-                  <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                    Your application has been received and is now under review. You will receive an SMS notification 
-                    once your application status changes. Please keep your application reference number safe.
-                  </p>
-                  
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 max-w-md mx-auto">
-                    <h3 className="font-semibold text-blue-800 mb-2">Application Status</h3>
-                    <div className="flex items-center justify-center">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                        <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
-                        Pending Review
-                      </span>
-                    </div>
-                    <p className="text-blue-700 text-sm mt-2">
-                      An SMS will be sent to your parent/guardian when the status changes to Shortlisted or Confirmed.
-                    </p>
-                  </div>
-
-                  <div className="flex justify-center gap-4">
-                    <Button
-                      onClick={() => {
-                        setCurrentStep(1);
-                        setFormData({});
-                        setPaymentData({ method: '', amount: 1000, transactionCode: '', paymentDate: '' });
-                        setUploadedDocuments({});
-                        setDocumentStatuses({
-                          'birth-certificate': 'Pending',
-                          'passport-photo': 'Pending', 
-                          'academic-report': 'Pending',
-                          'transfer-letter': 'Optional',
-                          'parent-id': 'Pending',
-                          'medical-report': 'Optional'
-                        });
-                        reset();
-                      }}
-                      className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
-                    >
-                      <Lucide icon="Plus" className="w-4 h-4 mr-2" />
-                      Submit Another Application
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          </form>
         </>
       ) : !profile && !dialog ? (
         <>

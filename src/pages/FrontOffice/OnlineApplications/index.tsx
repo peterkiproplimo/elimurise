@@ -135,6 +135,16 @@ function Main() {
   const [messages, setMessages] = useState<any>([]);
   const [loadings, setLoading] = useState<boolean>(false);
   const [parentLoading, setParentLoading] = useState<boolean>(true);
+  
+  // Link generation states
+  const [linkDialog, setLinkDialog] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState("");
+  const [linkData, setLinkData] = useState({
+    startDate: "",
+    endDate: "",
+    applicationFee: 1000,
+    title: "Online Application Form"
+  });
   interface ChatComponentProps {
     user: { _id: string };
     selectedParent: {
@@ -533,6 +543,59 @@ function Main() {
       isLoading(false);
     }
   };
+
+  // Link generation functions
+  const generateLink = async () => {
+    try {
+      // Generate a unique token
+      const token = generateToken();
+      
+      // Create link data with token
+      const linkPayload = {
+        ...linkData,
+        token: token,
+        generatedAt: new Date().toISOString(),
+        generatedBy: user?.id || user?._id
+      };
+
+      // Store the link configuration (you might want to save this to database)
+      console.log('Generated link data:', linkPayload);
+      
+      // Generate the full URL
+      const baseUrl = window.location.origin;
+      const applicationUrl = `${baseUrl}/onlineregistration?token=${token}`;
+      
+      setGeneratedLink(applicationUrl);
+      
+      // Copy to clipboard
+      await navigator.clipboard.writeText(applicationUrl);
+      
+      // Show success message
+      alert('Link generated and copied to clipboard!');
+      
+    } catch (error) {
+      console.error('Error generating link:', error);
+      alert('Error generating link. Please try again.');
+    }
+  };
+
+  const generateToken = () => {
+    // Generate a secure random token
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 32; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
+  const handleLinkDataChange = (field: string, value: any) => {
+    setLinkData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const handleSort = (field: string) => {
     setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
     setSortField(field);
@@ -1074,8 +1137,17 @@ function Main() {
         </>
       ) : !profile && !dialog ? (
         <>
-          <h2 className="mt-1 text-lg font-medium ">Online Applicants</h2>
-    
+          <div className="flex items-center justify-between">
+            <h2 className="mt-1 text-lg font-medium ">Online Applicants</h2>
+            <Button
+              onClick={() => setLinkDialog(true)}
+              variant="primary"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center"
+            >
+              <Lucide icon="Link" className="w-4 h-4 mr-2" />
+              Generate Online Link
+            </Button>
+          </div>
 
           <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
             {(is_admin() ||
@@ -1106,7 +1178,7 @@ function Main() {
                 </Menu>
               </>
             )}
-            <div className="hidden mx-auto md:block text-slate-500">
+            {/* <div className="hidden mx-auto md:block text-slate-500">
               Showing{" "}
               {pagination.current_page +
                 " to " +
@@ -1114,47 +1186,9 @@ function Main() {
                 " of " +
                 pagination.total}{" "}
               entries
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <TomSelect
-                value={grade}
-                className="relative w-56 text-slate-500 "
-                onChange={(event: any) => {
-                  reset({ ...getValues(), grade: event, stream: "" });
-                  setStream("");
-                  // reset({ ...getValues(), grade: event });
+            </div> */}
+     
 
-                  setGrade(event);
-                }}
-              >
-                <option value={""} selected>
-                  All Grades
-                </option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </TomSelect>
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <FormSelect
-                {...register("stream")}
-                name="stream"
-                onChange={(e: any) => {
-                  setStream(e.target.value);
-                }}
-                className={errors.stream ? "border-danger" : ""}
-                disabled={isEditMode}
-              >
-                <option value={""}>Select Stream</option>
-                {streams.map((stream: any, key) => (
-                  <option key={key} value={stream._id}>
-                    {stream.name}
-                  </option>
-                ))}
-              </FormSelect>
-            </div>
             <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
               <div className="relative w-56 text-slate-500">
                 <FormInput
@@ -1290,7 +1324,7 @@ function Main() {
                                 <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
                                      onClick={() => profileRecord(learner)}>
                                   {learner?.first_name && learner?.first_name}
-                                  {" " + learner?.surname + " " + learner?.last_name}
+                                  {" " + learner?.last_name + " " + learner?.last_name}
                                 </div>
                               
                               </div>
@@ -1609,7 +1643,7 @@ function Main() {
                     onError={(e) => (e.currentTarget.src = leanerImg)}
                   />
                   <h3 className="mt-3 text-lg font-semibold">
-                    {`${learner.first_name} ${learner.surname}`}
+                    {`${learner.first_name} ${learner.last_name}`}
                   </h3>
                 </div>
               </div>
@@ -1652,7 +1686,7 @@ function Main() {
                               <td className="px-4 py-4 font-bold border-b border-gray-200">
                                 Name
                               </td>
-                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.first_name} ${learner?.last_name} ${learner.surname}`}</td>
+                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.first_name} ${learner?.last_name} ${learner.middle_name}`}</td>
                             </tr>
     
                             <tr>
@@ -2022,6 +2056,131 @@ function Main() {
           </Dialog.Footer>
         </Dialog.Panel>
       </Dialog>
+
+      {/* Generate Online Link Dialog */}
+      <Dialog
+        open={linkDialog}
+        onClose={() => {
+          setLinkDialog(false);
+          setGeneratedLink("");
+        }}
+      >
+        <Dialog.Panel>
+          <Dialog.Title>
+            <h2 className="mr-auto text-base font-medium">Generate Online Application Link</h2>
+            <a
+              onClick={(event: React.MouseEvent) => {
+                event.preventDefault();
+                setLinkDialog(false);
+                setGeneratedLink("");
+              }}
+              className="absolute top-0 right-0 mt-5 mr-5 text-slate-400"
+            >
+              <Lucide icon="X" className="w-4 h-4" />
+            </a>
+          </Dialog.Title>
+          
+          <div className="p-5">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <FormLabel htmlFor="title">Application Title</FormLabel>
+                <FormInput
+                  id="title"
+                  type="text"
+                  value={linkData.title}
+                  onChange={(e) => handleLinkDataChange('title', e.target.value)}
+                  placeholder="Enter application title"
+                  className="mt-1"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <FormLabel htmlFor="startDate">Application Start Date</FormLabel>
+                  <FormInput
+                    id="startDate"
+                    type="date"
+                    value={linkData.startDate}
+                    onChange={(e) => handleLinkDataChange('startDate', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel htmlFor="endDate">Application End Date</FormLabel>
+                  <FormInput
+                    id="endDate"
+                    type="date"
+                    value={linkData.endDate}
+                    onChange={(e) => handleLinkDataChange('endDate', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <FormLabel htmlFor="applicationFee">Application Fee (KES)</FormLabel>
+                <FormInput
+                  id="applicationFee"
+                  type="number"
+                  value={linkData.applicationFee}
+                  onChange={(e) => handleLinkDataChange('applicationFee', parseInt(e.target.value) || 1000)}
+                  placeholder="1000"
+                  className="mt-1"
+                />
+              </div>
+
+              {generatedLink && (
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <h4 className="font-semibold text-green-800 mb-2">Generated Link:</h4>
+                  <div className="flex items-center gap-2">
+                    <FormInput
+                      type="text"
+                      value={generatedLink}
+                      readOnly
+                      className="flex-1 bg-white"
+                    />
+                    <Button
+                      onClick={() => navigator.clipboard.writeText(generatedLink)}
+                      variant="outline-secondary"
+                      className="px-3"
+                    >
+                      <Lucide icon="Copy" className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <p className="text-sm text-green-700 mt-2">
+                    Link copied to clipboard! Share this link with applicants.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <Dialog.Footer>
+            <div className="text-right">
+              <Button
+                variant="outline-secondary"
+                onClick={() => {
+                  setLinkDialog(false);
+                  setGeneratedLink("");
+                }}
+                className="mr-2"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={generateLink}
+                variant="primary"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              >
+                <Lucide icon="Link" className="w-4 h-4 mr-2" />
+                Generate Link
+              </Button>
+            </div>
+          </Dialog.Footer>
+        </Dialog.Panel>
+      </Dialog>
+
       <Notification
         options={{ duration: 3000 }}
         getRef={(el) => {
