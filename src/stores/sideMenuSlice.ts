@@ -106,6 +106,12 @@ const initialState: SideMenuState = {
       subMenu: [
         {
           icon: "Users",
+          title: "Analytics and Reports",
+          pathname: "/home/frontofficeanalytics",
+          ignore: !hasPermission("learners", "read"),
+        },
+        {
+          icon: "Users",
           title: "Enquiries",
           pathname: "/home/enquiries",
           ignore: !hasPermission("learners", "read"),

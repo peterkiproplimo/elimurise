@@ -213,7 +213,7 @@ function Main() {
         
         // Close form and refresh data
         setConversionMode(false);
-        await getEnquiries();
+        await getStudents();
       }
     } catch (error) {
       console.error('Error converting enquiry:', error);
@@ -259,10 +259,16 @@ function Main() {
     per_page: 0,
   });
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
+  
+  // Filter states
+  const [selectedGradeFilter, setSelectedGradeFilter] = useState<string>('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
+  const [selectedSourceFilter, setSelectedSourceFilter] = useState<string>('');
   const [strandFilter, setStrandFilter] = useState({
     school: "na",
     grade: "na",
@@ -512,9 +518,22 @@ function Main() {
   useEffect(() => {
     getStreams();
   }, [grade]);
+  // Debounce search input
   useEffect(() => {
+    console.log("Search input changed:", search);
+    const timer = setTimeout(() => {
+      console.log("Setting debounced search:", search);
+      setDebouncedSearch(search);
+      setPage(1); // Reset to first page when search changes
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    console.log("getStudents called with debouncedSearch:", debouncedSearch);
     getStudents();
-  }, [search, page, limit, grade, stream, sortField, sortOrder]);
+  }, [debouncedSearch, page, limit, grade, stream, sortField, sortOrder, selectedGradeFilter, selectedStatusFilter, selectedSourceFilter]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -666,31 +685,39 @@ function Main() {
   const getStudents = async () => {
     isLoading(true);
     try {
-      const response = await ApiService.getEnquiries(
-        {
-          page,
-          search,
-          limit,
-          grade,
-          stream,
-          sortField,
-          sortOrder, // Include sorting in API request
-          status: ["P"],
-        },
-        strandFilter
-      );
+      const searchParams = {
+        page,
+        search: debouncedSearch,
+        limit,
+        grade: selectedGradeFilter || grade,
+        stream,
+        sortField,
+        sortOrder, // Include sorting in API request
+        status: selectedStatusFilter ? [selectedStatusFilter] : [],
+        source: selectedSourceFilter,
+      };
+      
+      console.log("Search params:", searchParams);
+      const response = await ApiService.getEnquiries(searchParams, {});
       const pagination = response?.pagination;
       setPagination({
         current_page: Number(pagination?.current_page),
-        total: response?.length,
-        total_pages: pagination?.total_pages,
+        total: pagination?.total || 0,
+        total_pages: pagination?.total_pages || 1,
         per_page: Number(pagination?.per_page),
       });
 
       console.log("Enquiries data", response)
-      setLearners(response);
+      setLearners(response?.data || []);
     } catch (error) {
       console.error("Error fetching students:", error);
+      setLearners([]);
+      setPagination({
+        current_page: 1,
+        total: 0,
+        total_pages: 1,
+        per_page: 0,
+      });
     } finally {
       isLoading(false);
     }
@@ -698,6 +725,37 @@ function Main() {
   const handleSort = (field: string) => {
     setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
     setSortField(field);
+  };
+
+  // Filter handler functions
+  const handleGradeFilterChange = (grade: string) => {
+    setSelectedGradeFilter(grade);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearGradeFilter = () => {
+    setSelectedGradeFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handleStatusFilterChange = (status: string) => {
+    setSelectedStatusFilter(status);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearStatusFilter = () => {
+    setSelectedStatusFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handleSourceFilterChange = (source: string) => {
+    setSelectedSourceFilter(source);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearSourceFilter = () => {
+    setSelectedSourceFilter('');
+    setPage(1); // Reset to first page when clearing filter
   };
 
   const getStreams = async () => {
@@ -1811,19 +1869,133 @@ function Main() {
             </div> */}
    
 
-            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0 space-x-3">
               <div className="relative w-56 text-slate-500">
                 <FormInput
                   type="text"
                   className="w-56 pr-10 !box"
                   placeholder="Search..."
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <Lucide
-                  icon="Search"
-                  className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                />
+                {search ? (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Clear search"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                )}
               </div>
+              
+              {/* Grade Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedGradeFilter}
+                  onChange={(e) => handleGradeFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedGradeFilter ? 'border-blue-500 bg-blue-50' : ''}`}
+                >
+                  <option value="">All Grades</option>
+                  {grades.map((grade: any) => (
+                    <option key={grade._id} value={grade.name}>
+                      {grade.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {selectedGradeFilter && (
+                  <button
+                    onClick={clearGradeFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors"
+                    title="Clear filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Status Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedStatusFilter}
+                  onChange={(e) => handleStatusFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedStatusFilter ? 'border-green-500 bg-green-50' : ''}`}
+                >
+                  <option value="">All Status</option>
+                  <option value="New">New</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Closed">Closed</option>
+                </FormSelect>
+                {selectedStatusFilter && (
+                  <button
+                    onClick={clearStatusFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-green-500 hover:text-green-700 transition-colors"
+                    title="Clear filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Source Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedSourceFilter}
+                  onChange={(e) => handleSourceFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedSourceFilter ? 'border-purple-500 bg-purple-50' : ''}`}
+                >
+                  <option value="">All Sources</option>
+                  <option value="Walk-in">Walk-in</option>
+                  <option value="Online">Online</option>
+                  <option value="Phone">Phone</option>
+                  <option value="Email">Email</option>
+                  <option value="Referral">Referral</option>
+                </FormSelect>
+                {selectedSourceFilter && (
+                  <button
+                    onClick={clearSourceFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-700 transition-colors"
+                    title="Clear filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              
+              {/* Active Filter Indicator */}
+              {(selectedGradeFilter || selectedStatusFilter || selectedSourceFilter) && (
+                <div className="flex items-center space-x-3 flex-wrap">
+                  {selectedGradeFilter && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-blue-600 font-medium">
+                        Grade: {selectedGradeFilter}
+                      </span>
+                    </div>
+                  )}
+                  {selectedStatusFilter && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-green-600 font-medium">
+                        Status: {selectedStatusFilter}
+                      </span>
+                    </div>
+                  )}
+                  {selectedSourceFilter && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-purple-600 font-medium">
+                        Source: {selectedSourceFilter}
+                      </span>
+                    </div>
+                  )}
+                  <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                    {(learners || []).length} results
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 

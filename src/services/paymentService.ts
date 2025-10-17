@@ -38,3 +38,60 @@ export function handler(err: any) {
 
   return new Error(error.message);
 }
+
+// M-Pesa Payment Functions
+export const initiateMpesaPayment = async (paymentData: {
+  phone: string;
+  amount: number;
+  userId?: string;
+}) => {
+  try {
+    const response = await axios.post(`${c.BASE_LOCAL_URL}mpesa/deposit`, {
+      phone: paymentData.phone,
+      amount: paymentData.amount,
+      userId: paymentData.userId
+    });
+    return response.data;
+  } catch (error) {
+    throw handler(error);
+  }
+};
+
+export const checkMpesaTransactionStatus = async (checkoutRequestID: string) => {
+  try {
+    const response = await axios.post(`${c.BASE_LOCAL_URL}mpesa/transaction-status`, {
+      transactionId: checkoutRequestID
+    });
+    return response.data;
+  } catch (error) {
+    throw handler(error);
+  }
+};
+
+// New function to get transaction status by CheckoutRequestID
+export const getTransactionStatus = async (checkoutRequestID: string) => {
+  try {
+    const response = await axios.get(`${c.BASE_LOCAL_URL}mpesa/transaction-status/${checkoutRequestID}`);
+    return response.data;
+  } catch (error) {
+    throw handler(error);
+  }
+};
+
+export const withdrawMpesa = async (withdrawData: {
+  phone: string;
+  amount: number;
+  userId?: string;
+}) => {
+  try {
+    const response = await axios.post(`${c.BASE_LOCAL_URL}mpesa/withdraw`, {
+      phone: withdrawData.phone,
+      amount: withdrawData.amount,
+      userId: withdrawData.userId
+    });
+    return response.data;
+  } catch (error) {
+    throw handler(error);
+  }
+
+};

@@ -23,7 +23,9 @@ export const ENQUIRIES = `${BASE_LOCAL_URL}client/enquiries`;
 export const ONLINEAPPLICANTS = `${BASE_LOCAL_URL}onlineregistration`; 
 export const COMPLAINTS = `${BASE_LOCAL_URL}complaints`; 
 export const CREATEREPLY = `${BASE_LOCAL_URL}replies`;
-export const CERTIFICATES = `${BASE_LOCAL_URL}certificates`; 
+export const CERTIFICATES = `${BASE_LOCAL_URL}certificates`;
+export const COHORTS = `${BASE_LOCAL_URL}cohorts`;
+export const FRONTOFFICE = `${BASE_LOCAL_URL}front-office`; 
 
 
 export const ENROLLMENT = `${BASE_URL}portal/enrollment`;

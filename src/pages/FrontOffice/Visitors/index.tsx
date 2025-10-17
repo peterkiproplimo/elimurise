@@ -106,6 +106,11 @@ function Main() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
+  
+  // Filter states
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
+  const [selectedCompanyFilter, setSelectedCompanyFilter] = useState<string>('');
+  const [selectedPurposeFilter, setSelectedPurposeFilter] = useState<string>('');
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
@@ -359,7 +364,7 @@ function Main() {
   }, [grade]);
   useEffect(() => {
     getStudents();
-  }, [search, page, limit, grade, stream, sortField, sortOrder]);
+  }, [search, page, limit, grade, stream, sortField, sortOrder, selectedStatusFilter, selectedCompanyFilter, selectedPurposeFilter]);
 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -511,7 +516,7 @@ function Main() {
   const getStudents = async () => {
     isLoading(true);
     try {
-      const response = await ApiService.getVisitors(
+      const visitorsResponse = await ApiService.getVisitors(
         {
           page,
           search,
@@ -520,26 +525,32 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
-          status: ["P"],
+          // status: selectedStatusFilter ? [selectedStatusFilter] : [],
+          // company: selectedCompanyFilter,
+          // purpose: selectedPurposeFilter,
         },
         strandFilter
       );
-
-      console.log("Visitors fetch success")
-      const pagination = response?.pagination;
+      const pagination = visitorsResponse?.pagination;
       setPagination({
         current_page: Number(pagination?.current_page),
-        total: response?.length,
-        total_pages: pagination?.total_pages,
+        total: pagination?.total || 0,
+        total_pages: pagination?.total_pages || 1,
         per_page: Number(pagination?.per_page),
       });
 
-      console.log("Visitor Management data Test", response);
-
-      setLearners(response);
+      console.log("Visitors data", visitorsResponse.data);
+      setLearners(visitorsResponse.data || []);
 
     } catch (error) {
       console.error("Error fetching students:", error);
+      setLearners([]);
+      setPagination({
+        current_page: 1,
+        total: 0,
+        total_pages: 1,
+        per_page: 0,
+      });
     } finally {
       isLoading(false);
     }
@@ -548,6 +559,37 @@ function Main() {
   const handleSort = (field: string) => {
     setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
     setSortField(field);
+  };
+
+  // Filter handler functions
+  const handleStatusFilterChange = (status: string) => {
+    setSelectedStatusFilter(status);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearStatusFilter = () => {
+    setSelectedStatusFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handleCompanyFilterChange = (company: string) => {
+    setSelectedCompanyFilter(company);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearCompanyFilter = () => {
+    setSelectedCompanyFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handlePurposeFilterChange = (purpose: string) => {
+    setSelectedPurposeFilter(purpose);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearPurposeFilter = () => {
+    setSelectedPurposeFilter('');
+    setPage(1); // Reset to first page when clearing filter
   };
 
 
@@ -1367,20 +1409,131 @@ function Main() {
             </div> */}
   
        
-            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0 space-x-3">
               <div className="relative w-56 text-slate-500">
                 <FormInput
                   type="text"
                   className="w-56 pr-10 !box"
                   placeholder="Search..."
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <Lucide
-                  icon="Search"
-                  className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                />
+                {search ? (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Clear search"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                )}
+              </div>
+
+              {/* Status Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedStatusFilter}
+                  onChange={(e) => handleStatusFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedStatusFilter ? 'border-green-500 bg-green-50' : ''}`}
+                >
+                  <option value="">All Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Checked In">Checked In</option>
+                  <option value="Checked Out">Checked Out</option>
+                </FormSelect>
+                {selectedStatusFilter && (
+                  <button
+                    onClick={clearStatusFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-green-500 hover:text-green-700 transition-colors"
+                    title="Clear status filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Company Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedCompanyFilter}
+                  onChange={(e) => handleCompanyFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedCompanyFilter ? 'border-blue-500 bg-blue-50' : ''}`}
+                >
+                  <option value="">All Companies</option>
+                  <option value="Microsoft">Microsoft</option>
+                  <option value="Google">Google</option>
+                  <option value="Apple">Apple</option>
+                  <option value="Amazon">Amazon</option>
+                  <option value="Other">Other</option>
+                </FormSelect>
+                {selectedCompanyFilter && (
+                  <button
+                    onClick={clearCompanyFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors"
+                    title="Clear company filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Purpose Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedPurposeFilter}
+                  onChange={(e) => handlePurposeFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedPurposeFilter ? 'border-purple-500 bg-purple-50' : ''}`}
+                >
+                  <option value="">All Purposes</option>
+                  <option value="Meeting">Meeting</option>
+                  <option value="Interview">Interview</option>
+                  <option value="Delivery">Delivery</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Other">Other</option>
+                </FormSelect>
+                {selectedPurposeFilter && (
+                  <button
+                    onClick={clearPurposeFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-700 transition-colors"
+                    title="Clear purpose filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* Active Filter Indicators */}
+            {(selectedStatusFilter || selectedCompanyFilter || selectedPurposeFilter) && (
+              <div className="flex items-center space-x-3 flex-wrap mt-3">
+                {selectedStatusFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-green-600 font-medium">
+                      Status: {selectedStatusFilter}
+                    </span>
+                  </div>
+                )}
+                {selectedCompanyFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-blue-600 font-medium">
+                      Company: {selectedCompanyFilter}
+                    </span>
+                  </div>
+                )}
+                {selectedPurposeFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-purple-600 font-medium">
+                      Purpose: {selectedPurposeFilter}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">

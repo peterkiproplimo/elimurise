@@ -132,6 +132,10 @@ function Main() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
+  
+  // Filter states
+  const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>('');
+  const [selectedCertificateCategoriesFilter, setSelectedCertificateCategoriesFilter] = useState<string>('');
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
@@ -258,6 +262,7 @@ function Main() {
       studentId: yup.string().required("Student ID is required"),
       certificateName: yup.string().required("Certificate name is required"),
       certificateType: yup.string().required("Certificate type is required"),
+      certificateCategories: yup.string().required("Certificate categories is required"),
       issueDate: yup.string().required("Issue date is required"),
       expiryDate: yup.string().optional(),
   
@@ -359,6 +364,7 @@ function Main() {
         formDataToSend.append('studentAdmNo', selectedStudent.adm_no);
         formDataToSend.append('certificateName', data.certificateName);
         formDataToSend.append('certificateType', data.certificateType);
+        formDataToSend.append('certificateCategories', data.certificateCategories);
         formDataToSend.append('issueDate', data.issueDate);
         
         if (data.expiryDate) {
@@ -429,7 +435,7 @@ function Main() {
   }, [grade]);
   useEffect(() => {
     getStudents();
-  }, [search, page, limit, grade, stream, sortField, sortOrder]);
+  }, [search, page, limit, grade, stream, sortField, sortOrder, selectedTypeFilter, selectedCertificateCategoriesFilter]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -580,9 +586,12 @@ function Main() {
       // Fetch certificates instead of students
       const response = await ApiService.getCertificates({
         page,
+        search,
         limit: limit,
         sortBy: sortField,
-        sortOrder: sortOrder
+        sortOrder: sortOrder,
+        type: selectedTypeFilter,
+        certificateCategories: selectedCertificateCategoriesFilter
       });
       
       console.log("Certificates response:", response);
@@ -702,6 +711,27 @@ function Main() {
   const handleSort = (field: string) => {
     setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
     setSortField(field);
+  };
+
+  // Filter handler functions
+  const handleTypeFilterChange = (type: string) => {
+    setSelectedTypeFilter(type);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearTypeFilter = () => {
+    setSelectedTypeFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handleCertificateCategoriesFilterChange = (certificateCategories: string) => {
+    setSelectedCertificateCategoriesFilter(certificateCategories);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearCertificateCategoriesFilter = () => {
+    setSelectedCertificateCategoriesFilter('');
+    setPage(1); // Reset to first page when clearing filter
   };
   const getParents = async (search: any) => {
     const response = await ApiService.getParents({
@@ -1392,6 +1422,35 @@ function Main() {
                       )}
                     </div>
 
+                {/* Certificate Categories */}
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                    Certificate Categories <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormSelect
+                    {...register("certificateCategories")}
+                    name="certificateCategories"
+                        className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                      >
+                    <option value="">Select Certificate Category</option>
+                    <option value="Upload scanned certificates">Upload scanned certificates</option>
+                    <option value="Awards">Awards</option>
+                    <option value="Recognitions">Recognitions</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Training">Training</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Leadership">Leadership</option>
+                    <option value="Community Service">Community Service</option>
+                    <option value="Other">Other</option>
+                      </FormSelect>
+                  {errors.certificateCategories && (
+                        <div className="mt-2 text-red-500 text-sm">
+                      {typeof errors.certificateCategories.message === "string" &&
+                        errors.certificateCategories.message}
+                        </div>
+                      )}
+                    </div>
+
                 {/* Issue Date */}
                     <div>
                       <FormLabel className="text-sm font-medium text-gray-700">
@@ -1548,60 +1607,107 @@ function Main() {
                 pagination.total}{" "}
               entries
             </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <TomSelect
-                value={grade}
-                className="relative w-56 text-slate-500 "
-                onChange={(event: any) => {
-                  reset({ ...getValues(), grade: event, stream: "" });
-                  setStream("");
-                  // reset({ ...getValues(), grade: event });
-
-                  setGrade(event);
-                }}
-              >
-                <option value={""} selected>
-                  All Grades
-                </option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </TomSelect>
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <FormSelect
-                {...register("stream")}
-                name="stream"
-                onChange={(e: any) => {
-                  setStream(e.target.value);
-                }}
-                className={errors.stream ? "border-danger" : ""}
-                disabled={isEditMode}
-              >
-                <option value={""}>Select Stream</option>
-                {streams.map((stream: any, key) => (
-                  <option key={key} value={stream._id}>
-                    {stream.name}
-                  </option>
-                ))}
-              </FormSelect>
-            </div>
-            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+      
+   
+            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0 space-x-3">
               <div className="relative w-56 text-slate-500">
                 <FormInput
                   type="text"
                   className="w-56 pr-10 !box"
                   placeholder="Search..."
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <Lucide
-                  icon="Search"
-                  className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                />
+                {search ? (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Clear search"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                )}
+              </div>
+
+              {/* Type Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedTypeFilter}
+                  onChange={(e) => handleTypeFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedTypeFilter ? 'border-blue-500 bg-blue-50' : ''}`}
+                >
+                  <option value="">All Types</option>
+                  <option value="Academic">Academic</option>
+                  <option value="Completion">Completion</option>
+                  <option value="Achievement">Achievement</option>
+                  <option value="Participation">Participation</option>
+                  <option value="Merit">Merit</option>
+                </FormSelect>
+                {selectedTypeFilter && (
+                  <button
+                    onClick={clearTypeFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors"
+                    title="Clear type filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Certificate Categories Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedCertificateCategoriesFilter}
+                  onChange={(e) => handleCertificateCategoriesFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedCertificateCategoriesFilter ? 'border-orange-500 bg-orange-50' : ''}`}
+                >
+                  <option value="">All Categories</option>
+                  <option value="Upload scanned certificates">Upload scanned certificates</option>
+                  <option value="Awards">Awards</option>
+                  <option value="Recognitions">Recognitions</option>
+                  <option value="Academic">Academic</option>
+                  <option value="Training">Training</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Leadership">Leadership</option>
+                  <option value="Community Service">Community Service</option>
+                  <option value="Other">Other</option>
+                </FormSelect>
+                {selectedCertificateCategoriesFilter && (
+                  <button
+                    onClick={clearCertificateCategoriesFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-700 transition-colors"
+                    title="Clear certificate categories filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* Active Filter Indicators */}
+            {(selectedTypeFilter || selectedCertificateCategoriesFilter) && (
+              <div className="flex items-center space-x-3 flex-wrap mt-3">
+                {selectedTypeFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-blue-600 font-medium">
+                      Type: {selectedTypeFilter}
+                    </span>
+                  </div>
+                )}
+                {selectedCertificateCategoriesFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-orange-600 font-medium">
+                      Category: {selectedCertificateCategoriesFilter}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
@@ -2788,36 +2894,6 @@ function Main() {
                   )}
                 </div>
 
-                <div className="col-span-12 sm:col-span-4 mt-2">
-                  <FormLabel htmlFor="stream">
-                    Select Stream<span className="text-danger ml-0.5">*</span>
-                  </FormLabel>
-                  <FormSelect
-                    id="stream"
-                    // {...register("stream")}
-                    name="stream"
-                    defaultValue={approveTranfer.to_stream}
-                    onChange={(e) => {
-                      setApproveTranfer({
-                        ...approveTranfer,
-                        to_stream: e.target.value,
-                      });
-                    }}
-                  >
-                    <option value="">Select Stream</option>
-                    {streams.map((stream: any, key) => (
-                      <option key={key} value={stream._id}>
-                        {stream.name}
-                      </option>
-                    ))}
-                  </FormSelect>
-                  {errors.stream && (
-                    <div className="mt-2 text-danger">
-                      {typeof errors.stream.message === "string" &&
-                        errors.stream.message}
-                    </div>
-                  )}
-                </div>
               </>
             )}
 
@@ -2870,47 +2946,7 @@ function Main() {
               <Lucide icon="X" className="w-8 h-8 text-slate-400" />
             </a>
           </Dialog.Title>
-          <div className="grid grid-cols-12 gap-4 gap-y-3 p-4">
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <TomSelect
-                value={grade}
-                className=" w-full text-slate-500 "
-                onChange={(event: any) => {
-                  reset({ ...getValues(), grade: event });
-                  setStream("");
-                  setGrade(event);
-                }}
-              >
-                <option value={""} selected>
-                  All Grades
-                </option>
-                {grades.map((grade: any, key) => (
-                  <option key={key} value={grade._id}>
-                    {grade.name}
-                  </option>
-                ))}
-              </TomSelect>
-            </div>
-            <div className="flex flex-wrap items-center col-span-12 mr-3  xl:flex-nowrap">
-              <FormSelect
-                // {...register("stream")}
-                // name="stream"
-                value={stream}
-                onChange={(e: any) => {
-                  setStream(e.target.value);
-                }}
-                className={errors.stream ? "border-danger" : ""}
-                disabled={isEditMode}
-              >
-                <option value={""}>Select Stream</option>
-                {streams.map((stream: any, key) => (
-                  <option key={key} value={stream._id}>
-                    {stream.name}
-                  </option>
-                ))}
-              </FormSelect>
-            </div>
-          </div>
+      
           <Dialog.Footer>
             <div className=" text-right">
               <Button

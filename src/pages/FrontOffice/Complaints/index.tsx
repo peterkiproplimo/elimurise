@@ -109,6 +109,11 @@ function Main() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
+  
+  // Filter states
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
+  const [selectedPriorityFilter, setSelectedPriorityFilter] = useState<string>('');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('');
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
@@ -432,7 +437,7 @@ function Main() {
 
   useEffect(() => {
     getStudents();
-  }, [search, page, limit, grade, stream, sortField, sortOrder]);
+  }, [search, page, limit, grade, stream, sortField, sortOrder, selectedStatusFilter, selectedPriorityFilter, selectedCategoryFilter]);
 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -609,7 +614,9 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
-          status: ["P"],
+          status: selectedStatusFilter ? [selectedStatusFilter] : [],
+          priority: selectedPriorityFilter,
+          category: selectedCategoryFilter,
         },
         strandFilter
       );
@@ -617,12 +624,12 @@ function Main() {
       const pagination = response?.pagination;
       setPagination({
         current_page: Number(pagination?.current_page),
-        total: response?.length,
-        total_pages: pagination?.total_pages,
+        total: pagination?.total || 0,
+        total_pages: pagination?.total_pages || 1,
         per_page: Number(pagination?.per_page),
       });
-      console.log("Response data", response?.data)
-      setLearners(response);
+      console.log("Complaints data", response);
+      setLearners(response.data || []);
     } catch (error) {
       console.error("Error fetching students:", error);
     } finally {
@@ -633,6 +640,37 @@ function Main() {
   const handleSort = (field: string) => {
     setSortOrder(sortField === field && sortOrder === "asc" ? "desc" : "asc");
     setSortField(field);
+  };
+
+  // Filter handler functions
+  const handleStatusFilterChange = (status: string) => {
+    setSelectedStatusFilter(status);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearStatusFilter = () => {
+    setSelectedStatusFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handlePriorityFilterChange = (priority: string) => {
+    setSelectedPriorityFilter(priority);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearPriorityFilter = () => {
+    setSelectedPriorityFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handleCategoryFilterChange = (category: string) => {
+    setSelectedCategoryFilter(category);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearCategoryFilter = () => {
+    setSelectedCategoryFilter('');
+    setPage(1); // Reset to first page when clearing filter
   };
 
 
@@ -1439,20 +1477,132 @@ function Main() {
               entries
             </div> */}
    
-            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0 space-x-3">
               <div className="relative w-56 text-slate-500">
                 <FormInput
                   type="text"
                   className="w-56 pr-10 !box"
                   placeholder="Search..."
+                  value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <Lucide
-                  icon="Search"
-                  className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
-                />
+                {search ? (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Clear search"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <Lucide
+                    icon="Search"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
+                  />
+                )}
+              </div>
+
+              {/* Status Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedStatusFilter}
+                  onChange={(e) => handleStatusFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedStatusFilter ? 'border-green-500 bg-green-50' : ''}`}
+                >
+                  <option value="">All Status</option>
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                  <option value="Closed">Closed</option>
+                </FormSelect>
+                {selectedStatusFilter && (
+                  <button
+                    onClick={clearStatusFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-green-500 hover:text-green-700 transition-colors"
+                    title="Clear status filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Priority Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedPriorityFilter}
+                  onChange={(e) => handlePriorityFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedPriorityFilter ? 'border-red-500 bg-red-50' : ''}`}
+                >
+                  <option value="">All Priorities</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Critical">Critical</option>
+                </FormSelect>
+                {selectedPriorityFilter && (
+                  <button
+                    onClick={clearPriorityFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500 hover:text-red-700 transition-colors"
+                    title="Clear priority filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Category Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedCategoryFilter}
+                  onChange={(e) => handleCategoryFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedCategoryFilter ? 'border-blue-500 bg-blue-50' : ''}`}
+                >
+                  <option value="">All Categories</option>
+                  <option value="Academic">Academic</option>
+                  <option value="Administrative">Administrative</option>
+                  <option value="Facilities">Facilities</option>
+                  <option value="Behavioral">Behavioral</option>
+                  <option value="Technical">Technical</option>
+                  <option value="Other">Other</option>
+                </FormSelect>
+                {selectedCategoryFilter && (
+                  <button
+                    onClick={clearCategoryFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors"
+                    title="Clear category filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* Active Filter Indicators */}
+            {(selectedStatusFilter || selectedPriorityFilter || selectedCategoryFilter) && (
+              <div className="flex items-center space-x-3 flex-wrap mt-3">
+                {selectedStatusFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-green-600 font-medium">
+                      Status: {selectedStatusFilter}
+                    </span>
+                  </div>
+                )}
+                {selectedPriorityFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-red-600 font-medium">
+                      Priority: {selectedPriorityFilter}
+                    </span>
+                  </div>
+                )}
+                {selectedCategoryFilter && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-blue-600 font-medium">
+                      Category: {selectedCategoryFilter}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">

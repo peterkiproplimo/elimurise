@@ -86,6 +86,7 @@ import TimetableTeacher from "../pages/Timetable/teacher";
 import TimetableViewer from "../pages/Timetable/Timetable_view";
 import InactiveLearners from "../pages/Learners/daeactivated";
 import Enquiries from "../pages/FrontOffice/Enquiries/index";
+import FrontOfficeAnalytics from "../pages/FrontOffice/FrontOfficeDashboard/index";
 import Visitors from "../pages/FrontOffice/Visitors/index";
 import PhoneCalls from "../pages/FrontOffice/PhoneCalls/index";
 import Complaints from "../pages/FrontOffice/Complaints/index";
@@ -109,6 +110,10 @@ function Router() {
         {
           path: "",
           element: <Dashboard />,
+        },
+        {
+          path: "frontofficeanalytics",
+          element: <FrontOfficeAnalytics />
         },
         {
           path: "enquiries",

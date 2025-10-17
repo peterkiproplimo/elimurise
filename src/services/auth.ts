@@ -659,7 +659,7 @@ export const getOnlineApplicants = async (data: any, filter: any) => {
 export const getVisitors = async (data: any, filter: any) => {
   try {
     let res = await axios.get(c.VISITORS, {
-      // params: data,
+      params: data,
     });
     return res.data;
   } catch (e) {
@@ -670,7 +670,7 @@ export const getVisitors = async (data: any, filter: any) => {
 export const getComplaints = async (data: any, filter: any) => {
   try {
     let res = await axios.get(c.COMPLAINTS, {
-      // params: data,
+      params: data,
     });
     return res.data;
   } catch (e) {
@@ -920,6 +920,166 @@ export async function createOnlineApplicant(data: any) {
       let res = await axios.post(c.ONLINEAPPLICANTS, data, requestConfig);
       return res.data;
     }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+// Application status management functions
+export async function shortlistApplicant(applicantId: string, data: any = {}) {
+  try {
+    let res = await axios.put(c.ONLINEAPPLICANTS + "/" + applicantId + "/shortlist", data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function confirmApplicant(applicantId: string, data: any = {}) {
+  try {
+    let res = await axios.put(c.ONLINEAPPLICANTS + "/" + applicantId + "/confirm", data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function rejectApplicant(applicantId: string, data: any = {}) {
+  try {
+    let res = await axios.put(c.ONLINEAPPLICANTS + "/" + applicantId + "/reject", data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+// Front Office Dashboard API functions
+export async function getFrontOfficeStats(dateRange: any) {
+  try {
+    let res = await axios.get(c.FRONTOFFICE + "/dashboard/stats", {
+      params: dateRange
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getEnquiryConversionFunnel(dateRange: any) {
+  try {
+    let res = await axios.get(c.FRONTOFFICE + "/enquiries/conversion-funnel", {
+      params: dateRange
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getVisitorReports(dateRange: any) {
+  try {
+    let res = await axios.get(c.FRONTOFFICE + "/visitors/reports", {
+      params: dateRange
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getComplaintSLAReports(dateRange: any) {
+  try {
+    let res = await axios.get(c.FRONTOFFICE + "/complaints/sla-reports", {
+      params: dateRange
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getApplicationPipelineReports(dateRange: any) {
+  try {
+    let res = await axios.get(c.FRONTOFFICE + "/applications/pipeline-reports", {
+      params: dateRange
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function exportFrontOfficeReport(reportType: string, dateRange: any) {
+  try {
+    let res = await axios.get(c.FRONTOFFICE + `/reports/export/${reportType}`, {
+      params: dateRange,
+      responseType: 'blob'
+    });
+    return res;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+// Cohort API functions
+export async function createCohort(data: any) {
+  try {
+    let res = await axios.post(c.COHORTS, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getAllCohorts(params: any = {}) {
+  try {
+    let res = await axios.get(c.COHORTS, { params });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getCohortById(id: string) {
+  try {
+    let res = await axios.get(c.COHORTS + "/" + id);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getCohortByToken(token: string) {
+  try {
+    let res = await axios.get(c.COHORTS + "/token/" + token);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function updateCohort(id: string, data: any) {
+  try {
+    let res = await axios.put(c.COHORTS + "/" + id, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function deleteCohort(id: string) {
+  try {
+    let res = await axios.delete(c.COHORTS + "/" + id);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getCohortApplications(id: string, params: any = {}) {
+  try {
+    let res = await axios.get(c.COHORTS + "/" + id + "/applications", { params });
+    return res.data;
   } catch (e) {
     throw handler(e);
   }

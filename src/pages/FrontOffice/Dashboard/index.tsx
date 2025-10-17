@@ -1965,7 +1965,7 @@ function Main() {
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                           <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                            Total Students
+                            Total Studentsdknkada
                           </p>
                         </div>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -2093,7 +2093,7 @@ function Main() {
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                           <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                            Total Visitors
+                            Total Students
                           </p>
                         </div>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -2124,7 +2124,7 @@ function Main() {
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                           <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                            Total Enquiries
+                            Total Teachers
                           </p>
                         </div>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -2155,7 +2155,7 @@ function Main() {
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                           <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                            Total Complaints
+                            Active Classes
                           </p>
                         </div>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -2186,7 +2186,7 @@ function Main() {
                         <div className="flex items-center space-x-2">
                           <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                           <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                            Total Applications
+                            Attendance Rate
                           </p>
                         </div>
                         <p className="text-3xl font-bold text-gray-900 dark:text-white">

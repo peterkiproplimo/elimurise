@@ -143,8 +143,26 @@ function Main() {
     startDate: "",
     endDate: "",
     applicationFee: 1000,
-    title: "Online Application Form"
+    title: ""
   });
+
+  // Cohort-related state variables
+  const [cohorts, setCohorts] = useState<any[]>([]);
+  const [selectedCohort, setSelectedCohort] = useState<any>(null);
+  const [cohortDialog, setCohortDialog] = useState(false);
+  const [cohortData, setCohortData] = useState({
+    name: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+    maxApplications: 100,
+    isActive: true,
+    generatedBy: user?.id || user?._id
+  });
+  const [viewCohortDialog, setViewCohortDialog] = useState(false);
+  const [selectedCohortFilter, setSelectedCohortFilter] = useState<string>('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
+  const [mainActiveTab, setMainActiveTab] = useState<'applicants' | 'cohorts'>('applicants');
   interface ChatComponentProps {
     user: { _id: string };
     selectedParent: {
@@ -195,7 +213,7 @@ function Main() {
   useEffect(() => {
     if (!socket) return;
 
-    socket.emit("register", { userId: user._id, userType: "parent" });
+    socket.emit("register", { userId: user?._id, userType: "parent" });
 
     const handleReceiveMessage = (newMessage: Message) => {
       setMessages((prev: any) => [...prev, newMessage]);
@@ -213,7 +231,7 @@ function Main() {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [socket, user._id]);
+  }, [socket, user?._id]);
 
   const handleNavigate = (learnerId: any) => {
     navigate(`/learner/${learnerId}`, {
@@ -277,7 +295,7 @@ function Main() {
       const formData = new FormData();
       formData.append("learner", learner._id);
 
-      formData.append("sender", user._id);
+      formData.append("sender", user?._id);
       formData.append("senderModel", "PortalUser");
       formData.append("receiver", selectedParent?._id ?? "");
       formData.append("receiverModel", "Parent");
@@ -360,6 +378,7 @@ function Main() {
   };
   useEffect(() => {
     getGrades();
+    loadCohorts();
     // getParents();
   }, []);
   useEffect(() => {
@@ -367,7 +386,7 @@ function Main() {
   }, [grade]);
   useEffect(() => {
     getStudents();
-  }, [search, page, limit, grade, stream, sortField, sortOrder]);
+  }, [search, page, limit, grade, stream, sortField, sortOrder, selectedCohortFilter, selectedStatusFilter]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -524,59 +543,226 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
-          status: ["P"],
+          // status: selectedStatusFilter ? [selectedStatusFilter] : ["P"],
+          cohortId: selectedCohortFilter || undefined, // Add cohort filtering
         },
         strandFilter
       );
       const pagination = response?.pagination;
-      setPagination({
-        current_page: Number(pagination?.current_page),
-        total: pagination?.total,
-        total_pages: pagination?.total_pages,
-        per_page: Number(pagination?.per_page),
-      });
 
-      setLearners(response);
+      // Apply client-side filtering based on selectedStatusFilter
+      let filteredApplicants = response?.applicants || [];
+      
+      if (selectedStatusFilter) {
+        filteredApplicants = filteredApplicants.filter((applicant: any) => 
+          applicant.applicationStatus === selectedStatusFilter
+        );
+      }
+      
+      // Update pagination to reflect filtered results
+      const filteredPagination = {
+        current_page: Number(pagination?.current_page),
+        total: filteredApplicants.length, // Use filtered count
+        total_pages: Math.ceil(filteredApplicants.length / parseInt(limit.toString())),
+        per_page: Number(pagination?.per_page),
+      };
+      
+      setPagination(filteredPagination);
+      setLearners(filteredApplicants);
     } catch (error) {
       console.error("Error fetching students:", error);
+      setLearners([]); // Ensure learners is always an array
     } finally {
       isLoading(false);
     }
   };
 
-  // Link generation functions
+  // Link generation functions - now creates cohorts in backend
   const generateLink = async () => {
     try {
-      // Generate a unique token
-      const token = generateToken();
-      
-      // Create link data with token
-      const linkPayload = {
-        ...linkData,
-        token: token,
-        generatedAt: new Date().toISOString(),
-        generatedBy: user?.id || user?._id
+      if (!linkData.title || !linkData.startDate || !linkData.endDate) {
+        alert('Please fill in all required fields (Title, Start Date, End Date)');
+        return;
+      }
+
+      // Create cohort data
+      const cohortPayload = {
+        name: linkData.title,
+        description: `Online application form for ${linkData.title}`,
+        startDate: linkData.startDate,
+        endDate: linkData.endDate,
+        applicationFee: linkData.applicationFee || 1000,
+        maxApplications: 1000, // Default max applications
+        isActive: true,
+        generatedBy: user?.id || user?._id,
+        settings: {
+          allowLateApplications: false,
+          requireDocuments: true,
+          autoApprove: false
+        }
       };
 
-      // Store the link configuration (you might want to save this to database)
-      console.log('Generated link data:', linkPayload);
+      // Create cohort in backend
+      const response = await ApiService.createCohort(cohortPayload);
       
-      // Generate the full URL
-      const baseUrl = window.location.origin;
-      const applicationUrl = `${baseUrl}/onlineregistration?token=${token}`;
-      
-      setGeneratedLink(applicationUrl);
-      
-      // Copy to clipboard
-      await navigator.clipboard.writeText(applicationUrl);
-      
-      // Show success message
-      alert('Link generated and copied to clipboard!');
+      if (response.cohort) {
+        const cohort = response.cohort;
+        
+        // Update generated link with cohort URL
+        setGeneratedLink(cohort.applicationUrl);
+        
+        // Copy to clipboard
+        await navigator.clipboard.writeText(cohort.applicationUrl);
+        
+        // Refresh cohorts list
+        loadCohorts();
+        
+        // Show success message
+        alert(`Cohort created successfully!\n\nCohort: ${cohort.name}\nApplication URL copied to clipboard!`);
+        
+        // Close dialog
+        setLinkDialog(false);
+      }
       
     } catch (error) {
-      console.error('Error generating link:', error);
-      alert('Error generating link. Please try again.');
+      console.error('Error creating cohort:', error);
+      alert('Error creating cohort. Please try again.');
     }
+  };
+
+  // Load cohorts from backend
+  const loadCohorts = async () => {
+    try {
+      const response = await ApiService.getAllCohorts();
+      if (response.cohorts) {
+        setCohorts(response.cohorts);
+      }
+    } catch (error) {
+      console.error('Error loading cohorts:', error);
+    }
+  };
+
+  // Cohort management functions
+  const createCohort = async () => {
+    try {
+      if (!cohortData.name || !cohortData.startDate || !cohortData.endDate) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const cohortPayload = {
+        ...cohortData,
+        generatedBy: user?.id || user?._id,
+        settings: {
+          allowLateApplications: false,
+          requireDocuments: true,
+          autoApprove: false
+        }
+      };
+
+      // Create cohort in backend
+      const response = await ApiService.createCohort(cohortPayload);
+      
+      if (response.cohort) {
+        // Refresh cohorts list
+        loadCohorts();
+        
+        // Reset form
+        setCohortData({
+          name: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+          maxApplications: 100,
+          isActive: true,
+          generatedBy: user?.id || user?._id
+        });
+        
+        setCohortDialog(false);
+        alert('Cohort created successfully!');
+      }
+      
+    } catch (error) {
+      console.error('Error creating cohort:', error);
+      alert('Error creating cohort. Please try again.');
+    }
+  };
+
+  const generateCohortLink = async (cohort: any) => {
+    try {
+      // Copy the cohort's application URL to clipboard
+      if (cohort.applicationUrl) {
+        await navigator.clipboard.writeText(cohort.applicationUrl);
+        alert(`Cohort link copied to clipboard!\nCohort: ${cohort.name}`);
+      } else {
+        alert('No application URL found for this cohort');
+      }
+    } catch (error) {
+      console.error('Error copying cohort link:', error);
+      alert('Error copying cohort link. Please try again.');
+    }
+  };
+
+  const viewCohortApplications = (cohort: any) => {
+    setSelectedCohort(cohort);
+    setViewCohortDialog(true);
+    // Filter applications by cohort
+    getStudentsByCohort(cohort.id);
+  };
+
+  const getStudentsByCohort = async (cohortId: string) => {
+    isLoading(true);
+    try {
+      const response = await ApiService.getCohortApplications(cohortId, {
+        page,
+        search,
+        limit,
+        status: "Pending"
+      });
+      
+      if (response.applications) {
+        setLearners(response.applications);
+        const pagination = response?.pagination;
+        setPagination({
+          current_page: Number(pagination?.current_page),
+          total: pagination?.total,
+          total_pages: pagination?.total_pages,
+          per_page: Number(pagination?.per_page),
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching cohort students:", error);
+      setLearners([]); // Ensure learners is always an array
+    } finally {
+      isLoading(false);
+    }
+  };
+
+  const handleCohortDataChange = (field: string, value: any) => {
+    setCohortData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleCohortFilterChange = (cohortId: string) => {
+    setSelectedCohortFilter(cohortId);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearCohortFilter = () => {
+    setSelectedCohortFilter('');
+    setPage(1); // Reset to first page when clearing filter
+  };
+
+  const handleStatusFilterChange = (status: string) => {
+    setSelectedStatusFilter(status);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearStatusFilter = () => {
+    setSelectedStatusFilter('');
+    setPage(1); // Reset to first page when clearing filter
   };
 
   const generateToken = () => {
@@ -654,6 +840,67 @@ function Main() {
     getLeanerClasses(record._id);
     console.log(record);
     setProfile(true);
+  };
+
+  // Application status management functions
+  const handleShortlistApplicant = async (applicantId: string) => {
+    isLoading(true);
+    try {
+      const res = await ApiService.shortlistApplicant(applicantId);
+      if (res.success) {
+        setSuccess(true);
+        setMessage("Applicant shortlisted successfully!");
+        await getStudents(); // Refresh the list
+      } else {
+        throw new Error(res.message || "Failed to shortlist applicant");
+      }
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage(error.message || "Failed to shortlist applicant");
+    } finally {
+      isLoading(false);
+      notify.current?.showToast();
+    }
+  };
+
+  const handleConfirmApplicant = async (applicantId: string) => {
+    isLoading(true);
+    try {
+      const res = await ApiService.confirmApplicant(applicantId);
+      if (res.success) {
+        setSuccess(true);
+        setMessage("Applicant confirmed successfully!");
+        await getStudents(); // Refresh the list
+      } else {
+        throw new Error(res.message || "Failed to confirm applicant");
+      }
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage(error.message || "Failed to confirm applicant");
+    } finally {
+      isLoading(false);
+      notify.current?.showToast();
+    }
+  };
+
+  const handleRejectApplicant = async (applicantId: string) => {
+    isLoading(true);
+    try {
+      const res = await ApiService.rejectApplicant(applicantId);
+      if (res.success) {
+        setSuccess(true);
+        setMessage("Applicant rejected successfully!");
+        await getStudents(); // Refresh the list
+      } else {
+        throw new Error(res.message || "Failed to reject applicant");
+      }
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage(error.message || "Failed to reject applicant");
+    } finally {
+      isLoading(false);
+      notify.current?.showToast();
+    }
   };
   const learner_state = location.state; // The object passed in `state`
   useEffect(() => {
@@ -956,13 +1203,13 @@ function Main() {
                 <div
                   key={index}
                   className={`flex ${
-                    msg.sender === user._id ? "justify-end" : "justify-start"
+                    msg.sender === user?._id ? "justify-end" : "justify-start"
                   }`}
                 >
                   <div className="max-w-[75%] group">
                     <div
                       className={`p-4 rounded-2xl shadow-md transition-all ${
-                        msg.sender === user._id
+                        msg.sender === user?._id
                           ? "bg-indigo-500 text-white"
                           : "bg-white text-gray-800 border border-gray-200"
                       }`}
@@ -1042,7 +1289,7 @@ function Main() {
                     </div>
                     <span
                       className={`text-xs mt-1 block opacity-0 group-hover:opacity-100 transition-opacity ${
-                        msg.sender === user._id
+                        msg.sender === user?._id
                           ? "text-right text-gray-400"
                           : "text-left text-gray-500"
                       }`}
@@ -1139,21 +1386,60 @@ function Main() {
         <>
           <div className="flex items-center justify-between">
             <h2 className="mt-1 text-lg font-medium ">Online Applicants</h2>
-            <Button
-              onClick={() => setLinkDialog(true)}
-              variant="primary"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center"
-            >
-              <Lucide icon="Link" className="w-4 h-4 mr-2" />
-              Generate Online Link
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button
+                onClick={() => setMainActiveTab('cohorts')}
+                variant="secondary"
+                className="bg-gradient-to-r from-purple-600 to-violet-600 text-white hover:from-purple-700 hover:to-violet-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center"
+              >
+                <Lucide icon="Users" className="w-4 h-4 mr-2" />
+                View Cohorts
+              </Button>
+              <Button
+                onClick={() => setLinkDialog(true)}
+                variant="primary"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center"
+              >
+                <Lucide icon="Link" className="w-4 h-4 mr-2" />
+                Generate Online Link
+              </Button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
-            {(is_admin() ||
-              hasPermission("parental-communication", "read")) && (
-              <>
-                {" "}
+          {/* Tab Navigation */}
+          <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 mt-6">
+            <button
+              onClick={() => setMainActiveTab('applicants')}
+              className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                mainActiveTab === 'applicants'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              <Lucide icon="Users" className="w-4 h-4 mr-2" />
+              Applicants
+            </button>
+            <button
+              onClick={() => setMainActiveTab('cohorts')}
+              className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                mainActiveTab === 'cohorts'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              <Lucide icon="Calendar" className="w-4 h-4 mr-2" />
+              Cohorts
+            </button>
+          </div>
+
+          {/* Tab Content */}
+          {mainActiveTab === 'applicants' && (
+            <>
+              <div className="flex flex-wrap items-center col-span-12 mt-2  xl:flex-nowrap">
+                {(is_admin() ||
+                  hasPermission("parental-communication", "read")) && (
+                  <>
+                    {" "}
  
                 <Menu>
             
@@ -1178,18 +1464,9 @@ function Main() {
                 </Menu>
               </>
             )}
-            {/* <div className="hidden mx-auto md:block text-slate-500">
-              Showing{" "}
-              {pagination.current_page +
-                " to " +
-                pagination.total_pages +
-                " of " +
-                pagination.total}{" "}
-              entries
-            </div> */}
      
 
-            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0">
+            <div className="flex items-center w-full mt-3 xl:w-auto xl:mt-0 space-x-3">
               <div className="relative w-56 text-slate-500">
                 <FormInput
                   type="text"
@@ -1202,6 +1479,78 @@ function Main() {
                   className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3"
                 />
               </div>
+              
+              {/* Cohort Filter Dropdown */}
+              <div className="relative w-64">
+                <FormSelect
+                  value={selectedCohortFilter}
+                  onChange={(e) => handleCohortFilterChange(e.target.value)}
+                  className={`w-64 !box ${selectedCohortFilter ? 'border-blue-500 bg-blue-50' : ''}`}
+                >
+                  <option value="">All Cohorts</option>
+                  {cohorts.map((cohort: any) => (
+                    <option key={cohort._id} value={cohort._id}>
+                      {cohort.name}
+                    </option>
+                  ))}
+                </FormSelect>
+                {selectedCohortFilter && (
+                  <button
+                    onClick={clearCohortFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors"
+                    title="Clear filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Status Filter Dropdown */}
+              <div className="relative w-48">
+                <FormSelect
+                  value={selectedStatusFilter}
+                  onChange={(e) => handleStatusFilterChange(e.target.value)}
+                  className={`w-48 !box ${selectedStatusFilter ? 'border-green-500 bg-green-50' : ''}`}
+                >
+                  <option value="">All Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Shortlisted">Shortlisted</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Rejected">Rejected</option>
+                </FormSelect>
+                {selectedStatusFilter && (
+                  <button
+                    onClick={clearStatusFilter}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-green-500 hover:text-green-700 transition-colors"
+                    title="Clear filter"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              
+              {/* Active Filter Indicator */}
+              {(selectedCohortFilter || selectedStatusFilter) && (
+                <div className="flex items-center space-x-3 flex-wrap">
+                  {selectedCohortFilter && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-green-600 font-medium">
+                        Cohort: {cohorts.find((c: any) => c._id === selectedCohortFilter)?.name || 'Unknown'}
+                      </span>
+                    </div>
+                  )}
+                  {selectedStatusFilter && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-green-600 font-medium">
+                        Status: {selectedStatusFilter}
+                      </span>
+                    </div>
+                  )}
+                  <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                    {(learners || []).length} results
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1211,7 +1560,7 @@ function Main() {
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
                 </div>
-              ) : learners.length === 0 ? (
+              ) : (learners || []).length === 0 ? (
                 <div className="flex flex-col items-center mt-10 bg-white p-8">
                   {/* <Search size={28} className="" /> */}
                   <p className="text-xl text-slate-500 ">No records found</p>
@@ -1302,6 +1651,11 @@ function Main() {
                           </div>
                         </Table.Th>
 
+                        {selectedCohortFilter && (
+                          <Table.Th className="text-center">
+                            Cohort
+                          </Table.Th>
+                        )}
                         <Table.Th className="text-center w-32">
                           Actions
                         </Table.Th>
@@ -1309,7 +1663,7 @@ function Main() {
                     </Table.Thead>
 
                     <Table.Tbody>
-                      {learners.map((learner: any, key) => (
+                      {(learners || []).map((applicant: any, key) => (
                         <Table.Tr key={key}>
                           <Table.Td className="text-center">
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
@@ -1322,9 +1676,9 @@ function Main() {
                         
                               <div>
                                 <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
-                                     onClick={() => profileRecord(learner)}>
-                                  {learner?.first_name && learner?.first_name}
-                                  {" " + learner?.last_name + " " + learner?.last_name}
+                                     onClick={() => profileRecord(applicant)}>
+                                  {applicant?.first_name && applicant?.first_name}
+                                  {" " + applicant?.last_name + " " + applicant?.last_name}
                                 </div>
                               
                               </div>
@@ -1338,9 +1692,9 @@ function Main() {
                               
                             <div>
                                 <div className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 cursor-pointer"
-                                     onClick={() => profileRecord(learner)}>
-                                  {learner?.guardian_first_name && learner?.guardian_first_name}
-                                  {" " + learner?.guardian_surname + " " + learner?.guardian_last_name}
+                                     onClick={() => profileRecord(applicant)}>
+                                  {applicant?.guardian_first_name && applicant?.guardian_first_name}
+                                  {" " + applicant?.guardian_surname + " " + applicant?.guardian_last_name}
                                 </div>
                               
                               </div>
@@ -1350,7 +1704,7 @@ function Main() {
                           <Table.Td>
                             <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-3 py-2 inline-block">
                               <span className="font-medium text-purple-700 dark:text-purple-300">
-                                {learner?.guardian_relationship}
+                                {applicant?.guardian_relationship}
                               </span>
                             </div>
                           </Table.Td>
@@ -1358,33 +1712,47 @@ function Main() {
                           <Table.Td>
                             <div className="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 inline-block">
                               <span className="font-medium text-green-700 dark:text-green-300">
-                                {learner?.guardian_phone}
+                                {applicant?.guardian_phone}
                               </span>
                             </div>
                           </Table.Td>
                           
                           <Table.Td>
                             <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                              learner?.status === "L" || learner?.status === "G"
+                              applicant?.status === "L" || applicant?.status === "G"
                                 ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                                : learner?.status === "D"
+                                : applicant?.status === "D"
                                 ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
                                 : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
                             }`}>
                               <div className={`w-2 h-2 rounded-full mr-2 ${
-                                learner?.status === "L" || learner?.status === "G"
+                                applicant?.status === "L" || applicant?.status === "G"
                                   ? "bg-red-500"
-                                  : learner?.status === "D"
+                                  : applicant?.status === "D"
                                   ? "bg-orange-500"
                                   : "bg-green-500"
-                              }`}></div>
+                              }`}>
+                                
+                              </div>
 
-                              Shortlisted
-                              {/* {learner?.status === "L" || learner?.status === "G" ? "Left" : ""}
-                              {learner?.status === "P" ? "Active" : ""}
-                              {learner?.status === "D" ? "Deactivated" : ""} */}
+                              
+                              {/* {applicant?.status === "L" || applicant?.status === "G" ? "Left" : ""} */}
+                              {applicant?.applicationStatus === "Shortlisted" ? "Shortlisted" : ""}
+                              {applicant?.applicationStatus === "Confirmed" ? "Confirmed" : ""}
+                              {applicant?.applicationStatus === "Pending" ? "Pending" : ""}
+                              {applicant?.applicationStatus === "Rejected" ? "Rejected" : ""}
                             </div>
                           </Table.Td>
+
+                          {selectedCohortFilter && (
+                            <Table.Td>
+                              <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-3 py-2 inline-block">
+                                <span className="font-medium text-indigo-700 dark:text-indigo-300 text-sm">
+                                  {cohorts.find((c: any) => c._id === selectedCohortFilter)?.name || 'Unknown'}
+                                </span>
+                              </div>
+                            </Table.Td>
+                          )}
 
                           <Table.Td>
                             <div className="flex items-center justify-center space-x-2">
@@ -1399,7 +1767,7 @@ function Main() {
                                   <Menu.Item
                                     onClick={(e: any) => {
                                       e.preventDefault();
-                                      profileRecord(learner);
+                                      profileRecord(applicant);
                                     }}
                                     className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
                                   >
@@ -1407,11 +1775,64 @@ function Main() {
                                     Review
                                   </Menu.Item>
 
+                                  {/* Application Status Actions */}
+                                  {applicant?.applicationStatus === 'Pending' && (
+                                    <>
+                                      <Menu.Item
+                                        onClick={(e: any) => {
+                                          e.preventDefault();
+                                          handleShortlistApplicant(applicant._id);
+                                        }}
+                                        className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors duration-200"
+                                      >
+                                        <Lucide icon="UserCheck" className="w-4 h-4 mr-3 text-yellow-500" />
+                                        Shortlist
+                                      </Menu.Item>
+                                      
+                                      <Menu.Item
+                                        onClick={(e: any) => {
+                                          e.preventDefault();
+                                          handleRejectApplicant(applicant._id);
+                                        }}
+                                        className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-200"
+                                      >
+                                        <Lucide icon="XCircle" className="w-4 h-4 mr-3 text-red-500" />
+                                        Reject
+                                      </Menu.Item>
+                                    </>
+                                  )}
+
+                                  {applicant?.applicationStatus === 'Shortlisted' && (
+                                    <>
+                                      <Menu.Item
+                                        onClick={(e: any) => {
+                                          e.preventDefault();
+                                          handleConfirmApplicant(applicant._id);
+                                        }}
+                                        className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-200"
+                                      >
+                                        <Lucide icon="CheckCircle" className="w-4 h-4 mr-3 text-green-500" />
+                                        Confirm
+                                      </Menu.Item>
+                                      
+                                      <Menu.Item
+                                        onClick={(e: any) => {
+                                          e.preventDefault();
+                                          handleRejectApplicant(applicant._id);
+                                        }}
+                                        className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-200"
+                                      >
+                                        <Lucide icon="XCircle" className="w-4 h-4 mr-3 text-red-500" />
+                                        Reject
+                                      </Menu.Item>
+                                    </>
+                                  )}
+
                                   {hasPermission("learners", "delete") && (
                                     <Menu.Item
                                       onClick={(e: any) => {
                                         e.preventDefault();
-                                        setRecordId(learner._id);
+                                        setRecordId(applicant._id);
                                         setViewMore(true);
                                       }}
                                       className="flex items-center px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
@@ -1566,6 +1987,130 @@ function Main() {
 
             {/* END: Data List */}
           </div>
+            </>
+          )}
+
+          {/* Cohorts Tab Content */}
+          {mainActiveTab === 'cohorts' && (
+            <div className="mt-6">
+              {cohorts.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                  <Lucide icon="Calendar" className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No cohorts found</h3>
+                  <p className="text-gray-500 mb-6">Create your first cohort using the "Generate Online Link" button</p>
+                  <Button
+                    onClick={() => setLinkDialog(true)}
+                    variant="primary"
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700"
+                  >
+                    <Lucide icon="Link" className="w-4 h-4 mr-2" />
+                    Create First Cohort
+                  </Button>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table hover striped>
+                    <Table.Thead variant="modern">
+                      <Table.Tr>
+                        <Table.Th className="whitespace-nowrap">Cohort Name</Table.Th>
+                        <Table.Th className="whitespace-nowrap">Start Date</Table.Th>
+                        <Table.Th className="whitespace-nowrap">End Date</Table.Th>
+                        <Table.Th className="whitespace-nowrap">Status</Table.Th>
+                        <Table.Th className="whitespace-nowrap">Applications</Table.Th>
+                        <Table.Th className="whitespace-nowrap">Fee</Table.Th>
+                        <Table.Th className="whitespace-nowrap">Actions</Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {cohorts.map((cohort: any, index: number) => (
+                        <Table.Tr key={cohort._id || index}>
+                          <Table.Td>
+                            <div>
+                              <div className="font-medium">{cohort.name}</div>
+                              {cohort.description && (
+                                <div className="text-sm text-gray-500 truncate max-w-xs">
+                                  {cohort.description}
+                                </div>
+                              )}
+                            </div>
+                          </Table.Td>
+                          <Table.Td>
+                            {new Date(cohort.startDate).toLocaleDateString()}
+                          </Table.Td>
+                          <Table.Td>
+                            {new Date(cohort.endDate).toLocaleDateString()}
+                          </Table.Td>
+                          <Table.Td>
+                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              cohort.status === 'active' ? 'bg-green-100 text-green-800' :
+                              cohort.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                              cohort.status === 'closed' ? 'bg-red-100 text-red-800' :
+                              cohort.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {cohort.status || 'Active'}
+                            </span>
+                          </Table.Td>
+                          <Table.Td>
+                            <div className="text-sm">
+                              <div className="font-medium">
+                                {cohort.applicationStats?.total || 0} Total
+                              </div>
+                              <div className="text-gray-500">
+                                {cohort.applicationStats?.pending || 0} Pending
+                              </div>
+                            </div>
+                          </Table.Td>
+                          <Table.Td>
+                            <span className="font-medium text-green-600">
+                              KES {cohort.applicationFee?.toLocaleString() || '1,000'}
+                            </span>
+                          </Table.Td>
+                          <Table.Td>
+                            <div className="flex items-center space-x-2">
+                              <Tippy content="Copy Link">
+                                <Button
+                                  onClick={() => generateCohortLink(cohort)}
+                                  variant="outline-secondary"
+                                  className="p-1"
+                                >
+                                  <Lucide icon="Link" className="w-4 h-4" />
+                                </Button>
+                              </Tippy>
+                              <Tippy content="View Applications">
+                                <Button
+                                  onClick={() => {
+                                    setSelectedCohortFilter(cohort._id);
+                                    setMainActiveTab('applicants');
+                                  }}
+                                  variant="outline-secondary"
+                                  className="p-1"
+                                >
+                                  <Lucide icon="Eye" className="w-4 h-4" />
+                                </Button>
+                              </Tippy>
+                              <Tippy content="Edit Cohort">
+                                <Button
+                                  onClick={() => {
+                                    // TODO: Implement edit cohort functionality
+                                    alert('Edit cohort functionality coming soon!');
+                                  }}
+                                  variant="outline-secondary"
+                                  className="p-1"
+                                >
+                                  <Lucide icon="Edit" className="w-4 h-4" />
+                                </Button>
+                              </Tippy>
+                            </div>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))}
+                    </Table.Tbody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* BEGIN: Delete Confirmation Modal */}
           <Dialog
@@ -1655,7 +2200,7 @@ function Main() {
                 <div className="p-6">
                   <h4 className="font-bold">Applicant's Information</h4>
 
-                  {/* Tabs for Basic Info and Guardians */}
+                  {/* Tabs for Basic Info, Documents, and Payments */}
                   <ul className="flex border-b border-gray-200 mb-4">
                     <li className="mr-2">
                       <button
@@ -1669,7 +2214,30 @@ function Main() {
                         Basic Info
                       </button>
                     </li>
-                 
+                    <li className="mr-2">
+                      <button
+                        className={`inline-block py-2 px-4 ${
+                          activeTab === "documents"
+                            ? "text-blue-600 border-b-2 border-blue-600"
+                            : "text-gray-600 hover:text-blue-600"
+                        } font-semibold`}
+                        onClick={() => setActiveTab("documents")}
+                      >
+                        Documents
+                      </button>
+                    </li>
+                    <li className="mr-2">
+                      <button
+                        className={`inline-block py-2 px-4 ${
+                          activeTab === "payments"
+                            ? "text-blue-600 border-b-2 border-blue-600"
+                            : "text-gray-600 hover:text-blue-600"
+                        } font-semibold`}
+                        onClick={() => setActiveTab("payments")}
+                      >
+                        Payments
+                      </button>
+                    </li>
                   </ul>
 
                   {/* Tab Content */}
@@ -1678,97 +2246,424 @@ function Main() {
 
                     {activeTab === "basicInfo" && (
                       <div className="tab-pane active">
-                        <h4 className="font-bold">Bascic Information</h4>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {/* Student Information */}
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h5 className="font-bold text-lg mb-4 text-blue-600">Student Information</h5>
+                            <table className="min-w-full">
+                              <tbody>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Full Name</td>
+                                  <td className="px-3 py-2 text-sm">{`${learner?.first_name || ''} ${learner?.middle_name || ''} ${learner?.last_name || ''}`.trim()}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Gender</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.gender || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Date of Birth</td>
+                                  <td className="px-3 py-2 text-sm">
+                                    {learner?.dateOfBirth ? new Date(learner.dateOfBirth).toLocaleDateString() : 'N/A'}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Nationality</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.nationality || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">County/Sub-County</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.countySubCounty || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Birth Certificate No.</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.birthCertificateNo || 'N/A'}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
 
-                        <table className="min-w-full border border-gray-200">
-                          <tbody>
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                Name
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.first_name} ${learner?.last_name} ${learner.middle_name}`}</td>
-                            </tr>
-    
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              gender
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.gender}`}</td>
-                            </tr>
-              
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              Admn No
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {`${learner?.adm_no}`}
-                              </td>
-                            </tr>
+                          {/* Guardian Information */}
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h5 className="font-bold text-lg mb-4 text-green-600">Guardian Information</h5>
+                            <table className="min-w-full">
+                              <tbody>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Relationship</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.guardian_relationship || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Full Name</td>
+                                  <td className="px-3 py-2 text-sm">{`${learner?.guardian_first_name || ''} ${learner?.guardian_surname || ''} ${learner?.guardian_last_name || ''}`.trim()}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Email</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.guardian_email || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Phone</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.guardian_phone || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Postal Address</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.postalAddress || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">ID Number</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.idNumber || 'N/A'}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
 
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              Guardian Relationship
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {`${learner?.guardian_relationship}`}
-                              </td>
-                            </tr>
+                          {/* Academic Information */}
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h5 className="font-bold text-lg mb-4 text-purple-600">Academic Information</h5>
+                            <table className="min-w-full">
+                              <tbody>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Current/Last School</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.currentOrLastSchool || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Current Class</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.currentClass || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Class Applying For</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.classApplyingFor || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">KCPE Index Number</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.kcpeIndexNumber || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">KCPE Marks</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.kcpeMarks || 'N/A'}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
 
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              Guardian Name
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                                {`${learner?.guardian_first_name}  ${learner?.guardian_last_name} ${learner?.guardian_surname}`}
-                              </td>
-                            </tr>
-                       
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              Guardian Email
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.guardian_email}`}</td>
-                            </tr>
+                          {/* Address Information */}
+                          <div className="bg-gray-50 p-4 rounded-lg">
+                            <h5 className="font-bold text-lg mb-4 text-orange-600">Address Information</h5>
+                            <table className="min-w-full">
+                              <tbody>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Home Address</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.homeAddress || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Nearest Landmark</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.nearestLandmark || 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Distance from School</td>
+                                  <td className="px-3 py-2 text-sm">{learner?.distanceFromSchool ? `${learner.distanceFromSchool} km` : 'N/A'}</td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Application Status</td>
+                                  <td className="px-3 py-2 text-sm">
+                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                      learner?.applicationStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                      learner?.applicationStatus === 'Shortlisted' ? 'bg-blue-100 text-blue-800' :
+                                      learner?.applicationStatus === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                                      'bg-gray-100 text-gray-800'
+                                    }`}>
+                                      {learner?.applicationStatus || 'N/A'}
+                                    </span>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="px-3 py-2 font-semibold text-sm">Application Date</td>
+                                  <td className="px-3 py-2 text-sm">
+                                    {learner?.createdAt ? new Date(learner.createdAt).toLocaleDateString() : 'N/A'}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
 
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              Guardian Phone
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.guardian_phone}`}</td>
-                            </tr>
+                        {/* Current Status Display */}
+                        <div className="mt-6 mb-4 text-center">
+                          <div className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-50 border">
+                            <span className="text-sm font-medium text-gray-600 mr-2">Current Status:</span>
+                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                              learner?.applicationStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                              learner?.applicationStatus === 'Shortlisted' ? 'bg-blue-100 text-blue-800' :
+                              learner?.applicationStatus === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                              learner?.applicationStatus === 'Rejected' ? 'bg-red-100 text-red-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {learner?.applicationStatus || 'N/A'}
+                            </span>
+                          </div>
+                        </div>
 
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              Time Created
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">{`${learner?.createdAt}`}</td>
-                            </tr>
+                        {/* Action Buttons */}
+                        <div className="mt-4 flex justify-center space-x-4">
+                          {learner?.applicationStatus === 'Pending' && (
+                            <button
+                              onClick={() => handleShortlistApplicant(learner._id)}
+                              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                            >
+                              Short List
+                            </button>
+                          )}
+                          
+                          {learner?.applicationStatus === 'Shortlisted' && (
+                            <button
+                              onClick={() => handleConfirmApplicant(learner._id)}
+                              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                            >
+                              Confirm Application
+                            </button>
+                          )}
+                          
+                          {(learner?.applicationStatus === 'Pending' || learner?.applicationStatus === 'Shortlisted') && (
+                            <button
+                              onClick={() => handleRejectApplicant(learner._id)}
+                              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors font-semibold"
+                            >
+                              Reject Application
+                            </button>
+                          )}
+                        </div>
 
-                            <tr>
-                              <td className="px-4 py-4 font-bold border-b border-gray-200">
-                              </td>
-                              <td className="px-4 py-4 border-b border-gray-200">
-                              <button
-                                  className=" bg-gray-800 text-white p-2 hover:bg-gray-700 transition-colors"
+                        {/* Action Descriptions */}
+                        <div className="mt-4 text-center">
+                          {learner?.applicationStatus === 'Pending' && (
+                            <div className="text-sm text-gray-600">
+                              <p className="mb-2">Available actions for pending applications:</p>
+                              <div className="flex justify-center space-x-6 text-xs">
+                                <span className="flex items-center">
+                                  <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                  <strong>Short List:</strong> Move to shortlist for review
+                                </span>
+                                <span className="flex items-center">
+                                  <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                  <strong>Reject:</strong> Decline the application
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {learner?.applicationStatus === 'Shortlisted' && (
+                            <div className="text-sm text-gray-600">
+                              <p className="mb-2">Available actions for shortlisted applications:</p>
+                              <div className="flex justify-center space-x-6 text-xs">
+                                <span className="flex items-center">
+                                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                  <strong>Confirm:</strong> Accept the application
+                                </span>
+                                <span className="flex items-center">
+                                  <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                  <strong>Reject:</strong> Decline the application
+                                </span>
+                              </div>
+                            </div>
+                          )}
+
+                          {(learner?.applicationStatus === 'Confirmed' || learner?.applicationStatus === 'Rejected') && (
+                            <div className="text-sm text-gray-500 italic">
+                              No further actions available for {learner?.applicationStatus?.toLowerCase()} applications.
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Documents Tab */}
+                    {activeTab === "documents" && (
+                      <div className="tab-pane active">
+                        <h4 className="font-bold text-lg mb-4 text-blue-600">Uploaded Documents</h4>
+                        
+                        {learner?.documents ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {Object.entries(learner.documents).map(([docType, docInfo]: [string, any]) => (
+                              <div key={docType} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                                <div className="flex items-center justify-between mb-3">
+                                  <h6 className="font-semibold text-sm text-gray-800 capitalize">
+                                    {docType.replace(/([A-Z])/g, ' $1').trim()}
+                                  </h6>
+                                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                    docInfo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                  }`}>
+                                    {docInfo ? 'Uploaded' : 'Missing'}
+                                  </span>
+                                </div>
                                 
-                                >
-                                  Short List
-                                </button>
-                              </td>
-                            </tr>
+                                {docInfo ? (
+                                  <div className="space-y-2">
+                                    <div className="text-xs text-gray-600">
+                                      <strong>File:</strong> {docInfo.originalName}
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                      <strong>Type:</strong> {docInfo.mimetype}
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                      <strong>Size:</strong> {(docInfo.size / 1024).toFixed(1)} KB
+                                    </div>
+                                    <div className="text-xs text-gray-600">
+                                      <strong>Uploaded:</strong> {new Date(docInfo.uploadDate).toLocaleDateString()}
+                                    </div>
+                                    
+                                    <div className="flex space-x-2 mt-3">
+                                      {/* <button className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition-colors">
+                                        View
+                                      </button> */}
+                                      <button className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition-colors">
+                                        Download
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="text-xs text-gray-500 italic">
+                                    No document uploaded
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <p>No documents uploaded</p>
+                          </div>
+                        )}
 
-                            {learner?.status == "G" && (
-                              <tr>
-                                <td className="px-4 py-4 font-bold border-b border-gray-200">
-                                  Left On
-                                </td>
-                                <td className="px-4 py-4 border-b border-gray-200">
-                                  {formatDate(learner?.grad_date, "DD-MM-YYYY")}
-                                </td>
-                              </tr>
-                            )}
-                          </tbody>
-                        </table>
+                        {/* Document Summary */}
+                        {learner?.documents && (
+                          <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+                            <h5 className="font-semibold text-sm mb-2">Document Summary</h5>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                              <div className="text-center">
+                                <div className="font-semibold text-green-600">
+                                  {Object.values(learner.documents).filter(doc => doc).length}
+                                </div>
+                                <div className="text-gray-600">Uploaded</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-semibold text-red-600">
+                                  {Object.values(learner.documents).filter(doc => !doc).length}
+                                </div>
+                                <div className="text-gray-600">Missing</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-semibold text-blue-600">
+                                  {Object.values(learner.documents).filter((doc: any) => doc?.mimetype?.includes('pdf')).length}
+                                </div>
+                                <div className="text-gray-600">PDF Files</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-semibold text-purple-600">
+                                  {Object.values(learner.documents).filter((doc: any) => doc?.mimetype?.includes('image')).length}
+                                </div>
+                                <div className="text-gray-600">Images</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Payments Tab */}
+                    {activeTab === "payments" && (
+                      <div className="tab-pane active">
+                        <h4 className="font-bold text-lg mb-4 text-blue-600">Payment Information</h4>
+                        
+                        {learner?.payment ? (
+                          <div className="bg-white border border-gray-200 rounded-lg p-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              {/* Payment Details */}
+                              <div>
+                                <h5 className="font-semibold text-sm mb-3 text-gray-700">Payment Details</h5>
+                                <table className="min-w-full">
+                                  <tbody>
+                                    <tr>
+                                      <td className="px-3 py-2 font-semibold text-sm">Method</td>
+                                      <td className="px-3 py-2 text-sm">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                          learner.payment.method === 'M-Pesa' ? 'bg-green-100 text-green-800' :
+                                          learner.payment.method === 'Bank Transfer' ? 'bg-blue-100 text-blue-800' :
+                                          'bg-gray-100 text-gray-800'
+                                        }`}>
+                                          {learner.payment.method || 'N/A'}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="px-3 py-2 font-semibold text-sm">Amount</td>
+                                      <td className="px-3 py-2 text-sm font-semibold text-green-600">
+                                        KES {learner.payment.amount ? learner.payment.amount.toLocaleString() : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="px-3 py-2 font-semibold text-sm">Transaction Code</td>
+                                      <td className="px-3 py-2 text-sm font-mono text-blue-600">
+                                        {learner.payment.transactionCode || 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="px-3 py-2 font-semibold text-sm">Payment Date</td>
+                                      <td className="px-3 py-2 text-sm">
+                                        {learner.payment.paymentDate ? new Date(learner.payment.paymentDate).toLocaleDateString() : 'N/A'}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="px-3 py-2 font-semibold text-sm">Status</td>
+                                      <td className="px-3 py-2 text-sm">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                          learner.payment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                          learner.payment.status === 'Verified' ? 'bg-green-100 text-green-800' :
+                                          learner.payment.status === 'Failed' ? 'bg-red-100 text-red-800' :
+                                          'bg-gray-100 text-gray-800'
+                                        }`}>
+                                          {learner.payment.status || 'N/A'}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              {/* Payment Actions */}
+                              {/* <div>
+                                <h5 className="font-semibold text-sm mb-3 text-gray-700">Payment Actions</h5>
+                                <div className="space-y-3">
+                                  <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors font-semibold text-sm">
+                                    Verify Payment
+                                  </button>
+                                  <button className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors font-semibold text-sm">
+                                    Mark as Verified
+                                  </button>
+                                  <button className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors font-semibold text-sm">
+                                    Request Receipt
+                                  </button>
+                                  <button className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-semibold text-sm">
+                                    Flag Payment Issue
+                                  </button>
+                                </div>
+                              </div> */}
+                            </div>
+
+                            {/* Payment History/Notes */}
+                            <div className="mt-6 pt-4 border-t border-gray-200">
+                              <h5 className="font-semibold text-sm mb-3 text-gray-700">Payment Notes</h5>
+                              <div className="bg-gray-50 p-3 rounded-lg">
+                                <p className="text-sm text-gray-600">
+                                  Payment was made during the online registration process. 
+                                  {learner.payment.transactionCode && ` Transaction code: ${learner.payment.transactionCode}`}
+                                  {learner.payment.paymentDate && ` Date: ${new Date(learner.payment.paymentDate).toLocaleDateString()}`}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-8 text-gray-500">
+                            <p>No payment information available</p>
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -2180,6 +3075,7 @@ function Main() {
           </Dialog.Footer>
         </Dialog.Panel>
       </Dialog>
+
 
       <Notification
         options={{ duration: 3000 }}

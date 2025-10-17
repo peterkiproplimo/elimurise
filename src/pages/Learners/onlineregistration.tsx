@@ -139,6 +139,33 @@ function Main() {
 
   const [attachments, setAttachments] = useState<File[]>([]);
   const location = useLocation();
+
+  // Function to fetch cohort data by token
+  const fetchCohortByToken = async (token: string) => {
+    setLoadingCohort(true);
+    try {
+      const response = await ApiService.getCohortByToken(token);
+      if (response.cohort) {
+        const cohort = response.cohort;
+        setCohortData(cohort);
+        setCohortId(cohort._id);
+        // Update payment amount from cohort data
+        setPaymentData(prev => ({
+          ...prev,
+          amount: cohort.applicationFee || 1000
+        }));
+        console.log('Cohort loaded:', cohort);
+      } else {
+        console.error('Cohort not found for token:', token);
+        alert('Invalid application link. Please contact the school for assistance.');
+      }
+    } catch (error) {
+      console.error('Error fetching cohort:', error);
+      alert('Error loading application form. Please try again or contact the school.');
+    } finally {
+      setLoadingCohort(false);
+    }
+  };
   const isPublicView = location.pathname.startsWith("/onlineregistration");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -159,10 +186,24 @@ function Main() {
   const [paymentData, setPaymentData] = useState<any>({
     method: '',
     amount: 1000,
+    phone: '',
     transactionCode: '',
-    paymentDate: ''
+    paymentDate: '',
+    stkPushSent: false,
+    checkoutRequestID: ''
   });
   const [applicationStatus, setApplicationStatus] = useState('Pending');
+  
+  // Cohort-related state
+  const [cohortData, setCohortData] = useState<any>(null);
+  const [cohortToken, setCohortToken] = useState<string>('');
+  const [cohortId, setCohortId] = useState<string>('');
+  const [loadingCohort, setLoadingCohort] = useState<boolean>(false);
+  const [mpesaStatusLoading, setMpesaStatusLoading] = useState(false);
+  
+  // Polling interval ref for M-Pesa status checking
+  const pollingInterval = useRef<any>(null);
+  const pollingTimeout = useRef<any>(null);
 
   const handleFileChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
@@ -228,23 +269,261 @@ function Main() {
     }
   };
 
-  const handlePaymentSubmit = async (event: any) => {
-    event.preventDefault();
-    
-    if (!paymentData.method || !paymentData.transactionCode) {
-      alert('Please fill in all payment details');
+  // Function to initiate M-Pesa STK push (Make Payment button)
+  const initiateMpesaPayment = async () => {
+    // Validate M-Pesa payment data
+    if (!paymentData.phone) {
+      alert('Please enter your M-Pesa phone number');
       return;
     }
 
-    // Simulate payment verification
+    // Basic phone number validation for M-Pesa
+    const phoneRegex = /^(254|0)[0-9]{9}$/;
+    if (!phoneRegex.test(paymentData.phone.replace(/\s/g, ''))) {
+      alert('Please enter a valid Kenyan phone number (e.g., 0712345678 or 254712345678)');
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      // Import M-Pesa payment service
+      const { initiateMpesaPayment: initiatePayment } = await import('../../services/paymentService');
+      
+      // Get user from localStorage if available, or generate a temporary ID for registration
+      const user = localStorage.getItem('user');
+      const userData = user ? JSON.parse(user) : null;
+      
+      // For registration, use a temporary userId if no user is logged in
+      const tempUserId = userData?.userId || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Initiate M-Pesa STK push
+      const mpesaResponse = await initiatePayment({
+        phone: paymentData.phone,
+        amount: parseFloat(paymentData.amount),
+        userId: tempUserId
+      });
+
+      if (mpesaResponse.message === 'STK push initiated successfully') {
+        // Store checkout request ID and mark STK push as sent
+        setPaymentData(prev => ({
+          ...prev,
+          checkoutRequestID: mpesaResponse.checkoutRequestID,
+          stkPushSent: true,
+          mpesaStatus: 'pending'
+        }));
+        
+        // Start automatic polling for transaction status
+        startPolling();
+        
+        alert('M-Pesa STK push sent! Please check your phone and enter your PIN when prompted. After completing payment, enter your transaction code below.');
+      } else {
+        throw new Error(mpesaResponse.message || 'Failed to initiate M-Pesa payment');
+      }
+    } catch (error) {
+      console.error('Payment initiation error:', error);
+      alert(`Failed to initiate payment: ${error.message}`);
+    } finally {
       setLoading(false);
-      setCurrentStep(3); // Move to review step
-    }, 2000);
+    }
   };
 
+  const handlePaymentSubmit = async (event: any) => {
+    event.preventDefault();
+    
+    // Validate payment data
+    if (!paymentData.method || !paymentData.amount) {
+      alert('Please fill in payment method and amount');
+      return;
+    }
+
+    if (paymentData.method === 'M-Pesa') {
+      // For M-Pesa, require transaction code
+      if (!paymentData.transactionCode) {
+        alert('Please enter your M-Pesa transaction code (receipt number) to verify payment');
+        return;
+      }
+      
+      // Accept manual receipt code entry without validation
+      setPaymentData(prev => ({
+        ...prev,
+        mpesaStatus: 'completed',
+        receiptNumber: paymentData.transactionCode // Store the manually entered receipt
+      }));
+      
+      alert('Payment verified successfully! You can now proceed to review your application.');
+      setCurrentStep(3); // Move to review step after verification
+    } else if (paymentData.method === 'Bank Transfer') {
+      // For Bank Transfer, require transaction code verification
+      if (!paymentData.transactionCode) {
+        alert('Please enter your bank transaction code to verify payment.');
+        return;
+      }
+      
+      // Simulate bank transfer verification
+      setPaymentData(prev => ({
+        ...prev,
+        mpesaStatus: 'completed'
+      }));
+      
+      alert('Bank transfer verified successfully! You can now proceed to review your application.');
+      setCurrentStep(3); // Move to review step after verification
+    }
+  };
+
+  const checkMpesaStatus = async () => {
+    if (!paymentData.checkoutRequestID) return;
+    
+    setMpesaStatusLoading(true);
+    try {
+      const { getTransactionStatus } = await import('../../services/paymentService');
+      const response = await getTransactionStatus(paymentData.checkoutRequestID);
+      
+      if (response.message === 'Transaction found') {
+        const transaction = response.data;
+        
+        if (transaction.status === 'completed' && transaction.mpesaReceiptNumber) {
+          // Transaction completed successfully
+          setPaymentData(prev => ({
+            ...prev,
+            mpesaStatus: 'completed',
+            receiptNumber: transaction.mpesaReceiptNumber,
+            transactionDate: transaction.transactionDate
+          }));
+          
+          // Stop polling when transaction is completed
+          stopPolling();
+          
+          alert(`Payment successful! Receipt: ${transaction.mpesaReceiptNumber}. You can now proceed to review your application.`);
+          
+          // Automatically move to review step after successful payment
+          setCurrentStep(3);
+        } else if (transaction.status === 'failed') {
+          // Transaction failed
+          setPaymentData(prev => ({
+            ...prev,
+            mpesaStatus: 'failed'
+          }));
+          
+          alert('Payment failed. Please try again.');
+          
+          // Stop polling when transaction fails
+          stopPolling();
+        } else {
+          // Transaction still pending
+          setPaymentData(prev => ({
+            ...prev,
+            mpesaStatus: 'pending'
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Status check error:', error);
+      // Don't show alert for 404 errors (transaction not found yet)
+      if (error.message !== 'Transaction not found') {
+        alert('Failed to check payment status');
+      }
+    } finally {
+      setMpesaStatusLoading(false);
+    }
+  };
+
+  // Auto-polling for transaction status
+  const startPolling = () => {
+    if (paymentData.checkoutRequestID && !pollingInterval.current) {
+      // Check immediately
+      checkMpesaStatus();
+      
+      // Then check every 3 seconds
+      pollingInterval.current = window.setInterval(() => {
+        checkMpesaStatus();
+      }, 3000);
+      
+      // Stop polling after 5 minutes (300 seconds) to avoid infinite polling
+      pollingTimeout.current = window.setTimeout(() => {
+        if (pollingInterval.current) {
+          window.clearInterval(pollingInterval.current);
+          pollingInterval.current = null;
+          if (paymentData.mpesaStatus === 'pending') {
+            alert('Payment status check timed out. Please check manually or try again.');
+          }
+        }
+      }, 300000); // 5 minutes
+    }
+  };
+
+  // Stop polling
+  const stopPolling = () => {
+    if (pollingInterval.current) {
+      window.clearInterval(pollingInterval.current);
+      pollingInterval.current = null;
+    }
+    if (pollingTimeout.current) {
+      window.clearTimeout(pollingTimeout.current);
+      pollingTimeout.current = null;
+    }
+  };
+
+  // Cleanup polling on component unmount
+  useEffect(() => {
+    return () => {
+      stopPolling();
+    };
+  }, []);
+
+  // WebSocket listener for real-time payment updates
+  useEffect(() => {
+    if (!socket) return;
+
+    const handlePaymentUpdate = (data: any) => {
+      if (data.checkoutRequestID === paymentData.checkoutRequestID) {
+        if (data.status === 'completed') {
+          setPaymentData(prev => ({
+            ...prev,
+            mpesaStatus: 'completed',
+            receiptNumber: data.receiptNumber,
+            transactionDate: new Date().toISOString()
+          }));
+          
+          // Stop polling since we got real-time update
+          stopPolling();
+          
+          alert(`Payment successful! Receipt: ${data.receiptNumber}. You can now proceed to review your application.`);
+          
+          // Automatically move to review step after successful payment
+          setCurrentStep(3);
+        } else if (data.status === 'failed') {
+          setPaymentData(prev => ({
+            ...prev,
+            mpesaStatus: 'failed'
+          }));
+          
+          // Stop polling since we got real-time update
+          stopPolling();
+          
+          alert('Payment failed. Please try again.');
+        }
+      }
+    };
+
+    socket.on('payment_update', handlePaymentUpdate);
+
+    return () => {
+      socket.off('payment_update', handlePaymentUpdate);
+    };
+  }, [socket, paymentData.checkoutRequestID]);
+
   const handleFinalSubmit = async () => {
+    // Validate payment completion before final submission
+    if (paymentData.method === 'M-Pesa' && !paymentData.transactionCode) {
+      alert('Please enter your M-Pesa receipt number to verify payment before submitting your application.');
+      return;
+    }
+    if (paymentData.method === 'Bank Transfer' && !paymentData.transactionCode) {
+      alert('Please enter your bank transaction code to verify payment before submitting your application.');
+      return;
+    }
+    
     setLoading(true);
     try {
       // Create FormData for file uploads
@@ -262,6 +541,11 @@ function Main() {
       
       // Add application status
       formDataToSend.append('applicationStatus', 'Pending');
+
+      // Add cohort information if available
+      if (cohortId) {
+        formDataToSend.append('cohortId', cohortId);
+      }
 
       // Add uploaded documents as files
       Object.keys(uploadedDocuments).forEach(documentType => {
@@ -290,6 +574,17 @@ function Main() {
   };
 
   const goToStep = (step: number) => {
+    // Prevent skipping payment completion
+    if (step === 3 && currentStep === 2) {
+      if (paymentData.method === 'M-Pesa' && !paymentData.transactionCode) {
+        alert('Please enter your M-Pesa receipt number to verify payment before proceeding to review.');
+        return;
+      }
+      if (paymentData.method === 'Bank Transfer' && !paymentData.transactionCode) {
+        alert('Please enter your bank transaction code to verify payment before proceeding to review.');
+        return;
+      }
+    }
     setCurrentStep(step);
   };
 
@@ -864,6 +1159,23 @@ function Main() {
   const closeZoom = () => {
     setZoomedImage(null);
   };
+
+  // Handle URL parameters and fetch cohort data on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get('token');
+    const cohort = urlParams.get('cohort');
+    
+    if (token) {
+      setCohortToken(token);
+      if (cohort) {
+        setCohortId(cohort);
+      }
+      // Fetch cohort data based on token
+      fetchCohortByToken(token);
+    }
+  }, [location.search]);
+
   return (
     <>
       <div className="fixed bottom-6 right-6 z-50">
@@ -1065,8 +1377,8 @@ function Main() {
         <>
           {/* Enhanced Header with Description */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-8 rounded-t-2xl shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+            <div className="bg-green-100 flex items-center justify-between">
+              <div className="bg-green-100 flex items-center">
                 {!isPublicView && (
                   <a
                     onClick={(event: React.MouseEvent) => {
@@ -1081,18 +1393,54 @@ function Main() {
                     <Lucide icon="ArrowLeft" className="w-6 h-6" />
                   </a>
                 )}
-                <div>
+                <div className="bg-green-100 ">
                   <h1 className="text-3xl font-bold mb-2">Welcome to our Online Admission Portal</h1>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mt-4">
-                    <div className="flex items-center mb-3">
-                      <Lucide icon="Info" className="w-5 h-5 mr-2" />
-                      <span className="font-semibold text-lg">Application Information</span>
+                  
+                  {/* Cohort Information Display */}
+                  {loadingCohort && (
+                    <div className="bg-green-100 border border-blue-300 rounded-lg p-4 mt-4">
+                      <div className="flex items-center">
+                        <LoadingIcon icon="spinning-circles" color="blue" className="w-5 h-5 mr-3" />
+                        <span className="text-blue-800 font-medium">Loading application details...</span>
+                      </div>
                     </div>
-                    <div className="text-blue-100 leading-relaxed space-y-2">
+                  )}
+                  
+                  {cohortData && !loadingCohort && (
+                    <div className="bg-green-100 border border-green-300 rounded-lg p-4 mt-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-green-800 font-semibold text-lg">{cohortData.name}</h3>
+                          {cohortData.description && (
+                            <p className="text-green-700 text-sm mt-1">{cohortData.description}</p>
+                          )}
+                          <div className="flex items-center mt-2 text-sm text-green-600">
+                            <Lucide icon="Calendar" className="w-4 h-4 mr-2" />
+                            <span>
+                              {new Date(cohortData.startDate).toLocaleDateString()} - {new Date(cohortData.endDate).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-green-800 font-bold text-xl">
+                            KES {cohortData.applicationFee?.toLocaleString() || '1,000'}
+                          </div>
+                          <div className="text-green-600 text-sm">Application Fee</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="bg-green-100 rounded-lg p-6 mt-4">
+                    <div className="flex text-green-800 items-center mb-3">
+                      <Lucide icon="Info" className="w-5 h-5 mr-2" />
+                      <span className="text-green-800 font-semibold text-lg">Application Information</span>
+                    </div>
+                    <div className="text-green-800 leading-relaxed space-y-2">
                       <p>
                         The application period is open from{' '}
-                        <span className="font-semibold text-white">March 1st, 2024</span> to{' '}
-                        <span className="font-semibold text-white">April 30th, 2024</span>.
+                        <span className="font-semibold text-green-700">March 1st, 2024</span> to{' '}
+                        <span className="font-semibold text-green-700">April 30th, 2024</span>.
                       </p>
                       
                       <p>
@@ -1105,7 +1453,7 @@ function Main() {
                         Your parent or guardian will be notified via SMS once your application has been shortlisted or confirmed for admission.
                       </p>
                       
-                      <p className="font-semibold text-white">
+                      <p className="font-semibold text-green-800">
                         Kindly double-check your details before submitting.
                         Thank you for applying to join our school community — we look forward to welcoming you!
                       </p>
@@ -1959,28 +2307,84 @@ function Main() {
 
                       <div>
                         <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                          Amount (KES)
+                          Amount (KES) <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormInput
                           type="number"
                           value={paymentData.amount}
-                          disabled
-                          className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 text-gray-600"
-                        />
-                      </div>
-
-                      <div>
-                        <FormLabel className="text-sm font-medium text-gray-700 mb-2">
-                          Transaction Code <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormInput
-                          type="text"
-                          value={paymentData.transactionCode}
-                          onChange={(e) => setPaymentData({...paymentData, transactionCode: e.target.value})}
-                          placeholder="Enter transaction code"
+                          onChange={(e) => setPaymentData({...paymentData, amount: e.target.value})}
+                          placeholder="Enter amount"
+                          min="1"
                           className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         />
                       </div>
+
+                      {paymentData.method === 'M-Pesa' && (
+                        <>
+                          <div className="md:col-span-2">
+                            <FormLabel className="text-sm font-medium text-gray-700 mb-2">
+                              M-Pesa Phone Number <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormInput
+                              type="tel"
+                              value={paymentData.phone}
+                              onChange={(e) => setPaymentData({...paymentData, phone: e.target.value})}
+                              placeholder="e.g., 0712345678 or 254712345678"
+                              className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                              Enter your M-Pesa registered phone number
+                            </p>
+                          </div>
+                          
+                          {/* Make Payment Button */}
+                          <div className="md:col-span-2">
+                            <Button
+                              type="button"
+                              onClick={initiateMpesaPayment}
+                              disabled={loading || !paymentData.phone}
+                              className="w-full py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 font-semibold shadow-lg hover:shadow-xl flex items-center justify-center"
+                            >
+                              {loading ? (
+                                <>
+                                  <LoadingIcon icon="spinning-circles" color="white" className="w-4 h-4 mr-2" />
+                                  Sending STK Push...
+                                </>
+                              ) : (
+                                <>
+                                  <Lucide icon="Smartphone" className="w-4 h-4 mr-2" />
+                                  Make Payment
+                                </>
+                              )}
+                            </Button>
+                            <p className="text-xs text-gray-500 mt-2 text-center">
+                              Click to send M-Pesa STK push to your phone
+                            </p>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Transaction Code Field - Conditional based on payment method */}
+                      {(paymentData.method === 'M-Pesa' || paymentData.method === 'Bank Transfer') && (
+                        <div className="md:col-span-2">
+                          <FormLabel className="text-sm font-medium text-gray-700 mb-2">
+                            {paymentData.method === 'M-Pesa' ? 'M-Pesa Receipt Number' : 'Bank Transaction Code'} <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormInput
+                            type="text"
+                            value={paymentData.transactionCode}
+                            onChange={(e) => setPaymentData({...paymentData, transactionCode: e.target.value})}
+                            placeholder={paymentData.method === 'M-Pesa' ? 'Enter M-Pesa receipt number (e.g., NEF61H8J6R)' : 'Enter bank transaction code'}
+                            className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            {paymentData.method === 'M-Pesa' 
+                              ? 'Enter the receipt number you received after completing M-Pesa payment'
+                              : 'Enter the transaction code from your bank transfer'
+                            }
+                          </p>
+                        </div>
+                      )}
 
                       <div>
                         <FormLabel className="text-sm font-medium text-gray-700 mb-2">
@@ -2001,18 +2405,16 @@ function Main() {
                           <Lucide icon="Info" className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
                           <div className="text-sm text-blue-800">
                             <p className="font-medium mb-1">
-                              {paymentData.method === 'mpesa' ? 'M-Pesa Payment Instructions:' : 'Bank Transfer Instructions:'}
+                              {paymentData.method === 'M-Pesa' ? 'M-Pesa Payment Instructions:' : 'Bank Transfer Instructions:'}
                             </p>
                             <ul className="list-disc list-inside space-y-1 text-blue-700">
-                              {paymentData.method === 'mpesa' ? (
+                              {paymentData.method === 'M-Pesa' ? (
                                 <>
-                                  <li>Go to M-Pesa menu on your phone</li>
-                                  <li>Select "Lipa na M-Pesa"</li>
-                                  <li>Select "Pay Bill"</li>
-                                  <li>Enter Business Number: 123456</li>
-                                  <li>Enter Account Number: Your phone number</li>
-                                  <li>Enter Amount: KES {paymentData.amount}</li>
-                                  <li>Enter your M-Pesa PIN</li>
+                                  <li>Ensure your phone number {paymentData.phone} is registered with M-Pesa</li>
+                                  <li>You will receive an STK push notification on your phone</li>
+                                  <li>Enter your M-Pesa PIN when prompted</li>
+                                  <li>Wait for confirmation SMS from M-Pesa</li>
+                                  <li>Amount to be charged: KES {paymentData.amount}</li>
                                 </>
                               ) : (
                                 <>
@@ -2030,6 +2432,43 @@ function Main() {
                     )}
                   </div>
 
+                  {/* Payment Status Indicator */}
+                  {paymentData.method && (
+                    <div className="mt-6 p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className={`w-3 h-3 rounded-full mr-3 ${
+                            (paymentData.method === 'M-Pesa' && paymentData.transactionCode) ||
+                            (paymentData.method === 'Bank Transfer' && paymentData.transactionCode)
+                              ? 'bg-green-500' 
+                              : 'bg-gray-400'
+                          }`}></div>
+                          <div>
+                            <p className="font-medium text-gray-800">
+                              Payment Status: 
+                              <span className={`ml-2 ${
+                                (paymentData.method === 'M-Pesa' && paymentData.transactionCode) ||
+                                (paymentData.method === 'Bank Transfer' && paymentData.transactionCode)
+                                  ? 'text-green-600' 
+                                  : 'text-gray-600'
+                              }`}>
+                                {(paymentData.method === 'M-Pesa' && paymentData.transactionCode) ||
+                                 (paymentData.method === 'Bank Transfer' && paymentData.transactionCode)
+                                  ? 'Ready to Verify ✓' 
+                                  : 'Not Started'}
+                              </span>
+                            </p>
+                            {paymentData.mpesaStatus === 'completed' && paymentData.receiptNumber && (
+                              <p className="text-sm text-green-600 mt-1">
+                                Receipt: {paymentData.receiptNumber}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex justify-between items-center">
                     <Button
                       type="button"
@@ -2042,13 +2481,27 @@ function Main() {
                     </Button>
                     <Button
                       onClick={handlePaymentSubmit}
-                      disabled={loading}
+                      disabled={
+                        loading || 
+                        (paymentData.method === 'M-Pesa' && !paymentData.transactionCode) ||
+                        (paymentData.method === 'Bank Transfer' && !paymentData.transactionCode)
+                      }
                       className="px-8 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 font-semibold shadow-lg hover:shadow-xl flex items-center"
                     >
                       {loading ? (
                         <>
                           <LoadingIcon icon="spinning-circles" color="white" className="w-4 h-4 mr-2" />
-                          Verifying Payment...
+                          {paymentData.method === 'M-Pesa' ? 'Verifying Payment...' : 'Verifying Payment...'}
+                        </>
+                      ) : paymentData.method === 'M-Pesa' && !paymentData.transactionCode ? (
+                        <>
+                          <Lucide icon="Key" className="w-4 h-4 mr-2" />
+                          Enter Receipt Number
+                        </>
+                      ) : paymentData.method === 'Bank Transfer' && !paymentData.transactionCode ? (
+                        <>
+                          <Lucide icon="Key" className="w-4 h-4 mr-2" />
+                          Enter Transaction Code
                         </>
                       ) : (
                         <>
@@ -2074,6 +2527,16 @@ function Main() {
                 </div>
 
                 <div className="max-w-4xl mx-auto space-y-6">
+                  {/* Debug Section - Remove in production */}
+                  {process.env.NODE_ENV === 'development' && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                      <h4 className="font-semibold text-yellow-800 mb-2">Debug Info:</h4>
+                      <pre className="text-xs text-yellow-700 overflow-auto">
+                        {JSON.stringify(formData, null, 2)}
+                      </pre>
+                    </div>
+                  )}
+                  
                   {/* Personal Details Review */}
                   <div className="bg-white border border-gray-200 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -2081,10 +2544,14 @@ function Main() {
                       Personal Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div><span className="font-medium">Name:</span> {formData.first_name} {formData.last_name}</div>
+                      <div><span className="font-medium">First Name:</span> {formData.first_name}</div>
+                      <div><span className="font-medium">Middle Name:</span> {formData.middle_name || 'Not specified'}</div>
+                      <div><span className="font-medium">Last Name:</span> {formData.last_name}</div>
                       <div><span className="font-medium">Date of Birth:</span> {formData.dateOfBirth}</div>
                       <div><span className="font-medium">Gender:</span> {formData.gender}</div>
                       <div><span className="font-medium">Nationality:</span> {formData.nationality}</div>
+                      <div><span className="font-medium">County/Sub-County:</span> {formData.countySubCounty || 'Not specified'}</div>
+                      <div><span className="font-medium">Birth Certificate No:</span> {formData.birthCertificateNo || 'Not specified'}</div>
                     </div>
                   </div>
 
@@ -2095,7 +2562,9 @@ function Main() {
                       Parent/Guardian Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div><span className="font-medium">Guardian Name:</span> {formData.guardian_first_name} {formData.guardian_last_name}</div>
+                      <div><span className="font-medium">Guardian First Name:</span> {formData.guardian_first_name}</div>
+                      <div><span className="font-medium">Guardian Surname:</span> {formData.guardian_surname || 'Not specified'}</div>
+                      <div><span className="font-medium">Guardian Last Name:</span> {formData.guardian_last_name}</div>
                       <div><span className="font-medium">Phone:</span> {formData.guardian_phone}</div>
                       <div><span className="font-medium">Email:</span> {formData.guardian_email}</div>
                       <div><span className="font-medium">Relationship:</span> {formData.guardian_relationship}</div>
@@ -2159,6 +2628,16 @@ function Main() {
                                className={`w-4 h-4 mr-2 ${uploadedDocuments['parent-id'] ? 'text-green-600' : 'text-yellow-600'}`} />
                         <span className="font-medium">Parent ID:</span> {uploadedDocuments['parent-id'] ? uploadedDocuments['parent-id'].name : 'Pending'}
                       </div>
+                      <div className="flex items-center">
+                        <Lucide icon={uploadedDocuments['transfer-letter'] ? "CheckCircle" : "Clock"} 
+                               className={`w-4 h-4 mr-2 ${uploadedDocuments['transfer-letter'] ? 'text-green-600' : 'text-yellow-600'}`} />
+                        <span className="font-medium">Transfer Letter:</span> {uploadedDocuments['transfer-letter'] ? uploadedDocuments['transfer-letter'].name : 'Not provided (Optional)'}
+                      </div>
+                      <div className="flex items-center">
+                        <Lucide icon={uploadedDocuments['medical-report'] ? "CheckCircle" : "Clock"} 
+                               className={`w-4 h-4 mr-2 ${uploadedDocuments['medical-report'] ? 'text-green-600' : 'text-yellow-600'}`} />
+                        <span className="font-medium">Medical Report:</span> {uploadedDocuments['medical-report'] ? uploadedDocuments['medical-report'].name : 'Not provided (Optional)'}
+                      </div>
                     </div>
                   </div>
 
@@ -2171,9 +2650,61 @@ function Main() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div><span className="font-medium">Method:</span> {paymentData.method}</div>
                       <div><span className="font-medium">Amount:</span> KES {paymentData.amount}</div>
-                      <div><span className="font-medium">Transaction Code:</span> {paymentData.transactionCode}</div>
-                      <div><span className="font-medium">Date:</span> {paymentData.paymentDate}</div>
+                      {paymentData.method === 'M-Pesa' && (
+                        <>
+                          <div><span className="font-medium">Phone:</span> {paymentData.phone}</div>
+                          <div><span className="font-medium">Receipt Number:</span> {paymentData.transactionCode}</div>
+                          <div><span className="font-medium">Status:</span> 
+                            <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                              paymentData.mpesaStatus === 'pending' 
+                                ? 'bg-yellow-100 text-yellow-800' 
+                                : paymentData.mpesaStatus === 'completed'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {paymentData.mpesaStatus || 'Pending'}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                      {paymentData.method === 'Bank Transfer' && (
+                        <>
+                          <div><span className="font-medium">Transaction Code:</span> {paymentData.transactionCode}</div>
+                          <div><span className="font-medium">Date:</span> {paymentData.paymentDate}</div>
+                        </>
+                      )}
                     </div>
+                    
+                    {paymentData.method === 'M-Pesa' && paymentData.checkoutRequestID && (
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <Lucide icon="Smartphone" className="w-4 h-4 text-blue-600 mr-2" />
+                            <span className="text-sm text-blue-800">
+                              M-Pesa payment initiated. Check your phone for STK push notification.
+                            </span>
+                          </div>
+                          <Button
+                            type="button"
+                            onClick={checkMpesaStatus}
+                            disabled={mpesaStatusLoading}
+                            className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            {mpesaStatusLoading ? (
+                              <>
+                                <LoadingIcon icon="spinning-circles" color="white" className="w-3 h-3 mr-1" />
+                                Checking...
+                              </>
+                            ) : (
+                              <>
+                                <Lucide icon="RefreshCw" className="w-3 h-3 mr-1" />
+                                Check Status
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-between items-center pt-6">
@@ -2240,7 +2771,7 @@ function Main() {
                       onClick={() => {
                         setCurrentStep(1);
                         setFormData({});
-                        setPaymentData({ method: '', amount: 1000, transactionCode: '', paymentDate: '' });
+                        setPaymentData({ method: '', amount: 1000, transactionCode: '', paymentDate: '', stkPushSent: false, checkoutRequestID: '' });
                         setUploadedDocuments({});
                         setDocumentStatuses({
                           'birth-certificate': 'Pending',
