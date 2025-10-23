@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Card from '../../base-components/Card';
-import Button from '../../base-components/Button';
-import { Tab } from '../../base-components/Headless';
+import Card from '../../../base-components/Card';
+import Button from '../../../base-components/Button';
+import { Tab } from '../../../base-components/Headless';
 import { 
   TrendingUp, 
   Users, 
@@ -14,9 +14,8 @@ import {
   Download,
   Filter
 } from 'lucide-react';
-import { ChartWidget, MetricCard, ActivityFeed, AlertWidget, ProgressWidget } from '../../components/Dashboard/DashboardWidgets';
-import { useAuth } from '../../contexts/Auth';
-import { dashboardService } from '../../services/dashboardService';
+import { ChartWidget, MetricCard, ActivityFeed, AlertWidget, ProgressWidget } from '../../../components/Dashboard/DashboardWidgets';
+import { useAuth } from '../../../contexts/Auth';
 
 interface AuthContextData {
   user: any;

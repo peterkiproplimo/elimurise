@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../../base-components/Button";
-import PassportUpload from "./profilephoto";
+
 import { X, Paperclip, Send, MoreHorizontal, Eye, Edit, ArrowLeftRight, LogOut } from "lucide-react"; // Using Lucide icons for a modern look
 import {
   FormCheck,
@@ -134,6 +134,16 @@ function Main() {
 
   const handleConversionSubmit = async () => {
     try {
+      // Validate required fields
+      if (!conversionForm.studentName || !conversionForm.dateOfBirth || !conversionForm.gender || 
+          !conversionForm.gradeInterested || !conversionForm.parentName || !conversionForm.relationship || 
+          !conversionForm.phoneNumber || !conversionForm.email || !conversionForm.address) {
+        setMessage('Please fill in all required fields before converting.');
+        setSuccess(false);
+        notify.current?.showToast();
+        return;
+      }
+
       // Create online application from enquiry data with correct field structure
       const applicationData = {
         // Student Details
@@ -141,7 +151,7 @@ function Main() {
         middle_name: '',
         last_name: conversionForm.studentName.split(' ').slice(1).join(' ') || '',
         gender: conversionForm.gender,
-        dateOfBirth: conversionForm.dateOfBirth,
+        dateOfBirth: new Date(conversionForm.dateOfBirth), // Convert to Date object
         nationality: 'Kenyan', // Default nationality
         countySubCounty: '',
         birthCertificateNo: '',
@@ -157,7 +167,7 @@ function Main() {
         idNumber: '',
         
         // Academic Information
-        currentOrLastSchool: conversionForm.previousSchool,
+        currentOrLastSchool: conversionForm.previousSchool || '',
         currentClass: '',
         classApplyingFor: conversionForm.gradeInterested,
         kcpeIndexNumber: '',
@@ -168,27 +178,27 @@ function Main() {
         nearestLandmark: '',
         distanceFromSchool: '',
         
-        // Payment Information
-        payment: JSON.stringify({
+        // Payment Information - Send as object, not string
+        payment: {
           method: 'M-Pesa',
           amount: 1000,
           transactionCode: 'CONV' + Date.now(),
-          paymentDate: new Date().toISOString(),
+          paymentDate: new Date(),
           status: 'Pending'
-        }),
+        },
         
         // Application Status
         applicationStatus: 'Pending',
         
         // Additional Information
-        medical_conditions: conversionForm.medicalConditions,
-        emergency_contact: conversionForm.emergencyContact,
-        notes: conversionForm.notes,
+        medical_conditions: conversionForm.medicalConditions || '',
+        emergency_contact: conversionForm.emergencyContact || '',
+        notes: conversionForm.notes || '',
         
         // Source tracking
         source: 'enquiry_conversion',
         original_enquiry_id: selectedEnquiry._id,
-        conversion_date: new Date().toISOString()
+        conversion_date: new Date()
       };
 
       // Debug: Log the application data being sent
@@ -196,13 +206,14 @@ function Main() {
       
       // Submit to online applications
       const response = await ApiService.createOnlineApplicant(applicationData);
+      console.log('Application creation response:', response);
       
-      if (response) {
+      if (response && response.applicant) {
         // Update enquiry status to 'Converted'
         await ApiService.updateEnquiry(selectedEnquiry._id, {
           status: 'Converted',
           converted_to_application: true,
-          application_id: response.applicant?._id,
+          application_id: response.applicant._id,
           conversion_date: new Date().toISOString()
         });
         
@@ -214,10 +225,22 @@ function Main() {
         // Close form and refresh data
         setConversionMode(false);
         await getStudents();
+      } else {
+        throw new Error('Invalid response from server');
       }
     } catch (error) {
       console.error('Error converting enquiry:', error);
-      setMessage('Error converting enquiry to application. Please try again.');
+      console.error('Error details:', error.response?.data || error.message);
+      
+      // More specific error message
+      let errorMessage = 'Error converting enquiry to application. Please try again.';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setMessage(errorMessage);
       setSuccess(false);
       notify.current?.showToast();
     }

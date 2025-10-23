@@ -1,34 +1,22 @@
 import _ from "lodash";
 import clsx from "clsx";
-import fakerData from "../../utils/faker";
-import Button from "../../base-components/Button";
-import Pagination from "../../base-components/Pagination";
-import { FormInput, FormSelect } from "../../base-components/Form";
-import TinySlider, {
-  TinySliderElement,
-} from "../../base-components/TinySlider";
-import Lucide from "../../base-components/Lucide";
-import Tippy from "../../base-components/Tippy";
-import ReportDonutChart from "../../components/ReportDonutChart";
-import LeafletMap from "../../components/LeafletMap";
-import { Tab } from "../../base-components/Headless";
-import Table from "../../base-components/Table";
-import studentUrl from "../../assets/images/woman.jpeg";
-import { useAuth } from "../../contexts/Auth";
-import * as ApiService from "../../services/auth";
+import Button from "../../../base-components/Button";
+import Pagination from "../../../base-components/Pagination";
+import { FormInput, FormSelect } from "../../../base-components/Form";
+import Lucide from "../../../base-components/Lucide";
+import Tippy from "../../../base-components/Tippy";
+import LeafletMap from "../../../components/LeafletMap";
+import { Tab } from "../../../base-components/Headless";
+import Table from "../../../base-components/Table";
+import { useAuth } from "../../../contexts/Auth";
+import * as ApiService from "../../../services/auth";
 import React, { useState, useRef, useEffect } from "react";
-import * as c from "../../utils/constants";
-import logo from "../../assets/images/teacher.jpeg";
-import image from "../../assets/images/parent.jpeg";
+import * as c from "../../../utils/constants";
 import { useNavigate } from "react-router-dom";
-import leanerImg from "../../assets/images/learner.jpeg";
-import { is_admin } from "../../utils/helper";
-import image1 from "../../assets/images/custom.svg";
-import StackedBarChart from "../../components/VerticalBarChart";
-import { useTour } from "../../TourContext";
+import { is_admin, is_agreed_terms } from "../../../utils/helper";
+import image1 from "../../../assets/images/custom.svg";
+import { useTour } from "../../../TourContext";
 import ContentLoader from "react-content-loader";
-import CardLoader from "../UserProfile/loader";
-import { is_agreed_terms } from "../../utils/helper";
 
 // Define interfaces for timetable data
 interface TimeSlot {

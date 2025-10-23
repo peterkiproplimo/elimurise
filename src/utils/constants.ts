@@ -26,6 +26,7 @@ export const CREATEREPLY = `${BASE_LOCAL_URL}replies`;
 export const CERTIFICATES = `${BASE_LOCAL_URL}certificates`;
 export const COHORTS = `${BASE_LOCAL_URL}cohorts`;
 export const FRONTOFFICE = `${BASE_LOCAL_URL}front-office`; 
+export const PHONECALLS = `${BASE_LOCAL_URL}phone-calls`; 
 
 
 export const ENROLLMENT = `${BASE_URL}portal/enrollment`;

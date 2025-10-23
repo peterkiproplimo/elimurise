@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../../base-components/Button";
-import PassportUpload from "./profilephoto";
 import { X, Paperclip, Send, MoreHorizontal, Eye, Edit, ArrowLeftRight, LogOut } from "lucide-react"; // Using Lucide icons for a modern look
 import {
   FormCheck,
@@ -111,6 +110,10 @@ function Main() {
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
   const [selectedCompanyFilter, setSelectedCompanyFilter] = useState<string>('');
   const [selectedPurposeFilter, setSelectedPurposeFilter] = useState<string>('');
+  
+  // Date filter states
+  const [fromDate, setFromDate] = useState<string>('');
+  const [toDate, setToDate] = useState<string>('');
   const [next_page, setNextPage] = useState(1);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
@@ -359,6 +362,13 @@ function Main() {
     getGrades();
     // getParents();
   }, []);
+
+  // Trigger data refresh when date filters change
+  useEffect(() => {
+    if (fromDate || toDate) {
+      getStudents();
+    }
+  }, [fromDate, toDate]);
   useEffect(() => {
     getStreams();
   }, [grade]);
@@ -525,6 +535,8 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
+          fromDate: fromDate || undefined,
+          toDate: toDate || undefined,
           // status: selectedStatusFilter ? [selectedStatusFilter] : [],
           // company: selectedCompanyFilter,
           // purpose: selectedPurposeFilter,
@@ -592,6 +604,23 @@ function Main() {
     setPage(1); // Reset to first page when clearing filter
   };
 
+  // Date filter handler functions
+  const handleFromDateChange = (date: string) => {
+    setFromDate(date);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const handleToDateChange = (date: string) => {
+    setToDate(date);
+    setPage(1); // Reset to first page when filtering
+  };
+
+  const clearDateFilters = () => {
+    setFromDate('');
+    setToDate('');
+    setPage(1); // Reset to first page when clearing filters
+  };
+
 
   const getStreams = async () => {
     const response = await ApiService.getStream({ grade: grade });
@@ -634,6 +663,56 @@ function Main() {
       isLoading(false);
       setSuccess(false);
       setMessage(error.message);
+      notify.current?.showToast();
+    }
+  };
+
+  // Duration monitoring helper functions
+  const calculateAverageDuration = () => {
+    const checkedOutVisitors = learners.filter((v: any) => v.actualDuration);
+    if (checkedOutVisitors.length === 0) return 0;
+    
+    const totalDuration = checkedOutVisitors.reduce((sum: number, v: any) => sum + (v.actualDuration || 0), 0);
+    return Math.round(totalDuration / checkedOutVisitors.length);
+  };
+
+  const calculateCurrentDuration = (visitor: any) => {
+    if (!visitor.checkInTime) return 0;
+    
+    const currentTime = new Date();
+    const checkInTime = new Date(visitor.checkInTime);
+    const durationMs = currentTime.getTime() - checkInTime.getTime();
+    return Math.round(durationMs / (1000 * 60)); // Convert to minutes
+  };
+
+  const checkOverstayedVisitors = async () => {
+    try {
+      const response = await ApiService.checkOverstayedVisitors();
+      console.log('Overstayed visitors check:', response);
+      
+      // Refresh the visitors list to get updated data
+      await getStudents();
+      
+      setSuccess(true);
+      setMessage(`Found ${response.overstayedCount} overstayed visitors and ${response.warningCount} warnings`);
+      notify.current?.showToast();
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage('Error checking overstayed visitors: ' + error.message);
+      notify.current?.showToast();
+    }
+  };
+
+  const handleCheckOut = async (visitorId: string) => {
+    try {
+      await ApiService.checkoutVisitor(visitorId);
+      await getStudents(); // Refresh the list
+      setSuccess(true);
+      setMessage('Visitor checked out successfully');
+      notify.current?.showToast();
+    } catch (error: any) {
+      setSuccess(false);
+      setMessage('Error checking out visitor: ' + error.message);
       notify.current?.showToast();
     }
   };
@@ -1434,6 +1513,46 @@ function Main() {
                 )}
               </div>
 
+              {/* Date Filter Inputs */}
+              <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <FormInput
+                    type="date"
+                    className="w-40 !box"
+                    placeholder="From Date"
+                    value={fromDate}
+                    onChange={(e) => handleFromDateChange(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Calendar"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3 text-gray-400"
+                  />
+                </div>
+                <span className="text-gray-500">to</span>
+                <div className="relative">
+                  <FormInput
+                    type="date"
+                    className="w-40 !box"
+                    placeholder="To Date"
+                    value={toDate}
+                    onChange={(e) => handleToDateChange(e.target.value)}
+                  />
+                  <Lucide
+                    icon="Calendar"
+                    className="absolute inset-y-0 right-0 w-4 h-4 my-auto mr-3 text-gray-400"
+                  />
+                </div>
+                {(fromDate || toDate) && (
+                  <button
+                    onClick={clearDateFilters}
+                    className="px-3 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Clear date filters"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
               {/* Status Filter Dropdown */}
               <div className="relative w-48">
                 <FormSelect
@@ -1509,7 +1628,7 @@ function Main() {
             </div>
 
             {/* Active Filter Indicators */}
-            {(selectedStatusFilter || selectedCompanyFilter || selectedPurposeFilter) && (
+            {(selectedStatusFilter || selectedCompanyFilter || selectedPurposeFilter || fromDate || toDate) && (
               <div className="flex items-center space-x-3 flex-wrap mt-3">
                 {selectedStatusFilter && (
                   <div className="flex items-center space-x-2">
@@ -1532,8 +1651,16 @@ function Main() {
                     </span>
                   </div>
                 )}
+                {(fromDate || toDate) && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-orange-600 font-medium">
+                      Date: {fromDate || 'Start'} to {toDate || 'End'}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
+
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
@@ -1616,6 +1743,25 @@ function Main() {
                           </div>
                         </Table.Th>
 
+                        <Table.Th className="text-center">
+                          Duration
+                        </Table.Th>
+
+                        <Table.Th
+                          className="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-center"
+                          onClick={() => handleSort("createdAt")}
+                        >
+                          <div className="flex items-center justify-center space-x-1">
+                            <span>Created Date</span>
+                            {sortField === "createdAt" && (
+                              <Lucide
+                                icon={sortOrder === "asc" ? "ChevronUp" : "ChevronDown"}
+                                className="w-4 h-4"
+                              />
+                            )}
+                          </div>
+                        </Table.Th>
+
                         <Table.Th className="text-center w-32">
                           Actions
                         </Table.Th>
@@ -1675,6 +1821,40 @@ function Main() {
                       
                               {learner?.status === "Checked Out" ? "Checked Out" : ""}
                               {learner?.status === "Checked In" ? "Checked In" : ""}
+                            </div>
+                          </Table.Td>
+
+                          <Table.Td className="text-center">
+                            <div className="flex flex-col items-center space-y-1">
+                              {learner?.status === "Checked In" ? (
+                                <>
+                                  <div className={`text-sm font-medium ${learner?.isOverstayed ? 'text-red-600' : 'text-gray-600'}`}>
+                                    {calculateCurrentDuration(learner)}m
+                                  </div>
+                                  <div className="text-xs text-gray-500">
+                                    / {learner?.expectedDuration || 60}m
+                                  </div>
+                                  {learner?.isOverstayed && (
+                                    <div className="text-xs text-red-500 font-medium">
+                                      +{learner?.overstayMinutes || 0}m
+                                    </div>
+                                  )}
+                                </>
+                              ) : learner?.actualDuration ? (
+                                <div className="text-sm font-medium text-gray-600">
+                                  {learner.actualDuration}m
+                                </div>
+                              ) : (
+                                <div className="text-sm text-gray-400">-</div>
+                              )}
+                            </div>
+                          </Table.Td>
+
+                          <Table.Td className="text-center">
+                            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2 inline-block">
+                              <span className="font-medium text-gray-900 dark:text-white text-sm">
+                                {learner?.createdAt ? formatDate(learner.createdAt) : 'N/A'}
+                              </span>
                             </div>
                           </Table.Td>
 

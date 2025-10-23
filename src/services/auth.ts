@@ -953,6 +953,46 @@ export async function rejectApplicant(applicantId: string, data: any = {}) {
   }
 }
 
+// Visitor Duration Monitoring Functions
+export async function checkOverstayedVisitors() {
+  try {
+    let res = await axios.get(c.VISITORS + "/alerts/overstayed", config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function getVisitorDurationAnalytics(params: any = {}) {
+  try {
+    let res = await axios.get(c.VISITORS + "/analytics/duration", {
+      params,
+      ...config2
+    });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function updateVisitorDuration(visitorId: string, data: any) {
+  try {
+    let res = await axios.put(c.VISITORS + "/" + visitorId + "/duration", data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function acknowledgeVisitorAlert(visitorId: string, alertId: string, data: any) {
+  try {
+    let res = await axios.post(c.VISITORS + "/" + visitorId + "/alerts/" + alertId + "/acknowledge", data, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
 // Front Office Dashboard API functions
 export async function getFrontOfficeStats(dateRange: any) {
   try {

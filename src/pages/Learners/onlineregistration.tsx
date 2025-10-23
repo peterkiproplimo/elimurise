@@ -1182,7 +1182,7 @@ function Main() {
         {isOpen && (
           <div className="w-[450px] h-[600px] bg-white rounded-2xl shadow-xl flex flex-col font-sans overflow-hidden border border-gray-100">
             {/* Chat Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-4 flex justify-between items-center">
+            <div className="bg-gradient-to-r from-green-600 to-green-500 text-white p-4 flex justify-between items-center">
               <span className="font-semibold text-xl tracking-tight">
                 {selectedParent
                   ? `Chat with ${selectedParent.first_name} ${selectedParent.last_name}`
@@ -1190,7 +1190,7 @@ function Main() {
               </span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-indigo-700 rounded-full transition-colors"
+                className="p-2 hover:bg-green-700 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1207,7 +1207,7 @@ function Main() {
                   <div className="max-w-[75%] group">
                     <div
                       className={`p-4 rounded-2xl shadow-md transition-all ${msg.sender === user._id
-                          ? "bg-indigo-500 text-white"
+                          ? "bg-green-500 text-white"
                           : "bg-white text-gray-800 border border-gray-200"
                         }`}
                     >
@@ -1364,7 +1364,7 @@ function Main() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-indigo-500 hover:bg-indigo-600 text-white p-3 rounded-full disabled:opacity-50 transition-colors"
+                  className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full disabled:opacity-50 transition-colors"
                 >
                   <Send className="w-5 h-5" />
                 </button>
@@ -1376,7 +1376,7 @@ function Main() {
       {(isPublicView || (dialog && !profile)) ? (
         <>
           {/* Enhanced Header with Description */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-8 rounded-t-2xl shadow-lg">
+          <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-8 rounded-t-2xl shadow-lg">
             <div className="bg-green-100 flex items-center justify-between">
               <div className="bg-green-100 flex items-center">
                 {!isPublicView && (
@@ -1388,20 +1388,20 @@ function Main() {
                       setIsEditMode(false);
                     }}
                     href="#"
-                    className="text-white hover:text-blue-200 transition-colors mr-4"
+                    className="text-white hover:text-green-200 transition-colors mr-4"
                   >
                     <Lucide icon="ArrowLeft" className="w-6 h-6" />
                   </a>
                 )}
-                <div className="bg-green-100 ">
-                  <h1 className="text-3xl font-bold mb-2">Welcome to our Online Admission Portal</h1>
+                <div className="bg-green-100">
+                  <h1 className="text-3xl font-bold text-green-600">Welcome to our Online Admission Portal</h1>
                   
                   {/* Cohort Information Display */}
                   {loadingCohort && (
-                    <div className="bg-green-100 border border-blue-300 rounded-lg p-4 mt-4">
+                    <div className="bg-green-100 border border-green-300 rounded-lg p-4 mt-4">
                       <div className="flex items-center">
-                        <LoadingIcon icon="spinning-circles" color="blue" className="w-5 h-5 mr-3" />
-                        <span className="text-blue-800 font-medium">Loading application details...</span>
+                        <LoadingIcon icon="spinning-circles" color="green" className="w-5 h-5 mr-3" />
+                        <span className="text-green-800 font-medium">Loading application details...</span>
                       </div>
                     </div>
                   )}
@@ -1439,8 +1439,20 @@ function Main() {
                     <div className="text-green-800 leading-relaxed space-y-2">
                       <p>
                         The application period is open from{' '}
-                        <span className="font-semibold text-green-700">March 1st, 2024</span> to{' '}
-                        <span className="font-semibold text-green-700">April 30th, 2024</span>.
+                        <span className="font-semibold text-green-700">
+                          {cohortData ? new Date(cohortData.startDate).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          }) : 'Loading...'}
+                        </span> to{' '}
+                        <span className="font-semibold text-green-700">
+                          {cohortData ? new Date(cohortData.endDate).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          }) : 'Loading...'}
+                        </span>.
                       </p>
                       
                       <p>
@@ -1484,7 +1496,7 @@ function Main() {
                   <div key={step} className="flex items-center">
                     <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                       currentStep >= step 
-                        ? 'bg-blue-600 border-blue-600 text-white' 
+                        ? 'bg-green-600 border-green-600 text-white' 
                         : 'border-gray-300 text-gray-400'
                     }`}>
                       {currentStep > step ? (
@@ -1494,7 +1506,7 @@ function Main() {
                       )}
                     </div>
                     <span className={`ml-2 text-sm font-medium ${
-                      currentStep >= step ? 'text-blue-600' : 'text-gray-400'
+                      currentStep >= step ? 'text-green-600' : 'text-gray-400'
                     }`}>
                       {step === 1 && 'Application Form'}
                       {step === 2 && 'Payment'}
@@ -1502,7 +1514,7 @@ function Main() {
                     </span>
                     {step < 3 && (
                       <div className={`w-16 h-0.5 mx-4 ${
-                        currentStep > step ? 'bg-blue-600' : 'bg-gray-300'
+                        currentStep > step ? 'bg-green-600' : 'bg-gray-300'
                       }`} />
                     )}
                   </div>
@@ -1521,9 +1533,9 @@ function Main() {
             {/* Form Content */}
             <div className="space-y-8">
               {/* Student Details Section */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+              <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
                 <div className="flex items-center mb-6">
-                  <div className="bg-blue-600 rounded-lg p-2 mr-3">
+                  <div className="bg-green-600 rounded-lg p-2 mr-3">
                     <Lucide icon="User" className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-800">Student Details</h3>
@@ -1538,7 +1550,7 @@ function Main() {
                       type="text"
                       name="first_name"
                       className={`mt-1 w-full rounded-xl border-2 ${errors.first_name ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+                        } focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md`}
                       placeholder="Enter first name"
                     />
                     {errors.first_name && (
@@ -1576,7 +1588,7 @@ function Main() {
                       type="text"
                       name="last_name"
                       className={`mt-1 w-full rounded-xl border-2 ${errors.last_name ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+                        } focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md`}
                       placeholder="Enter last name"
                     />
                     {errors.last_name && (
@@ -2027,7 +2039,7 @@ function Main() {
                       type="text"
                       name="homeAddress"
                       className={`mt-1 w-full rounded-xl border-2 ${errors.homeAddress ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+                        } focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md`}
                       placeholder="Enter physical location"
                     />
                     {errors.homeAddress && (
@@ -2047,7 +2059,7 @@ function Main() {
                       type="text"
                       name="nearestLandmark"
                       className={`mt-1 w-full rounded-xl border-2 ${errors.nearestLandmark ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+                        } focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md`}
                       placeholder="Enter nearest landmark for pickup/drop-off"
                     />
                     {errors.nearestLandmark && (
@@ -2067,7 +2079,7 @@ function Main() {
                       type="text"
                       name="distanceFromSchool"
                       className={`mt-1 w-full rounded-xl border-2 ${errors.distanceFromSchool ? "border-red-500 bg-red-50" : "border-gray-200 bg-white"
-                        } focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md`}
+                        } focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md`}
                       placeholder="e.g., 5km (Optional)"
                     />
                     {errors.distanceFromSchool && (
@@ -2107,7 +2119,7 @@ function Main() {
                     type="file"
                     accept=".pdf,.jpg,.jpeg"
                     onChange={(e) => handleDocumentUpload(e, 'birth-certificate')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
                   />
                   {documentStatuses['birth-certificate'] === 'Uploaded' && (
                     <div className="mt-2 flex items-center text-green-600 text-sm">
@@ -2127,7 +2139,7 @@ function Main() {
                     type="file"
                     accept=".jpg,.jpeg,.png"
                     onChange={(e) => handleDocumentUpload(e, 'passport-photo')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
                   />
                   {documentStatuses['passport-photo'] === 'Uploaded' && (
                     <div className="mt-2 flex items-center text-green-600 text-sm">
@@ -2147,7 +2159,7 @@ function Main() {
                     type="file"
                     accept=".pdf,.jpg,.jpeg"
                     onChange={(e) => handleDocumentUpload(e, 'academic-report')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
                   />
                   {documentStatuses['academic-report'] === 'Uploaded' && (
                     <div className="mt-2 flex items-center text-green-600 text-sm">
@@ -2167,7 +2179,7 @@ function Main() {
                     type="file"
                     accept=".pdf"
                     onChange={(e) => handleDocumentUpload(e, 'transfer-letter')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
                   />
                   {documentStatuses['transfer-letter'] === 'Uploaded' && (
                     <div className="mt-2 flex items-center text-green-600 text-sm">
@@ -2187,7 +2199,7 @@ function Main() {
                     type="file"
                     accept=".pdf,.jpg,.jpeg"
                     onChange={(e) => handleDocumentUpload(e, 'parent-id')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
                   />
                   {documentStatuses['parent-id'] === 'Uploaded' && (
                     <div className="mt-2 flex items-center text-green-600 text-sm">
@@ -2207,7 +2219,7 @@ function Main() {
                     type="file"
                     accept=".pdf"
                     onChange={(e) => handleDocumentUpload(e, 'medical-report')}
-                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 shadow-sm hover:shadow-md"
                   />
                   {documentStatuses['medical-report'] === 'Uploaded' && (
                     <div className="mt-2 flex items-center text-green-600 text-sm">
@@ -2219,12 +2231,12 @@ function Main() {
               </div>
 
               {/* Upload Instructions */}
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-start">
-                  <Lucide icon="Info" className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-blue-800">
+                  <Lucide icon="Info" className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-green-800">
                     <p className="font-medium mb-1">Upload Instructions:</p>
-                    <ul className="list-disc list-inside space-y-1 text-blue-700">
+                    <ul className="list-disc list-inside space-y-1 text-green-700">
                       <li>Maximum file size: 5MB per document</li>
                       <li>Supported formats: PDF, JPG, PNG</li>
                       <li>Ensure documents are clear and legible</li>
@@ -2297,7 +2309,7 @@ function Main() {
                         <FormSelect
                           value={paymentData.method}
                           onChange={(e) => setPaymentData({...paymentData, method: e.target.value})}
-                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                         >
                           <option value="">Select Payment Method</option>
                           <option value="M-Pesa">M-Pesa</option>
@@ -2315,7 +2327,7 @@ function Main() {
                           onChange={(e) => setPaymentData({...paymentData, amount: e.target.value})}
                           placeholder="Enter amount"
                           min="1"
-                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                         />
                       </div>
 
@@ -2330,7 +2342,7 @@ function Main() {
                               value={paymentData.phone}
                               onChange={(e) => setPaymentData({...paymentData, phone: e.target.value})}
                               placeholder="e.g., 0712345678 or 254712345678"
-                              className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                              className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                             />
                             <p className="text-xs text-gray-500 mt-1">
                               Enter your M-Pesa registered phone number
@@ -2375,7 +2387,7 @@ function Main() {
                             value={paymentData.transactionCode}
                             onChange={(e) => setPaymentData({...paymentData, transactionCode: e.target.value})}
                             placeholder={paymentData.method === 'M-Pesa' ? 'Enter M-Pesa receipt number (e.g., NEF61H8J6R)' : 'Enter bank transaction code'}
-                            className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                            className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                           />
                           <p className="text-xs text-gray-500 mt-1">
                             {paymentData.method === 'M-Pesa' 
@@ -2394,20 +2406,20 @@ function Main() {
                           type="date"
                           value={paymentData.paymentDate}
                           onChange={(e) => setPaymentData({...paymentData, paymentDate: e.target.value})}
-                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                          className="w-full rounded-xl border-2 border-gray-200 bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
                         />
                       </div>
                     </div>
 
                     {paymentData.method && (
-                      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                         <div className="flex items-start">
-                          <Lucide icon="Info" className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
-                          <div className="text-sm text-blue-800">
+                          <Lucide icon="Info" className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                          <div className="text-sm text-green-800">
                             <p className="font-medium mb-1">
                               {paymentData.method === 'M-Pesa' ? 'M-Pesa Payment Instructions:' : 'Bank Transfer Instructions:'}
                             </p>
-                            <ul className="list-disc list-inside space-y-1 text-blue-700">
+                            <ul className="list-disc list-inside space-y-1 text-green-700">
                               {paymentData.method === 'M-Pesa' ? (
                                 <>
                                   <li>Ensure your phone number {paymentData.phone} is registered with M-Pesa</li>
@@ -2519,8 +2531,8 @@ function Main() {
             {currentStep === 3 && (
               <div className="p-8 animate-fade-in">
                 <div className="text-center mb-8">
-                  <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <Lucide icon="Eye" className="w-8 h-8 text-blue-600" />
+                  <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <Lucide icon="Eye" className="w-8 h-8 text-green-600" />
                   </div>
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">Review Your Application</h2>
                   <p className="text-gray-600">Please review all details before submitting</p>
@@ -2540,7 +2552,7 @@ function Main() {
                   {/* Personal Details Review */}
                   <div className="bg-white border border-gray-200 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <Lucide icon="User" className="w-5 h-5 mr-2 text-blue-600" />
+                      <Lucide icon="User" className="w-5 h-5 mr-2 text-green-600" />
                       Personal Details
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -2676,11 +2688,11 @@ function Main() {
                     </div>
                     
                     {paymentData.method === 'M-Pesa' && paymentData.checkoutRequestID && (
-                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <Lucide icon="Smartphone" className="w-4 h-4 text-blue-600 mr-2" />
-                            <span className="text-sm text-blue-800">
+                            <Lucide icon="Smartphone" className="w-4 h-4 text-green-600 mr-2" />
+                            <span className="text-sm text-green-800">
                               M-Pesa payment initiated. Check your phone for STK push notification.
                             </span>
                           </div>
@@ -2688,7 +2700,7 @@ function Main() {
                             type="button"
                             onClick={checkMpesaStatus}
                             disabled={mpesaStatusLoading}
-                            className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                            className="px-3 py-1 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                           >
                             {mpesaStatusLoading ? (
                               <>
@@ -2753,15 +2765,15 @@ function Main() {
                     once your application status changes. Please keep your application reference number safe.
                   </p>
                   
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 max-w-md mx-auto">
-                    <h3 className="font-semibold text-blue-800 mb-2">Application Status</h3>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8 max-w-md mx-auto">
+                    <h3 className="font-semibold text-green-800 mb-2">Application Status</h3>
                     <div className="flex items-center justify-center">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
                         <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
                         Pending Review
                       </span>
                     </div>
-                    <p className="text-blue-700 text-sm mt-2">
+                    <p className="text-green-700 text-sm mt-2">
                       An SMS will be sent to your parent/guardian when the status changes to Shortlisted or Confirmed.
                     </p>
                   </div>
@@ -2833,7 +2845,7 @@ function Main() {
               setProfile(false); // Assuming setProfile is defined in the parent component
             }}
             href="#"
-            className="mb-4 flex items-center text-blue-600 hover:text-blue-800"
+            className="mb-4 flex items-center text-green-600 hover:text-green-800"
           >
             <Lucide icon="ArrowLeft" className="text-slate-400 mr-3" />
             Back
@@ -2870,8 +2882,8 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${activeTab === "basicInfo"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
+                            ? "text-green-600 border-b-2 border-green-600"
+                            : "text-gray-600 hover:text-green-600"
                           } font-semibold`}
                         onClick={() => setActiveTab("basicInfo")}
                       >
@@ -2884,8 +2896,8 @@ function Main() {
                           <li className="mr-2 flex items-center">
                             <button
                               className={`inline-block py-2 px-4 ${activeTab === "guardian1"
-                                  ? "text-blue-600 border-b-2 border-blue-600"
-                                  : "text-gray-600 hover:text-blue-600"
+                                  ? "text-green-600 border-b-2 border-green-600"
+                                  : "text-gray-600 hover:text-green-600"
                                 } font-semibold flex items-center`}
                               onClick={() => setActiveTab("guardian1")}
                             >
@@ -2900,7 +2912,7 @@ function Main() {
                                     className="relative"
                                     onClick={() => openChat(learner?.guardian)}
                                   >
-                                    <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
+                                    <MessageCircle className="w-6 h-6 text-green-500 cursor-pointer hover:text-green-700" />
                                     {/* {unreadMessages?.guardian1 > 0 && (
                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {unreadMessages?.guardian1}
@@ -2913,8 +2925,8 @@ function Main() {
                           <li className="mr-2 flex items-center">
                             <button
                               className={`inline-block py-2 px-4 ${activeTab === "guardian2"
-                                  ? "text-blue-600 border-b-2 border-blue-600"
-                                  : "text-gray-600 hover:text-blue-600"
+                                  ? "text-green-600 border-b-2 border-green-600"
+                                  : "text-gray-600 hover:text-green-600"
                                 } font-semibold flex items-center`}
                               onClick={() => setActiveTab("guardian2")}
                             >
@@ -2929,7 +2941,7 @@ function Main() {
                                     className="relative"
                                     onClick={() => openChat(learner?.guardian2)}
                                   >
-                                    <MessageCircle className="w-6 h-6 text-blue-500 cursor-pointer hover:text-blue-700" />
+                                    <MessageCircle className="w-6 h-6 text-green-500 cursor-pointer hover:text-green-700" />
                                     {/* {unreadMessages?.guardian2 > 0 && (
                                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {unreadMessages?.guardian2}
@@ -2944,8 +2956,8 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${activeTab === "tab4"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
+                            ? "text-green-600 border-b-2 border-green-600"
+                            : "text-gray-600 hover:text-green-600"
                           } font-semibold`}
                         onClick={() => setActiveTab("tab4")}
                       >
@@ -2955,8 +2967,8 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${activeTab === "tab3"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
+                            ? "text-green-600 border-b-2 border-green-600"
+                            : "text-gray-600 hover:text-green-600"
                           } font-semibold`}
                         onClick={() => setActiveTab("tab3")}
                       >
@@ -2966,8 +2978,8 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${activeTab === "tab5"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
+                            ? "text-green-600 border-b-2 border-green-600"
+                            : "text-gray-600 hover:text-green-600"
                           } font-semibold`}
                         onClick={() => setActiveTab("tab5")}
                       >
@@ -2977,8 +2989,8 @@ function Main() {
                     <li className="mr-2">
                       <button
                         className={`inline-block py-2 px-4 ${activeTab === "tab6"
-                            ? "text-blue-600 border-b-2 border-blue-600"
-                            : "text-gray-600 hover:text-blue-600"
+                            ? "text-green-600 border-b-2 border-green-600"
+                            : "text-gray-600 hover:text-green-600"
                           } font-semibold`}
                         onClick={() => setActiveTab("tab6")}
                       >

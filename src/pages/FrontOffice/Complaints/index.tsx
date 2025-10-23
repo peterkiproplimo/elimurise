@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../../base-components/Button";
-import PassportUpload from "./profilephoto";
+
 import { X, Paperclip, Send, MoreHorizontal, Eye, Edit, ArrowLeftRight, LogOut } from "lucide-react"; // Using Lucide icons for a modern look
 import {
   FormCheck,
@@ -614,7 +614,7 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
-          status: selectedStatusFilter ? [selectedStatusFilter] : [],
+          // status: selectedStatusFilter ? [selectedStatusFilter] : [],
           priority: selectedPriorityFilter,
           category: selectedCategoryFilter,
         },

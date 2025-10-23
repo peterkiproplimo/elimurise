@@ -94,6 +94,11 @@ import ExitedLearners from "../pages/Learners/exited";
 import Certificates from "../pages/Certificates/index";
 import OnlineRegistration from "../pages/Learners/onlineregistration";
 import OnlineApplications from "../pages/FrontOffice/OnlineApplications/index";
+import ProjectsModule from "../pages/Projects/ProjectsModule/index";
+import ProjectDetails from "../pages/Projects/ProjectDetails/index";
+import UploadConfig from "../pages/Projects/UploadConfig/index";
+// import Subjects from "../pages/Projects/Subjects/index";
+import Competencies from "../pages/Projects/Competencies/index";
 //inactive learners
 
 //nn
@@ -111,9 +116,30 @@ function Router() {
           path: "",
           element: <Dashboard />,
         },
+
         {
           path: "frontofficeanalytics",
           element: <FrontOfficeAnalytics />
+        },
+        {
+          path: "projectsmodule",
+          element: <ProjectsModule />
+        },
+        {
+          path: "project-details/:id",
+          element: <ProjectDetails />
+        },
+        // {
+        //   path: "subjects",
+        //   element: <Subjects />
+        // },
+        {
+          path: "competencies",
+          element: <Competencies />
+        },
+        {
+          path: "uploadconfig",
+          element: <UploadConfig />
         },
         {
           path: "enquiries",

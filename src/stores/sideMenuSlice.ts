@@ -142,6 +142,34 @@ const initialState: SideMenuState = {
         }
       ],
     },
+
+        // FRONT OFFICE
+        {
+          icon: "Building2",
+          title: "Project Management",
+          subMenu: [
+ 
+            {
+              icon: "User",
+              title: "Projects",
+              pathname: "/home/projectsmodule",
+              ignore: !hasPermission("parents", "read"),
+            },
+        
+            {
+              icon: "User",
+              title: "Competencies",
+              pathname: "/home/competencies",
+              ignore: !hasPermission("parents", "read"),
+            },
+              {
+              icon: "User",
+              title: "UploadConfig",
+              pathname: "/home/uploadConfig",
+              ignore: !hasPermission("parents", "read"),
+            },
+          ],
+        },
     // STAFF MANAGEMENT
     {
       icon: "Users",

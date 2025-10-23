@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Card from '../../base-components/Card';
-import Button from '../../base-components/Button';
-import { Tab } from '../../base-components/Headless';
+import Card from '../../../base-components/Card';
+import Button from '../../../base-components/Button';
+import { Tab } from '../../../base-components/Headless';
 import { Calendar, Users, BookOpen, DollarSign, TrendingUp, AlertCircle, MessageSquare, Activity } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useAuth } from '../../contexts/Auth';
-import { dashboardService } from '../../services/dashboardService';
+import { useAuth } from '../../../contexts/Auth';
+import { dashboardService } from '../../../services/dashboardService';
 
 interface DashboardData {
   overview: {
