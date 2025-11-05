@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../../base-components/Button";
 import {
   FormInput,
@@ -79,6 +80,8 @@ interface Subject {
 }
 
 const Competencies = () => {
+  const navigate = useNavigate();
+  
   // Get user data from localStorage
   const auth = localStorage.getItem("@AuthData");
   const auth_data = auth ? JSON.parse(auth) : null;
@@ -91,8 +94,6 @@ const Competencies = () => {
   const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
   const [competencyToDelete, setCompetencyToDelete] = useState<Competency | null>(null);
   const [activeTab, setActiveTab] = useState("list"); // "list" or "add"
-  const [editModal, setEditModal] = useState(false);
-  const [editingCompetency, setEditingCompetency] = useState<Competency | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCompetencies, setTotalCompetencies] = useState(0);
@@ -200,11 +201,8 @@ const Competencies = () => {
   const onSubmit = async (data: any) => {
     setLoading(true);
     try {
-      const url = editingCompetency
-        ? `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies/${editingCompetency._id}`
-        : `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies`;
-
-      const method = editingCompetency ? "PUT" : "POST";
+      const url = `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies`;
+      const method = "POST";
 
       // Prepare the data with subjectId and subjectName
       const submitData = { ...data };
@@ -239,10 +237,8 @@ const Competencies = () => {
       });
 
       if (response.ok) {
-      notificationRef.current?.showToast();
+        notificationRef.current?.showToast();
         setActiveTab("list");
-        setEditModal(false);
-        setEditingCompetency(null);
         reset();
         fetchCompetencies(currentPage);
       } else {
@@ -314,19 +310,9 @@ const Competencies = () => {
 
   // Edit competency
   const handleEdit = (competency: Competency) => {
-    setEditingCompetency(competency);
-    setValue("name", competency.name);
-    setValue("code", competency.code);
-    setValue("description", competency.description);
-    setValue("category", competency.category);
-    setValue("level", competency.level);
-    setValue("domain", competency.domain);
-    // Handle both old subject object format and new subjectId format
-    const subjectId = competency.subject?._id || competency.subjectId || "";
-    setValue("subject", subjectId);
-    setValue("framework", competency.framework);
-    setValue("version", competency.version);
-    setEditModal(true);
+    navigate('/home/competencies/edit', {
+      state: { competency }
+    });
   };
 
   const categories = [
@@ -552,6 +538,17 @@ const Competencies = () => {
                     <Table.Td>
                       <div className="flex items-center justify-center">
                         <Button
+                          variant="outline-primary"
+                          size="sm"
+                          className="mr-2"
+                          onClick={() => navigate('/home/competencies/view', {
+                            state: { competency }
+                          })}
+                          title="View Competency"
+                        >
+                          <Lucide icon="Eye" className="w-4 h-4" />
+                        </Button>
+                        <Button
                           variant="outline-secondary"
                           size="sm"
                           className="mr-2"
@@ -559,17 +556,7 @@ const Competencies = () => {
                         >
                           <Lucide icon="Edit" className="w-4 h-4" />
                         </Button>
-                        <Button
-                          variant="outline-secondary"
-                          size="sm"
-                          className="mr-2"
-                          onClick={() => toggleStatus(competency)}
-                        >
-                          <Lucide
-                            icon={competency.isActive ? "EyeOff" : "Eye"}
-                            className="w-4 h-4"
-                          />
-                        </Button>
+          
                         <Button
                           variant="outline-danger"
                           size="sm"
@@ -729,132 +716,6 @@ const Competencies = () => {
         </div>
       )}
 
-      {/* Edit Competency Modal */}
-      <Dialog open={editModal} onClose={() => setEditModal(false)}>
-        <Dialog.Panel>
-          <Dialog.Title>Edit Competency</Dialog.Title>
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <FormLabel htmlFor="edit-name">Competency Name *</FormLabel>
-                <FormInput
-                  id="edit-name"
-                  type="text"
-                  placeholder="Enter competency name"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <div className="mt-1 text-danger">{String(errors.name.message)}</div>
-                )}
-              </div>
-              <div>
-                <FormLabel htmlFor="edit-code">Competency Code *</FormLabel>
-                <FormInput
-                  id="edit-code"
-                  type="text"
-                  placeholder="Enter competency code"
-                  {...register("code")}
-                />
-                {errors.code && (
-                  <div className="mt-1 text-danger">{String(errors.code.message)}</div>
-                )}
-              </div>
-              <div className="sm:col-span-2">
-                <FormLabel htmlFor="edit-description">Description</FormLabel>
-                <FormTextarea
-                  id="edit-description"
-                  placeholder="Enter competency description"
-                  {...register("description")}
-                />
-              </div>
-              <div>
-                <FormLabel htmlFor="edit-category">Category *</FormLabel>
-                <FormSelect id="edit-category" {...register("category")}>
-                  <option value="">Select category</option>
-                  {categories.map((cat) => (
-                    <option key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.category && (
-                  <div className="mt-1 text-danger">{String(errors.category.message)}</div>
-                )}
-              </div>
-              <div>
-                <FormLabel htmlFor="edit-level">Level *</FormLabel>
-                <FormSelect id="edit-level" {...register("level")}>
-                  <option value="">Select level</option>
-                  {levels.map((level) => (
-                    <option key={level.value} value={level.value}>
-                      {level.label}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.level && (
-                  <div className="mt-1 text-danger">{String(errors.level.message)}</div>
-                )}
-              </div>
-              <div>
-                <FormLabel htmlFor="edit-domain">Domain *</FormLabel>
-                <FormSelect id="edit-domain" {...register("domain")}>
-                  <option value="">Select domain</option>
-                  {domains.map((domain) => (
-                    <option key={domain.value} value={domain.value}>
-                      {domain.label}
-                    </option>
-                  ))}
-                </FormSelect>
-                {errors.domain && (
-                  <div className="mt-1 text-danger">{String(errors.domain.message)}</div>
-                )}
-              </div>
-              <div>
-                <FormLabel htmlFor="edit-subject">Learning Area / Subject</FormLabel>
-                <FormSelect id="edit-subject" {...register("subject")}>
-                  <option value="">Select learning area (optional)</option>
-                  {learningAreas.map((learningArea) => (
-                    <option key={learningArea._id} value={learningArea._id}>
-                      {learningArea.code} - {learningArea.name}
-                    </option>
-                  ))}
-                </FormSelect>
-              </div>
-              <div>
-                <FormLabel htmlFor="edit-framework">Framework</FormLabel>
-                <FormInput
-                  id="edit-framework"
-                  type="text"
-                  placeholder="Enter framework name"
-                  {...register("framework")}
-                />
-              </div>
-              <div>
-                <FormLabel htmlFor="edit-version">Version</FormLabel>
-                <FormInput
-                  id="edit-version"
-                  type="text"
-                  placeholder="Enter version"
-                  {...register("version")}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end mt-6">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                className="mr-2"
-                onClick={() => setEditModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" disabled={loading}>
-                {loading ? <LoadingIcon icon="oval" className="w-4 h-4" /> : "Update"}
-              </Button>
-            </div>
-          </form>
-        </Dialog.Panel>
-      </Dialog>
 
       {/* Delete Confirmation Modal */}
       <Dialog open={deleteConfirmationModal} onClose={() => setDeleteConfirmationModal(false)}>

@@ -148,26 +148,38 @@ const initialState: SideMenuState = {
           icon: "Building2",
           title: "Project Management",
           subMenu: [
- 
+            
             {
               icon: "User",
               title: "Projects",
-              pathname: "/home/projectsmodule",
+              pathname: "/projectsmodule",
               ignore: !hasPermission("parents", "read"),
             },
-        
             {
               icon: "User",
               title: "Competencies",
               pathname: "/home/competencies",
               ignore: !hasPermission("parents", "read"),
             },
-              {
+            // {
+            //   icon: "User",
+            //   title: "UploadConfig",
+            //   pathname: "/home/uploadConfig",
+            //   ignore: !hasPermission("parents", "read"),
+            // },
+            {
               icon: "User",
-              title: "UploadConfig",
-              pathname: "/home/uploadConfig",
+              title: "PortfolioSummary",
+              pathname: "/portfolio-summary",
               ignore: !hasPermission("parents", "read"),
             },
+            {
+              icon: "User",
+              title: "Google Drive Auth Config",
+              pathname: "/googleauthenticate",
+              ignore: !hasPermission("parents", "read"),
+            },
+            
           ],
         },
     // STAFF MANAGEMENT

@@ -907,6 +907,24 @@ export async function getReplies(complaintId: string) {
   }
 }
 
+export async function deleteComplaint(complaintId: string) {
+  try {
+    const res = await axios.delete(`${c.COMPLAINTS}/${complaintId}`, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function deleteEnquiry(enquiryId: string) {
+  try {
+    const res = await axios.delete(`${c.ENQUIRIES}/${enquiryId}`, config2);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
 export async function createOnlineApplicant(data: any) {
   try {
     // Determine if data is FormData or regular object
@@ -920,6 +938,15 @@ export async function createOnlineApplicant(data: any) {
       let res = await axios.post(c.ONLINEAPPLICANTS, data, requestConfig);
       return res.data;
     }
+  } catch (e) {
+    throw handler(e);
+  }
+}
+
+export async function deleteOnlineApplicant(applicantId: string) {
+  try {
+    const res = await axios.delete(`${c.ONLINEAPPLICANTS}/${applicantId}`, config2);
+    return res.data;
   } catch (e) {
     throw handler(e);
   }

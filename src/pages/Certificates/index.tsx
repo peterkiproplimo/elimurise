@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { useState, useRef, useEffect } from "react";
 import Button from "../../base-components/Button";
-import PassportUpload from "./profilephoto";
 import { X, Paperclip, Send, MoreHorizontal, Eye, Edit, ArrowLeftRight, LogOut } from "lucide-react"; // Using Lucide icons for a modern look
 import {
   FormCheck,
@@ -53,6 +52,7 @@ const socket: Socket = io(import.meta.env.VITE_API_ENDPOINT, {
     token: `Bearer ${user?.token}`,
   },
 });
+
 
 
 
@@ -748,6 +748,13 @@ function Main() {
   };
 
   const deleteRecord = async () => {
+    if (!recordId) {
+      setSuccess(false);
+      setMessage("No record ID provided");
+      notify.current?.showToast();
+      return;
+    }
+    
     isLoading(true);
     try {
       let res = await ApiService.deleteLearner(recordId);

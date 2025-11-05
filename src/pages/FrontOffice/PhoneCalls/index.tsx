@@ -1,20 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/Auth';
 import phoneCallService from '../../../services/phoneCallService';
 import Button from '../../../base-components/Button';
 import Card from '../../../base-components/Card';
 import Table from '../../../base-components/Table';
-import Pagination from '../../../base-components/Pagination';
 import { Dialog } from '../../../base-components/Headless';
 import {
-  FormInput,
-  FormSelect,
-  FormTextarea,
-  FormLabel,
-  FormCheck
+  FormSelect
 } from '../../../base-components/Form';
 import Notification, { NotificationElement } from '../../../base-components/Notification';
 import LoadingIcon from '../../../base-components/LoadingIcon';
@@ -30,33 +23,13 @@ import {
   Calendar,
   Clock,
   User,
-  MessageSquare,
-  X
+  MessageSquare
 } from 'lucide-react';
-
-// Validation schema
-const phoneCallSchema = yup.object({
-  callerName: yup.string().required('Caller name is required'),
-  callerPhone: yup.string().required('Phone number is required'),
-  callerEmail: yup.string().email('Invalid email format'),
-  callType: yup.string().required('Call type is required'),
-  purpose: yup.string().required('Purpose is required'),
-  notes: yup.string(),
-  followUpRequired: yup.boolean(),
-  followUpDate: yup.date().when('followUpRequired', {
-    is: true,
-    then: yup.date().required('Follow-up date is required when follow-up is needed'),
-    otherwise: yup.date()
-  }),
-  priority: yup.string().required('Priority is required'),
-  handledBy: yup.string().required('Handled by is required')
-});
 
 interface PhoneCall {
   _id: string;
   callerName: string;
   callerPhone: string;
-  callerEmail?: string;
   callType: 'Incoming' | 'Outgoing' | 'Missed';
   callDate: string;
   callTime?: string;
@@ -79,14 +52,13 @@ interface PhoneCall {
 }
 
 const PhoneCalls: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const notify = useRef<NotificationElement>();
   
   // State management
   const [phoneCalls, setPhoneCalls] = useState<PhoneCall[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCall, setEditingCall] = useState<PhoneCall | null>(null);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [callToDelete, setCallToDelete] = useState<string | null>(null);
   
@@ -104,26 +76,6 @@ const PhoneCalls: React.FC = () => {
     priority: '',
     followUpRequired: ''
   });
-
-  // Form setup
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-    formState: { errors }
-  } = useForm({
-    resolver: yupResolver(phoneCallSchema),
-    defaultValues: {
-      callType: 'Incoming',
-      priority: 'Medium',
-      followUpRequired: false,
-      handledBy: user?.firstname + ' ' + user?.lastname || ''
-    }
-  });
-
-  const followUpRequired = watch('followUpRequired');
 
   // Load phone calls on component mount and when filters change
   useEffect(() => {
@@ -145,61 +97,21 @@ const PhoneCalls: React.FC = () => {
       setPagination(response.pagination);
     } catch (error) {
       console.error('Error loading phone calls:', error);
-      notify.current?.showToast({
-        title: 'Error',
-        message: 'Failed to load phone calls',
-        type: 'error'
-      });
+      notify.current?.showToast();
     } finally {
       setLoading(false);
     }
   };
 
-  const onSubmit = async (data: any) => {
-    try {
-      if (editingCall) {
-        await phoneCallService.updatePhoneCall(editingCall._id, data);
-        notify.current?.showToast({
-          title: 'Success',
-          message: 'Phone call updated successfully',
-          type: 'success'
-        });
-      } else {
-        await phoneCallService.createPhoneCall(data);
-        notify.current?.showToast({
-          title: 'Success',
-          message: 'Phone call recorded successfully',
-          type: 'success'
-        });
-      }
-      
-      setDialogOpen(false);
-      setEditingCall(null);
-      reset();
-      loadPhoneCalls();
-    } catch (error) {
-      console.error('Error saving phone call:', error);
-      notify.current?.showToast({
-        title: 'Error',
-        message: 'Failed to save phone call',
-        type: 'error'
-      });
-    }
+  // Navigation functions
+  const handleAddPhoneCall = () => {
+    navigate('/home/phonecalls/add');
   };
 
-  const handleEdit = (call: PhoneCall) => {
-    setEditingCall(call);
-    setValue('callerName', call.callerName);
-    setValue('callerPhone', call.callerPhone);
-    setValue('callerEmail', call.callerEmail || '');
-    setValue('callType', call.callType);
-    setValue('purpose', call.purpose);
-    setValue('notes', call.notes || '');
-    setValue('followUpRequired', call.followUpRequired);
-    setValue('followUpDate', call.followUpDate || '');
-    setValue('priority', call.priority);
-    setValue('handledBy', call.handledBy);
-    setDialogOpen(true);
+  const handleEditPhoneCall = (phoneCall: PhoneCall) => {
+    navigate('/home/phonecalls/edit', {
+      state: { phoneCall }
+    });
   };
 
   const handleDelete = async () => {
@@ -207,40 +119,24 @@ const PhoneCalls: React.FC = () => {
     
     try {
       await phoneCallService.deletePhoneCall(callToDelete);
-      notify.current?.showToast({
-        title: 'Success',
-        message: 'Phone call deleted successfully',
-        type: 'success'
-      });
+      notify.current?.showToast();
       setDeleteDialog(false);
       setCallToDelete(null);
       loadPhoneCalls();
     } catch (error) {
       console.error('Error deleting phone call:', error);
-      notify.current?.showToast({
-        title: 'Error',
-        message: 'Failed to delete phone call',
-        type: 'error'
-      });
+      notify.current?.showToast();
     }
   };
 
   const handleCompleteFollowUp = async (callId: string) => {
     try {
       await phoneCallService.completeFollowUp(callId);
-      notify.current?.showToast({
-        title: 'Success',
-        message: 'Follow-up marked as completed',
-        type: 'success'
-      });
+      notify.current?.showToast();
       loadPhoneCalls();
     } catch (error) {
       console.error('Error completing follow-up:', error);
-      notify.current?.showToast({
-        title: 'Error',
-        message: 'Failed to complete follow-up',
-        type: 'error'
-      });
+      notify.current?.showToast();
     }
   };
 
@@ -290,15 +186,16 @@ const PhoneCalls: React.FC = () => {
           <h1 className="text-3xl font-bold">Phone Call Log</h1>
           <p className="text-muted-foreground">Manage and track phone calls</p>
         </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-wrap">
         <Button
-          onClick={() => {
-            setEditingCall(null);
-            reset();
-            setDialogOpen(true);
-          }}
-          className="flex items-center gap-2"
+          variant="primary"
+          className="mr-2 mb-2"
+          onClick={handleAddPhoneCall}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-4 w-4 mr-2" />
           Add Phone Call
         </Button>
       </div>
@@ -439,7 +336,7 @@ const PhoneCalls: React.FC = () => {
                             ) : (
                               <Button
                                 size="sm"
-                                variant="outline"
+                                variant="outline-success"
                                 onClick={() => handleCompleteFollowUp(call._id)}
                                 className="text-xs"
                               >
@@ -455,14 +352,15 @@ const PhoneCalls: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <Button
                             size="sm"
-                            variant="outline"
-                            onClick={() => handleEdit(call)}
+                            variant="outline-secondary"
+                            onClick={() => handleEditPhoneCall(call)}
+                            className="mr-1"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="outline-danger"
                             onClick={() => {
                               setCallToDelete(call._id);
                               setDeleteDialog(true);
@@ -480,171 +378,38 @@ const PhoneCalls: React.FC = () => {
               {/* Pagination */}
               {pagination.total_pages > 1 && (
                 <div className="mt-6">
-                  <Pagination
-                    currentPage={pagination.current_page}
-                    totalPages={pagination.total_pages}
-                    onPageChange={(page) => setPagination({ ...pagination, current_page: page })}
-                  />
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-gray-700">
+                      Showing {((pagination.current_page - 1) * pagination.per_page) + 1} to {Math.min(pagination.current_page * pagination.per_page, pagination.total)} of {pagination.total} results
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={() => setPagination(prev => ({ ...prev, current_page: Math.max(1, prev.current_page - 1) }))}
+                        disabled={pagination.current_page === 1}
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-sm text-gray-700">
+                        Page {pagination.current_page} of {pagination.total_pages}
+                      </span>
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={() => setPagination(prev => ({ ...prev, current_page: Math.min(prev.total_pages, prev.current_page + 1) }))}
+                        disabled={pagination.current_page === pagination.total_pages}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
             </>
           )}
         </div>
       </Card>
-
-      {/* Add/Edit Phone Call Dialog */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <Dialog.Panel>
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold">
-                {editingCall ? 'Edit Phone Call' : 'Add New Phone Call'}
-              </h3>
-              <Button
-                variant="outline"
-                onClick={() => setDialogOpen(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <FormLabel htmlFor="callerName">Caller Name *</FormLabel>
-                  <FormInput
-                    id="callerName"
-                    {...register('callerName')}
-                    placeholder="Enter caller name"
-                  />
-                  {errors.callerName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.callerName.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <FormLabel htmlFor="callerPhone">Phone Number *</FormLabel>
-                  <FormInput
-                    id="callerPhone"
-                    {...register('callerPhone')}
-                    placeholder="Enter phone number"
-                  />
-                  {errors.callerPhone && (
-                    <p className="text-red-500 text-sm mt-1">{errors.callerPhone.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <FormLabel htmlFor="callerEmail">Email</FormLabel>
-                  <FormInput
-                    id="callerEmail"
-                    type="email"
-                    {...register('callerEmail')}
-                    placeholder="Enter email address"
-                  />
-                  {errors.callerEmail && (
-                    <p className="text-red-500 text-sm mt-1">{errors.callerEmail.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <FormLabel htmlFor="callType">Call Type *</FormLabel>
-                  <FormSelect id="callType" {...register('callType')}>
-                    <option value="Incoming">Incoming</option>
-                    <option value="Outgoing">Outgoing</option>
-                    <option value="Missed">Missed</option>
-                  </FormSelect>
-                  {errors.callType && (
-                    <p className="text-red-500 text-sm mt-1">{errors.callType.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <FormLabel htmlFor="priority">Priority *</FormLabel>
-                  <FormSelect id="priority" {...register('priority')}>
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Urgent">Urgent</option>
-                  </FormSelect>
-                  {errors.priority && (
-                    <p className="text-red-500 text-sm mt-1">{errors.priority.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <FormLabel htmlFor="handledBy">Handled By *</FormLabel>
-                  <FormInput
-                    id="handledBy"
-                    {...register('handledBy')}
-                    placeholder="Enter handler name"
-                  />
-                  {errors.handledBy && (
-                    <p className="text-red-500 text-sm mt-1">{errors.handledBy.message}</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <FormLabel htmlFor="purpose">Purpose *</FormLabel>
-                <FormInput
-                  id="purpose"
-                  {...register('purpose')}
-                  placeholder="Enter call purpose"
-                />
-                {errors.purpose && (
-                  <p className="text-red-500 text-sm mt-1">{errors.purpose.message}</p>
-                )}
-              </div>
-
-              <div>
-                <FormLabel htmlFor="notes">Notes</FormLabel>
-                <FormTextarea
-                  id="notes"
-                  {...register('notes')}
-                  placeholder="Enter additional notes"
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex items-center gap-4">
-                <FormCheck
-                  id="followUpRequired"
-                  {...register('followUpRequired')}
-                  label="Follow-up Required"
-                />
-              </div>
-
-              {followUpRequired && (
-                <div>
-                  <FormLabel htmlFor="followUpDate">Follow-up Date</FormLabel>
-                  <FormInput
-                    id="followUpDate"
-                    type="date"
-                    {...register('followUpDate')}
-                  />
-                  {errors.followUpDate && (
-                    <p className="text-red-500 text-sm mt-1">{errors.followUpDate.message}</p>
-                  )}
-                </div>
-              )}
-
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">
-                  {editingCall ? 'Update' : 'Save'} Phone Call
-                </Button>
-              </div>
-            </form>
-          </div>
-        </Dialog.Panel>
-      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}>
@@ -656,7 +421,7 @@ const PhoneCalls: React.FC = () => {
             </p>
             <div className="flex justify-end gap-3">
               <Button
-                variant="outline"
+                variant="outline-secondary"
                 onClick={() => setDeleteDialog(false)}
               >
                 Cancel

@@ -26,8 +26,64 @@ export const CREATEREPLY = `${BASE_LOCAL_URL}replies`;
 export const CERTIFICATES = `${BASE_LOCAL_URL}certificates`;
 export const COHORTS = `${BASE_LOCAL_URL}cohorts`;
 export const FRONTOFFICE = `${BASE_LOCAL_URL}front-office`; 
-export const PHONECALLS = `${BASE_LOCAL_URL}phone-calls`; 
+export const PHONECALLS = `${BASE_LOCAL_URL}phone-calls`;
+export const PORTFOLIOSUMMARY = `${BASE_LOCAL_URL}portfolio-summary`; 
 
+// Google OAuth 2.0 URLs
+export const GOOGLE_OAUTH = {
+  // Authorization URL for Google OAuth 2.0
+  AUTH_URL: 'https://accounts.google.com/o/oauth2/v2/auth',
+  
+  // Token exchange URL
+  TOKEN_URL: 'https://oauth2.googleapis.com/token',
+  
+  // Revoke access URL
+  REVOKE_URL: 'https://oauth2.googleapis.com/revoke',
+  
+  // User info endpoint
+  USER_INFO_URL: 'https://www.googleapis.com/oauth2/v2/userinfo',
+  
+  // Google Drive API endpoints
+  DRIVE_API_BASE: 'https://www.googleapis.com/drive/v3',
+  DRIVE_UPLOAD_BASE: 'https://www.googleapis.com/upload/drive/v3',
+  
+  // Discovery document URL
+  DISCOVERY_DOC: 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
+  
+  // OAuth 2.0 Scopes
+  SCOPES: {
+    // Read-only access to user's basic info
+    PROFILE: 'https://www.googleapis.com/auth/userinfo.profile',
+    EMAIL: 'https://www.googleapis.com/auth/userinfo.email',
+    
+    // Google Drive scopes
+    DRIVE_FILE: 'https://www.googleapis.com/auth/drive.file',
+    DRIVE_METADATA: 'https://www.googleapis.com/auth/drive.metadata.readonly',
+    DRIVE_READONLY: 'https://www.googleapis.com/auth/drive.readonly',
+    DRIVE: 'https://www.googleapis.com/auth/drive',
+    
+    // Combined scopes for file operations
+    DRIVE_UPLOAD: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly'
+  }
+};
+
+// Google API endpoints
+export const GOOGLE_APIS = {
+  // Google Drive API
+  DRIVE: {
+    FILES: 'https://www.googleapis.com/drive/v3/files',
+    ABOUT: 'https://www.googleapis.com/drive/v3/about',
+    UPLOAD: 'https://www.googleapis.com/upload/drive/v3/files'
+  },
+  
+  // OAuth 2.0
+  OAUTH: {
+    AUTH: 'https://accounts.google.com/o/oauth2/v2/auth',
+    TOKEN: 'https://oauth2.googleapis.com/token',
+    REVOKE: 'https://oauth2.googleapis.com/revoke',
+    USERINFO: 'https://www.googleapis.com/oauth2/v2/userinfo'
+  }
+};
 
 export const ENROLLMENT = `${BASE_URL}portal/enrollment`;
 export const ASSESSMENT = `${BASE_URL}portal/assessment`;

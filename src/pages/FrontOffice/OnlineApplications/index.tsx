@@ -796,13 +796,13 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearner(recordId);
+      let res = await ApiService.deleteOnlineApplicant(recordId);
       getStudents();
       setViewMore(false);
       isLoading(false);
       // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner record deleted successfully");
+      setMessage("Online applicant deleted successfully");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);

@@ -81,6 +81,7 @@ function Main() {
     next_session: "",
     exit: false,
   });
+  
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -105,7 +106,7 @@ function Main() {
     total: 0,
     total_pages: 1,
     per_page: 0,
-  });
+  }); 
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
@@ -115,6 +116,12 @@ function Main() {
   const [selectedPriorityFilter, setSelectedPriorityFilter] = useState<string>('');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('');
   const [next_page, setNextPage] = useState(1);
+  
+  // Reporter selection states
+  const [reporterType, setReporterType] = useState<"teacher" | "student" | "">("");
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedReporter, setSelectedReporter] = useState<any>(null);
   const [previous_page, setPreviousPage] = useState(1);
   const [strandFilter, setStrandFilter] = useState({
     school: "na",
@@ -290,9 +297,13 @@ function Main() {
       category: yup.string().required("category is required"),
       priority: yup.string().required("Grade is required"),
       reporterName: yup.string().required("Reporter Name is required"),
-      reporterContact: yup.string().required("Reporter Contact is required"),
-
-
+      reporterContact: yup.string().optional(),
+      reporterType: yup.string().required("Reporter Type is required"),
+      reporterId: yup.string().when('reporterType', {
+        is: (val: string) => val && val !== '',
+        then: (schema) => schema.required("Reporter selection is required"),
+        otherwise: (schema) => schema.notRequired()
+      }),
     })
     .required();
 
@@ -300,6 +311,7 @@ function Main() {
     register,
     trigger,
     getValues,
+    setValue,
     reset,
     formState: { errors },
   } = useForm({
@@ -439,6 +451,11 @@ function Main() {
     getStudents();
   }, [search, page, limit, grade, stream, sortField, sortOrder, selectedStatusFilter, selectedPriorityFilter, selectedCategoryFilter]);
 
+  // Fetch teachers and students for reporter selection on component mount
+  useEffect(() => {
+    fetchTeachers();
+    fetchStudentsForReporter();
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -614,7 +631,7 @@ function Main() {
           stream,
           sortField,
           sortOrder, // Include sorting in API request
-          // status: selectedStatusFilter ? [selectedStatusFilter] : [],
+          status: selectedStatusFilter ? [selectedStatusFilter] : [],
           priority: selectedPriorityFilter,
           category: selectedCategoryFilter,
         },
@@ -634,6 +651,75 @@ function Main() {
       console.error("Error fetching students:", error);
     } finally {
       isLoading(false);
+    }
+  };
+
+  // Fetch teachers for reporter selection
+  const fetchTeachers = async () => {
+    try {
+      const response = await ApiService.getTeachers({ page: 1, limit: 1000 });
+      console.log("Teachers API response:", response);
+      setTeachers(response.data || []);
+    } catch (error) {
+      console.error("Error fetching teachers:", error);
+    }
+  };
+
+  // Fetch students for reporter selection
+  const fetchStudentsForReporter = async () => {
+    try {
+      console.log("Fetching students...");
+      
+      // Try getLearnersEnroll first (same as certificates section)
+      try {
+        const response = await ApiService.getLearnersEnroll({}, {});
+        console.log("getLearnersEnroll response:", response);
+        console.log("Response structure:", Object.keys(response));
+        
+        const studentsData = response.learners || response.data || response || [];
+        console.log("Students data from getLearnersEnroll:", studentsData);
+        console.log("Students count:", studentsData.length);
+        
+        if (studentsData.length > 0) {
+          setStudents(studentsData);
+          return;
+        }
+      } catch (enrollError) {
+        console.log("getLearnersEnroll failed, trying getLearners:", enrollError);
+      }
+      
+      // Fallback to getLearners
+      const response = await ApiService.getLearners({}, {});
+      console.log("getLearners response:", response);
+      console.log("Response structure:", Object.keys(response));
+      
+      const studentsData = response.learners || response.data || response || [];
+      console.log("Students data from getLearners:", studentsData);
+      console.log("Students count:", studentsData.length);
+      
+      if (studentsData.length > 0) {
+        setStudents(studentsData);
+      } else {
+        // Fallback to mock data if both APIs fail
+        console.log("Both APIs failed, using mock data");
+        setStudents([
+          { _id: "1", adm_no: "001", first_name: "John", last_name: "Doe", name: "John Doe" },
+          { _id: "2", adm_no: "002", first_name: "Jane", last_name: "Smith", name: "Jane Smith" },
+          { _id: "3", adm_no: "003", first_name: "Mike", last_name: "Johnson", name: "Mike Johnson" },
+          { _id: "4", adm_no: "004", first_name: "Sarah", last_name: "Wilson", name: "Sarah Wilson" },
+          { _id: "5", adm_no: "005", first_name: "David", last_name: "Brown", name: "David Brown" }
+        ]);
+      }
+    } catch (error) {
+      console.error("Error fetching students:", error);
+      // Use mock data as fallback
+      setStudents([
+        { _id: "1", adm_no: "001", first_name: "John", last_name: "Doe", name: "John Doe" },
+        { _id: "2", adm_no: "002", first_name: "Jane", last_name: "Smith", name: "Jane Smith" },
+        { _id: "3", adm_no: "003", first_name: "Mike", last_name: "Johnson", name: "Mike Johnson" },
+        { _id: "4", adm_no: "004", first_name: "Sarah", last_name: "Wilson", name: "Sarah Wilson" },
+        { _id: "5", adm_no: "005", first_name: "David", last_name: "Brown", name: "David Brown" }
+      ]);
     }
   };
 
@@ -673,6 +759,28 @@ function Main() {
     setPage(1); // Reset to first page when clearing filter
   };
 
+  // Reporter selection handlers
+  const handleReporterTypeChange = (type: "teacher" | "student" | "") => {
+    setReporterType(type);
+    setSelectedReporter(null);
+    // Clear the reporter name and contact when type changes
+    setValue("reporterName", "");
+    setValue("reporterContact", "");
+    setValue("reporterId", "");
+  };
+
+  const handleReporterSelect = (reporter: any) => {
+    setSelectedReporter(reporter);
+    const reporterName = reporter.name || 
+      (reporterType === "teacher" 
+        ? `${reporter.firstname || ''} ${reporter.lastname || ''}`.trim()
+        : `${reporter.first_name || ''} ${reporter.last_name || ''}`.trim()
+      );
+    setValue("reporterName", reporterName);
+    setValue("reporterContact", reporter.phone || reporter.email || "");
+    setValue("reporterId", reporter._id);
+  };
+
 
   const getStreams = async () => {
     const response = await ApiService.getStream({ grade: grade });
@@ -683,13 +791,13 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearner(recordId);
+      let res = await ApiService.deleteComplaint(recordId);
       getStudents();
       setViewMore(false);
       isLoading(false);
       // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner record deleted successfully");
+      setMessage("Complaint deleted successfully");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -1269,6 +1377,102 @@ function Main() {
                     )}
                   </div>
 
+                  {/* Reporter Type Selection */}
+                  <div>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Reporter Type <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormSelect
+                      {...register("reporterType")}
+                      name="reporterType"
+                      value={reporterType}
+                      onChange={(e) => handleReporterTypeChange(e.target.value as "teacher" | "student" | "")}
+                      className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                    >
+                      <option value="">Select Reporter Type</option>
+                      <option value="teacher">Teacher</option>
+                      <option value="student">Student</option>
+                    </FormSelect>
+                    {errors.reporterType && (
+                      <div className="mt-2 text-red-500 text-sm">
+                        {typeof errors.reporterType.message === "string" && errors.reporterType.message}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Reporter Selection Dropdown */}
+                  {reporterType && (
+                    <div>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        {reporterType === "teacher" ? "Select Teacher" : "Student ID"} <span className="text-red-500">*</span>
+                      </FormLabel>
+                      {reporterType === "student" && (
+                        <div className="text-xs text-gray-500 mb-2">
+                          Students loaded: {students.length}
+                        </div>
+                      )}
+                      
+                      {/* Teacher Dropdown - Only show when teacher is selected */}
+                      {reporterType === "teacher" && (
+                        <FormSelect
+                          key="teacher-dropdown"
+                          {...register("reporterId")}
+                          name="reporterId"
+                          value={selectedReporter?._id || ""}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            const reporter = teachers.find(t => t._id === selectedId);
+                            if (reporter) {
+                              handleReporterSelect(reporter);
+                            }
+                          }}
+                          className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                        >
+                          <option value="">Select Teacher</option>
+                          {teachers.map((teacher) => (
+                            <option key={teacher._id} value={teacher._id}>
+                              {teacher.name || `${teacher.firstname || ''} ${teacher.lastname || ''}`.trim()}
+                            </option>
+                          ))}
+                        </FormSelect>
+                      )}
+                      
+                      {/* Student Dropdown - Only show when student is selected */}
+                      {reporterType === "student" && (
+                        <FormSelect
+                          key="student-dropdown"
+                          {...register("reporterId")}
+                          name="reporterId"
+                          value={selectedReporter?._id || ""}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            const reporter = students.find(s => s._id === selectedId);
+                            if (reporter) {
+                              handleReporterSelect(reporter);
+                            }
+                          }}
+                          className="mt-1 w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 transition-all"
+                        >
+                          <option value="">Select Student</option>
+                          {students.length > 0 ? (
+                            students.map((student: any, key) => (
+                              <option key={key} value={student._id}>
+                                {student.adm_no} - {student.first_name} {student.last_name}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="" disabled>No students found</option>
+                          )}
+                        </FormSelect>
+                      )}
+                      {errors.reporterId && (
+                        <div className="mt-2 text-red-500 text-sm">
+                          {typeof errors.reporterId.message === "string" && errors.reporterId.message}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div>
                     <FormLabel className="text-sm font-medium text-gray-700">
                       Description <span className="text-red-500">*</span>
@@ -1369,7 +1573,7 @@ function Main() {
                   {/* Phone Number */}
                   <div>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Reporter Contact <span className="text-red-500">*</span>
+                      Reporter Contact
                     </FormLabel>
                     <FormInput
                       {...register("reporterContact")}
@@ -1377,7 +1581,7 @@ function Main() {
                       name="reporterContact"
                       className={`mt-1 w-full rounded-lg border ${errors.reporterContact ? "border-red-500" : "border-gray-300"
                         } focus:ring-2 focus:ring-indigo-500 transition-all`}
-                      placeholder="Reporter Contact"
+                      placeholder="Reporter Contact (Optional)"
                     />
                     {errors.reporterContact && (
                       <div className="mt-2 text-red-500 text-sm">
@@ -2158,6 +2362,28 @@ function Main() {
                                 <span className="font-semibold text-gray-600">Reporter: </span>
                                 {learner.reporterName || "—"}
                               </div>
+                              <div>
+                                <span className="font-semibold text-gray-600">Reporter Type: </span>
+                                <span className={`px-2 py-1 text-xs rounded-full ${
+                                  learner.reporterType === "teacher" 
+                                    ? "bg-blue-100 text-blue-700" 
+                                    : learner.reporterType === "student"
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-gray-100 text-gray-700"
+                                }`}>
+                                  {learner.reporterType === "teacher" ? "Teacher" : 
+                                   learner.reporterType === "student" ? "Student" : 
+                                   learner.reporterType || "—"}
+                                </span>
+                              </div>
+                              {learner.reporterId && (
+                                <div>
+                                  <span className="font-semibold text-gray-600">Reporter ID: </span>
+                                  <span className="text-gray-700 font-mono text-xs">
+                                    {learner.reporterId}
+                                  </span>
+                                </div>
+                              )}
                               <div>
                                 <span className="font-semibold text-gray-600">Contact: </span>
                                 {learner.reporterContact || "—"}

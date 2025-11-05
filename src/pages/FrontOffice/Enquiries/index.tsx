@@ -289,7 +289,6 @@ function Main() {
   const [previous_page, setPreviousPage] = useState(1);
   
   // Filter states
-  const [selectedGradeFilter, setSelectedGradeFilter] = useState<string>('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('');
   const [selectedSourceFilter, setSelectedSourceFilter] = useState<string>('');
   const [strandFilter, setStrandFilter] = useState({
@@ -556,7 +555,7 @@ function Main() {
   useEffect(() => {
     console.log("getStudents called with debouncedSearch:", debouncedSearch);
     getStudents();
-  }, [debouncedSearch, page, limit, grade, stream, sortField, sortOrder, selectedGradeFilter, selectedStatusFilter, selectedSourceFilter]);
+  }, [debouncedSearch, page, limit, grade, stream, sortField, sortOrder, selectedStatusFilter, selectedSourceFilter]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -712,7 +711,7 @@ function Main() {
         page,
         search: debouncedSearch,
         limit,
-        grade: selectedGradeFilter || grade,
+        grade: grade,
         stream,
         sortField,
         sortOrder, // Include sorting in API request
@@ -751,16 +750,6 @@ function Main() {
   };
 
   // Filter handler functions
-  const handleGradeFilterChange = (grade: string) => {
-    setSelectedGradeFilter(grade);
-    setPage(1); // Reset to first page when filtering
-  };
-
-  const clearGradeFilter = () => {
-    setSelectedGradeFilter('');
-    setPage(1); // Reset to first page when clearing filter
-  };
-
   const handleStatusFilterChange = (status: string) => {
     setSelectedStatusFilter(status);
     setPage(1); // Reset to first page when filtering
@@ -790,13 +779,12 @@ function Main() {
   const deleteRecord = async () => {
     isLoading(true);
     try {
-      let res = await ApiService.deleteLearner(recordId);
+      let res = await ApiService.deleteEnquiry(recordId);
       getStudents();
       setViewMore(false);
       isLoading(false);
-      // setConfirmDelete(false);
       setSuccess(true);
-      setMessage("Learner record deleted successfully");
+      setMessage("Enquiry deleted successfully");
       notify.current?.showToast();
     } catch (error: any) {
       isLoading(false);
@@ -1917,31 +1905,6 @@ function Main() {
                 )}
               </div>
               
-              {/* Grade Filter Dropdown */}
-              <div className="relative w-48">
-                <FormSelect
-                  value={selectedGradeFilter}
-                  onChange={(e) => handleGradeFilterChange(e.target.value)}
-                  className={`w-48 !box ${selectedGradeFilter ? 'border-blue-500 bg-blue-50' : ''}`}
-                >
-                  <option value="">All Grades</option>
-                  {grades.map((grade: any) => (
-                    <option key={grade._id} value={grade.name}>
-                      {grade.name}
-                    </option>
-                  ))}
-                </FormSelect>
-                {selectedGradeFilter && (
-                  <button
-                    onClick={clearGradeFilter}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700 transition-colors"
-                    title="Clear filter"
-                  >
-                    <Lucide icon="X" className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
               {/* Status Filter Dropdown */}
               <div className="relative w-48">
                 <FormSelect
@@ -1991,15 +1954,8 @@ function Main() {
               </div>
               
               {/* Active Filter Indicator */}
-              {(selectedGradeFilter || selectedStatusFilter || selectedSourceFilter) && (
+              {(selectedStatusFilter || selectedSourceFilter) && (
                 <div className="flex items-center space-x-3 flex-wrap">
-                  {selectedGradeFilter && (
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-blue-600 font-medium">
-                        Grade: {selectedGradeFilter}
-                      </span>
-                    </div>
-                  )}
                   {selectedStatusFilter && (
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-green-600 font-medium">

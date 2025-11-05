@@ -20,6 +20,10 @@ import LoadingIcon from "../../../base-components/LoadingIcon";
 import Pagination from "../../../base-components/Pagination";
 import Dropzone from "dropzone";
 import * as ApiService from "../../../services/auth";
+import GoogleDriveUpload from '../../../components/GoogleDriveUpload';
+import ImageDriveUpload from '../../../components/ImageDriveUpload';
+import { GoogleDriveFile } from '../../../utils/googleDriveConfig';
+import googleImageUploadService from '../../../services/googleImageUploadService';
 
 // Validation schema for project evidence submission
 const projectEvidenceSchema = yup.object({
@@ -34,12 +38,6 @@ const projectEvidenceSchema = yup.object({
   student: yup.string().required("Student selection is required"),
 });
 
-// Validation schema for teacher comments and ratings
-const teacherFeedbackSchema = yup.object({
-  comment: yup.string().required("Comment is required"),
-  rating: yup.number().required("Rating is required").min(1).max(5),
-  authenticityApproved: yup.boolean(),
-});
 
 interface ProjectEvidence {
   _id: string;
@@ -60,6 +58,14 @@ interface ProjectEvidence {
   pci: string;
   evidenceType: 'photo' | 'video';
   mediaUrl: string;
+  googleDriveFiles?: Array<{
+    mediaUrl: string;
+    googleDriveUrl: string;
+    googleDriveFileId: string;
+    fileType: string;
+  }>;
+  googleDriveUrl?: string;
+  googleDriveFileId?: string;
   cloudinaryData?: {
     public_id: string;
     secure_url: string;
@@ -130,7 +136,6 @@ const ProjectsModule = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(false);
   const [submissionModal, setSubmissionModal] = useState(false);
-  const [feedbackModal, setFeedbackModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectEvidence | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -155,8 +160,22 @@ const ProjectsModule = () => {
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [viewModal, setViewModal] = useState(false);
   const [selectedFileForView, setSelectedFileForView] = useState<{url: string, type: string, title: string} | null>(null);
+  const [googleDriveUploadModal, setGoogleDriveUploadModal] = useState(false);
+  const [viewDetailsTab, setViewDetailsTab] = useState<'basic' | 'feedback' | 'evidences'>('basic');
 
   const notificationRef = useRef<NotificationElement>(null);
+
+  // Google Drive upload handlers
+  const handleGoogleDriveUploadSuccess = (file: GoogleDriveFile) => {
+    console.log('File uploaded to Google Drive:', file);
+    // You can add additional logic here, like updating the UI or showing a success message
+    setGoogleDriveUploadModal(false);
+  };
+
+  const handleGoogleDriveUploadError = (error: string) => {
+    console.error('Google Drive upload error:', error);
+    // You can add additional error handling here, like showing an error notification
+  };
 
   const {
     register: registerSubmission,
@@ -168,15 +187,6 @@ const ProjectsModule = () => {
     resolver: yupResolver(projectEvidenceSchema),
   });
 
-  const {
-    register: registerFeedback,
-    handleSubmit: handleFeedbackSubmit,
-    formState: { errors: feedbackErrors },
-    reset: resetFeedback,
-    setValue: setFeedbackValue,
-  } = useForm({
-    resolver: yupResolver(teacherFeedbackSchema),
-  });
 
   // Fetch data
   const fetchData = async () => {
@@ -444,7 +454,36 @@ const ProjectsModule = () => {
     }
 
     setLoading(true);
+    let googleDriveUrl = null;
+
     try {
+      // Check if signed in to Google Drive
+      const isSignedIn = googleImageUploadService.isSignedIn();
+      const selectedStudent = students.find(s => s._id === selectedStudentId);
+      const studentName = selectedStudent ? `${selectedStudent.first_name}_${selectedStudent.last_name}` : 'Unknown';
+
+      // Upload to Google Drive if signed in
+      if (isSignedIn && selectedStudent) {
+        try {
+          console.log('Uploading to Google Drive with student name:', studentName);
+          
+          // Get the elimurise folder (will create if doesn't exist)
+          const elimuriseFolderId = await googleImageUploadService.getOrCreateElimuriseFolder();
+          
+          // Upload to a subfolder with student name
+          const studentFolderId = await googleImageUploadService.getOrCreateFolder(studentName, elimuriseFolderId);
+          
+          // Upload the file
+          const uploadedFile = await googleImageUploadService.uploadImage(selectedFile, studentFolderId);
+          googleDriveUrl = uploadedFile.webViewLink;
+          
+          console.log('File uploaded to Google Drive:', googleDriveUrl);
+        } catch (error: any) {
+          console.error('Error uploading to Google Drive:', error);
+          // Continue with the submission even if Google Drive upload fails
+        }
+      }
+
       const formData = new FormData();
       formData.append('title', data.title);
       formData.append('description', data.description);
@@ -473,7 +512,12 @@ const ProjectsModule = () => {
       formData.append('studentName', data.studentName);
       formData.append('studentId', data.studentId);
       formData.append('media', selectedFile);
-      formData.append('uploadToCloudinary', 'true'); // Use Cloudinary instead of Google Drive
+      formData.append('uploadToCloudinary', 'true'); // Always use Cloudinary for backup
+      
+      // Add Google Drive URL if available
+      if (googleDriveUrl) {
+        formData.append('googleDriveUrl', googleDriveUrl);
+      }
 
       const response = await fetch(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences`, {
         method: 'POST',
@@ -505,52 +549,12 @@ const ProjectsModule = () => {
     }
   };
 
-  // Submit teacher feedback
-  const onSubmitFeedback = async (data: any) => {
-    if (!selectedProject) return;
-
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences/${selectedProject._id}/feedback`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (response.ok) {
-        notificationRef.current?.showToast();
-        setFeedbackModal(false);
-        setSelectedProject(null);
-        resetFeedback();
-        fetchProjectEvidences(currentPage);
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit feedback");
-      }
-    } catch (error: any) {
-      console.error("Error submitting feedback:", error);
-      notificationRef.current?.showToast();
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle feedback submission
   const handleFeedback = (project: ProjectEvidence) => {
-    setSelectedProject(project);
-    if (project.teacherFeedback && project.teacherFeedback.length > 0) {
-      // Get the latest feedback
-      const latestFeedback = project.teacherFeedback[project.teacherFeedback.length - 1];
-      setFeedbackValue("comment", latestFeedback.comment);
-      setFeedbackValue("rating", latestFeedback.rating);
-      setFeedbackValue("authenticityApproved", latestFeedback.authenticityApproved);
-    }
-    setFeedbackModal(true);
+    navigate('/home/projects/teacher-feedback', {
+      state: { project }
+    });
   };
 
   const pciOptions = [
@@ -705,11 +709,19 @@ const ProjectsModule = () => {
             <Button
               variant="primary"
               className="mr-2 mb-2"
-              onClick={() => setActiveTab("submit")}
+              onClick={() => navigate('/projectsmodule/create')}
             >
               <Lucide icon="Plus" className="w-4 h-4 mr-2" />
               Submit Project Evidence
             </Button>
+            {/* <Button
+              variant="outline-primary"
+              className="mr-2 mb-2"
+              onClick={() => setGoogleDriveUploadModal(true)}
+            >
+              <Lucide icon="Upload" className="w-4 h-4 mr-2" />
+              Upload to Google Drive
+            </Button> */}
           </div>
 
           {/* Projects Table */}
@@ -720,9 +732,6 @@ const ProjectsModule = () => {
                   <Table.Tr>
                     <Table.Th className="whitespace-nowrap">Title</Table.Th>
                     <Table.Th className="whitespace-nowrap">Student</Table.Th>
-                    <Table.Th className="whitespace-nowrap">PCI</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Type</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Status</Table.Th>
                     <Table.Th className="whitespace-nowrap">Submitted</Table.Th>
                     <Table.Th className="text-center whitespace-nowrap">Actions</Table.Th>
                   </Table.Tr>
@@ -730,13 +739,13 @@ const ProjectsModule = () => {
                 <Table.Tbody>
                   {loading ? (
                     <Table.Tr>
-                      <Table.Td colSpan={7} className="text-center">
+                      <Table.Td colSpan={4} className="text-center">
                         <LoadingIcon icon="oval" className="w-8 h-8" />
                       </Table.Td>
                     </Table.Tr>
                   ) : projectEvidences.length === 0 ? (
                     <Table.Tr>
-                      <Table.Td colSpan={7} className="text-center">
+                      <Table.Td colSpan={4} className="text-center">
                         No project evidences found
                       </Table.Td>
                     </Table.Tr>
@@ -755,31 +764,7 @@ const ProjectsModule = () => {
                               <div className="text-gray-500">{project.studentId || 'N/A'}</div>
                             </div>
                           </Table.Td>
-                          <Table.Td>
-                            <span className="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary">
-                              {project.pci}
-                            </span>
-                          </Table.Td>
-                          <Table.Td>
-                            <span className="px-2 py-1 text-xs rounded-full bg-info/10 text-info">
-                              {project.evidenceType}
-                            </span>
-                          </Table.Td>
-                          <Table.Td>
-                            <span
-                              className={`px-2 py-1 text-xs rounded-full ${
-                                project.status === 'approved'
-                                  ? "bg-success/10 text-success"
-                                  : project.status === 'rejected'
-                                  ? "bg-danger/10 text-danger"
-                                  : project.status === 'reviewed'
-                                  ? "bg-warning/10 text-warning"
-                                  : "bg-info/10 text-info"
-                              }`}
-                            >
-                              {project.status}
-                            </span>
-                          </Table.Td>
+                          
                           <Table.Td>
                             <span className="text-sm">
                               {new Date(project.submittedAt).toLocaleDateString()}
@@ -801,9 +786,9 @@ const ProjectsModule = () => {
                                 size="sm"
                                 className="mr-2"
                                 onClick={() => {
-                                  setSelectedProject(project);
-                                  resetFeedback(); // Reset form for new feedback
-                                  setFeedbackModal(true);
+                                  navigate('/home/projects/teacher-feedback', {
+                                    state: { project }
+                                  });
                                 }}
                                 title="Add Feedback"
                               >
@@ -855,6 +840,52 @@ const ProjectsModule = () => {
       {/* Submit Project Evidence Tab */}
       {activeTab === "submit" && (
         <div className="mt-5">
+          {/* Google Drive Sign In Section */}
+          <div className="bg-white shadow-md rounded-lg p-4 mb-4">
+            {!googleImageUploadService.isSignedIn() && (
+              <div className="flex items-center justify-between">
+                <div>
+                  <h5 className="font-semibold text-gray-700 mb-2">Google Drive Integration</h5>
+                  <p className="text-sm text-gray-600">
+                    Sign in to Google Drive to save project files with student names automatically.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => {
+                    const authUrl = googleImageUploadService.generateAuthUrl();
+                    window.location.href = authUrl;
+                  }}
+                  variant="primary"
+                >
+                  <Lucide icon="LogIn" className="w-4 h-4 mr-2" />
+                  Sign In to Google Drive
+                </Button>
+              </div>
+            )}
+            {googleImageUploadService.isSignedIn() && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Lucide icon="CheckCircle" className="w-5 h-5 text-green-600" />
+                  <div>
+                    <h5 className="font-semibold text-gray-700">Signed in to Google Drive</h5>
+                    <p className="text-sm text-gray-600">
+                      Files will be automatically saved to your "elimurise" folder with student names.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => {
+                    googleImageUploadService.signOut();
+                    notificationRef.current?.showToast();
+                  }}
+                  variant="outline-secondary"
+                >
+                  Sign Out
+                </Button>
+              </div>
+            )}
+          </div>
+
           <div className="bg-white shadow-md rounded-lg p-6">
             <h4 className="font-bold mb-4">Submit Project Evidence</h4>
             <form onSubmit={handleSubmissionSubmit(onSubmitProjectEvidence)}>
@@ -1161,6 +1192,29 @@ const ProjectsModule = () => {
           <Dialog.Title>Project Evidence Details</Dialog.Title>
           {selectedProject && (
             <div className="mt-4">
+              {/* Tabs for Basic Info / Teacher Feedback / Evidences */}
+              <div className="flex border-b mb-4">
+                <button
+                  className={`px-4 py-2 -mb-px border-b-2 ${viewDetailsTab === 'basic' ? 'border-primary text-primary' : 'border-transparent text-gray-600'}`}
+                  onClick={() => setViewDetailsTab('basic')}
+                >
+                  Basic Info
+                </button>
+                <button
+                  className={`ml-4 px-4 py-2 -mb-px border-b-2 ${viewDetailsTab === 'feedback' ? 'border-primary text-primary' : 'border-transparent text-gray-600'}`}
+                  onClick={() => setViewDetailsTab('feedback')}
+                >
+                  Teacher Feedback
+                </button>
+                <button
+                  className={`ml-4 px-4 py-2 -mb-px border-b-2 ${viewDetailsTab === 'evidences' ? 'border-primary text-primary' : 'border-transparent text-gray-600'}`}
+                  onClick={() => setViewDetailsTab('evidences')}
+                >
+                  Evidences
+                </button>
+              </div>
+
+              {viewDetailsTab === 'basic' && (
               <div className="grid grid-cols-1 gap-4">
                 <div>
                   <h3 className="font-semibold text-lg">{selectedProject.title}</h3>
@@ -1216,9 +1270,13 @@ const ProjectsModule = () => {
                   )}
                 </div>
                 
-                {selectedProject.teacherFeedback && selectedProject.teacherFeedback.length > 0 && (
-                  <div className="border-t pt-4">
-                    <h4 className="font-medium">Teacher Feedback ({selectedProject.teacherFeedback.length}):</h4>
+              </div>
+              )}
+
+              {viewDetailsTab === 'feedback' && (
+                <div className="border-t pt-4">
+                  <h4 className="font-medium">Teacher Feedback ({selectedProject.teacherFeedback?.length || 0}):</h4>
+                  {selectedProject.teacherFeedback && selectedProject.teacherFeedback.length > 0 ? (
                     <div className="space-y-3 mt-3">
                       {selectedProject.teacherFeedback.map((feedback, index) => (
                         <div key={index} className="bg-gray-50 p-3 rounded-lg">
@@ -1233,11 +1291,7 @@ const ProjectsModule = () => {
                             <span className="text-sm">
                               Rating: {feedback.rating}/5
                             </span>
-                            <span className={`text-sm px-2 py-1 rounded ${
-                              feedback.authenticityApproved
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}>
+                            <span className={`text-sm px-2 py-1 rounded ${feedback.authenticityApproved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                               {feedback.authenticityApproved ? 'Approved' : 'Not Approved'}
                             </span>
                             <span className="text-xs text-gray-500">
@@ -1247,9 +1301,68 @@ const ProjectsModule = () => {
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div className="text-gray-600 mt-2">No feedback yet.</div>
+                  )}
               </div>
+              )}
+
+              {viewDetailsTab === 'evidences' && (
+                <div className="space-y-4">
+                  {/* Google Drive files grid for images */}
+                  {selectedProject.googleDriveFiles && selectedProject.googleDriveFiles.length > 0 ? (
+                    <>
+                      <h4 className="font-medium">Google Drive Files</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {selectedProject.googleDriveFiles.map((file, idx) => (
+                          <div key={file.googleDriveFileId || idx} className="border rounded-lg p-2">
+                            {file.fileType?.startsWith('image') ? (
+                              <img
+                                src={file.mediaUrl || file.googleDriveUrl}
+                                alt={selectedProject.title}
+                                className="w-full h-40 object-cover rounded"
+                                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                              />
+                            ) : file.fileType === 'application/pdf' ? (
+                              <a
+                                href={file.googleDriveUrl || file.mediaUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary underline block truncate"
+                              >
+                                View PDF
+                              </a>
+                            ) : (
+                              <a
+                                href={file.googleDriveUrl || file.mediaUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary underline block truncate"
+                              >
+                                Open File
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-gray-600">No Google Drive evidences available.</div>
+                  )}
+
+                  {/* Fallback single file link if present */}
+                  {!selectedProject.googleDriveFiles?.length && selectedProject.googleDriveUrl && (
+                    <a
+                      href={selectedProject.googleDriveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary underline"
+                    >
+                      Open Evidence in Google Drive
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           )}
           <div className="flex justify-end mt-6">
@@ -1264,61 +1377,6 @@ const ProjectsModule = () => {
         </Dialog.Panel>
       </Dialog>
 
-      {/* Teacher Feedback Modal */}
-      <Dialog open={feedbackModal} onClose={() => setFeedbackModal(false)}>
-        <Dialog.Panel>
-          <Dialog.Title>Add Teacher Feedback</Dialog.Title>
-          <form onSubmit={handleFeedbackSubmit(onSubmitFeedback)} className="mt-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <FormLabel htmlFor="comment">Comment *</FormLabel>
-                <FormTextarea
-                  id="comment"
-                  placeholder="Enter your feedback comment"
-                  {...registerFeedback("comment")}
-                />
-                {feedbackErrors.comment && (
-                  <div className="mt-1 text-danger">{String(feedbackErrors.comment.message)}</div>
-                )}
-              </div>
-              <div>
-                <FormLabel htmlFor="rating">Rating (1-5) *</FormLabel>
-                <FormSelect id="rating" {...registerFeedback("rating")}>
-                  <option value="">Select rating</option>
-                  <option value="1">1 - Poor</option>
-                  <option value="2">2 - Below Average</option>
-                  <option value="3">3 - Average</option>
-                  <option value="4">4 - Good</option>
-                  <option value="5">5 - Excellent</option>
-                </FormSelect>
-                {feedbackErrors.rating && (
-                  <div className="mt-1 text-danger">{String(feedbackErrors.rating.message)}</div>
-                )}
-              </div>
-              <div>
-                <FormLabel htmlFor="authenticityApproved">Authenticity Approved</FormLabel>
-                <FormSelect id="authenticityApproved" {...registerFeedback("authenticityApproved")}>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </FormSelect>
-              </div>
-            </div>
-            <div className="flex justify-end mt-6">
-              <Button
-                type="button"
-                variant="outline-secondary"
-                className="mr-2"
-                onClick={() => setFeedbackModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" disabled={loading}>
-                {loading ? <LoadingIcon icon="oval" className="w-4 h-4" /> : "Submit Feedback"}
-              </Button>
-            </div>
-          </form>
-        </Dialog.Panel>
-      </Dialog>
 
       {/* File View Modal */}
       <Dialog open={viewModal} onClose={() => setViewModal(false)}>
@@ -1388,6 +1446,15 @@ const ProjectsModule = () => {
               Close
             </Button>
           </div>
+        </Dialog.Panel>
+      </Dialog>
+
+      {/* Google Drive Upload Modal */}
+      <Dialog open={googleDriveUploadModal} onClose={() => setGoogleDriveUploadModal(false)}>
+        <Dialog.Panel>
+          <Dialog.Footer>
+      
+          </Dialog.Footer>
         </Dialog.Panel>
       </Dialog>
 

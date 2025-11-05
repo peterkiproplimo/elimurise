@@ -90,6 +90,8 @@ import FrontOfficeAnalytics from "../pages/FrontOffice/FrontOfficeDashboard/inde
 import Visitors from "../pages/FrontOffice/Visitors/index";
 import PhoneCalls from "../pages/FrontOffice/PhoneCalls/index";
 import Complaints from "../pages/FrontOffice/Complaints/index";
+import AddPhoneCall from "../pages/FrontOffice/AddPhoneCall/index";
+import EditPhoneCall from "../pages/FrontOffice/EditPhoneCall/index";
 import ExitedLearners from "../pages/Learners/exited";
 import Certificates from "../pages/Certificates/index";
 import OnlineRegistration from "../pages/Learners/onlineregistration";
@@ -99,7 +101,20 @@ import ProjectDetails from "../pages/Projects/ProjectDetails/index";
 import UploadConfig from "../pages/Projects/UploadConfig/index";
 // import Subjects from "../pages/Projects/Subjects/index";
 import Competencies from "../pages/Projects/Competencies/index";
+import EditCompetency from "../pages/Projects/EditCompetency/index";
+import ViewCompetency from "../pages/Projects/ViewCompetency/index";
+import PortfolioSummary from "../pages/Projects/PortfolioSummary/index";
+import PortfolioPreviewPage from "../pages/Projects/PortfolioSummary/PortfolioPreviewPage";
+import PortfolioGenerationForm from "../pages/Projects/PortfolioSummary/PortfolioGenerationForm";
+import PDFTestPage from "../pages/Projects/PortfolioSummary/PDFTestPage";
+import PortfolioPDFViewer from "../pages/Projects/PortfolioSummary/PortfolioPDFViewer";
+import TeacherFeedback from "../pages/Projects/TeacherFeedback/index";
+import GoogleDriveUploadPage from "../pages/Projects/GoogleDriveUpload/index";
+import GoogleOAuthRedirect from "../pages/GoogleOAuthRedirect";
+
 //inactive learners
+import CreateProjectEvidence from "../pages/Projects/ProjectsModule/createprojectEvidence";
+import GenerateGoogleSecrets from "../pages/Projects/ProjectsModule/generateGoogleSecrets";
 
 //nn
 function Router() {
@@ -122,8 +137,8 @@ function Router() {
           element: <FrontOfficeAnalytics />
         },
         {
-          path: "projectsmodule",
-          element: <ProjectsModule />
+          path: "projects/teacher-feedback",
+          element: <TeacherFeedback />
         },
         {
           path: "project-details/:id",
@@ -138,9 +153,26 @@ function Router() {
           element: <Competencies />
         },
         {
+          path: "competencies/edit",
+          element: <EditCompetency />
+        },
+        {
+          path: "competencies/view",
+          element: <ViewCompetency />
+        },
+        {
           path: "uploadconfig",
           element: <UploadConfig />
         },
+        {
+          path: "google-drive-upload",
+          element: <GoogleDriveUploadPage />
+        },
+        {
+          path: "oauthclientredirect",
+          element: <GoogleOAuthRedirect />
+        },
+      
         {
           path: "enquiries",
           element: <Enquiries />
@@ -152,6 +184,14 @@ function Router() {
         {
           path: "phonecalls",
           element: <PhoneCalls />
+        },
+        {
+          path: "phonecalls/add",
+          element: <AddPhoneCall />
+        },
+        {
+          path: "phonecalls/edit",
+          element: <EditPhoneCall />
         },
         {
           path: "complaints",
@@ -507,6 +547,40 @@ function Router() {
     {
       path: "/onlineregistration",
       element: <OnlineRegistration />,
+    },
+    // Portfolio Summary routes without authentication
+    {
+      path: "/portfolio-summary",
+      element: <PortfolioSummary />,
+    },
+    {
+      path: "/portfolio-summary/generate",
+      element: <PortfolioGenerationForm />,
+    },
+    {
+      path: "/portfolio-summary/pdf-test",
+      element: <PDFTestPage />,
+    },
+    {
+      path: "/portfolio-summary/pdf-viewer",
+      element: <PortfolioPDFViewer />,
+    },
+    {
+      path: "/portfolio-summary/preview",
+      element: <PortfolioPreviewPage />,
+    },
+    // Projects Module routes without authentication
+    {
+      path: "/projectsmodule",
+      element: <ProjectsModule />,
+    },
+    {
+      path: "/googleauthenticate",
+      element: <GenerateGoogleSecrets />,
+    },
+    {
+      path: "/projectsmodule/create",
+      element: <CreateProjectEvidence />,
     },
     {
       path: "/error-page",
