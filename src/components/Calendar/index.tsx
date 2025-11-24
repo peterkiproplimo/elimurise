@@ -5,12 +5,30 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import { DateClickArg } from "@fullcalendar/interaction";
+import { EventClickArg } from "@fullcalendar/core";
 // import DatesSetArg from "@fullcalendar/interaction/DatesSetArg";
 interface CalendarProps {
   initialDate?: string;
-  events?: Array<{ title: string; date: string; end?: string }>; // Adjusted 'start' to 'date' for consistency
+  events?: Array<{
+    id?: string;
+    title: string;
+    date?: string;
+    start?: string;
+    end?: string;
+    allDay?: boolean;
+    backgroundColor?: string;
+    borderColor?: string;
+    extendedProps?: Record<string, any>;
+  }>;
   onDateClick?: (dateStr: string) => void;
   onMonthChange?: (newDate: Date) => void; // Added for month navigation
+  onEventClick?: (eventInfo: {
+    id?: string;
+    title: string;
+    start?: string;
+    end?: string;
+    extendedProps?: Record<string, any>;
+  }) => void;
   className?: string;
 }
 
@@ -19,6 +37,7 @@ const Calendar: React.FC<CalendarProps> = ({
   events = [],
   onDateClick,
   onMonthChange,
+  onEventClick,
   className,
 }) => {
   const handleDateClick = (info: DateClickArg) => {
@@ -28,14 +47,6 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const handleDatesSet = (dateInfo: any) => {
-    const newMonthStart = new Date(
-      dateInfo.view.currentStart.getFullYear(),
-      dateInfo.view.currentStart.getMonth(),
-      1
-    );
-
-    // console.log("month chnaged", dateInfo.view);
-
     if (onMonthChange) {
       const newMonthStart = new Date(
         dateInfo.view.currentStart.getFullYear(),
@@ -46,16 +57,25 @@ const Calendar: React.FC<CalendarProps> = ({
     }
   };
 
-  const handleEventClick = (info: any) => {
-    console.log("cl.....", info.event.start);
+  const handleEventClick = (info: EventClickArg) => {
+    if (onEventClick) {
+      onEventClick({
+        id: info.event.id || undefined,
+        title: info.event.title,
+        start: info.event.startStr,
+        end: info.event.endStr,
+        extendedProps: info.event.extendedProps,
+      });
+      return;
+    }
+
     if (onDateClick && info.event.start) {
-      // Extract the local date in YYYY-MM-DD format
       const date = info.event.start;
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so +1
+      const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
       const dateStr = `${year}-${month}-${day}`;
-      onDateClick(dateStr); // Trigger handleDateClick with local date
+      onDateClick(dateStr);
     }
   };
   
@@ -80,7 +100,7 @@ const Calendar: React.FC<CalendarProps> = ({
         dayMaxEvents={3} // Limit events per day for cleaner look
         eventBackgroundColor="#6366f1" // Indigo base color
         eventBorderColor="#4f46e5"
-        eventClick={handleEventClick} // Ensures event clicks trigger handleDateClick
+        eventClick={handleEventClick} // Ensures event clicks trigger handleDateClick / custom handler
         eventTextColor="#ffffff"
         height="auto" // Responsive height
         drop={(info) => {

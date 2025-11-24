@@ -3,7 +3,7 @@
 
 // export const BASE_URL = "https://api.Elimuriselearning.co.ke/";
 export const BASE_URL = import.meta.env.VITE_API_ENDPOINT;
-export const BASE_LOCAL_URL = import.meta.env.VITE__LOCAL_API_ENDPOINT;
+export const BASE_LOCAL_URL = import.meta.env.VITE_API_ENDPOINT;
 export const IMG_URL = `${BASE_URL}portal`;
 //API Endpoints
 //devops has do it again
@@ -98,6 +98,7 @@ export const BEHAVIOUR = `${BASE_URL}portal/behaviour`;
 export const COMMENTS = `${BASE_URL}portal/comment`;
 export const PACKAGE = `${BASE_URL}portal/package`;
 export const MESSAGE = `${BASE_URL}portal/messages`;
+export const EVENTS = `${BASE_URL}portal/events`;
 export const SCHOOL_PATH = `${BASE_URL}portal`;
 
 export const MESSAGE_PARENT = `${BASE_URL}learner/messages`;

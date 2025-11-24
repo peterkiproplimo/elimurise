@@ -1664,7 +1664,7 @@ function Main() {
           </div>
 
           <div className="grid grid-cols-12 gap-6 mt-5">
-            <div className="col-span-12 overflow-auto  2xl:overflow-visible">
+            <div className="col-span-12 overflow-auto  2xl:overflow-visible pb-4">
               {loading ? (
                 <div className="flex flex-col items-center mt-5">
                   <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
@@ -1769,7 +1769,11 @@ function Main() {
                     </Table.Thead>
 
                     <Table.Tbody>
-                      {learners.map((learner: any, key) => (
+                      {learners.map((learner: any, key) => {
+                        const isLastRow = key === learners.length - 1;
+                        const isSecondLastRow = key === learners.length - 2;
+                        const shouldOpenUpward = isLastRow || isSecondLastRow;
+                        return (
                         <Table.Tr key={key}>
                           <Table.Td className="text-center">
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
@@ -1866,7 +1870,7 @@ function Main() {
                                 </Menu.Button>
                                 <Menu.Items
                                   className="w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 py-2 mt-2"
-                                  placement="bottom-end"
+                                  placement={shouldOpenUpward ? "top-end" : "bottom-end"}
                                 >
                                   <Menu.Item
                                     onClick={(e: any) => {
@@ -1931,7 +1935,7 @@ function Main() {
                             </div>
                           </Table.Td>
                         </Table.Tr>
-                      ))}
+                      )})}
                     </Table.Tbody>
                   </Table>
 

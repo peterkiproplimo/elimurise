@@ -59,7 +59,7 @@ const GenerateGoogleSecrets = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}google-config`,
+        `${import.meta.env.VITE_API_ENDPOINT}google-config`,
         {
           method: "GET",
           headers: {
@@ -86,7 +86,7 @@ const GenerateGoogleSecrets = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}google-config`,
+        `${import.meta.env.VITE_API_ENDPOINT}google-config`,
         {
           method: "POST",
           headers: {
@@ -161,7 +161,7 @@ const GenerateGoogleSecrets = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}google-config/exchange-code`,
+        `${import.meta.env.VITE_API_ENDPOINT}google-config/exchange-code`,
         {
           method: "POST",
           headers: {

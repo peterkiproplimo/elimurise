@@ -120,7 +120,7 @@ const Competencies = () => {
     try {
       // Fetch subjects
       const subjectsResponse = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}subjects?limit=1000&status=active`,
+        `${import.meta.env.VITE_API_ENDPOINT}subjects?limit=1000&status=active`,
         {
           method: "GET",
           headers: {
@@ -166,7 +166,7 @@ const Competencies = () => {
       if (filterSubject) params.append("subject", filterSubject);
 
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies?${params}`,
+        `${import.meta.env.VITE_API_ENDPOINT}competencies?${params}`,
         {
           method: "GET",
           headers: {
@@ -201,7 +201,7 @@ const Competencies = () => {
   const onSubmit = async (data: any) => {
     setLoading(true);
     try {
-      const url = `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies`;
+      const url = `${import.meta.env.VITE_API_ENDPOINT}competencies`;
       const method = "POST";
 
       // Prepare the data with subjectId and subjectName
@@ -260,7 +260,7 @@ const Competencies = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies/${competencyToDelete._id}`,
+        `${import.meta.env.VITE_API_ENDPOINT}competencies/${competencyToDelete._id}`,
         {
           method: "DELETE",
         }
@@ -288,7 +288,7 @@ const Competencies = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies/${competency._id}/toggle-status`,
+        `${import.meta.env.VITE_API_ENDPOINT}competencies/${competency._id}/toggle-status`,
         {
           method: "PATCH",
         }
@@ -473,34 +473,30 @@ const Competencies = () => {
       {/* Competencies Table */}
       <div className="mt-5">
         <div className="overflow-x-auto">
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th className="whitespace-nowrap">Code</Table.Th>
-                <Table.Th className="whitespace-nowrap">Name</Table.Th>
-                <Table.Th className="whitespace-nowrap">Category</Table.Th>
-                <Table.Th className="whitespace-nowrap">Level</Table.Th>
-                <Table.Th className="whitespace-nowrap">Domain</Table.Th>
-                <Table.Th className="whitespace-nowrap">Subject</Table.Th>
-                <Table.Th className="whitespace-nowrap">Status</Table.Th>
-                <Table.Th className="text-center whitespace-nowrap">Actions</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {loading ? (
+          {loading ? (
+            <div className="flex flex-col items-center mt-5">
+              <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+            </div>
+          ) : competencies.length === 0 ? (
+            <div className="flex flex-col items-center mt-10 bg-white p-8">
+              <p className="text-xl text-slate-500 ">No competencies found</p>
+            </div>
+          ) : (
+            <Table>
+              <Table.Thead>
                 <Table.Tr>
-                  <Table.Td colSpan={8} className="text-center">
-                    <LoadingIcon icon="oval" className="w-8 h-8" />
-                  </Table.Td>
+                  <Table.Th className="whitespace-nowrap">Code</Table.Th>
+                  <Table.Th className="whitespace-nowrap">Name</Table.Th>
+                  <Table.Th className="whitespace-nowrap">Category</Table.Th>
+                  <Table.Th className="whitespace-nowrap">Level</Table.Th>
+                  <Table.Th className="whitespace-nowrap">Domain</Table.Th>
+                  <Table.Th className="whitespace-nowrap">Subject</Table.Th>
+                  <Table.Th className="whitespace-nowrap">Status</Table.Th>
+                  <Table.Th className="text-center whitespace-nowrap">Actions</Table.Th>
                 </Table.Tr>
-              ) : competencies.length === 0 ? (
-                <Table.Tr>
-                  <Table.Td colSpan={8} className="text-center">
-                    No competencies found
-                  </Table.Td>
-                </Table.Tr>
-              ) : (
-                competencies.map((competency, index) => (
+              </Table.Thead>
+              <Table.Tbody>
+                {competencies.map((competency, index) => (
                   <Table.Tr key={competency._id}>
                     <Table.Td>{competency.code}</Table.Td>
                     <Table.Td>{competency.name}</Table.Td>
@@ -570,10 +566,10 @@ const Competencies = () => {
                       </div>
                     </Table.Td>
                   </Table.Tr>
-                ))
-              )}
-            </Table.Tbody>
-          </Table>
+                ))}
+              </Table.Tbody>
+            </Table>
+          )}
         </div>
 
         {/* Pagination */}

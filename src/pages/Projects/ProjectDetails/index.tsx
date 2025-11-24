@@ -113,9 +113,9 @@ const ProjectDetails = () => {
       try {
         setLoading(true);
         console.log('Fetching project with ID:', id);
-        console.log('API Endpoint:', `${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences/${id}`);
+        console.log('API Endpoint:', `${import.meta.env.VITE_API_ENDPOINT}project-evidences/${id}`);
         
-        const response = await fetch(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences/${id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_ENDPOINT}project-evidences/${id}`);
         console.log('Response status:', response.status);
         
         if (response.ok) {
@@ -144,7 +144,7 @@ const ProjectDetails = () => {
 
     try {
       setSubmittingFeedback(true);
-      const response = await fetch(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences/${project._id}/feedback`, {
+      const response = await fetch(`${import.meta.env.VITE_API_ENDPOINT}project-evidences/${project._id}/feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ const ProjectDetails = () => {
         setShowFeedbackForm(false);
         resetFeedback();
         // Refresh project data
-        const updatedResponse = await fetch(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences/${project._id}`);
+        const updatedResponse = await fetch(`${import.meta.env.VITE_API_ENDPOINT}project-evidences/${project._id}`);
         if (updatedResponse.ok) {
           const updatedData = await updatedResponse.json();
           setProject(updatedData);

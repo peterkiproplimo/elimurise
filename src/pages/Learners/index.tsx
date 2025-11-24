@@ -1423,10 +1423,15 @@ function Main() {
                             .filter(
                               (parent: any) => parent.email !== guardianIdNo2
                             )
-                            .map((parent: any) => ({
-                              value: parent.email,
-                              text: `${parent.first_name} ${parent.last_name} - ${parent.email}`,
-                            }));
+                            .map((parent: any) => {
+                              const firstName = parent.first_name || '';
+                              const lastName = parent.last_name || '';
+                              const fullName = `${firstName} ${lastName}`.trim() || 'No Name';
+                              return {
+                                value: parent.email,
+                                text: `${fullName} - ${parent.email}`,
+                              };
+                            });
                           callback(options);
                         },
                         placeholder: "Search for a parent by email...",
@@ -1627,10 +1632,15 @@ function Main() {
                               .filter(
                                 (parent: any) => parent.email !== guardianIdNo
                               )
-                              .map((parent: any) => ({
-                                value: parent.email,
-                                text: `${parent.first_name} ${parent.last_name} - ${parent.email}`,
-                              }));
+                              .map((parent: any) => {
+                                const firstName = parent.first_name || '';
+                                const lastName = parent.last_name || '';
+                                const fullName = `${firstName} ${lastName}`.trim() || 'No Name';
+                                return {
+                                  value: parent.email,
+                                  text: `${fullName} - ${parent.email}`,
+                                };
+                              });
                             callback(options);
                           },
                           placeholder: "Search for a parent by email...",

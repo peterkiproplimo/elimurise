@@ -75,7 +75,7 @@ const UploadConfig = () => {
   const fetchCloudinaryConfig = async () => {
     try {
       setLoading(true);
-      const apiEndpoint = import.meta.env.VITE__LOCAL_API_ENDPOINT || 'http://localhost:9000/api/';
+      const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || 'http://localhost:9000/api/';
       const url = `${apiEndpoint}cloudinary-config/${CLOUDINARY_CONFIG_ID}`;
       
       console.log('Fetching Cloudinary config from:', url);
@@ -126,7 +126,7 @@ const UploadConfig = () => {
       setSaving(true);
       
       // Always use the specific ID for updates
-      const apiEndpoint = import.meta.env.VITE__LOCAL_API_ENDPOINT || 'http://localhost:9000/api/';
+      const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || 'http://localhost:9000/api/';
       const url = `${apiEndpoint}cloudinary-config/${CLOUDINARY_CONFIG_ID}`;
       const method = "PUT"; // Always update since we have a specific ID
       
@@ -162,7 +162,7 @@ const UploadConfig = () => {
       setTestLoading(true);
       setTestResult(null);
       
-      const apiEndpoint = import.meta.env.VITE__LOCAL_API_ENDPOINT || 'http://localhost:9000/api/';
+      const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || 'http://localhost:9000/api/';
       const response = await fetch(`${apiEndpoint}cloudinary-config/test`, {
         method: "POST",
         headers: {

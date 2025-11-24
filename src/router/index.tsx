@@ -115,6 +115,7 @@ import GoogleOAuthRedirect from "../pages/GoogleOAuthRedirect";
 //inactive learners
 import CreateProjectEvidence from "../pages/Projects/ProjectsModule/createprojectEvidence";
 import GenerateGoogleSecrets from "../pages/Projects/ProjectsModule/generateGoogleSecrets";
+import EventsPage from "../pages/Events";
 
 //nn
 function Router() {
@@ -293,6 +294,10 @@ function Router() {
         {
           path: "notice-board",
           element: <Noticesboard />,
+        },
+        {
+          path: "events",
+          element: <EventsPage />,
         },
         {
           path: "attendance_summary",
@@ -551,36 +556,54 @@ function Router() {
     // Portfolio Summary routes without authentication
     {
       path: "/portfolio-summary",
-      element: <PortfolioSummary />,
-    },
-    {
-      path: "/portfolio-summary/generate",
-      element: <PortfolioGenerationForm />,
-    },
-    {
-      path: "/portfolio-summary/pdf-test",
-      element: <PDFTestPage />,
-    },
-    {
-      path: "/portfolio-summary/pdf-viewer",
-      element: <PortfolioPDFViewer />,
-    },
-    {
-      path: "/portfolio-summary/preview",
-      element: <PortfolioPreviewPage />,
+      element: <Layout />,
+      children: [
+        {
+          path: "",
+          element: <PortfolioSummary />,
+        },
+        {
+          path: "generate",
+          element: <PortfolioGenerationForm />,
+        },
+        {
+          path: "pdf-test",
+          element: <PDFTestPage />,
+        },
+        {
+          path: "pdf-viewer",
+          element: <PortfolioPDFViewer />,
+        },
+        {
+          path: "preview",
+          element: <PortfolioPreviewPage />,
+        },
+      ],
     },
     // Projects Module routes without authentication
     {
       path: "/projectsmodule",
-      element: <ProjectsModule />,
+      element: <Layout />,
+      children: [
+        {
+          path: "",
+          element: <ProjectsModule />,
+        },
+        {
+          path: "create",
+          element: <CreateProjectEvidence />,
+        },
+      ],
     },
     {
       path: "/googleauthenticate",
-      element: <GenerateGoogleSecrets />,
-    },
-    {
-      path: "/projectsmodule/create",
-      element: <CreateProjectEvidence />,
+      element: <Layout />,
+      children: [
+        {
+          path: "",
+          element: <GenerateGoogleSecrets />,
+        },
+      ],
     },
     {
       path: "/error-page",

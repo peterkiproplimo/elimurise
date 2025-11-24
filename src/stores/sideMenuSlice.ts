@@ -305,13 +305,16 @@ const initialState: SideMenuState = {
           icon: "Bell",
           title: "Announcements",
           pathname: "/home/notice-board",
-          ignore: !hasPermission("communication", "read"),
         },
         {
           icon: "Mail",
           title: "Message Center",
           pathname: "/home/message",
-          ignore: !hasPermission("communication", "read"),
+        },
+        {
+          icon: "Calendar",
+          title: "Events & Calendar",
+          pathname: "/home/events",
         },
       ],
     },

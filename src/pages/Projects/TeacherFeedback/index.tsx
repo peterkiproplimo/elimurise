@@ -102,7 +102,7 @@ const TeacherFeedback: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences/${project._id}/feedback`, {
+      const response = await fetch(`${import.meta.env.VITE_API_ENDPOINT}project-evidences/${project._id}/feedback`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

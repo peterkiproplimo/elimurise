@@ -71,7 +71,7 @@ class GoogleImageUploadService {
         localStorage.setItem('google_refresh_token', this.refreshToken);
         try {
           // Send refresh token to backend to persist against specific config ID
-          await axios.post(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}google-config/69023ae4a772a5bf53b229fa/refresh-token`, {
+          await axios.post(`${import.meta.env.VITE_API_ENDPOINT}google-config/69023ae4a772a5bf53b229fa/refresh-token`, {
             refresh_token: this.refreshToken,
             access_token: this.accessToken
           });

@@ -485,6 +485,79 @@ export const createAttendance = async (data: any) => {
   }
 };
 
+// Events & Calendar
+export const getEvents = async (params: any = {}) => {
+  try {
+    let res = await axios.get(c.EVENTS, { params });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getCalendarEvents = async (params: any = {}) => {
+  try {
+    let res = await axios.get(`${c.EVENTS}/calendar`, { params });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getEventStats = async () => {
+  try {
+    let res = await axios.get(`${c.EVENTS}/stats/overview`);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const getEventById = async (id: string) => {
+  try {
+    let res = await axios.get(`${c.EVENTS}/${id}`);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const createEvent = async (data: any) => {
+  try {
+    let res = await axios.post(c.EVENTS, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const updateEvent = async (id: string, data: any) => {
+  try {
+    let res = await axios.put(`${c.EVENTS}/${id}`, data);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const deleteEvent = async (id: string) => {
+  try {
+    let res = await axios.delete(`${c.EVENTS}/${id}`);
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
+export const updateEventStatus = async (id: string, status: string) => {
+  try {
+    let res = await axios.patch(`${c.EVENTS}/${id}/status`, { status });
+    return res.data;
+  } catch (e) {
+    throw handler(e);
+  }
+};
+
 export async function createStream(data: FieldValues) {
   try {
     if (data._id) {

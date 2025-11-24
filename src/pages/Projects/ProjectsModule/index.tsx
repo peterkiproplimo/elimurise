@@ -207,7 +207,7 @@ const ProjectsModule = () => {
 
       // Fetch competencies
       const competenciesResponse = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies?limit=1000&status=active`
+        `${import.meta.env.VITE_API_ENDPOINT}competencies?limit=1000&status=active`
       );
       if (competenciesResponse.ok) {
         const competenciesData = await competenciesResponse.json();
@@ -273,7 +273,7 @@ const ProjectsModule = () => {
       if (filterDateTo) params.append("dateTo", filterDateTo);
 
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences?${params}`,
+        `${import.meta.env.VITE_API_ENDPOINT}project-evidences?${params}`,
         {
           method: "GET",
           headers: {
@@ -519,7 +519,7 @@ const ProjectsModule = () => {
         formData.append('googleDriveUrl', googleDriveUrl);
       }
 
-      const response = await fetch(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences`, {
+      const response = await fetch(`${import.meta.env.VITE_API_ENDPOINT}project-evidences`, {
         method: 'POST',
         body: formData,
       });
@@ -726,106 +726,104 @@ const ProjectsModule = () => {
 
           {/* Projects Table */}
           <div className="mt-5">
-            <div className="overflow-x-auto">
-              <Table>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="whitespace-nowrap">Title</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Student</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Submitted</Table.Th>
-                    <Table.Th className="text-center whitespace-nowrap">Actions</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {loading ? (
+            {loading ? (
+              <div className="flex flex-col items-center mt-5">
+                <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+              </div>
+            ) : projectEvidences.length === 0 ? (
+              <div className="flex flex-col items-center mt-10 bg-white p-8">
+                <p className="text-xl text-slate-500">No records found</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <Table.Thead>
                     <Table.Tr>
-                      <Table.Td colSpan={4} className="text-center">
-                        <LoadingIcon icon="oval" className="w-8 h-8" />
-                      </Table.Td>
+                      <Table.Th className="whitespace-nowrap">Title</Table.Th>
+                      <Table.Th className="whitespace-nowrap">Student</Table.Th>
+                      <Table.Th className="whitespace-nowrap">Submitted</Table.Th>
+                      <Table.Th className="text-center whitespace-nowrap">Actions</Table.Th>
                     </Table.Tr>
-                  ) : projectEvidences.length === 0 ? (
-                    <Table.Tr>
-                      <Table.Td colSpan={4} className="text-center">
-                        No project evidences found
-                      </Table.Td>
-                    </Table.Tr>
-                  ) : (
-                    projectEvidences.map((project) => (
-                      <React.Fragment key={project._id}>
-                        <Table.Tr>
-                          <Table.Td>
-                            <div className="max-w-xs truncate" title={project.title}>
-                              {project.title}
-                            </div>
-                          </Table.Td>
-                          <Table.Td>
-                            <div className="text-sm">
-                              <div className="font-medium">{project.studentName || 'Unknown Student'}</div>
-                              <div className="text-gray-500">{project.studentId || 'N/A'}</div>
-                            </div>
-                          </Table.Td>
-                          
-                          <Table.Td>
-                            <span className="text-sm">
-                              {new Date(project.submittedAt).toLocaleDateString()}
-                            </span>
-                          </Table.Td>
-                          <Table.Td>
-                            <div className="flex items-center justify-center">
-                              <Button
-                                variant="outline-secondary"
-                                size="sm"
-                                className="mr-2"
-                                onClick={() => navigate(`/home/project-details/${project._id}`)}
-                                title="View Details"
-                              >
-                                <Lucide icon="Eye" className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                className="mr-2"
-                                onClick={() => {
-                                  navigate('/home/projects/teacher-feedback', {
-                                    state: { project }
-                                  });
-                                }}
-                                title="Add Feedback"
-                              >
-                                <Lucide icon="MessageSquare" className="w-4 h-4" />
-                              </Button>
-                              {/* Cloudinary View and Download buttons */}
-                              {(project.cloudinaryData?.secure_url || project.cloudinaryData?.url || project.mediaUrl) && (
-                                <>
-                                  <Button
-                                    variant="outline-secondary"
-                                    size="sm"
-                                    className="mr-2"
-                                    onClick={() => handleViewFile(project)}
-                                    title="View File"
-                                  >
-                                    <Lucide icon="Play" className="w-4 h-4" />
-                                  </Button>
-                                  <Button
-                                    variant="outline-success"
-                                    size="sm"
-                                    className="mr-2"
-                                    onClick={() => handleDownloadFile(project)}
-                                    title="Download File"
-                                  >
-                                    <Lucide icon="Download" className="w-4 h-4" />
-                                  </Button>
-                                </>
-                              )}
-                            </div>
-                          </Table.Td>
-                        </Table.Tr>
-                      </React.Fragment>
-                    ))
-                  )}
-                </Table.Tbody>
-              </Table>
-            </div>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {projectEvidences.map((project) => {
+                      return (
+                        <React.Fragment key={project._id}>
+                          <Table.Tr>
+                            <Table.Td>
+                              <div className="max-w-xs truncate" title={project.title}>
+                                {project.title}
+                              </div>
+                            </Table.Td>
+                            <Table.Td>
+                              <div className="text-sm">
+                                <div className="font-medium">{project.studentName || 'Unknown Student'}</div>
+                                <div className="text-gray-500">{project.studentId || 'N/A'}</div>
+                              </div>
+                            </Table.Td>
+                            
+                            <Table.Td>
+                              <span className="text-sm">
+                                {new Date(project.submittedAt).toLocaleDateString()}
+                              </span>
+                            </Table.Td>
+                            <Table.Td>
+                              <div className="flex items-center justify-center">
+                                <Button
+                                  variant="outline-secondary"
+                                  size="sm"
+                                  className="mr-2"
+                                  onClick={() => navigate(`/home/project-details/${project._id}`)}
+                                  title="View Details"
+                                >
+                                  <Lucide icon="Eye" className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="outline-primary"
+                                  size="sm"
+                                  className="mr-2"
+                                  onClick={() => {
+                                    navigate('/home/projects/teacher-feedback', {
+                                      state: { project }
+                                    });
+                                  }}
+                                  title="Add Feedback"
+                                >
+                                  <Lucide icon="MessageSquare" className="w-4 h-4" />
+                                </Button>
+                                {/* Cloudinary View and Download buttons */}
+                                {(project.cloudinaryData?.secure_url || project.cloudinaryData?.url || project.mediaUrl) && (
+                                  <>
+                                    <Button
+                                      variant="outline-secondary"
+                                      size="sm"
+                                      className="mr-2"
+                                      onClick={() => handleViewFile(project)}
+                                      title="View File"
+                                    >
+                                      <Lucide icon="Play" className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant="outline-success"
+                                      size="sm"
+                                      className="mr-2"
+                                      onClick={() => handleDownloadFile(project)}
+                                      title="Download File"
+                                    >
+                                      <Lucide icon="Download" className="w-4 h-4" />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </Table.Td>
+                          </Table.Tr>
+                        </React.Fragment>
+                      );
+                    })}
+                  </Table.Tbody>
+                </Table>
+              </div>
+            )}
 
             {/* Pagination */}
             {totalPages > 1 && (

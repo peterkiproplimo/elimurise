@@ -115,7 +115,7 @@ const EditCompetency: React.FC = () => {
   const fetchLearningAreas = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}learning-areas?limit=1000&status=active`
+        `${import.meta.env.VITE_API_ENDPOINT}learning-areas?limit=1000&status=active`
       );
       if (response.ok) {
         const data = await response.json();
@@ -146,7 +146,7 @@ const EditCompetency: React.FC = () => {
 
     setLoading(true);
     try {
-      const url = `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies/${competency._id}`;
+      const url = `${import.meta.env.VITE_API_ENDPOINT}competencies/${competency._id}`;
       const method = "PUT";
 
       // Prepare the data with subjectId and subjectName

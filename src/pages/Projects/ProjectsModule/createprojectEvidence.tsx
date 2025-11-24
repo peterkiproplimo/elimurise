@@ -196,7 +196,7 @@ const ProjectsModule = () => {
 
       // Fetch competencies
       const competenciesResponse = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}competencies?limit=1000&status=active`
+        `${import.meta.env.VITE_API_ENDPOINT}competencies?limit=1000&status=active`
       );
       if (competenciesResponse.ok) {
         const competenciesData = await competenciesResponse.json();
@@ -262,7 +262,7 @@ const ProjectsModule = () => {
       if (filterDateTo) params.append("dateTo", filterDateTo);
 
       const response = await fetch(
-        `${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences?${params}`,
+        `${import.meta.env.VITE_API_ENDPOINT}project-evidences?${params}`,
         {
           method: "GET",
           headers: {
@@ -471,7 +471,7 @@ const ProjectsModule = () => {
       let accessToken: string;
       try {
         const response = await fetch(
-          `${import.meta.env.VITE__LOCAL_API_ENDPOINT}google-config/refresh-token`,
+          `${import.meta.env.VITE_API_ENDPOINT}google-config/refresh-token`,
           {
             method: 'POST',
             headers: {
@@ -631,7 +631,7 @@ const ProjectsModule = () => {
       }
 
       // Submit single project evidence with all files
-      const response = await fetch(`${import.meta.env.VITE__LOCAL_API_ENDPOINT}project-evidences`, {
+      const response = await fetch(`${import.meta.env.VITE_API_ENDPOINT}project-evidences`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -840,33 +840,29 @@ const ProjectsModule = () => {
           {/* Projects Table */}
           <div className="mt-5">
             <div className="overflow-x-auto">
-              <Table>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th className="whitespace-nowrap">Title</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Student</Table.Th>
-                    <Table.Th className="whitespace-nowrap">PCI</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Type</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Status</Table.Th>
-                    <Table.Th className="whitespace-nowrap">Submitted</Table.Th>
-                    <Table.Th className="text-center whitespace-nowrap">Actions</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {loading ? (
+              {loading ? (
+                <div className="flex flex-col items-center mt-5">
+                  <LoadingIcon icon="spinning-circles" className="w-8 h-8" />
+                </div>
+              ) : projectEvidences.length === 0 ? (
+                <div className="flex flex-col items-center mt-10 bg-white p-8">
+                  <p className="text-xl text-slate-500 ">No project evidences found</p>
+                </div>
+              ) : (
+                <Table>
+                  <Table.Thead>
                     <Table.Tr>
-                      <Table.Td colSpan={7} className="text-center">
-                        <LoadingIcon icon="oval" className="w-8 h-8" />
-                      </Table.Td>
+                      <Table.Th className="whitespace-nowrap">Title</Table.Th>
+                      <Table.Th className="whitespace-nowrap">Student</Table.Th>
+                      <Table.Th className="whitespace-nowrap">PCI</Table.Th>
+                      <Table.Th className="whitespace-nowrap">Type</Table.Th>
+                      <Table.Th className="whitespace-nowrap">Status</Table.Th>
+                      <Table.Th className="whitespace-nowrap">Submitted</Table.Th>
+                      <Table.Th className="text-center whitespace-nowrap">Actions</Table.Th>
                     </Table.Tr>
-                  ) : projectEvidences.length === 0 ? (
-                    <Table.Tr>
-                      <Table.Td colSpan={7} className="text-center">
-                        No project evidences found
-                      </Table.Td>
-                    </Table.Tr>
-                  ) : (
-                    projectEvidences.map((project) => (
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {projectEvidences.map((project) => (
                       <React.Fragment key={project._id}>
                         <Table.Tr>
                           <Table.Td>
@@ -961,10 +957,10 @@ const ProjectsModule = () => {
                           </Table.Td>
                         </Table.Tr>
                       </React.Fragment>
-                    ))
-                  )}
-                </Table.Tbody>
-              </Table>
+                    ))}
+                  </Table.Tbody>
+                </Table>
+              )}
             </div>
 
             {/* Pagination */}
@@ -981,7 +977,20 @@ const ProjectsModule = () => {
       {activeTab === "submit" && (
         <div className="mt-5">
           <div className="bg-white shadow-md rounded-lg p-6">
-            <h4 className="font-bold mb-4">Submit Project Evidence</h4>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <Button
+                  type="button"
+                  variant="outline-secondary"
+                  onClick={() => setActiveTab("list")}
+                  className="flex items-center gap-2"
+                >
+                  <Lucide icon="ArrowLeft" className="w-4 h-4" />
+                  Back
+                </Button>
+                <h4 className="font-bold">Submit Project Evidence</h4>
+              </div>
+            </div>
             <form onSubmit={handleSubmissionSubmit(onSubmitProjectEvidence)}>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>

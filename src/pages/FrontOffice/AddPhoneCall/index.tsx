@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   Save
 } from 'lucide-react';
+import Lucide from '../../../base-components/Lucide';
 
 // Validation schema
 const phoneCallSchema = yup.object({
@@ -29,10 +30,10 @@ const phoneCallSchema = yup.object({
   purpose: yup.string().required('Purpose is required'),
   notes: yup.string(),
   followUpRequired: yup.boolean(),
-  followUpDate: yup.date().when('followUpRequired', {
+  followUpDate: yup.string().when('followUpRequired', {
     is: true,
-    then: yup.date().required('Follow-up date is required when follow-up is needed'),
-    otherwise: yup.date()
+    then: yup.string().required('Follow-up date is required when follow-up is needed'),
+    otherwise: yup.string().nullable()
   }),
   priority: yup.string().required('Priority is required'),
   handledBy: yup.string().required('Handled by is required')
@@ -43,6 +44,8 @@ const AddPhoneCall: React.FC = () => {
   const { user } = useAuth();
   const notify = useRef<NotificationElement>();
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(true);
+  const [message, setMessage] = useState("");
 
   // Form setup
   const {
@@ -71,7 +74,18 @@ const AddPhoneCall: React.FC = () => {
   const onSubmit = async (data: any) => {
     try {
       setLoading(true);
-      await phoneCallService.createPhoneCall(data);
+      
+      // Clean up the data before sending
+      const cleanedData = {
+        ...data,
+        followUpDate: data.followUpRequired && data.followUpDate ? data.followUpDate : undefined,
+        followUpRequired: data.followUpRequired || false,
+        notes: data.notes || undefined
+      };
+      
+      await phoneCallService.createPhoneCall(cleanedData);
+      setSuccess(true);
+      setMessage("Phone call saved successfully");
       notify.current?.showToast();
       
       // Navigate back to phone calls list
@@ -80,6 +94,8 @@ const AddPhoneCall: React.FC = () => {
       }, 1500);
     } catch (error: any) {
       console.error('Error creating phone call:', error);
+      setSuccess(false);
+      setMessage(error.response?.data?.message || error.message || "Failed to save phone call");
       notify.current?.showToast();
     } finally {
       setLoading(false);
@@ -92,7 +108,22 @@ const AddPhoneCall: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Notification getRef={(el) => { notify.current = el; }} />
+      <Notification
+        options={{ duration: 3000 }}
+        getRef={(el) => {
+          notify.current = el;
+        }}
+        className="flex"
+      >
+        <Lucide
+          icon={success ? "CheckCircle" : "XCircle"}
+          className={success ? "text-success" : "text-danger"}
+        />
+        <div className="ml-4 mr-4">
+          <div className="font-medium">{success ? "Success" : "Failed"}</div>
+          <div className="mt-1 text-slate-500">{message}</div>
+        </div>
+      </Notification>
       
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
@@ -217,11 +248,16 @@ const AddPhoneCall: React.FC = () => {
                 <h3 className="text-md font-semibold text-gray-900 mb-4">Follow-up Information</h3>
                 
                 <div className="space-y-4">
-                  <FormCheck
-                    id="followUpRequired"
-                    {...register('followUpRequired')}
-                    label="Follow-up Required"
-                  />
+                  <FormCheck>
+                    <FormCheck.Input
+                      id="followUpRequired"
+                      type="checkbox"
+                      {...register('followUpRequired')}
+                    />
+                    <FormCheck.Label htmlFor="followUpRequired">
+                      Follow-up Required
+                    </FormCheck.Label>
+                  </FormCheck>
                   
                   {followUpRequired && (
                     <div>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE__LOCAL_API_ENDPOINT || 'http://localhost:9000/api/';
+const API_BASE_URL = import.meta.env.VITE_API_ENDPOINT || 'http://localhost:9000/api/';
 
 class GoogleDriveService {
   constructor() {
