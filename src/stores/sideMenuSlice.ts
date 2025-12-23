@@ -316,6 +316,31 @@ const initialState: SideMenuState = {
           title: "Events & Calendar",
           pathname: "/home/events",
         },
+        {
+          icon: "MessageCircle",
+          title: "Send SMS",
+          pathname: "/home/sms/send",
+        },
+        {
+          icon: "User",
+          title: "Send Single SMS",
+          pathname: "/home/sms/send-single",
+        },
+        {
+          icon: "CreditCard",
+          title: "SMS Wallet",
+          pathname: "/home/sms/wallet",
+        },
+        {
+          icon: "List",
+          title: "SMS Logs",
+          pathname: "/home/sms/logs",
+        },
+        {
+          icon: "FileText",
+          title: "SMS Templates",
+          pathname: "/home/sms/templates",
+        },
       ],
     },
 

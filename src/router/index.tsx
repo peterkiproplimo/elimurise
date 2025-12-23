@@ -111,6 +111,11 @@ import PortfolioPDFViewer from "../pages/Projects/PortfolioSummary/PortfolioPDFV
 import TeacherFeedback from "../pages/Projects/TeacherFeedback/index";
 import GoogleDriveUploadPage from "../pages/Projects/GoogleDriveUpload/index";
 import GoogleOAuthRedirect from "../pages/GoogleOAuthRedirect";
+import SendSMS from "../pages/SMS/SendSMS";
+import SendSingleSMS from "../pages/SMS/SendSingleSMS";
+import Wallet from "../pages/SMS/Wallet";
+import Logs from "../pages/SMS/Logs";
+import Templates from "../pages/SMS/Templates";
 
 //inactive learners
 import CreateProjectEvidence from "../pages/Projects/ProjectsModule/createprojectEvidence";
@@ -201,6 +206,26 @@ function Router() {
         {
           path: "onlineapplications",
           element: <OnlineApplications />
+        },
+        {
+          path: "sms/send",
+          element: <SendSMS />
+        },
+        {
+          path: "sms/send-single",
+          element: <SendSingleSMS />
+        },
+        {
+          path: "sms/wallet",
+          element: <Wallet />
+        },
+        {
+          path: "sms/logs",
+          element: <Logs />
+        },
+        {
+          path: "sms/templates",
+          element: <Templates />
         },
         {
           path: "certificates",
