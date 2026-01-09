@@ -1,13 +1,9 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '/api/sms' });
+const api = axios.create({ baseURL: 'http://localhost:5001/api/sms' });
 
-const ONFON_URL = 'https://api.onfonmedia.co.ke/v1/sms/SendBulkSMS';
-const ACCESS_KEY = 'xxxxxxxx-xxxx-xxxx-xxxx';
-const API_KEY = 'Kb1EhwPAozixY7aRn6p4tMkOXmUyWurS9G23eqs5F8B0IHgZ';
-const CLIENT_ID = 'ElimuRise';
-
-export function sendSMSDirect(payload: {
+export function sendSMS(payload: {
+  schoolId: string;
   senderId?: string;
   body: string;
   recipients: string[];
@@ -15,26 +11,7 @@ export function sendSMSDirect(payload: {
   isFlash?: boolean;
   scheduleDateTime?: string;
 }) {
-  const providerPayload = {
-    SenderId: payload.senderId || 'ELIMURISE',
-    IsUnicode: Boolean(payload.isUnicode),
-    IsFlash: Boolean(payload.isFlash),
-    ScheduleDateTime: payload.scheduleDateTime || undefined,
-    MessageParameters: payload.recipients.map((to) => ({
-      Number: to,
-      Text: payload.body,
-    })),
-    ApiKey: API_KEY,
-    ClientId: CLIENT_ID,
-  };
-
-  return axios.post(ONFON_URL, providerPayload, {
-    headers: {
-      'Content-Type': 'application/json',
-      AccessKey: ACCESS_KEY,
-    },
-    timeout: 15000,
-  });
+  return api.post('/send', payload);
 }
 
 export function getWallet(schoolId: string) {
@@ -54,4 +31,21 @@ export function registerWebhook(data: any) {
   return api.post('/webhook', data);
 }
 
-export default { sendSMS, getWallet, topUpWallet, getMessages, registerWebhook };
+export function purchaseSMS(payload: { schoolId: string; phone: string; tokens: number }) {
+  return api.post('/purchase', payload);
+}
+
+export function getPurchaseStatus(purchaseId: string) {
+  return api.get(`/purchase/${purchaseId}`);
+}
+
+export function getPurchaseHistory(schoolId: string) {
+  return api.get(`/purchases/${schoolId}`);
+}
+
+export function getRecipientGroups(schoolId: string, grade?: string) {
+  const params = grade ? { params: { grade } } : {};
+  return api.get(`/recipient-groups/${schoolId}`, params);
+}
+
+export default { sendSMS, getWallet, topUpWallet, getMessages, registerWebhook, purchaseSMS, getPurchaseStatus, getPurchaseHistory, getRecipientGroups };

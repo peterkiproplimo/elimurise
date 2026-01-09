@@ -21,19 +21,11 @@ const schema = yup.object({
     .string()
     .required("Message is required")
     .min(1, "Message cannot be empty"),
-  senderId: yup.string().optional(),
-  isUnicode: yup.boolean().optional(),
-  isFlash: yup.boolean().optional(),
-  scheduleDateTime: yup.string().optional(),
 });
 
 interface SendSingleSMSForm {
   phoneNumber: string;
   message: string;
-  senderId?: string;
-  isUnicode?: boolean;
-  isFlash?: boolean;
-  scheduleDateTime?: string;
 }
 
 export default function SendSingleSMS() {
@@ -62,13 +54,12 @@ export default function SendSingleSMS() {
       // Clean phone number (remove spaces, dashes, parentheses)
       const cleanPhoneNumber = data.phoneNumber.replace(/[\s\-()]/g, "");
 
-      const resp = await smsApi.sendSMSDirect({
-        senderId: data.senderId || "ELIMURISE",
+      const schoolId = (window as any).CURRENT_SCHOOL_ID || "DEFAULT_SCHOOL";
+      const resp = await smsApi.sendSMS({
+        schoolId,
+        senderId: "ELIMURISE",
         body: data.message,
         recipients: [cleanPhoneNumber],
-        isUnicode: data.isUnicode,
-        isFlash: data.isFlash,
-        scheduleDateTime: data.scheduleDateTime || undefined,
       });
 
       setNotification({
@@ -141,55 +132,6 @@ export default function SendSingleSMS() {
                   <p className="text-xs text-gray-500 mt-1">
                     Enter the recipient's phone number (with country code)
                   </p>
-                </div>
-
-                {/* Sender ID */}
-                <div>
-                  <FormLabel htmlFor="senderId">Sender ID (Optional)</FormLabel>
-                  <FormInput
-                    id="senderId"
-                    type="text"
-                    placeholder="e.g., ELIMURISE"
-                    {...register("senderId")}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Leave empty to use default sender ID (ELIMURISE)
-                  </p>
-                </div>
-
-                {/* SMS Options */}
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="isUnicode"
-                      {...register("isUnicode")}
-                    />
-                    <FormLabel htmlFor="isUnicode" className="mb-0">
-                      Send as Unicode
-                    </FormLabel>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="isFlash"
-                      {...register("isFlash")}
-                    />
-                    <FormLabel htmlFor="isFlash" className="mb-0">
-                      Send as Flash SMS
-                    </FormLabel>
-                  </div>
-                  <div>
-                    <FormLabel htmlFor="scheduleDateTime">Schedule (Optional)</FormLabel>
-                    <FormInput
-                      id="scheduleDateTime"
-                      type="datetime-local"
-                      {...register("scheduleDateTime")}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Leave empty to send immediately
-                    </p>
-                  </div>
                 </div>
 
                 {/* Message */}

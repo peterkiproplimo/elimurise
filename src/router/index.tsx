@@ -114,6 +114,7 @@ import GoogleOAuthRedirect from "../pages/GoogleOAuthRedirect";
 import SendSMS from "../pages/SMS/SendSMS";
 import SendSingleSMS from "../pages/SMS/SendSingleSMS";
 import Wallet from "../pages/SMS/Wallet";
+import BuySMS from "../pages/SMS/BuySMS";
 import Logs from "../pages/SMS/Logs";
 import Templates from "../pages/SMS/Templates";
 
@@ -218,6 +219,10 @@ function Router() {
         {
           path: "sms/wallet",
           element: <Wallet />
+        },
+        {
+          path: "sms/buy",
+          element: <BuySMS />
         },
         {
           path: "sms/logs",

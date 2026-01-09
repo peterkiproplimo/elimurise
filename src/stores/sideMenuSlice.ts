@@ -318,7 +318,7 @@ const initialState: SideMenuState = {
         },
         {
           icon: "MessageCircle",
-          title: "Send SMS",
+          title: "Send SMS Multiple",
           pathname: "/home/sms/send",
         },
         {

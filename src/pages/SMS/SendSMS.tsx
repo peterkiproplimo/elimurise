@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import smsApi from "../../services/smsApi";
+import * as ApiService from "../../services/auth";
 import Button from "../../base-components/Button";
 import {
-  FormInput,
   FormLabel,
   FormTextarea,
   FormSelect,
@@ -18,10 +18,6 @@ const schema = yup.object({
   message: yup.string()
     .required("Message is required")
     .min(1, "Message cannot be empty"),
-  senderId: yup.string().optional(),
-  isUnicode: yup.boolean().optional(),
-  isFlash: yup.boolean().optional(),
-  scheduleDateTime: yup.string().optional(),
 }).test("recipients-required", "Recipients are required", function(values) {
   return !!values.recipientGroup || !!values.recipients?.trim();
 });
@@ -30,10 +26,6 @@ interface SendSMSForm {
   recipientGroup?: string;
   recipients?: string;
   message: string;
-  senderId?: string;
-  isUnicode?: boolean;
-  isFlash?: boolean;
-  scheduleDateTime?: string;
 }
 
 interface RecipientGroup {
@@ -41,24 +33,6 @@ interface RecipientGroup {
   count: number;
   phones: string[];
 }
-
-const RECIPIENT_GROUPS: Record<string, RecipientGroup> = {
-  parents: {
-    name: "Parents",
-    count: 1250,
-    phones: Array.from({ length: 1250 }, (_, i) => `25471234${String(i).padStart(4, "0")}`),
-  },
-  students: {
-    name: "Students",
-    count: 2840,
-    phones: Array.from({ length: 2840 }, (_, i) => `25472234${String(i).padStart(4, "0")}`),
-  },
-  staff: {
-    name: "Staff",
-    count: 185,
-    phones: Array.from({ length: 185 }, (_, i) => `25473234${String(i).padStart(4, "0")}`),
-  },
-};
 
 export default function SendSMS() {
   const {
@@ -77,9 +51,74 @@ export default function SendSMS() {
     message: string;
   } | null>(null);
   const [recipientCount, setRecipientCount] = useState(0);
+  const [recipientGroups, setRecipientGroups] = useState<Record<string, RecipientGroup>>({});
+  const [loadingGroups, setLoadingGroups] = useState(true);
+  const [grades, setGrades] = useState<Array<{ _id: string; name: string }>>([]);
+  const [loadingGrades, setLoadingGrades] = useState(false);
+  const [selectedGrade, setSelectedGrade] = useState<string>("all");
   const recipients = watch("recipients");
   const recipientGroup = watch("recipientGroup");
   const message = watch("message");
+  const schoolId = (window as any).CURRENT_SCHOOL_ID || "DEFAULT_SCHOOL";
+
+  // Load grades from backend
+  React.useEffect(() => {
+    const loadGrades = async () => {
+      setLoadingGrades(true);
+      try {
+        const response = await ApiService.getGrades({ page: 1, limit: 100 });
+        setGrades(response.data || []);
+      } catch (err) {
+        console.error("Failed to load grades:", err);
+      } finally {
+        setLoadingGrades(false);
+      }
+    };
+
+    loadGrades();
+  }, []);
+
+  // Load recipient groups from backend
+ React.useEffect(() => {
+  const loadRecipientGroups = async () => {
+    setLoadingGroups(true);
+    try {
+      const gradeFilter = selectedGrade !== "all" ? selectedGrade : undefined;
+
+      const resp = await smsApi.getRecipientGroups(schoolId, gradeFilter);
+      const data = resp.data;
+
+      setRecipientGroups({
+        parents: {
+          name: "Parents",
+          count: data.parents.total,
+          phones: data.parents.phones,
+        },
+        students: {
+          name: "Students",
+          count: data.students.count,
+          phones: data.students.phones,
+        },
+        staff: {
+          name: "Staff",
+          count: data.staff.count,
+          phones: data.staff.phones,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to load recipient groups:", err);
+      setNotification({
+        type: "error",
+        message: "Failed to load recipient groups",
+      });
+    } finally {
+      setLoadingGroups(false);
+    }
+  };
+
+  loadRecipientGroups();
+}, [schoolId, selectedGrade]);
+
 
   React.useEffect(() => {
     const manualCount = recipients
@@ -88,22 +127,29 @@ export default function SendSMS() {
       .filter(Boolean).length || 0;
 
     const groupCount = recipientGroup
-      ? RECIPIENT_GROUPS[recipientGroup]?.count || 0
+      ? recipientGroups[recipientGroup]?.count || 0
       : 0;
 
     setRecipientCount(manualCount + groupCount);
-  }, [recipients, recipientGroup]);
+  }, [recipients, recipientGroup, recipientGroups]);
+
+  React.useEffect(() => {
+  reset({ recipientGroup: "" });
+  setRecipientCount(0);
+}, [selectedGrade]);
 
   const onSubmit = async (data: SendSMSForm) => {
     setSending(true);
+    setNotification(null); // Clear any previous notifications
+    
     try {
       let recipientList: string[] = [];
 
       // Add selected group recipients
-      if (data.recipientGroup && RECIPIENT_GROUPS[data.recipientGroup]) {
+      if (data.recipientGroup && recipientGroups[data.recipientGroup]) {
         recipientList = [
           ...recipientList,
-          ...RECIPIENT_GROUPS[data.recipientGroup].phones,
+          ...recipientGroups[data.recipientGroup].phones,
         ];
       }
 
@@ -120,13 +166,17 @@ export default function SendSMS() {
         throw new Error("No valid recipients");
       }
 
-      const resp = await smsApi.sendSMSDirect({
-        senderId: data.senderId || "ELIMURISE",
+      // Remove duplicates and clean phone numbers
+      recipientList = [...new Set(recipientList.map(phone => phone.replace(/[\s\-()]/g, "")))];
+
+      if (recipientList.length === 0) {
+        throw new Error("No valid recipients after cleaning phone numbers");
+      }
+      const resp = await smsApi.sendSMS({
+        schoolId,
+        senderId: "ELIMURISE",
         body: data.message,
         recipients: recipientList,
-        isUnicode: data.isUnicode,
-        isFlash: data.isFlash,
-        scheduleDateTime: data.scheduleDateTime || undefined,
       });
 
       setNotification({
@@ -137,121 +187,120 @@ export default function SendSMS() {
       });
       reset();
       setRecipientCount(0);
+      setSelectedGrade("all");
 
       setTimeout(() => setNotification(null), 4000);
     } catch (err: any) {
       console.error("Send SMS error:", err);
+      
+      // Extract error details from response
+      const errorData = err?.response?.data || {};
+      const errorMessage = errorData.message || err.message || "Failed to send SMS";
+      const balance = errorData.balance;
+      const required = errorData.required;
+      
+      // Build detailed error message for insufficient tokens
+      let fullErrorMessage = errorMessage;
+      if (balance !== undefined && required !== undefined) {
+        fullErrorMessage = `${errorMessage} Current balance: ${balance} tokens. Required: ${required} tokens.`;
+      }
+      
       setNotification({
         type: "error",
-        message:
-          err?.response?.data?.message || err.message || "Failed to send SMS",
+        message: fullErrorMessage,
       });
-      setTimeout(() => setNotification(null), 4000);
+      
+      // Don't auto-dismiss critical errors like insufficient balance
+      // Keep them visible so user can see the issue
+      if (errorMessage.toLowerCase().includes("insufficient")) {
+        // Keep error visible for 10 seconds for insufficient balance errors
+        setTimeout(() => setNotification(null), 10000);
+      } else {
+        // Auto-dismiss other errors after 6 seconds
+        setTimeout(() => setNotification(null), 6000);
+      }
     } finally {
       setSending(false);
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      const phones = content
-        .split(/[,\n;]/)
-        .map((p) => p.trim())
-        .filter(Boolean)
-        .join("\n");
-
-      const textarea = document.querySelector(
-        "textarea[name='recipients']"
-      ) as HTMLTextAreaElement;
-      if (textarea) {
-        textarea.value = phones;
-        textarea.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-    };
-    reader.readAsText(file);
-  };
 
   return (
     <>
       <div className="flex items-center mt-8">
-        <h2 className="mr-auto text-lg font-medium">Send SMS Messages</h2>
+        <h2 className="mr-auto text-lg font-medium">Send SMS Multiple</h2>
       </div>
-
-      {notification && (
-        <div
-          className={`mt-5 p-4 rounded-lg border ${
-            notification.type === "success"
-              ? "bg-green-50 border-green-200 text-green-700"
-              : "bg-red-50 border-red-200 text-red-700"
-          }`}
-        >
-          <div className="flex gap-3">
-            <Lucide
-              icon={notification.type === "success" ? "CheckCircle" : "AlertCircle"}
-              className="w-5 h-5 flex-shrink-0 mt-0.5"
-            />
-            <span>{notification.message}</span>
-          </div>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 gap-6 mt-5">
         <div className="box">
+          {/* Error/Success Notification - Positioned at top of form box */}
+          {notification && (
+            <div className="mb-6">
+              <div
+                className={`p-4 rounded-lg border ${
+                  notification.type === "success"
+                    ? "bg-green-50 border-green-200 text-green-700"
+                    : "bg-red-50 border-red-200 text-red-700"
+                }`}
+              >
+                <div className="flex gap-3 items-start">
+                  <Lucide
+                    icon={notification.type === "success" ? "CheckCircle" : "AlertCircle"}
+                    className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                      notification.type === "error" ? "text-red-600" : "text-green-600"
+                    }`}
+                  />
+                  <div className="flex-1">
+                    <p className="font-semibold mb-1">
+                      {notification.type === "success" ? "Success!" : "Error"}
+                    </p>
+                    <p className="text-sm whitespace-pre-line">{notification.message}</p>
+                    {notification.type === "error" && (
+                      <p className="text-xs mt-2 text-red-600">
+                        Please check your SMS balance and try again, or purchase more tokens.
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setNotification(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <Lucide icon="X" className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="box-body">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {/* Sender ID */}
-                <div>
-                  <FormLabel htmlFor="senderId">Sender ID (Optional)</FormLabel>
-                  <FormInput
-                    id="senderId"
-                    type="text"
-                    placeholder="e.g., ELIMURISE"
-                    {...register("senderId")}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Leave empty to use default sender ID (ELIMURISE)
-                  </p>
-                </div>
 
-                {/* SMS Options */}
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="isUnicode"
-                      {...register("isUnicode")}
-                    />
-                    <FormLabel htmlFor="isUnicode" className="mb-0">
-                      Send as Unicode
-                    </FormLabel>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="isFlash"
-                      {...register("isFlash")}
-                    />
-                    <FormLabel htmlFor="isFlash" className="mb-0">
-                      Send as Flash SMS
-                    </FormLabel>
-                  </div>
-                  <div>
-                    <FormLabel htmlFor="scheduleDateTime">Schedule (Optional)</FormLabel>
-                    <FormInput
-                      id="scheduleDateTime"
-                      type="datetime-local"
-                      {...register("scheduleDateTime")}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Leave empty to send immediately
-                    </p>
-                  </div>
+                     {/* Grade Selector - Always visible */}
+                <div>
+                  <FormLabel htmlFor="grade">
+                    Select Grade (Optional)
+                  </FormLabel>
+                  <FormSelect
+                    id="grade"
+                    value={selectedGrade}
+                    onChange={(e) => setSelectedGrade(e.target.value)}
+                    disabled={loadingGrades || loadingGroups}
+                  >
+                    <option value="all">All Grades</option>
+                    {grades.map((grade) => (
+                      <option key={grade._id} value={grade._id}>
+                        {grade.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedGrade === "all"
+                    ? "All grades included"
+                    : `Filtering by: ${grades.find(g => g._id === selectedGrade)?.name}`}
+                </p>
+
                 </div>
 
                 {/* Recipient Group Dropdown */}
@@ -259,23 +308,28 @@ export default function SendSMS() {
                   <FormLabel htmlFor="recipientGroup">
                     Select Recipient Group (Optional)
                   </FormLabel>
-                  <FormSelect
+                 <FormSelect
                     id="recipientGroup"
                     {...register("recipientGroup")}
+                    disabled={loadingGroups || !selectedGrade}
                   >
                     <option value="">-- Select a group --</option>
-                    {Object.entries(RECIPIENT_GROUPS).map(([key, group]) => (
+                    {Object.entries(recipientGroups).map(([key, group]) => (
                       <option key={key} value={key}>
                         {group.name} ({group.count} recipients)
                       </option>
                     ))}
                   </FormSelect>
                   <p className="text-xs text-gray-500 mt-1">
-                    {recipientGroup
-                      ? `Selected: ${RECIPIENT_GROUPS[recipientGroup]?.name}`
+                    {loadingGroups
+                      ? "Loading groups..."
+                      : recipientGroup
+                      ? `Selected: ${recipientGroups[recipientGroup]?.name}`
                       : "No group selected"}
                   </p>
                 </div>
+
+         
 
                 {/* Recipient Count */}
                 <div>
@@ -295,13 +349,16 @@ export default function SendSMS() {
                 </div>
 
                 {/* Selected Group Info */}
-                {recipientGroup && (
+                {recipientGroup && recipientGroups[recipientGroup] && (
                   <div className="sm:col-span-2">
                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
                       <div className="flex gap-2 text-sm">
                         <Lucide icon="AlertCircle" className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                         <span className="text-amber-700">
-                          <strong>{RECIPIENT_GROUPS[recipientGroup]?.name}</strong> group ({RECIPIENT_GROUPS[recipientGroup]?.count} recipients) will be included.
+                          <strong>{recipientGroups[recipientGroup]?.name}</strong> group ({recipientGroups[recipientGroup]?.count} recipients) will be included.
+                          {recipientGroup === "students" && selectedGrade !== "all" && (
+                            <> Filtered by grade: <strong>{grades.find((g) => g._id === selectedGrade)?.name || "Grade"}</strong>.</>
+                          )}
                           {recipients?.trim() && " Additional manual entries will also be sent."}
                         </span>
                       </div>
@@ -373,6 +430,7 @@ export default function SendSMS() {
                   onClick={() => {
                     reset();
                     setRecipientCount(0);
+                    setSelectedGrade("all");
                   }}
                   variant="outline-secondary"
                   className="w-24"
